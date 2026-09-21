@@ -1,4 +1,5 @@
 import * as Phaser from "phaser";
+import type { MapSectionDefinition } from "../core/contentTypes";
 import type { StageDefinition } from "../core/types";
 import { Player } from "../entities/Player";
 
@@ -24,7 +25,22 @@ export class CameraDirector {
       this.stage.mapWidth,
       this.stage.mapHeight,
     );
-    this.camera.startFollow(this.player, true, 0.08, 0.08);
+    this.camera.setFollowOffset(-320, 0);
+    this.camera.startFollow(this.player, true, 0.08, 0);
+  }
+
+  public setSectionMode(section?: MapSectionDefinition): void {
+    const followsVertical = Boolean(
+      section?.vertical && this.stage.mapHeight > this.camera.height,
+    );
+
+    this.camera.setFollowOffset(-320, 0);
+    this.camera.startFollow(
+      this.player,
+      true,
+      0.08,
+      followsVertical ? 0.08 : 0,
+    );
   }
 
   public pauseFollow(): void {

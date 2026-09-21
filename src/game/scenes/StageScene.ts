@@ -4,13 +4,17 @@ import { createRuntimeStageState } from "../core/constants";
 import type { StageId } from "../core/types";
 import { GameEventBus } from "../bridge/GameEventBus";
 import { CameraDirector } from "../camera/CameraDirector";
+import { GameplayEventBus } from "../core/events";
 import { getStageDefinition, getWorldMapTheme } from "../data";
+import type { StageDefinition } from "../core/types";
 import { Player } from "../entities/Player";
 import { DEFAULT_PLAYER_TUNING } from "../entities/playerTypes";
 import { DEFAULT_KEYBINDS, InputManager } from "../input/InputManager";
 import { ParallaxRenderer } from "../maps/ParallaxRenderer";
+import { MapInteractionSystem } from "../maps/MapInteractionSystem";
 import { TiledMapLoader } from "../maps/TiledMapLoader";
 import type { LoadedMap } from "../maps/mapTypes";
+import { StageRandom } from "../random/StageRandom";
 import { StageBuilder } from "../stages/StageBuilder";
 import { StageRuntime } from "../stages/StageRuntime";
 import { PlayerController } from "../systems/PlayerController";
@@ -29,8 +33,12 @@ export class StageScene extends Phaser.Scene {
   private loadedMap?: LoadedMap | null;
   private parallaxRenderer?: ParallaxRenderer;
   private eventBus?: GameEventBus;
+  private gameplayEventBus?: GameplayEventBus;
+  private mapInteraction?: MapInteractionSystem;
   private statusText?: Phaser.GameObjects.Text;
   private stageId: StageId = "world-01-stage-1";
+  private stageDefinition?: StageDefinition;
+  private activeSectionId?: string;
 
   public constructor() {
     super("StageScene");
@@ -39,6 +47,7 @@ export class StageScene extends Phaser.Scene {
   public create(data: StageSceneData = {}): void {
     this.stageId = data.stageId ?? "world-01-stage-1";
     const stage = getStageDefinition(this.stageId);
+    this.stageDefinition = stage;
     const theme = getWorldMapTheme(stage.worldId);
     const seed = data.seed ?? 1;
     this.physics.world.setBounds(0, 0, stage.mapWidth, stage.mapHeight);
@@ -54,13 +63,23 @@ export class StageScene extends Phaser.Scene {
       DEFAULT_PLAYER_TUNING,
     );
     this.eventBus = new GameEventBus();
+    this.loadedMap = TiledMapLoader.load(this, stage, theme);
     this.runtime = new StageBuilder(undefined, this.eventBus).build(
       this,
       stage,
       seed,
       createRuntimeStageState(stage.id, seed),
+      this.loadedMap,
     );
-    this.loadedMap = TiledMapLoader.load(this, stage, theme);
+    this.gameplayEventBus = new GameplayEventBus();
+    this.mapInteraction = new MapInteractionSystem(
+      this,
+      this.player,
+      this.gameplayEventBus,
+      stage.id,
+      new StageRandom(this.runtime.runtimeState.randomSeed),
+      this.loadedMap,
+    );
 
     const gameplayLayer = this.loadedMap?.layers.gameplay;
     if (gameplayLayer) {
@@ -94,7 +113,11 @@ export class StageScene extends Phaser.Scene {
 
     this.cameraDirector = new CameraDirector(this, this.player, stage);
     this.cameraDirector.followPlayer();
+    this.syncSectionCamera();
     this.runtime.start();
+    this.runtime.getEventBus().on("map-state-restored", () => {
+      this.mapInteraction?.reset(this.runtime?.getMapSnapshot() ?? null);
+    });
     this.eventBus.on("stage-completed", (payload) => {
       this.runtime?.setStatus("completed");
       this.statusText?.setText(
@@ -115,9 +138,11 @@ export class StageScene extends Phaser.Scene {
 
     this.events.once("shutdown", () => {
       this.inputManager?.destroy();
+      this.mapInteraction?.destroy();
       this.runtime?.destroy();
       this.loadedMap?.destroy();
       this.parallaxRenderer?.destroy();
+      this.gameplayEventBus?.clear();
       this.eventBus?.clear();
     });
   }
@@ -127,16 +152,44 @@ export class StageScene extends Phaser.Scene {
       return;
     }
     this.playerController?.update(time, delta);
+    this.mapInteraction?.update(time, delta);
+    this.syncSectionCamera();
   }
 
   private activateCheckpoint(checkpointId: string): void {
     if (this.runtime?.getStatus() !== "play") {
       return;
     }
+    this.mapInteraction?.triggerObject(checkpointId, "checkpoint-reached");
+    this.runtime.runtimeState.checkpointId = checkpointId;
+    this.runtime.runtimeState.checkpointUsed = true;
+    this.runtime.setMapSnapshot(
+      this.mapInteraction?.createSnapshot(checkpointId) ?? null,
+    );
     this.eventBus?.emit("checkpoint-activated", {
       stageId: this.stageId,
       checkpointId,
     });
     this.statusText?.setText("checkpoint: " + checkpointId);
+  }
+
+  private syncSectionCamera(): void {
+    if (!this.cameraDirector || !this.player) {
+      return;
+    }
+
+    const sections = this.stageDefinition?.map?.sections ?? [];
+    const section = sections.find(
+      (candidate) =>
+        this.player!.x >= candidate.x &&
+        this.player!.x < candidate.x + candidate.width,
+    );
+
+    if (section?.id === this.activeSectionId) {
+      return;
+    }
+
+    this.activeSectionId = section?.id;
+    this.cameraDirector.setSectionMode(section);
   }
 }

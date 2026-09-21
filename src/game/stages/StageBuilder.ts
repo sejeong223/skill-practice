@@ -3,6 +3,7 @@ import type { ProgressState, RuntimeStageState, StageDefinition } from "../core/
 import { GameEventBus } from "../bridge/GameEventBus";
 import { StageRuntime } from "./StageRuntime";
 import { StageEntityFactory } from "./StageEntityFactory";
+import type { LoadedMap } from "../maps/mapTypes";
 
 export class StageBuilder {
   private readonly factory: StageEntityFactory;
@@ -24,6 +25,7 @@ export class StageBuilder {
     definition: StageDefinition,
     seed: number,
     runtimeState?: RuntimeStageState,
+    loadedMap: LoadedMap | null = null,
   ): StageRuntime {
     const runtime = new StageRuntime(
       scene,
@@ -32,6 +34,7 @@ export class StageBuilder {
       this.eventBus,
       this.factory,
       this.progress,
+      loadedMap,
     );
     runtime.runtimeState.randomSeed = seed;
     runtime.build();

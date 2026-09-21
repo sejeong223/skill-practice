@@ -1,11 +1,17 @@
 import * as Phaser from "phaser";
 import { STAGE_IDS, createRuntimeStageState } from "../core/constants";
-import type { EnemyDefinition, PlatformDefinition, TrapDefinition } from "../core/contentTypes";
+import type {
+  EnemyDefinition,
+  MapObjectDefinition,
+  PlatformDefinition,
+  TrapDefinition,
+} from "../core/contentTypes";
 import type { MapRuntimeSnapshot } from "../core/runtimeTypes";
 import type { ProgressState, RuntimeStageState, StageDefinition } from "../core/types";
 import { GameEventBus } from "../bridge/GameEventBus";
 import { StageRandom } from "../random/StageRandom";
 import { StageEntityFactory, type StageEntity, type StageEntityKind } from "./StageEntityFactory";
+import type { LoadedMap } from "../maps/mapTypes";
 
 interface RuntimeEntityRecord {
   readonly kind: StageEntityKind;
@@ -28,6 +34,7 @@ export class StageRuntime {
   private readonly eventBus: GameEventBus;
   private readonly factory: StageEntityFactory;
   private readonly progress?: ProgressState;
+  private readonly loadedMap: LoadedMap | null;
   private mapSnapshot: MapRuntimeSnapshot | null = null;
   private records: RuntimeEntityRecord[] = [];
   private status: StageRuntimeStatus = "enter";
@@ -39,6 +46,7 @@ export class StageRuntime {
     eventBus = new GameEventBus(),
     factory = new StageEntityFactory(),
     progress?: ProgressState,
+    loadedMap: LoadedMap | null = null,
   ) {
     this.scene = scene;
     this.definition = definition;
@@ -46,10 +54,21 @@ export class StageRuntime {
     this.eventBus = eventBus;
     this.factory = factory;
     this.progress = progress;
+    this.loadedMap = loadedMap;
   }
 
   public build(): void {
     this.clearEntities();
+
+    if (this.loadedMap) {
+      this.buildFromMap();
+      return;
+    }
+
+    this.buildFromSegments();
+  }
+
+  private buildFromSegments(): void {
     const random = new StageRandom(this.runtimeState.randomSeed);
     let segmentOffset = 0;
 
@@ -98,22 +117,161 @@ export class StageRuntime {
       segmentOffset += segment.length;
     }
 
-    const checkpointId = this.definition.checkpointIds[0];
-    if (checkpointId) {
-      this.add("checkpoint", checkpointId, this.factory.create(this.scene, {
-        kind: "checkpoint",
-        id: checkpointId,
-        x: Math.floor(this.definition.mapWidth / 2),
-        y: 460,
-      }));
+    this.addCheckpointAndExit();
+  }
+
+  private buildFromMap(): void {
+    let hasCheckpoint = false;
+    let hasExit = false;
+
+    for (const object of this.loadedMap?.objects ?? []) {
+      switch (object.kind) {
+        case "trap":
+          this.add("trap", object.id, this.factory.create(this.scene, {
+            kind: "trap",
+            definition: this.toTrapDefinition(object),
+          }));
+          break;
+        case "enemy-spawn":
+          this.add("enemy", object.id, this.factory.create(this.scene, {
+            kind: "enemy",
+            definition: this.toEnemyDefinition(object),
+          }));
+          break;
+        case "collectible":
+          this.add("collectible", object.id, this.factory.create(this.scene, {
+            kind: "collectible",
+            id: object.id,
+            x: object.x,
+            y: object.y,
+          }));
+          break;
+        case "checkpoint":
+          hasCheckpoint = true;
+          this.add("checkpoint", object.id, this.factory.create(this.scene, {
+            kind: "checkpoint",
+            id: object.id,
+            x: object.x,
+            y: object.y,
+          }));
+          break;
+        case "exit":
+          hasExit = true;
+          this.add("exit", object.id, this.factory.create(this.scene, {
+            kind: "exit",
+            id: object.id,
+            x: object.x,
+            y: object.y,
+          }));
+          break;
+        default:
+          break;
+      }
     }
 
+    if (!hasCheckpoint && this.definition.kind === "normal") {
+      this.addCheckpoint();
+    }
+
+    if (!hasExit) {
+      this.addExit();
+    }
+  }
+
+  private addCheckpointAndExit(): void {
+    if (this.definition.kind === "normal") {
+      this.addCheckpoint();
+    }
+
+    this.addExit();
+  }
+
+  private addCheckpoint(): void {
+    const checkpointId = this.definition.checkpointIds[0];
+
+    if (!checkpointId) {
+      return;
+    }
+
+    const section = this.definition.map?.sections.find(
+      (candidate) => candidate.checkpointId === checkpointId,
+    );
+    const x = section?.x ?? Math.floor(this.definition.mapWidth / 2);
+
+    this.add("checkpoint", checkpointId, this.factory.create(this.scene, {
+      kind: "checkpoint",
+      id: checkpointId,
+      x,
+      y: 460,
+    }));
+  }
+
+  private addExit(): void {
     this.add("exit", this.definition.id + "-exit", this.factory.create(this.scene, {
       kind: "exit",
       id: this.definition.id + "-exit",
       x: this.definition.mapWidth - 96,
       y: 440,
     }));
+  }
+
+  private toTrapDefinition(object: MapObjectDefinition): TrapDefinition {
+    const trapKinds: readonly TrapDefinition["kind"][] = [
+      "spike",
+      "falling-object",
+      "false-floor",
+      "moving-platform",
+      "wind",
+      "catapult",
+      "juice-slick",
+      "camera-flash",
+    ];
+    const value = object.properties.trapKind;
+    const kind = trapKinds.includes(value as TrapDefinition["kind"])
+      ? (value as TrapDefinition["kind"])
+      : "false-floor";
+
+    return {
+      id: object.id,
+      kind,
+      x: object.x + object.width / 2,
+      y: object.y + object.height / 2,
+      width: object.width || 64,
+      height: object.height || 32,
+      trigger: "proximity",
+      lethal: object.properties.lethal === true,
+      randomized: object.properties.randomized === true,
+      telegraph: "map object telegraph",
+      effect: "map-chain",
+    };
+  }
+
+  private toEnemyDefinition(object: MapObjectDefinition): EnemyDefinition {
+    const enemyKinds: readonly EnemyDefinition["kind"][] = [
+      "stray-cat",
+      "alley-cat",
+      "junkyard-cat",
+      "factory-cat",
+      "storm-cat",
+      "guard-cat",
+    ];
+    const value = object.properties.enemyKind;
+    const kind = enemyKinds.includes(value as EnemyDefinition["kind"])
+      ? (value as EnemyDefinition["kind"])
+      : "stray-cat";
+    const minX = object.x - 96;
+    const maxX = object.x + Math.max(96, object.width);
+
+    return {
+      id: object.id,
+      kind,
+      spawn: { x: object.x, y: object.y },
+      patrol: { minX, maxX, speed: 48 },
+      health: 2,
+      contactDamage: 1,
+      canBeStunned: true,
+      loot: [],
+    };
   }
 
   public start(): void {

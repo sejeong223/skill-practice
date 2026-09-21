@@ -1,13 +1,18 @@
 import {
+  BOSS_MAP_WIDTH,
+  MAP_TILE_SIZE,
+  NORMAL_MAP_WIDTH,
   stageIdFor,
   WORLD_IDS,
 } from "../core/constants";
 import type {
   BossDefinition,
   CutsceneDefinition,
+  StageMapDefinition,
   StageSegment,
   WorldDefinition,
 } from "../core/contentTypes";
+import { createDefaultStageSections } from "./worldMaps";
 import type {
   SkillId,
   StageDefinition,
@@ -28,7 +33,7 @@ interface WorldBlueprint {
 const WORLD_BLUEPRINTS: readonly WorldBlueprint[] = [
   {
     id: "world-01",
-    title: "생일 집 앞",
+    title: "뒷골목",
     subtitle: "왕갈비뼈를 훔쳐 간 냥아치 연합의 첫 흔적",
     stageTitles: [
       "무법지대 뒷골목",
@@ -42,13 +47,13 @@ const WORLD_BLUEPRINTS: readonly WorldBlueprint[] = [
   },
   {
     id: "world-02",
-    title: "뒤틀린 놀이공원",
-    subtitle: "웃음소리와 함정이 동시에 튀어나오는 구역",
+    title: "놀이터",
+    subtitle: "웃음소리와 함정이 동시에 튀어나오는 놀이터",
     stageTitles: [
-      "회전목마 광장",
-      "범퍼카 골목",
-      "풍선 관람차",
-      "놀이공원 지하통로",
+      "안전하지 않은 놀이터",
+      "미끄럼틀 낙하 구역",
+      "그네 줄타기 골목",
+      "정글짐 냥아치 통로",
     ],
     bossTitle: "놀이공원 관리실",
     bossName: "고등어",
@@ -56,13 +61,13 @@ const WORLD_BLUEPRINTS: readonly WorldBlueprint[] = [
   },
   {
     id: "world-03",
-    title: "육즙 공장",
-    subtitle: "왕갈비뼈 냄새가 사방에서 코를 괴롭히는 곳",
+    title: "뒷산",
+    subtitle: "왕갈비뼈 냄새가 바람을 타고 올라오는 뒷산",
     stageTitles: [
-      "육즙 공장 입구",
-      "고기 컨베이어 구역",
-      "압력솥 통로",
-      "왕갈비뼈 포장 라인",
+      "뒷산 입구",
+      "돌무더기 오르막",
+      "족제비 굴목",
+      "정상 직전 비탈길",
     ],
     bossTitle: "품질관리실",
     bossName: "공장장",
@@ -70,13 +75,13 @@ const WORLD_BLUEPRINTS: readonly WorldBlueprint[] = [
   },
   {
     id: "world-04",
-    title: "폭풍 고가도로",
-    subtitle: "꼬리 모터가 아니면 바람에 날아가는 구역",
+    title: "냥아치 아지트",
+    subtitle: "버려진 고물상에 모인 냥아치들의 본거지",
     stageTitles: [
-      "먹구름 고가도로",
-      "젖은 옥상 주차장",
-      "번개 피뢰침 구역",
-      "바람개비 송전탑",
+      "냥아치 아지트 외곽",
+      "버려진 고물상",
+      "고철 압축장",
+      "우두머리 경비 통로",
     ],
     bossTitle: "폭풍 관제탑",
     bossName: "번개",
@@ -84,13 +89,13 @@ const WORLD_BLUEPRINTS: readonly WorldBlueprint[] = [
   },
   {
     id: "world-05",
-    title: "냥아치 연합 본부",
+    title: "캣타워 공성전",
     subtitle: "모든 고양이 패거리의 우두머리가 기다리는 곳",
     stageTitles: [
-      "냥아치 연합 외곽",
-      "버려진 고물상",
-      "고양이 왕국 수문",
-      "왕좌 복도",
+      "캣타워 공성전 외곽",
+      "사료 창고 돌파로",
+      "캣타워 중층 난간",
+      "왕좌 직통 승강로",
     ],
     bossTitle: "우두머리의 옥좌",
     bossName: "우두머리",
@@ -102,22 +107,24 @@ function createSegment(
   stageId: StageId,
   segmentNumber: number,
   isBoss: boolean,
+  length: number,
 ): StageSegment {
   const segmentId = stageId + "-segment-" + segmentNumber;
+  const isSafeSection = !isBoss && (segmentNumber === 1 || segmentNumber === 5);
 
   return {
     id: segmentId,
-    length: isBoss ? 640 : 960,
+    length,
     platforms: [
       {
         id: segmentId + "-platform",
-        x: 96,
+        x: 16,
         y: 520,
-        width: isBoss ? 448 : 768,
+        width: length - 32,
         height: 32,
       },
     ],
-    traps: isBoss
+    traps: isBoss || isSafeSection
       ? []
       : [
           {
@@ -134,7 +141,7 @@ function createSegment(
             effect: "knockback-and-reset",
           },
         ],
-    enemies: isBoss
+    enemies: isBoss || isSafeSection
       ? []
       : [
           {
@@ -158,6 +165,26 @@ function createSegment(
   };
 }
 
+function createStageMap(
+  stageId: StageId,
+  isBoss: boolean,
+): StageMapDefinition {
+  const mapWidth = isBoss ? BOSS_MAP_WIDTH : NORMAL_MAP_WIDTH;
+
+  return {
+    mapKey: stageId + "-map",
+    mapFile: "/assets/pixel/maps/" + stageId + ".json",
+    tileWidth: MAP_TILE_SIZE,
+    tileHeight: MAP_TILE_SIZE,
+    mapWidth,
+    mapHeight: 720,
+    sections: isBoss ? [] : createDefaultStageSections(stageId),
+    layers: [],
+    objectDefinitions: [],
+    chainRules: [],
+  };
+}
+
 function createNormalStage(
   blueprint: WorldBlueprint,
   stageNumber: 1 | 2 | 3 | 4,
@@ -172,13 +199,17 @@ function createNormalStage(
     kind: "normal",
     spawn: { x: 96, y: 440 },
     checkpointIds: [id + "-checkpoint"],
-    mapWidth: 2880,
+    mapWidth: NORMAL_MAP_WIDTH,
     mapHeight: 720,
-    segments: [1, 2, 3].map((segmentNumber) =>
-      createSegment(id, segmentNumber, false),
+    segments: [192, 1152, 1152, 1152, 192].map((length, index) =>
+      createSegment(id, index + 1, false, length),
     ),
     collectibleIds: [id + "-memory"],
     cutsceneIds: [blueprint.id + "-world-intro"],
+    themeId: blueprint.id + "-theme",
+    mapKey: id + "-map",
+    map: createStageMap(id, false),
+    checkpointSectionIndex: 4,
   };
 }
 
@@ -193,10 +224,10 @@ function createBossStage(blueprint: WorldBlueprint): StageDefinition {
     kind: "boss",
     spawn: { x: 160, y: 440 },
     checkpointIds: [],
-    mapWidth: 1280,
+    mapWidth: BOSS_MAP_WIDTH,
     mapHeight: 720,
     segments: [1].map((segmentNumber) =>
-      createSegment(id, segmentNumber, true),
+      createSegment(id, segmentNumber, true, BOSS_MAP_WIDTH),
     ),
     collectibleIds: [],
     cutsceneIds: [
@@ -204,6 +235,9 @@ function createBossStage(blueprint: WorldBlueprint): StageDefinition {
       blueprint.id + "-boss-clear",
     ],
     bossId: blueprint.id + "-boss",
+    themeId: blueprint.id + "-theme",
+    mapKey: id + "-map",
+    map: createStageMap(id, true),
   };
 }
 

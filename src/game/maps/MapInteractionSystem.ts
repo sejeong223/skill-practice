@@ -148,6 +148,10 @@ export class MapInteractionSystem {
     return this.player;
   }
 
+  public destroy(): void {
+    this.pendingActions.splice(0);
+  }
+
   private canRunRule(rule: MapChainRule, objectId: string): boolean {
     if (rule.sourceId && rule.sourceId !== objectId) {
       return false;

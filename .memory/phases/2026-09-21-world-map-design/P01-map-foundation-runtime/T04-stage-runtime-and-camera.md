@@ -1,6 +1,6 @@
 # Task: T04 5구간 StageRuntime과 왼쪽 편향 카메라
 
-## Status: pending
+## Status: done
 
 ## Goal
 
@@ -87,6 +87,6 @@ Task: T04-stage-runtime-and-camera
 
 ## Progress
 
-- [ ] 구현 완료
-- [ ] 검증 통과
+- [x] 구현 완료
+- [x] 검증 통과 (`npm.cmd run lint`, `npm.cmd run build`)
 - commit: pending
