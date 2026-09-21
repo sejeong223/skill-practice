@@ -1,6 +1,6 @@
 # Task: T03 게임 상태·월드·스킬·도구·스테이지 도메인 스키마
 
-## Status: pending
+## Status: done
 
 ## Goal
 
@@ -106,10 +106,10 @@
 
 ## Acceptance Criteria
 
-- [ ] 코어 타입이 진행 저장과 런타임 상태를 분리한다.
-- [ ] 스킬·도구·스테이지·보스·컷신이 문자열 추측 없이 registry에서 조회된다.
-- [ ] 25개 StageId와 5개 WorldId가 타입 및 registry 규칙으로 표현된다.
-- [ ] 콘텐츠 검증기가 중복·누락·잘못된 가격·잘못된 스킬 순서를 잡는다.
++ [x] 코어 타입이 진행 저장과 런타임 상태를 분리한다.
++ [x] 스킬·도구·스테이지·보스·컷신이 문자열 추측 없이 registry에서 조회된다.
++ [x] 25개 StageId와 5개 WorldId가 타입 및 registry 규칙으로 표현된다.
++ [x] 콘텐츠 검증기가 중복·누락·잘못된 가격·잘못된 스킬 순서를 잡는다.
 
 ## Validation
 
@@ -131,6 +131,6 @@ Task: T03-game-domain-schema
 
 ## Progress
 
-- [ ] 구현 완료
-- [ ] 검증 통과
-- commit: pending
++ [x] 구현 완료
++ [x] 검증 통과
++ commit: T03 commit recorded in git history

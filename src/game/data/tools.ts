@@ -1,0 +1,58 @@
+import type { ToolDefinition } from "../core/types";
+
+export const TOOL_DEFINITIONS: readonly ToolDefinition[] = [
+  {
+    id: "rabbit-slipper",
+    slot: "attack",
+    price: 0,
+    passiveEffect: "three-hit-melee",
+    charges: null,
+    hiddenDrawbackId: "slipper-sneeze-recoil",
+    discoverOnTrigger: true,
+  },
+  {
+    id: "squeaky-ball",
+    slot: "attack",
+    price: 35,
+    passiveEffect: "bouncing-projectile",
+    charges: null,
+    hiddenDrawbackId: "squeak-summons-cats",
+    discoverOnTrigger: true,
+  },
+  {
+    id: "cardboard-tube",
+    slot: "attack",
+    price: 90,
+    passiveEffect: "extended-melee-range",
+    charges: null,
+    hiddenDrawbackId: "tube-blind-spot",
+    discoverOnTrigger: true,
+  },
+  {
+    id: "upside-down-bowl",
+    slot: "defense",
+    price: 0,
+    passiveEffect: "block-three-weak-hits",
+    charges: 3,
+    hiddenDrawbackId: "bowl-stray-dog-blockade",
+    discoverOnTrigger: true,
+  },
+  {
+    id: "cushion-pad",
+    slot: "defense",
+    price: 45,
+    passiveEffect: "soften-fall-damage",
+    charges: 2,
+    hiddenDrawbackId: "cushion-side-bounce",
+    discoverOnTrigger: true,
+  },
+  {
+    id: "cardboard-box",
+    slot: "defense",
+    price: 85,
+    passiveEffect: "hide-from-one-hit",
+    charges: 1,
+    hiddenDrawbackId: "box-obscures-vision",
+    discoverOnTrigger: true,
+  },
+];

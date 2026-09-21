@@ -6,8 +6,8 @@
 | :--- | :--- | :--- | :--- |
 | T01 | `done ✅` | 살짝 픽셀 아트풍 스타일 가이드와 생성형 에셋 계약 | [T01](./T01-pixel-art-asset-system.md) |
 | T02 | `done ✅` | Phaser 3.90.0 실행 셸과 1280×720 스케일링 | [T02](./T02-phaser-runtime-shell.md) |
-| T03 | `in_progress 🔵` | 게임 상태·월드·스킬·도구·스테이지 도메인 스키마 | [T03](./T03-game-domain-schema.md) |
+| T03 | `done ✅` | 게임 상태·월드·스킬·도구·스테이지 도메인 스키마 | [T03](./T03-game-domain-schema.md) |
 
 ## Progress
 
-- done: 2/3 (active: T03)
+- done: 3/3 (active: none)
