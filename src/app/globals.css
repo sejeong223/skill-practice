@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f5e7c7;
+  --foreground: #5f3942;
 }
 
 @theme inline {
@@ -12,15 +12,96 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-height: 100%;
 }
 
 body {
+  margin: 0;
+  overflow: hidden;
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+.game-page {
+  display: flex;
+  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.game-frame {
+  width: min(100%, 1280px);
+}
+
+.game-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 0 8px 12px;
+}
+
+.game-kicker {
+  margin: 0 0 5px;
+  color: #b0645d;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+}
+
+.game-header h1 {
+  margin: 0;
+  font-size: clamp(20px, 3vw, 32px);
+  letter-spacing: -0.06em;
+}
+
+.game-status {
+  color: #8b5a56;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.phaser-viewport {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border: 4px solid #5f3942;
+  border-radius: 14px;
+  background: #f5e7c7;
+  box-shadow: 0 18px 0 #d0a777, 0 26px 40px rgb(95 57 66 / 20%);
+}
+
+.phaser-viewport canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+}
+
+@media (max-width: 720px) {
+  .game-page {
+    padding: 12px;
+  }
+
+  .game-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .game-status {
+    font-size: 10px;
+  }
 }

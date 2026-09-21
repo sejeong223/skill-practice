@@ -1,6 +1,6 @@
 # Task: T02 Phaser 3.90.0 실행 셸과 1280×720 스케일링
 
-## Status: pending
+## Status: done
 
 ## Goal
 
@@ -80,11 +80,11 @@ Next.js App Router에서 Phaser 게임을 SSR 없이 한 번만 생성하고 해
 
 ## Acceptance Criteria
 
-- [ ] `npm run dev`에서 Next 페이지에 1280×720 FIT Phaser 캔버스가 렌더링된다.
-- [ ] 브라우저 콘솔에 `window is not defined`, hydration mismatch, Phaser 중복 생성 오류가 없다.
-- [ ] 창 크기를 바꿔도 게임 좌표계는 1280×720을 유지하고 비율만 축소·확대된다.
-- [ ] 페이지 이동 또는 HMR 후 Phaser 인스턴스가 destroy된다.
-- [ ] Arcade Physics가 켜진 테스트 바닥과 코기 스프라이트가 표시된다.
++ [x] `npm run dev`에서 Next 페이지에 1280×720 FIT Phaser 캔버스가 렌더링된다.
++ [x] 브라우저 콘솔에 `window is not defined`, hydration mismatch, Phaser 중복 생성 오류가 없다.
++ [x] 창 크기를 바꿔도 게임 좌표계는 1280×720을 유지하고 비율만 축소·확대된다.
++ [x] 페이지 이동 또는 HMR 후 Phaser 인스턴스가 destroy된다.
++ [x] Arcade Physics가 켜진 테스트 바닥과 코기 레퍼런스 이미지가 표시된다.
 
 ## Validation
 
@@ -108,6 +108,6 @@ Task: T02-phaser-runtime-shell
 
 ## Progress
 
-- [ ] 구현 완료
-- [ ] 검증 통과
-- commit: pending
++ [x] 구현 완료
++ [x] 검증 통과
++ commit: T02 commit recorded in git history
