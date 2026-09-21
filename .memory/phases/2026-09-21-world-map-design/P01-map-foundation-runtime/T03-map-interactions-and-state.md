@@ -1,6 +1,6 @@
 # Task: T03 맵 연쇄 상호작용과 상태 스냅샷
 
-## Status: pending
+## Status: done
 
 ## Goal
 
@@ -87,6 +87,6 @@ Task: T03-map-interactions-and-state
 
 ## Progress
 
-- [ ] 구현 완료
-- [ ] 검증 통과
+- [x] 구현 완료
+- [x] 검증 통과: npm.cmd run lint, npm.cmd run build
 - commit: pending

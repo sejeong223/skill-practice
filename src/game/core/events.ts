@@ -78,6 +78,34 @@ export interface GameplayEventMap {
     lethal: boolean;
     now: number;
   };
+  "map-object-triggered": {
+    stageId: string;
+    objectId: string;
+    trigger: string;
+    now: number;
+  };
+  "map-chain-fired": {
+    stageId: string;
+    chainId: string;
+    sourceId?: string;
+    now: number;
+  };
+  "map-object-state-changed": {
+    stageId: string;
+    objectId: string;
+    active: boolean;
+    x: number;
+    y: number;
+    collision: boolean;
+    variant?: string;
+    effect?: string;
+    now: number;
+  };
+  "map-reset": {
+    stageId: string;
+    checkpointId: string | null;
+    now: number;
+  };
 }
 
 export type GameplayEventType = keyof GameplayEventMap;

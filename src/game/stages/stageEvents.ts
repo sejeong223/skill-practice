@@ -19,6 +19,10 @@ export interface StageEventMap {
     stageId: StageId;
     checkpointId: string;
   };
+  "map-state-restored": {
+    stageId: StageId;
+    checkpointId: string | null;
+  };
   "stage-completed": {
     stageId: StageId;
     nextStageId: StageId | null;

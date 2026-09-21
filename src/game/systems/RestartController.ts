@@ -1,5 +1,6 @@
 import * as Phaser from "phaser";
 import { GameplayEventBus } from "../core/events";
+import type { CheckpointSnapshot } from "../core/runtimeTypes";
 import type { RuntimeStageState, StageId } from "../core/types";
 import { Player } from "../entities/Player";
 import { CheckpointSystem } from "./CheckpointSystem";
@@ -12,6 +13,7 @@ export class RestartController {
   private readonly runtime: RuntimeStageState;
   private readonly eventBus: GameplayEventBus;
   private readonly onRestart?: () => void;
+  private readonly onMapRestore?: (snapshot: CheckpointSnapshot | null) => void;
 
   public constructor(
     player: Player,
@@ -21,6 +23,7 @@ export class RestartController {
     runtime: RuntimeStageState,
     eventBus: GameplayEventBus,
     onRestart?: () => void,
+    onMapRestore?: (snapshot: CheckpointSnapshot | null) => void,
   ) {
     this.player = player;
     this.checkpointSystem = checkpointSystem;
@@ -29,6 +32,7 @@ export class RestartController {
     this.runtime = runtime;
     this.eventBus = eventBus;
     this.onRestart = onRestart;
+    this.onMapRestore = onMapRestore;
   }
 
   public restartAtCheckpointOrSpawn(): void {
@@ -36,6 +40,7 @@ export class RestartController {
 
     this.player.resetTo(new Phaser.Math.Vector2(target.x, target.y));
     this.player.setFlipX(target.facing < 0);
+    this.onMapRestore?.(this.checkpointSystem.getSnapshot());
     this.onRestart?.();
     this.eventBus.emit("restart", {
       stageId: this.stageId,

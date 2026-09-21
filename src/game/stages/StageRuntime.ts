@@ -1,6 +1,7 @@
 import * as Phaser from "phaser";
 import { STAGE_IDS, createRuntimeStageState } from "../core/constants";
 import type { EnemyDefinition, PlatformDefinition, TrapDefinition } from "../core/contentTypes";
+import type { MapRuntimeSnapshot } from "../core/runtimeTypes";
 import type { ProgressState, RuntimeStageState, StageDefinition } from "../core/types";
 import { GameEventBus } from "../bridge/GameEventBus";
 import { StageRandom } from "../random/StageRandom";
@@ -27,7 +28,7 @@ export class StageRuntime {
   private readonly eventBus: GameEventBus;
   private readonly factory: StageEntityFactory;
   private readonly progress?: ProgressState;
-  private readonly baseSeed: number;
+  private mapSnapshot: MapRuntimeSnapshot | null = null;
   private records: RuntimeEntityRecord[] = [];
   private status: StageRuntimeStatus = "enter";
 
@@ -45,15 +46,11 @@ export class StageRuntime {
     this.eventBus = eventBus;
     this.factory = factory;
     this.progress = progress;
-    this.baseSeed = runtimeState.randomSeed;
   }
 
   public build(): void {
     this.clearEntities();
-    const random = StageRandom.fromStage(
-      this.definition.id,
-      this.runtimeState.attempt + this.baseSeed - 1,
-    );
+    const random = new StageRandom(this.runtimeState.randomSeed);
     let segmentOffset = 0;
 
     for (const segment of this.definition.segments) {
@@ -131,19 +128,55 @@ export class StageRuntime {
     });
   }
 
-  public restart(): void {
+  public restartStage(): void {
     if (this.status === "completed") {
       return;
     }
 
     this.runtimeState.attempt += 1;
     this.runtimeState.currentStageCoins = 0;
+    this.runtimeState.checkpointId = null;
+    this.runtimeState.checkpointUsed = false;
+    this.runtimeState.checkpointSeed = null;
+    this.runtimeState.mapSnapshotVersion = 0;
+    this.mapSnapshot = null;
     this.runtimeState.randomSeed = StageRandom.hash(
       this.definition.id + ":" + this.runtimeState.attempt,
     );
     this.status = "enter";
     this.build();
     this.start();
+  }
+
+  public restartFromCheckpoint(snapshot = this.mapSnapshot): void {
+    if (this.status === "completed") {
+      return;
+    }
+
+    this.runtimeState.currentStageCoins = 0;
+    this.runtimeState.checkpointSeed = this.runtimeState.randomSeed;
+    this.mapSnapshot = snapshot;
+    this.status = "enter";
+    this.build();
+    this.start();
+    this.eventBus.emit("map-state-restored", {
+      stageId: this.definition.id,
+      checkpointId: this.runtimeState.checkpointId,
+    });
+  }
+
+  public restart(): void {
+    this.restartStage();
+  }
+
+  public setMapSnapshot(snapshot: MapRuntimeSnapshot | null): void {
+    this.mapSnapshot = snapshot;
+    this.runtimeState.checkpointSeed = snapshot?.randomSeed ?? null;
+    this.runtimeState.mapSnapshotVersion += snapshot ? 1 : 0;
+  }
+
+  public getMapSnapshot(): MapRuntimeSnapshot | null {
+    return this.mapSnapshot;
   }
 
   public complete(): void {

@@ -1,5 +1,5 @@
 import { GameplayEventBus } from "../core/events";
-import type { CheckpointSnapshot } from "../core/runtimeTypes";
+import type { CheckpointSnapshot, MapRuntimeSnapshot } from "../core/runtimeTypes";
 import type { RuntimeStageState, StageId } from "../core/types";
 import { Player } from "../entities/Player";
 
@@ -8,6 +8,7 @@ export class CheckpointSystem {
   private readonly eventBus: GameplayEventBus;
   private readonly stageId: StageId;
   private readonly runtime: RuntimeStageState;
+  private readonly createMapSnapshot?: (checkpointId: string) => MapRuntimeSnapshot | null;
   private snapshot: CheckpointSnapshot | null = null;
 
   public constructor(
@@ -15,11 +16,13 @@ export class CheckpointSystem {
     eventBus: GameplayEventBus,
     stageId: StageId,
     runtime: RuntimeStageState,
+    createMapSnapshot?: (checkpointId: string) => MapRuntimeSnapshot | null,
   ) {
     this.player = player;
     this.eventBus = eventBus;
     this.stageId = stageId;
     this.runtime = runtime;
+    this.createMapSnapshot = createMapSnapshot;
   }
 
   public activate(
@@ -39,9 +42,13 @@ export class CheckpointSystem {
       x,
       y,
       facing,
+      randomSeed: this.runtime.randomSeed,
+      mapSnapshotVersion: this.runtime.mapSnapshotVersion,
+      mapSnapshot: this.createMapSnapshot?.(checkpointId) ?? undefined,
     };
     this.runtime.checkpointId = checkpointId;
     this.runtime.checkpointUsed = true;
+    this.runtime.checkpointSeed = this.runtime.randomSeed;
     this.eventBus.emit("checkpoint-reached", {
       stageId: this.stageId,
       checkpointId,
@@ -64,6 +71,8 @@ export class CheckpointSystem {
     this.snapshot = null;
     this.runtime.checkpointId = null;
     this.runtime.checkpointUsed = false;
+    this.runtime.checkpointSeed = null;
+    this.runtime.mapSnapshotVersion = 0;
   }
 
   public getPlayer(): Player {

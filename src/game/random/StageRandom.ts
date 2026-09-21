@@ -43,6 +43,10 @@ export class StageRandom {
     return this.pick(values);
   }
 
+  public fork(scope: string): StageRandom {
+    return new StageRandom(StageRandom.hash(this.seed + ":" + scope));
+  }
+
   public static hash(value: string): number {
     let hash = 2166136261;
 
