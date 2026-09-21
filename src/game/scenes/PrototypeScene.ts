@@ -1,10 +1,19 @@
 import * as Phaser from "phaser";
 import { GAME_HEIGHT, GAME_WIDTH } from "../config";
+import { GameplayEventBus } from "../core/events";
+import { createDefaultProgressState } from "../core/constants";
+import { SKILL_DEFINITIONS } from "../data/skills";
+import { TOOL_DEFINITIONS } from "../data/tools";
 import { PlayerAnimator } from "../entities/PlayerAnimator";
 import { Player } from "../entities/Player";
 import { DEFAULT_PLAYER_TUNING } from "../entities/playerTypes";
 import { DEFAULT_KEYBINDS, InputManager } from "../input/InputManager";
+import { CombatSystem } from "../systems/CombatSystem";
+import { DefenseToolSystem } from "../systems/DefenseToolSystem";
+import { DrawbackDiscovery } from "../systems/DrawbackDiscovery";
 import { PlayerController } from "../systems/PlayerController";
+import { SkillSystem } from "../systems/SkillSystem";
+import { StrayDogEvent } from "../systems/StrayDogEvent";
 
 interface PrototypeSceneData {
   readonly assetLoadError?: string | null;
@@ -16,6 +25,13 @@ export class PrototypeScene extends Phaser.Scene {
   private playerController?: PlayerController;
   private playerAnimator?: PlayerAnimator;
   private stateText?: Phaser.GameObjects.Text;
+  private eventLogText?: Phaser.GameObjects.Text;
+  private eventBus?: GameplayEventBus;
+  private skillSystem?: SkillSystem;
+  private combatSystem?: CombatSystem;
+  private defenseToolSystem?: DefenseToolSystem;
+  private strayDogEvent?: StrayDogEvent;
+  private drawbackDiscovery?: DrawbackDiscovery;
 
   public constructor() {
     super("PrototypeScene");
@@ -44,9 +60,59 @@ export class PrototypeScene extends Phaser.Scene {
       DEFAULT_PLAYER_TUNING,
     );
     this.playerAnimator = new PlayerAnimator(this.player);
+    this.eventBus = new GameplayEventBus();
+    this.skillSystem = new SkillSystem(
+      this.player,
+      SKILL_DEFINITIONS,
+      this.eventBus,
+    );
+    this.combatSystem = new CombatSystem(
+      this.player,
+      this.eventBus,
+      TOOL_DEFINITIONS,
+    );
+    this.defenseToolSystem = new DefenseToolSystem(
+      this.eventBus,
+      TOOL_DEFINITIONS,
+    );
+    this.strayDogEvent = new StrayDogEvent(this.eventBus);
+    this.drawbackDiscovery = new DrawbackDiscovery(
+      createDefaultProgressState(),
+      this.eventBus,
+    );
+
+    // The prototype scene exposes two unlocked skills for manual testing.
+    this.skillSystem.unlockAfterBoss("world-01-boss");
+    this.skillSystem.unlockAfterBoss("world-03-boss");
+
+    this.eventBus.on("slipper-hit", (payload) => {
+      this.eventLogText?.setText("event: slipper-hit  combo " + payload.comboCount);
+    });
+    this.eventBus.on("slipper-sneeze", () => {
+      this.eventLogText?.setText("event: 에취!  slipper-sneeze  knockback 3m");
+    });
+    this.eventBus.on("bite-hit", () => {
+      this.eventLogText?.setText("event: bite-hit");
+    });
+    this.eventBus.on("skill-used", (payload) => {
+      this.eventLogText?.setText("event: skill-used  " + payload.skillId);
+    });
+    this.eventBus.on("stray-dog-surge", (payload) => {
+      this.eventLogText?.setText(
+        "event: stray-dog-surge  +" + payload.count + " route blockers",
+      );
+    });
+    this.eventBus.on("drawback-discovered", (payload) => {
+      this.eventLogText?.setText(
+        "event: drawback-discovered  " + payload.drawbackId,
+      );
+    });
 
     this.events.once("shutdown", () => {
       this.inputManager?.destroy();
+      this.strayDogEvent?.destroy();
+      this.drawbackDiscovery?.destroy();
+      this.eventBus?.clear();
     });
 
     this.add
@@ -71,6 +137,13 @@ export class PrototypeScene extends Phaser.Scene {
         fontSize: "16px",
       })
       .setResolution(2);
+    this.eventLogText = this.add
+      .text(36, 96, "event: waiting for input", {
+        color: "#8b5a56",
+        fontFamily: "monospace",
+        fontSize: "16px",
+      })
+      .setResolution(2);
 
     if (data.assetLoadError) {
       this.add
@@ -85,6 +158,19 @@ export class PrototypeScene extends Phaser.Scene {
 
   public update(time: number, delta: number): void {
     this.playerController?.update(time, delta);
+    const snapshot = this.inputManager?.getSnapshot();
+
+    if (snapshot?.attackPressed) {
+      this.combatSystem?.tryAttack(time);
+    }
+    if (snapshot?.dashPressed) {
+      this.skillSystem?.use("dash", time);
+    }
+    if (snapshot?.barkPressed) {
+      this.skillSystem?.use("bark", time);
+    }
+
+    this.combatSystem?.update(time);
     this.playerAnimator?.update(time);
 
     if (this.player && this.stateText) {

@@ -17,6 +17,8 @@ export class InputManager {
   private readonly scene: Phaser.Scene;
   private keybinds: KeybindMap;
   private keys = new Map<string, Phaser.Input.Keyboard.Key[]>();
+  private snapshotFrame = -1;
+  private cachedSnapshot?: InputSnapshot;
 
   public constructor(scene: Phaser.Scene, keybinds: KeybindMap) {
     this.scene = scene;
@@ -27,11 +29,20 @@ export class InputManager {
   public setKeybinds(keybinds: KeybindMap): void {
     this.destroyKeys();
     this.keybinds = keybinds;
+    this.snapshotFrame = -1;
+    this.cachedSnapshot = undefined;
     this.bindKeys();
   }
 
   public getSnapshot(): InputSnapshot {
-    return {
+    const frame = this.scene.game.loop.frame;
+
+    if (frame === this.snapshotFrame && this.cachedSnapshot) {
+      return this.cachedSnapshot;
+    }
+
+    this.snapshotFrame = frame;
+    this.cachedSnapshot = {
       left: this.isHeld("left"),
       right: this.isHeld("right"),
       jumpPressed: this.wasPressed("jump"),
@@ -41,6 +52,8 @@ export class InputManager {
       barkPressed: this.wasPressed("bark"),
       pausePressed: this.wasPressed("pause"),
     };
+
+    return this.cachedSnapshot;
   }
 
   public destroy(): void {

@@ -7,10 +7,10 @@
 [P02 핵심 게임플레이](./phases/2026-09-21-legendary-rib-corgi/P02-core-gameplay/phase.md)
 
 ## Active Task
-[T02 스킬 쿨다운·슬리퍼 공격·밥그릇·장비 부작용](./phases/2026-09-21-legendary-rib-corgi/P02-core-gameplay/T02-skills-equipment-combat.md)
+[T03 적·함정·사망·희소 체크포인트·재시작](./phases/2026-09-21-legendary-rib-corgi/P02-core-gameplay/T03-traps-enemies-checkpoints.md)
 
 ## Status
-- T01 구현·검증 완료
+- T02 구현·검증 완료
 
 ## Next Step (IMPORTANT)
-T02 청사진을 읽고 스킬 쿨다운·슬리퍼 공격·밥그릇 방어·장비 부작용을 구현 시작
+T03 청사진을 읽고 적·함정·사망·희소 체크포인트·재시작을 구현 시작
