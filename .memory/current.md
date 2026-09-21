@@ -1,20 +1,16 @@
 # Current Context
 
 ## Active Plan
-<!-- 아래에 현재 진행 중인 Plan 파일 링크 -->
-[기능명](./plans/기능명.md)
+[전설의 무한 육즙 왕갈비뼈 쟁탈전](./plans/2026-09-21-legendary-rib-corgi.md)
 
 ## Active Phase
-<!-- 아래에 현재 진행 중인 Phase 파일 링크 -->
-[P01 마일스톤명](./phases/기능명/P01-마일스톤명/phase.md)
+[P01 기반·비주얼·실행 셸](./phases/2026-09-21-legendary-rib-corgi/P01-foundation-visuals/phase.md)
 
 ## Active Task
-<!-- 아래에 현재 진행 중인 Task 파일 링크 -->
-[T01 작업명](./phases/기능명/P01-마일스톤명/T01-작업명.md)
+[T02 Phaser 3.90.0 실행 셸과 1280×720 스케일링](./phases/2026-09-21-legendary-rib-corgi/P01-foundation-visuals/T02-phaser-runtime-shell.md)
 
 ## Status
-- 작업 시작 전
+- T01 구현·검증 완료
 
 ## Next Step (IMPORTANT)
-<!-- AI가 즉시 착수할 다음 행동 1줄 -->
-Task 청사진을 읽고 구현을 시작하세요.
+T02 청사진을 읽고 package.json, src/game/config.ts, src/game/createGame.ts 파일 구현 시작

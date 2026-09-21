@@ -1,0 +1,143 @@
+[
+  {
+    "key": "corgi-reference",
+    "kind": "image",
+    "url": "/assets/pixel/references/characters/corgi/corgi-reference-v2.png",
+    "required": true
+  },
+  {
+    "key": "tuxedo-reference",
+    "kind": "image",
+    "url": "/assets/pixel/references/characters/tuxedo-reference-v1.png",
+    "required": true
+  },
+  {
+    "key": "core-items-reference",
+    "kind": "image",
+    "url": "/assets/pixel/references/items/core-items-reference-v1.png",
+    "required": true
+  },
+  {
+    "key": "corgi-idle",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/characters/corgi/corgi-idle.png",
+    "frameWidth": 32,
+    "frameHeight": 48,
+    "frameCount": 4,
+    "required": false
+  },
+  {
+    "key": "corgi-run",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/characters/corgi/corgi-run.png",
+    "frameWidth": 32,
+    "frameHeight": 48,
+    "frameCount": 6,
+    "required": false
+  },
+  {
+    "key": "corgi-jump",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/characters/corgi/corgi-jump.png",
+    "frameWidth": 32,
+    "frameHeight": 48,
+    "frameCount": 3,
+    "required": false
+  },
+  {
+    "key": "corgi-slipper-attack",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/characters/corgi/corgi-slipper-attack.png",
+    "frameWidth": 32,
+    "frameHeight": 48,
+    "frameCount": 5,
+    "required": false
+  },
+  {
+    "key": "corgi-bite",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/characters/corgi/corgi-bite.png",
+    "frameWidth": 32,
+    "frameHeight": 48,
+    "frameCount": 4,
+    "required": false
+  },
+  {
+    "key": "corgi-dash",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/characters/corgi/corgi-dash.png",
+    "frameWidth": 32,
+    "frameHeight": 48,
+    "frameCount": 4,
+    "required": false
+  },
+  {
+    "key": "corgi-bark",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/characters/corgi/corgi-bark.png",
+    "frameWidth": 32,
+    "frameHeight": 48,
+    "frameCount": 4,
+    "required": false
+  },
+  {
+    "key": "corgi-double-jump",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/characters/corgi/corgi-double-jump.png",
+    "frameWidth": 32,
+    "frameHeight": 48,
+    "frameCount": 3,
+    "required": false
+  },
+  {
+    "key": "corgi-tail-rotor",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/characters/corgi/corgi-tail-rotor.png",
+    "frameWidth": 32,
+    "frameHeight": 48,
+    "frameCount": 4,
+    "required": false
+  },
+  {
+    "key": "corgi-hurt",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/characters/corgi/corgi-hurt.png",
+    "frameWidth": 32,
+    "frameHeight": 48,
+    "frameCount": 2,
+    "required": false
+  },
+  {
+    "key": "corgi-death",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/characters/corgi/corgi-death.png",
+    "frameWidth": 32,
+    "frameHeight": 48,
+    "frameCount": 5,
+    "required": false
+  },
+  {
+    "key": "tuxedo-cat",
+    "kind": "image",
+    "url": "/assets/pixel/references/characters/tuxedo-reference-v1.png",
+    "required": false
+  },
+  {
+    "key": "legendary-rib",
+    "kind": "image",
+    "url": "/assets/pixel/references/items/core-items-reference-v1.png",
+    "required": false
+  },
+  {
+    "key": "rabbit-slipper",
+    "kind": "image",
+    "url": "/assets/pixel/references/items/core-items-reference-v1.png",
+    "required": false
+  },
+  {
+    "key": "upside-down-bowl",
+    "kind": "image",
+    "url": "/assets/pixel/references/items/core-items-reference-v1.png",
+    "required": false
+  }
+]
