@@ -1,4 +1,5 @@
 import * as Phaser from "phaser";
+import type { GameEventBus } from "./bridge/GameEventBus";
 import { BootScene } from "./scenes/BootScene";
 import { PreloadScene } from "./scenes/PreloadScene";
 import { PrototypeScene } from "./scenes/PrototypeScene";
@@ -10,17 +11,24 @@ export const GAME_GRAVITY_Y = 900;
 
 export interface CreateGameOptions {
   readonly parent: HTMLElement;
+  readonly gameEventBus?: GameEventBus;
   readonly onReady?: (game: Phaser.Game) => void;
 }
 
 export function createPhaserConfig(
   parent: HTMLElement,
+  gameEventBus?: GameEventBus,
 ): Phaser.Types.Core.GameConfig {
   return {
     type: Phaser.AUTO,
     width: GAME_WIDTH,
     height: GAME_HEIGHT,
     parent,
+    callbacks: {
+      preBoot: (game) => {
+        if (gameEventBus) game.registry.set("gameEventBus", gameEventBus);
+      },
+    },
     backgroundColor: "#f5e7c7",
     pixelArt: true,
     roundPixels: true,
@@ -46,7 +54,7 @@ export function createPhaserConfig(
 }
 
 export function createGame(options: CreateGameOptions): Phaser.Game {
-  const game = new Phaser.Game(createPhaserConfig(options.parent));
+  const game = new Phaser.Game(createPhaserConfig(options.parent, options.gameEventBus));
   options.onReady?.(game);
   return game;
 }

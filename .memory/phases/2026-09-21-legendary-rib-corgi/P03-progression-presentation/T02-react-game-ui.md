@@ -1,6 +1,6 @@
 # Task: T02 상점·캐릭터 상태 창·키 설정·HUD·프로필
 
-## Status: pending
+## Status: done
 
 ## Goal
 
@@ -77,6 +77,14 @@ Phaser 이벤트를 React UI로 연결해 스테이지 HUD, 안전 상점, 캐�
 
 ## Validation
 
+## Acceptance Verification
+
+- [x] GameShell, overlay, HUD, profile, shop, status, and keybind panels share typed progress state.
+- [x] Attack and defense equipment can be switched only from owned tools.
+- [x] Player names are trimmed, length-limited, and angle-bracket escaped before persistence/events.
+- [x] Banked coins and death/collection records are displayed separately.
+- [x] Purchases use bankedCoins only and key remapping rejects duplicate keys.
+
 - npm run lint — React UI/event bridge 타입 통과
 - npm run build — overlay CSS와 Client Component build 통과
 - npm run dev — 상점·상태 창·프로필·키 설정을 수동 확인
@@ -95,6 +103,10 @@ Task: T02-react-game-ui
 ~~~
 
 ## Progress
+
+- [x] 구현 완료
+- [x] 검증 통과: lint, build
+- commit: pending
 
 - [ ] 구현 완료
 - [ ] 검증 통과

@@ -47,6 +47,14 @@ export class DefenseToolSystem {
     this.broken = false;
   }
 
+  public setDefenseTool(toolId: string): boolean {
+    if (!this.tools.has(toolId)) {
+      return false;
+    }
+    this.resetForStage(toolId);
+    return this.toolId === toolId;
+  }
+
   public tryBlock(attack: IncomingAttack, now: number): DefenseResult {
     if (this.broken || this.remainingCharges <= 0) {
       return {

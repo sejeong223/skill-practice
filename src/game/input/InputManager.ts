@@ -13,6 +13,17 @@ export const DEFAULT_KEYBINDS: KeybindMap = {
   pause: ["ESC"],
 };
 
+export function toKeybindMap(keybinds: Readonly<Record<string, string>>): KeybindMap {
+  const normalize = (key: string): string => ({
+    ArrowLeft: "LEFT", ArrowRight: "RIGHT", ArrowUp: "UP", ArrowDown: "DOWN",
+  }[key] ?? key);
+  const get = (action: keyof KeybindMap, fallback: string): string[] => [normalize(keybinds[action] ?? fallback)];
+  return {
+    left: get("left", "A"), right: get("right", "D"), up: get("up", "W"), down: get("down", "S"),
+    jump: get("jump", "SPACE"), attack: get("attack", "J"), dash: get("dash", "K"), bark: get("bark", "L"), pause: get("pause", "ESC"),
+  };
+}
+
 export class InputManager {
   private readonly scene: Phaser.Scene;
   private keybinds: KeybindMap;

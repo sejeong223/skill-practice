@@ -1,4 +1,4 @@
-import { PhaserGame } from "@/components/game/PhaserGame";
+import { GameShell } from "@/components/game/GameShell";
 
 export default function Home() {
   return (
@@ -11,7 +11,7 @@ export default function Home() {
           </div>
           <span className="game-status">PROTOTYPE  ·  T02</span>
         </header>
-        <PhaserGame className="phaser-viewport" />
+        <GameShell initialStageId="world-01-stage-1" />
       </section>
     </main>
   );

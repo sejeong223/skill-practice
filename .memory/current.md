@@ -7,10 +7,10 @@
 [P02 핵심 게임플레이](./phases/2026-09-21-legendary-rib-corgi/P02-core-gameplay/phase.md)
 
 ## Active Task
-[P03-T02 상점·캐릭터 상태 창·키 설정·HUD·프로필](./phases/2026-09-21-legendary-rib-corgi/P03-progression-presentation/T02-react-game-ui.md)
+[P03-T03 나레이터 컷신·스킵·사운드·음악 이벤트](./phases/2026-09-21-legendary-rib-corgi/P03-progression-presentation/T03-cutscenes-audio.md)
 
 ## Status
-- P03-T01 구현·검증 완료
+- P03-T02 구현·검증 완료
 
 ## Next Step (IMPORTANT)
-P03-T02 청사진을 읽고 상점·캐릭터 상태 창·키 설정·HUD·프로필 구현 시작
+P03-T03 청사진을 읽고 나레이터 컷신·스킵·사운드·음악 이벤트 구현 시작

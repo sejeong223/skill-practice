@@ -2,15 +2,18 @@
 
 import { useEffect, useRef, type ReactElement } from "react";
 import type * as Phaser from "phaser";
+import type { GameEventBus } from "@/game/bridge/GameEventBus";
 
 export interface PhaserGameProps {
   readonly className?: string;
   readonly onGameReady?: (game: Phaser.Game) => void;
+  readonly gameEventBus?: GameEventBus;
 }
 
 export function PhaserGame({
   className,
   onGameReady,
+  gameEventBus,
 }: PhaserGameProps): ReactElement {
   const mountRef = useRef<HTMLDivElement>(null);
   const gameRef = useRef<Phaser.Game | null>(null);
@@ -34,6 +37,7 @@ export function PhaserGame({
 
       const game = createGame({
         parent: mountRef.current,
+        gameEventBus,
         onReady: (readyGame) => {
           gameRef.current = readyGame;
           onGameReadyRef.current?.(readyGame);
@@ -48,7 +52,7 @@ export function PhaserGame({
       gameRef.current?.destroy(true);
       gameRef.current = null;
     };
-  }, []);
+  }, [gameEventBus]);
 
   return (
     <div

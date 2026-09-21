@@ -1,6 +1,7 @@
 import * as Phaser from "phaser";
 import { GAME_HEIGHT, GAME_WIDTH } from "../config";
 import { CameraDirector } from "../camera/CameraDirector";
+import { GameEventBus } from "../bridge/GameEventBus";
 import { createDefaultProgressState, createRuntimeStageState } from "../core/constants";
 import type { ProgressState, RuntimeStageState } from "../core/types";
 import { GameplayEventBus } from "../core/events";
@@ -11,7 +12,7 @@ import { CheckpointSystem } from "../systems/CheckpointSystem";
 import { PlayerAnimator } from "../entities/PlayerAnimator";
 import { Player } from "../entities/Player";
 import { DEFAULT_PLAYER_TUNING } from "../entities/playerTypes";
-import { DEFAULT_KEYBINDS, InputManager } from "../input/InputManager";
+import { DEFAULT_KEYBINDS, InputManager, toKeybindMap } from "../input/InputManager";
 import { CombatSystem } from "../systems/CombatSystem";
 import { DeathSystem } from "../systems/DeathSystem";
 import { DefenseToolSystem } from "../systems/DefenseToolSystem";
@@ -35,6 +36,7 @@ export class PrototypeScene extends Phaser.Scene {
   private stateText?: Phaser.GameObjects.Text;
   private eventLogText?: Phaser.GameObjects.Text;
   private eventBus?: GameplayEventBus;
+  private persistenceEventBus?: GameEventBus;
   private progress?: ProgressState;
   private runtime?: RuntimeStageState;
   private checkpointSystem?: CheckpointSystem;
@@ -83,10 +85,13 @@ export class PrototypeScene extends Phaser.Scene {
     );
     this.playerAnimator = new PlayerAnimator(this.player);
     this.eventBus = new GameplayEventBus();
+    const sharedEventBus = this.registry.get("gameEventBus");
+    this.persistenceEventBus = sharedEventBus instanceof GameEventBus ? sharedEventBus : undefined;
     this.skillSystem = new SkillSystem(
       this.player,
       SKILL_DEFINITIONS,
       this.eventBus,
+      this.persistenceEventBus,
     );
     this.combatSystem = new CombatSystem(
       this.player,
@@ -101,6 +106,7 @@ export class PrototypeScene extends Phaser.Scene {
     this.drawbackDiscovery = new DrawbackDiscovery(
       this.progress,
       this.eventBus,
+      this.persistenceEventBus,
     );
 
     this.checkpointSystem = new CheckpointSystem(
@@ -150,6 +156,7 @@ export class PrototypeScene extends Phaser.Scene {
       this.runtime,
       this.restartController,
       this.eventBus,
+      this.persistenceEventBus,
     );
 
     // The prototype scene exposes two unlocked skills for manual testing.
@@ -181,6 +188,13 @@ export class PrototypeScene extends Phaser.Scene {
       this.eventLogText?.setText(
         "event: drawback-discovered  " + payload.drawbackId,
       );
+    });
+    this.persistenceEventBus?.on("keybinds-changed", (payload) => {
+      this.inputManager?.setKeybinds(toKeybindMap(payload.keybinds));
+    });
+    this.persistenceEventBus?.on("equipment-change-requested", (payload) => {
+      if (payload.attackToolId) this.combatSystem?.setAttackTool(payload.attackToolId);
+      if (payload.defenseToolId) this.defenseToolSystem?.setDefenseTool(payload.defenseToolId);
     });
     this.eventBus.on("checkpoint-reached", (payload) => {
       this.eventLogText?.setText(
