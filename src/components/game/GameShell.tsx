@@ -10,6 +10,7 @@ import { AutoSaveCoordinator } from "@/game/persistence/AutoSaveCoordinator";
 import { ProgressStore } from "@/game/persistence/ProgressStore";
 import { EconomySystem } from "@/game/systems/EconomySystem";
 import { GameEventBridge } from "./GameEventBridge";
+import { CutsceneOverlay } from "./CutsceneOverlay";
 import { GameOverlay } from "./GameOverlay";
 import { PhaserGame } from "./PhaserGame";
 
@@ -17,6 +18,7 @@ export interface GameShellProps {
   readonly initialStageId: StageId;
   readonly onExit?: () => void;
 }
+type UiMode = "safe" | "play" | "cutscene" | "dead";
 
 function cloneProgress(progress: ProgressState): ProgressState {
   return {
@@ -42,6 +44,7 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
   const economyRef = useRef<EconomySystem | null>(null);
   const autoSaveRef = useRef<AutoSaveCoordinator | null>(null);
   const [toast, setToast] = useState("진행 상태를 준비하는 중...");
+  const [mode, setMode] = useState<UiMode>("safe");
 
   useEffect(() => {
     const loaded = storeRef.current.load();
@@ -72,6 +75,9 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
       "stage-completed": "스테이지 클리어를 저장했습니다.",
     };
     setToast(messages[type] ?? "게임 이벤트: " + type);
+    if (type === "cutscene-started") setMode("cutscene");
+    if (type === "cutscene-finished" || type === "stage-started") setMode("play");
+    if (type === "death") setMode("dead");
   }, []);
 
   const handleNameConfirm = useCallback((name: string): void => {
@@ -83,12 +89,14 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
   }, [eventBus, replaceProgress]);
 
   const handlePurchase = useCallback((tool: ToolDefinition): void => {
+    if (mode !== "safe") return;
     if (economyRef.current?.purchaseTool(tool.id)) {
       replaceProgress(progressRef.current);
     }
-  }, [replaceProgress]);
+  }, [mode, replaceProgress]);
 
   const handleEquip = useCallback((tool: ToolDefinition): void => {
+    if (mode === "cutscene" || mode === "dead") return;
     if (!progressRef.current.ownedToolIds.includes(tool.id)) return;
     const next = cloneProgress(progressRef.current);
     if (tool.slot === "attack") next.equippedAttackToolId = tool.id;
@@ -97,7 +105,7 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
     eventBus.emit("equipment-change-requested", {
       [tool.slot === "attack" ? "attackToolId" : "defenseToolId"]: tool.id,
     });
-  }, [eventBus, replaceProgress]);
+  }, [eventBus, mode, replaceProgress]);
 
   const handleKeybindChange = useCallback((action: InputAction, key: string): void => {
     const next = cloneProgress(progressRef.current);
@@ -111,7 +119,8 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
     <div className="game-shell">
       <PhaserGame className="phaser-viewport" gameEventBus={eventBus} />
       <GameEventBridge eventBus={eventBus} onEvent={handleEvent} />
-      <GameOverlay stageTitle={stage.title} runtime={runtime} progress={progress} skills={SKILL_DEFINITIONS} tools={TOOL_DEFINITIONS} cooldowns={{}} alive={true} onNameConfirm={handleNameConfirm} onEquip={handleEquip} onPurchase={handlePurchase} onKeybindChange={handleKeybindChange} />
+      <CutsceneOverlay eventBus={eventBus} onSkip={() => eventBus.emit("cutscene-skip-requested", {})} />
+      <GameOverlay stageTitle={stage.title} runtime={runtime} progress={progress} skills={SKILL_DEFINITIONS} tools={TOOL_DEFINITIONS} cooldowns={{}} alive={mode !== "dead" && mode !== "cutscene"} safeZone={mode === "safe"} onNameConfirm={handleNameConfirm} onEquip={handleEquip} onPurchase={handlePurchase} onKeybindChange={handleKeybindChange} />
       <div className="game-toast" role="status">{toast}</div>
       {onExit && <button className="exit-button" type="button" onClick={onExit}>나가기</button>}
     </div>

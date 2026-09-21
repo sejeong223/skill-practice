@@ -140,6 +140,17 @@ form { display: flex; gap: 6px; margin-top: 10px; } form input { min-width: 0; f
 .exit-button { position: absolute; right: 16px; top: 16px; z-index: 5; padding: 5px 8px; border: 1px solid #5f3942; background: #f18a72; color: #5f3942; font: 800 10px var(--font-geist-mono), monospace; }
 .form-error { color: #b42d65 !important; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+.cutscene-overlay { position: absolute; inset: 0; z-index: 8; display: grid; align-content: end; justify-items: center; padding: 9% 10% 5%; pointer-events: auto; color: #fff8e5; background: rgb(39 35 49 / 30%); }
+.cutscene-vignette { position: absolute; inset: 0; pointer-events: none; box-shadow: inset 0 0 100px rgb(39 35 49 / 78%); }
+.cutscene-narration, .dialogue-box, .item-card, .cutscene-footer { position: relative; z-index: 1; }
+.cutscene-narration { max-width: 800px; padding: 12px 16px; border: 2px solid #fff8e5; background: rgb(39 35 49 / 86%); font-size: 15px; line-height: 1.7; text-align: center; }
+.dialogue-box { width: min(100%, 760px); margin-top: 10px; padding: 10px 14px; border: 2px solid #f0b95f; background: rgb(39 35 49 / 92%); }
+.dialogue-line { display: flex; gap: 10px; margin: 0 !important; color: #fff8e5 !important; font-size: 14px !important; }
+.dialogue-line strong { min-width: 62px; color: #f0b95f; text-transform: uppercase; }
+.speaker-owner strong { color: #f18a72; } .speaker-cat strong { color: #87c8a5; } .speaker-corgi strong { color: #e8cda0; }
+.item-card { align-self: center; max-width: 470px; margin-bottom: auto; padding: 24px; border: 4px solid #f0b95f; background: #5f3942; box-shadow: 8px 8px 0 rgb(39 35 49 / 45%); text-align: center; }
+.item-card h2 { margin: 8px 0; font-size: 22px; } .item-card p { color: #f5e7c7; font-size: 12px; }
+.cutscene-footer { display: flex; justify-content: space-between; width: min(100%, 800px); margin-top: 10px; color: #f5e7c7; font: 10px var(--font-geist-mono), monospace; }
 
 @media (max-width: 720px) {
   .overlay-columns { grid-template-columns: 1fr; }

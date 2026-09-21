@@ -11,6 +11,7 @@ const SAVE_EVENTS: readonly GameEventType[] = [
   "keybinds-changed",
   "drawback-discovered",
   "death-count-updated",
+  "cutscene-finished",
 ];
 
 export class AutoSaveCoordinator {

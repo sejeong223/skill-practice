@@ -1,0 +1,19 @@
+import type { CutsceneScript } from "@/game/cutscenes/types";
+
+export const INTRO_CUTSCENE: CutsceneScript = {
+  id: "intro-home",
+  stageId: "world-01-stage-1",
+  beats: [
+    { id: "birthday-morning", durationMs: 4200, narration: "생일 아침. 나른한 일요일 오후, 거실의 햇살이 따스하게 내리쬐는 완벽한 날. 오늘은 코기의 3번째 생일이다. 외출에서 돌아온 주인의 손에는 검은 비닐봉지가 들려 있었다.", actors: [{ actor: "owner", action: "enter" }], musicKey: "birthday-warm", skipAllowedAfterSeen: true },
+    { id: "rib-reveal", durationMs: 3600, narration: "비닐봉지 안에서 자태를 드러낸 것은 바로 동네 모든 반려견이 찬양하던 궁극의 간식, [전설의 무한 육즙 왕갈비뼈]였다.", actors: [{ actor: "rib", action: "reveal" }], itemCard: { title: "전설의 무한 육즙 왕갈비뼈", description: "365일 씹어도 마르지 않는 투뿔 한우의 육즙." }, soundCue: "rib-reveal", skipAllowedAfterSeen: true },
+    { id: "rib-lore", durationMs: 4600, narration: "전설에 따르면 이 갈비뼈는 한 번만 핥아도 슬개골이 아다만티움 급으로 단단해지고, 꼬리 모터 출력이 300% 상승해 헬리콥터처럼 하늘을 날 수 있으며, 365일 내내 씹어도 갓 구운 투뿔 한우 같은 육즙이 마르지 않는 기적의 간식이었다.", actors: [{ actor: "corgi", action: "hold" }], skipAllowedAfterSeen: true },
+    { id: "wait-command", durationMs: 3000, narration: "육즙의 향기에 취해 코기가 침을 한 바가지 흘리며 돌진하려는 찰나, 주인이 검지 손가락을 척 올렸다.", dialogue: [{ speaker: "owner", text: "기다려!" }], actors: [{ actor: "corgi", action: "hold" }], soundCue: "bark", skipAllowedAfterSeen: true },
+    { id: "owner-phone", durationMs: 3200, narration: "그 한 마디에 코기의 네 다리가 거실 바닥에 자석처럼 얼어붙었다. 주인은 사진을 찍어주겠다며 스마트폰을 찾으러 방으로 들어갔다.", dialogue: [{ speaker: "owner", text: "사진 찍어줄게, 잠깐만!" }], skipAllowedAfterSeen: true },
+    { id: "cat-entry", durationMs: 3400, narration: "바로 그때였다. 열려 있던 베란다 창문 틈으로 검고 거대한 그림자가 소리 없이 내려앉았다. 냥아치 연합의 행동대장, 턱시도 고양이였다.", actors: [{ actor: "tuxedo-cat", action: "enter" }], camera: [{ kind: "pan", x: 980, y: 250, durationMs: 700 }], musicKey: "world-01-alley", skipAllowedAfterSeen: true },
+    { id: "cat-steals-rib", durationMs: 2800, narration: "턱시도 고양이는 바닥에 얼어붙은 코기를 비웃듯 쳐다보더니, 왕갈비뼈를 툭 쳐서 입에 물었다.", actors: [{ actor: "tuxedo-cat", action: "steal" }, { actor: "rib", action: "steal" }], soundCue: "cat-taunt", skipAllowedAfterSeen: true },
+    { id: "cat-taunt", durationMs: 2600, dialogue: [{ speaker: "cat", text: "야옹. (다리도 짧은 게.)" }], actors: [{ actor: "tuxedo-cat", action: "taunt" }], camera: [{ kind: "zoom", value: 1.2, durationMs: 500 }], skipAllowedAfterSeen: true },
+    { id: "command-break", durationMs: 2300, narration: "고양이가 담벼락 너머로 사라진 직후, 안방에서 주인의 목소리가 들려왔다. 그 순간, 코기의 네 다리를 붙잡고 있던 가혹한 주문이 풀렸다.", dialogue: [{ speaker: "owner", text: "코기야, 조금만 더 기다려~" }, { speaker: "corgi", text: "끼잉..." }], soundCue: "whine", skipAllowedAfterSeen: true },
+    { id: "dog-door-escape", durationMs: 3600, narration: "코기는 주인의 애착 토끼 슬리퍼를 야무지게 입에 물었다. 비록 다리는 15cm밖에 되지 않지만, 눈빛만은 맹수 그 자체였다.", actors: [{ actor: "slipper", action: "hold" }, { actor: "corgi", action: "leap" }], soundCue: "slipper-hit", skipAllowedAfterSeen: true },
+    { id: "intro-transition", durationMs: 3200, narration: "좁은 강아지 전용 문으로 뱃살을 구겨 넣은 코기는 고양이들이 있는 무법지대 뒷골목으로 비장한 발걸음을 내디뎠다. 그렇게 코기는 생일 선물을 되찾기 위한 추격을 시작했다.", actors: [{ actor: "corgi", action: "leap" }], camera: [{ kind: "fade", durationMs: 650 }], soundCue: "stage-clear", skipAllowedAfterSeen: true },
+  ],
+};

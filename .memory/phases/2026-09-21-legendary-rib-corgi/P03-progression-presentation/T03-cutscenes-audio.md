@@ -1,6 +1,6 @@
 # Task: T03 나레이터 컷신·스킵·사운드·음악 이벤트
 
-## Status: pending
+## Status: done
 
 ## Goal
 
@@ -86,6 +86,14 @@
 
 ## Validation
 
+## Acceptance Verification
+
+- [x] Intro script follows the requested home, rib reveal, wait command, theft, taunt, escape, and alley transition order.
+- [x] First play auto-runs; seen cutscenes expose any-key/button skip and return control to the player.
+- [x] CutsceneDirector locks player control and restores it after finish/skip.
+- [x] Owner dialogue is limited to intro and ending scripts.
+- [x] AudioManager reacts to gameplay/cutscene events, stops previous music, and unlocks on first user gesture.
+
 - npm run lint — cutscene/audio overlay 타입 통과
 - npm run build — cutscene data와 audio manifest build 통과
 - npm run dev — intro·boss reward·ending·skip·audio unlock을 수동 확인
@@ -104,6 +112,10 @@ Task: T03-cutscenes-audio
 ~~~
 
 ## Progress
+
+- [x] 구현 완료
+- [x] 검증 통과: lint, build, dev server HTTP 200
+- commit: pending
 
 - [ ] 구현 완료
 - [ ] 검증 통과

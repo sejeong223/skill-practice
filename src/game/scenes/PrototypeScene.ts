@@ -2,6 +2,9 @@ import * as Phaser from "phaser";
 import { GAME_HEIGHT, GAME_WIDTH } from "../config";
 import { CameraDirector } from "../camera/CameraDirector";
 import { GameEventBus } from "../bridge/GameEventBus";
+import { AudioManager } from "../audio/AudioManager";
+import { CutsceneDirector } from "../cutscenes/CutsceneDirector";
+import { CUTSCENE_SCRIPTS } from "../data/cutscenes";
 import { createDefaultProgressState, createRuntimeStageState } from "../core/constants";
 import type { ProgressState, RuntimeStageState } from "../core/types";
 import { GameplayEventBus } from "../core/events";
@@ -37,6 +40,8 @@ export class PrototypeScene extends Phaser.Scene {
   private eventLogText?: Phaser.GameObjects.Text;
   private eventBus?: GameplayEventBus;
   private persistenceEventBus?: GameEventBus;
+  private audioManager?: AudioManager;
+  private cutsceneDirector?: CutsceneDirector;
   private progress?: ProgressState;
   private runtime?: RuntimeStageState;
   private checkpointSystem?: CheckpointSystem;
@@ -87,6 +92,10 @@ export class PrototypeScene extends Phaser.Scene {
     this.eventBus = new GameplayEventBus();
     const sharedEventBus = this.registry.get("gameEventBus");
     this.persistenceEventBus = sharedEventBus instanceof GameEventBus ? sharedEventBus : undefined;
+    this.audioManager = new AudioManager(this, this.eventBus, this.persistenceEventBus);
+    this.cutsceneDirector = this.persistenceEventBus
+      ? new CutsceneDirector(this, this.player, this.progress, CUTSCENE_SCRIPTS, this.persistenceEventBus, this.cameraDirector, this.audioManager)
+      : undefined;
     this.skillSystem = new SkillSystem(
       this.player,
       SKILL_DEFINITIONS,
@@ -196,6 +205,12 @@ export class PrototypeScene extends Phaser.Scene {
       if (payload.attackToolId) this.combatSystem?.setAttackTool(payload.attackToolId);
       if (payload.defenseToolId) this.defenseToolSystem?.setDefenseTool(payload.defenseToolId);
     });
+    this.persistenceEventBus?.on("cutscene-skip-requested", () => this.cutsceneDirector?.skip());
+   this.persistenceEventBus?.on("cutscene-requested", (payload) => { void this.cutsceneDirector?.play(payload.cutsceneId); });
+    this.persistenceEventBus?.on("cutscene-finished", (payload) => {
+      if (payload.cutsceneId === "intro-home") this.persistenceEventBus?.emit("stage-started", { stageId: stage.id, attempt: 1 });
+    });
+    if (!this.cutsceneDirector) this.persistenceEventBus?.emit("stage-started", { stageId: stage.id, attempt: 1 });
     this.eventBus.on("checkpoint-reached", (payload) => {
       this.eventLogText?.setText(
         "event: checkpoint-reached  " + payload.checkpointId,
@@ -229,6 +244,8 @@ export class PrototypeScene extends Phaser.Scene {
       this.deathSystem?.destroy();
       this.enemySystem?.destroy();
       this.trapSystem?.destroy();
+      this.cutsceneDirector?.destroy();
+      this.audioManager?.destroy();
       this.eventBus?.clear();
     });
 
@@ -268,12 +285,15 @@ export class PrototypeScene extends Phaser.Scene {
           color: "#8f283d",
           fontFamily: "monospace",
           fontSize: "16px",
-        })
-        .setResolution(2);
+       })
+       .setResolution(2);
+   }
+    if (this.cutsceneDirector) {
+      this.time.delayedCall(250, () => { void this.cutsceneDirector?.play("intro-home"); });
     }
-  }
+ }
 
-  public update(time: number, delta: number): void {
+ public update(time: number, delta: number): void {
     this.playerController?.update(time, delta);
     const snapshot = this.inputManager?.getSnapshot();
 

@@ -1,4 +1,5 @@
 import type { StageId } from "../core/types";
+import type { CutsceneBeat } from "../cutscenes/types";
 
 export interface StageEventMap {
   "stage-started": {
@@ -27,6 +28,21 @@ export interface StageEventMap {
     stageId: StageId;
     cutsceneId: string;
   };
+  "cutscene-started": {
+    cutsceneId: string;
+    skipAllowed: boolean;
+  };
+  "cutscene-beat": {
+    cutsceneId: string;
+    beat: CutsceneBeat;
+    index: number;
+    skipAllowed: boolean;
+  };
+  "cutscene-finished": {
+    cutsceneId: string;
+    skipped: boolean;
+  };
+  "cutscene-skip-requested": Record<string, never>;
   "shop-requested": {
     stageId: StageId;
   };
