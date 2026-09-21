@@ -7,11 +7,11 @@
 [P01 맵 기반 런타임](./phases/2026-09-21-world-map-design/P01-map-foundation-runtime/phase.md)
 
 ## Active Task
-[T02 Tiled 맵 로더와 패럴랙스 렌더링](./phases/2026-09-21-world-map-design/P01-map-foundation-runtime/T02-tiled-map-rendering.md)
+[T03 맵 연쇄 상호작용과 상태 스냅샷](./phases/2026-09-21-world-map-design/P01-map-foundation-runtime/T03-map-interactions-and-state.md)
 
 ## Status
-- T01 맵 도메인 스키마와 레지스트리 구현·검증 완료
-- T01 한국어 커밋 준비 완료
+- T01 맵 도메인 스키마와 레지스트리 구현·검증·커밋 완료
+- T02 Tiled 맵 로더와 패럴랙스 렌더링 구현·검증 준비 완료
 
 ## Next Step (IMPORTANT)
-T02 청사진을 읽고 src/game/assets/assetTypes.ts, src/game/assets/assetManifest.json, src/game/scenes/PreloadScene.ts, src/game/maps/TiledMapLoader.ts, src/game/maps/mapTypes.ts, src/game/maps/ParallaxRenderer.ts, src/game/stages/StageBuilder.ts, src/game/stages/StageRuntime.ts, src/game/scenes/StageScene.ts의 Tiled 맵 로더와 4단계 패럴랙스 구현 시작
+T03 청사진을 읽고 src/game/core/events.ts, src/game/stages/stageEvents.ts, src/game/maps/MapInteractionSystem.ts, src/game/maps/MapRuleRegistry.ts, src/game/random/StageRandom.ts, src/game/core/runtimeTypes.ts, src/game/stages/StageRuntime.ts, src/game/systems/CheckpointSystem.ts, src/game/systems/RestartController.ts의 시드 기반 연쇄 상호작용과 상태 스냅샷 구현 시작

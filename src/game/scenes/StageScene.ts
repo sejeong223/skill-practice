@@ -4,10 +4,13 @@ import { createRuntimeStageState } from "../core/constants";
 import type { StageId } from "../core/types";
 import { GameEventBus } from "../bridge/GameEventBus";
 import { CameraDirector } from "../camera/CameraDirector";
-import { getStageDefinition } from "../data";
+import { getStageDefinition, getWorldMapTheme } from "../data";
 import { Player } from "../entities/Player";
 import { DEFAULT_PLAYER_TUNING } from "../entities/playerTypes";
 import { DEFAULT_KEYBINDS, InputManager } from "../input/InputManager";
+import { ParallaxRenderer } from "../maps/ParallaxRenderer";
+import { TiledMapLoader } from "../maps/TiledMapLoader";
+import type { LoadedMap } from "../maps/mapTypes";
 import { StageBuilder } from "../stages/StageBuilder";
 import { StageRuntime } from "../stages/StageRuntime";
 import { PlayerController } from "../systems/PlayerController";
@@ -23,6 +26,8 @@ export class StageScene extends Phaser.Scene {
   private playerController?: PlayerController;
   private cameraDirector?: CameraDirector;
   private runtime?: StageRuntime;
+  private loadedMap?: LoadedMap | null;
+  private parallaxRenderer?: ParallaxRenderer;
   private eventBus?: GameEventBus;
   private statusText?: Phaser.GameObjects.Text;
   private stageId: StageId = "world-01-stage-1";
@@ -34,9 +39,12 @@ export class StageScene extends Phaser.Scene {
   public create(data: StageSceneData = {}): void {
     this.stageId = data.stageId ?? "world-01-stage-1";
     const stage = getStageDefinition(this.stageId);
+    const theme = getWorldMapTheme(stage.worldId);
     const seed = data.seed ?? 1;
     this.physics.world.setBounds(0, 0, stage.mapWidth, stage.mapHeight);
-    this.add.rectangle(stage.mapWidth / 2, GAME_HEIGHT / 2, stage.mapWidth, GAME_HEIGHT, 0xf5e7c7);
+    this.add.rectangle(stage.mapWidth / 2, GAME_HEIGHT / 2, stage.mapWidth, GAME_HEIGHT, 0xf5e7c7).setDepth(-40);
+    this.parallaxRenderer = new ParallaxRenderer(this);
+    this.parallaxRenderer.render(theme, stage.mapWidth, stage.mapHeight);
 
     this.player = new Player(this, stage.spawn.x, stage.spawn.y);
     this.inputManager = new InputManager(this, DEFAULT_KEYBINDS);
@@ -52,6 +60,12 @@ export class StageScene extends Phaser.Scene {
       seed,
       createRuntimeStageState(stage.id, seed),
     );
+    this.loadedMap = TiledMapLoader.load(this, stage, theme);
+
+    const gameplayLayer = this.loadedMap?.layers.gameplay;
+    if (gameplayLayer) {
+      this.physics.add.collider(this.player, gameplayLayer);
+    }
 
     for (const record of this.runtime.getEntities("platform")) {
       this.physics.add.collider(this.player, record.entity as Phaser.GameObjects.GameObject);
@@ -102,6 +116,8 @@ export class StageScene extends Phaser.Scene {
     this.events.once("shutdown", () => {
       this.inputManager?.destroy();
       this.runtime?.destroy();
+      this.loadedMap?.destroy();
+      this.parallaxRenderer?.destroy();
       this.eventBus?.clear();
     });
   }

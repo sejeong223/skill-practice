@@ -1,4 +1,4 @@
-export type AssetKind = "image" | "spritesheet" | "atlas" | "audio";
+export type AssetKind = "image" | "spritesheet" | "atlas" | "audio" | "tilemap";
 
 export interface PixelAssetDefinition {
   readonly key: string;
@@ -7,6 +7,8 @@ export interface PixelAssetDefinition {
   readonly frameWidth?: number;
   readonly frameHeight?: number;
   readonly frameCount?: number;
+  readonly tileWidth?: number;
+  readonly tileHeight?: number;
   readonly worldId?: string;
   readonly required: boolean;
 }

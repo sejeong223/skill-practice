@@ -85,6 +85,9 @@ export class PreloadScene extends Phaser.Scene {
       case "audio":
         this.load.audio(asset.key, asset.url);
         break;
+      case "tilemap":
+        this.load.tilemapTiledJSON(asset.key, asset.url);
+        break;
     }
   }
 }

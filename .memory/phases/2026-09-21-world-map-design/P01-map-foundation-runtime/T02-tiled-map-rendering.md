@@ -1,6 +1,6 @@
 # Task: T02 Tiled 맵 로더와 패럴랙스 렌더링
 
-## Status: pending
+## Status: done
 
 ## Goal
 
@@ -96,6 +96,6 @@ Task: T02-tiled-map-rendering
 
 ## Progress
 
-- [ ] 구현 완료
-- [ ] 검증 통과
+- [x] 구현 완료
+- [x] 검증 통과: npm.cmd run lint, npm.cmd run build
 - commit: pending

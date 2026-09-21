@@ -139,5 +139,95 @@
     "kind": "image",
     "url": "/assets/pixel/references/items/core-items-reference-v1.png",
     "required": false
+  },
+  {
+    "key": "world-01-tileset",
+    "kind": "image",
+    "url": "/assets/pixel/tiles/world-01/world-01-tileset.png",
+    "tileWidth": 16,
+    "tileHeight": 16,
+    "worldId": "world-01",
+    "required": false
+  },
+  {
+    "key": "world-02-tileset",
+    "kind": "image",
+    "url": "/assets/pixel/tiles/world-02/world-02-tileset.png",
+    "tileWidth": 16,
+    "tileHeight": 16,
+    "worldId": "world-02",
+    "required": false
+  },
+  {
+    "key": "world-03-tileset",
+    "kind": "image",
+    "url": "/assets/pixel/tiles/world-03/world-03-tileset.png",
+    "tileWidth": 16,
+    "tileHeight": 16,
+    "worldId": "world-03",
+    "required": false
+  },
+  {
+    "key": "world-04-tileset",
+    "kind": "image",
+    "url": "/assets/pixel/tiles/world-04/world-04-tileset.png",
+    "tileWidth": 16,
+    "tileHeight": 16,
+    "worldId": "world-04",
+    "required": false
+  },
+  {
+    "key": "world-05-tileset",
+    "kind": "image",
+    "url": "/assets/pixel/tiles/world-05/world-05-tileset.png",
+    "tileWidth": 16,
+    "tileHeight": 16,
+    "worldId": "world-05",
+    "required": false
+  },
+  {
+    "key": "world-01-map-placeholder",
+    "kind": "tilemap",
+    "url": "/assets/pixel/maps/world-01/world-01-stage-1.json",
+    "tileWidth": 16,
+    "tileHeight": 16,
+    "worldId": "world-01",
+    "required": false
+  },
+  {
+    "key": "world-02-map-placeholder",
+    "kind": "tilemap",
+    "url": "/assets/pixel/maps/world-02/world-02-stage-1.json",
+    "tileWidth": 16,
+    "tileHeight": 16,
+    "worldId": "world-02",
+    "required": false
+  },
+  {
+    "key": "world-03-map-placeholder",
+    "kind": "tilemap",
+    "url": "/assets/pixel/maps/world-03/world-03-stage-1.json",
+    "tileWidth": 16,
+    "tileHeight": 16,
+    "worldId": "world-03",
+    "required": false
+  },
+  {
+    "key": "world-04-map-placeholder",
+    "kind": "tilemap",
+    "url": "/assets/pixel/maps/world-04/world-04-stage-1.json",
+    "tileWidth": 16,
+    "tileHeight": 16,
+    "worldId": "world-04",
+    "required": false
+  },
+  {
+    "key": "world-05-map-placeholder",
+    "kind": "tilemap",
+    "url": "/assets/pixel/maps/world-05/world-05-stage-1.json",
+    "tileWidth": 16,
+    "tileHeight": 16,
+    "worldId": "world-05",
+    "required": false
   }
 ]
