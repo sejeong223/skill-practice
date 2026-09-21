@@ -6,4 +6,6 @@ export interface CheckpointSnapshot {
   x: number;
   y: number;
   facing: 1 | -1;
+  randomSeed?: number;
+  mapSnapshotVersion?: number;
 }

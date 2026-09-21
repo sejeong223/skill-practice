@@ -1,4 +1,4 @@
-import type { StageSegment } from "./contentTypes";
+import type { StageMapDefinition, StageSegment } from "./contentTypes";
 
 export type WorldId =
   | "world-01"
@@ -54,6 +54,8 @@ export interface RuntimeStageState {
   checkpointUsed: boolean;
   activeToolCharges: Record<ToolId, number>;
   randomSeed: number;
+  checkpointSeed: number | null;
+  mapSnapshotVersion: number;
 }
 
 export interface StageDefinition {
@@ -70,6 +72,10 @@ export interface StageDefinition {
   collectibleIds: string[];
   cutsceneIds: string[];
   bossId?: string;
+  themeId?: string;
+  mapKey?: string;
+  map?: StageMapDefinition;
+  checkpointSectionIndex?: number;
 }
 
 export interface SkillDefinition {

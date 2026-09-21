@@ -61,6 +61,11 @@ export const DEFAULT_DEFENSE_TOOL_ID = "upside-down-bowl";
 export const DEFAULT_DEFENSE_CHARGES = 3;
 export const NORMAL_STAGE_CHECKPOINT_COUNT = 1;
 export const BOSS_STAGE_CHECKPOINT_COUNT = 0;
+export const MAP_TILE_SIZE = 16;
+export const NORMAL_MAP_WIDTH = 3840;
+export const NORMAL_MAP_SAFE_LENGTH = 192;
+export const NORMAL_MAP_GAUNTLET_LENGTH = 1152;
+export const BOSS_MAP_WIDTH = 1920;
 
 export function createDefaultProgressState(
   playerName = "코기",
@@ -97,5 +102,7 @@ export function createRuntimeStageState(
       [DEFAULT_DEFENSE_TOOL_ID]: DEFAULT_DEFENSE_CHARGES,
     },
     randomSeed,
+    checkpointSeed: null,
+    mapSnapshotVersion: 0,
   };
 }

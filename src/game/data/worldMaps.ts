@@ -1,0 +1,160 @@
+import type {
+  MapLayerDefinition,
+  MapSectionDefinition,
+  WorldMapPalette,
+  WorldMapThemeDefinition,
+} from "../core/contentTypes";
+import {
+  NORMAL_MAP_GAUNTLET_LENGTH,
+  NORMAL_MAP_SAFE_LENGTH,
+  NORMAL_MAP_WIDTH,
+} from "../core/constants";
+import type { WorldId } from "../core/types";
+
+export const WORLD_MAP_THEMES: readonly WorldMapThemeDefinition[] = [
+  createTheme("world-01", "world-01-tileset", ["alley", "laundry", "roof", "fence"], {
+    far: "#f2c078",
+    mid: "#d98963",
+    gameplay: "#6b4950",
+    foreground: "#3d2d3a",
+    accent: "#e85d5d",
+  }),
+  createTheme("world-02", "world-02-tileset", ["swing", "slide", "seesaw", "jungle-gym"], {
+    far: "#9bd8e5",
+    mid: "#f4c95d",
+    gameplay: "#8a5a8c",
+    foreground: "#442b56",
+    accent: "#e96b9a",
+  }),
+  createTheme("world-03", "world-03-tileset", ["rock", "log", "grass", "cave"], {
+    far: "#9dbb87",
+    mid: "#66835f",
+    gameplay: "#6e5746",
+    foreground: "#34433a",
+    accent: "#d69b5f",
+  }),
+  createTheme("world-04", "world-04-tileset", ["scrap", "crane", "camera", "compressor"], {
+    far: "#77747a",
+    mid: "#4f555e",
+    gameplay: "#424044",
+    foreground: "#25232b",
+    accent: "#f08a44",
+  }),
+  createTheme("world-05", "world-05-tileset", ["tower", "catwalk", "banner", "throne"], {
+    far: "#3c274e",
+    mid: "#2d203b",
+    gameplay: "#241c2c",
+    foreground: "#120f19",
+    accent: "#e9b949",
+  }),
+];
+
+export function createDefaultStageSections(
+  stageId: string,
+): readonly MapSectionDefinition[] {
+  return [
+    {
+      id: stageId + "-section-1",
+      index: 1,
+      role: "safe-entry",
+      x: 0,
+      width: NORMAL_MAP_SAFE_LENGTH,
+      safe: true,
+      vertical: false,
+      mapObjectIds: [],
+    },
+    {
+      id: stageId + "-section-2",
+      index: 2,
+      role: "gauntlet",
+      x: NORMAL_MAP_SAFE_LENGTH,
+      width: NORMAL_MAP_GAUNTLET_LENGTH,
+      safe: false,
+      vertical: false,
+      mapObjectIds: [],
+    },
+    {
+      id: stageId + "-section-3",
+      index: 3,
+      role: "gauntlet",
+      x: NORMAL_MAP_SAFE_LENGTH + NORMAL_MAP_GAUNTLET_LENGTH,
+      width: NORMAL_MAP_GAUNTLET_LENGTH,
+      safe: false,
+      vertical: false,
+      mapObjectIds: [],
+    },
+    {
+      id: stageId + "-section-4",
+      index: 4,
+      role: "checkpoint-gauntlet",
+      x: NORMAL_MAP_SAFE_LENGTH + NORMAL_MAP_GAUNTLET_LENGTH * 2,
+      width: NORMAL_MAP_GAUNTLET_LENGTH,
+      safe: false,
+      vertical: false,
+      checkpointId: stageId + "-checkpoint",
+      mapObjectIds: [],
+    },
+    {
+      id: stageId + "-section-5",
+      index: 5,
+      role: "safe-exit",
+      x: NORMAL_MAP_WIDTH - NORMAL_MAP_SAFE_LENGTH,
+      width: NORMAL_MAP_SAFE_LENGTH,
+      safe: true,
+      vertical: false,
+      mapObjectIds: [],
+    },
+  ];
+}
+
+function createTheme(
+  worldId: WorldId,
+  tilesetKey: string,
+  hazardCatalog: readonly string[],
+  palette: WorldMapPalette,
+): WorldMapThemeDefinition {
+  const layers: readonly MapLayerDefinition[] = [
+    {
+      layerId: worldId + "-background-far",
+      kind: "background-far",
+      depth: -30,
+      scrollFactorX: 0.15,
+      scrollFactorY: 0.15,
+      assetKey: worldId + "-background-far",
+    },
+    {
+      layerId: worldId + "-background-mid",
+      kind: "background-mid",
+      depth: -20,
+      scrollFactorX: 0.35,
+      scrollFactorY: 0.35,
+      assetKey: worldId + "-background-mid",
+    },
+    {
+      layerId: worldId + "-gameplay",
+      kind: "gameplay",
+      depth: 0,
+      scrollFactorX: 1,
+      scrollFactorY: 1,
+      assetKey: tilesetKey,
+    },
+    {
+      layerId: worldId + "-foreground",
+      kind: "foreground",
+      depth: 20,
+      scrollFactorX: 1.05,
+      scrollFactorY: 1.05,
+      assetKey: worldId + "-foreground",
+    },
+  ];
+
+  return {
+    id: worldId + "-theme",
+    worldId,
+    tilesetKey,
+    palette,
+    layers,
+    objectVisualKeys: hazardCatalog,
+    hazardCatalog,
+  };
+}

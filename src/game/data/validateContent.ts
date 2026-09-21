@@ -38,6 +38,10 @@ export function validateContentRegistry(registry: ContentRegistry): void {
     issues.push("Exactly five world definitions are required.");
   }
 
+  if (registry.worldMaps.length !== WORLD_IDS.length) {
+    issues.push("Exactly five world map themes are required.");
+  }
+
   if (registry.stages.length !== STAGE_IDS.length) {
     issues.push("Exactly twenty-five stage definitions are required.");
   }
@@ -89,6 +93,14 @@ export function validateContentRegistry(registry: ContentRegistry): void {
     if (!world) {
       issues.push("Missing world definition: " + worldId);
       continue;
+    }
+
+    const theme = registry.worldMaps.find(
+      (candidate) => candidate.worldId === worldId,
+    );
+
+    if (!theme) {
+      issues.push("Missing world map theme: " + worldId);
     }
 
     if (world.order !== index + 1) {

@@ -8,6 +8,7 @@ import type {
   ToolDefinition,
 } from "../core/types";
 import { BOSS_DEFINITIONS, CUTSCENE_DEFINITIONS, STAGE_DEFINITIONS, WORLD_DEFINITIONS } from "./worlds";
+import { WORLD_MAP_THEMES } from "./worldMaps";
 import { SKILL_DEFINITIONS } from "./skills";
 import { TOOL_DEFINITIONS } from "./tools";
 import {
@@ -17,6 +18,7 @@ import {
 
 export const CONTENT_REGISTRY: ContentRegistry = {
   worlds: WORLD_DEFINITIONS,
+  worldMaps: WORLD_MAP_THEMES,
   stages: STAGE_DEFINITIONS,
   bosses: BOSS_DEFINITIONS,
   skills: SKILL_DEFINITIONS,
@@ -28,6 +30,9 @@ validateContentRegistry(CONTENT_REGISTRY);
 
 const worldById = new Map<string, WorldDefinition>(
   CONTENT_REGISTRY.worlds.map((world) => [world.id, world]),
+);
+const worldMapById = new Map<string, ContentRegistry["worldMaps"][number]>(
+  CONTENT_REGISTRY.worldMaps.map((theme) => [theme.worldId, theme]),
 );
 const stageById = new Map<string, StageDefinition>(
   CONTENT_REGISTRY.stages.map((stage) => [stage.id, stage]),
@@ -51,6 +56,16 @@ export function getWorldDefinition(worldId: string): WorldDefinition {
   }
 
   return world;
+}
+
+export function getWorldMapTheme(worldId: string) {
+  const theme = worldMapById.get(worldId);
+
+  if (!theme) {
+    throw missingContentError("world map theme", worldId);
+  }
+
+  return theme;
 }
 
 export function getStageDefinition(stageId: string): StageDefinition {
@@ -90,6 +105,7 @@ export {
   STAGE_DEFINITIONS,
   TOOL_DEFINITIONS,
   WORLD_DEFINITIONS,
+  WORLD_MAP_THEMES,
   ContentRegistryError,
   validateContentRegistry,
 };

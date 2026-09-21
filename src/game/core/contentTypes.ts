@@ -8,6 +8,140 @@ import type {
   WorldId,
 } from "./types";
 
+export type MapPropertyValue = string | number | boolean;
+
+export type MapSectionRole =
+  | "safe-entry"
+  | "gauntlet"
+  | "checkpoint-gauntlet"
+  | "safe-exit";
+
+export type MapLayerKind =
+  | "background-far"
+  | "background-mid"
+  | "gameplay"
+  | "foreground";
+
+export type MapObjectKind =
+  | "decoration"
+  | "interactive"
+  | "trap"
+  | "enemy-spawn"
+  | "checkpoint"
+  | "collectible"
+  | "exit";
+
+export type MapChainTrigger =
+  | "object-enter"
+  | "object-hit"
+  | "trap-triggered"
+  | "enemy-defeated"
+  | "checkpoint-reached"
+  | "timer"
+  | "chain-fired";
+
+export type MapChainActionKind =
+  | "activate-object"
+  | "deactivate-object"
+  | "move-object"
+  | "spawn-enemy"
+  | "set-collision"
+  | "emit-event"
+  | "camera-effect";
+
+export interface MapSectionDefinition {
+  readonly id: string;
+  readonly index: 1 | 2 | 3 | 4 | 5;
+  readonly role: MapSectionRole;
+  readonly x: number;
+  readonly width: number;
+  readonly safe: boolean;
+  readonly vertical: boolean;
+  readonly checkpointId?: string;
+  readonly mapObjectIds: readonly string[];
+}
+
+export interface MapLayerDefinition {
+  readonly layerId: string;
+  readonly kind: MapLayerKind;
+  readonly depth: number;
+  readonly scrollFactorX: number;
+  readonly scrollFactorY: number;
+  readonly assetKey: string;
+}
+
+export interface MapChainCondition {
+  readonly property: string;
+  readonly equals?: MapPropertyValue;
+  readonly notEquals?: MapPropertyValue;
+}
+
+export interface MapChainActionDefinition {
+  readonly type: MapChainActionKind;
+  readonly targetId?: string;
+  readonly value?: MapPropertyValue;
+  readonly delayMs?: number;
+  readonly eventType?: string;
+}
+
+export interface MapChainRule {
+  readonly id: string;
+  readonly trigger: MapChainTrigger;
+  readonly sourceId?: string;
+  readonly condition?: MapChainCondition;
+  readonly actions: readonly MapChainActionDefinition[];
+  readonly randomized: boolean;
+  readonly seedGroup?: string;
+}
+
+export interface MapObjectDefinition {
+  readonly id: string;
+  readonly kind: MapObjectKind;
+  readonly x: number;
+  readonly y: number;
+  readonly width: number;
+  readonly height: number;
+  readonly visualKey: string;
+  readonly layerId: string;
+  readonly collision: boolean;
+  readonly triggerId?: string;
+  readonly variantPool?: readonly string[];
+  readonly chainId?: string;
+  readonly seedGroup?: string;
+  readonly properties: Readonly<Record<string, MapPropertyValue>>;
+}
+
+export interface WorldMapPalette {
+  readonly far: string;
+  readonly mid: string;
+  readonly gameplay: string;
+  readonly foreground: string;
+  readonly accent: string;
+}
+
+export interface WorldMapThemeDefinition {
+  readonly id: string;
+  readonly worldId: WorldId;
+  readonly tilesetKey: string;
+  readonly palette: WorldMapPalette;
+  readonly layers: readonly MapLayerDefinition[];
+  readonly objectVisualKeys: readonly string[];
+  readonly hazardCatalog: readonly string[];
+}
+
+export interface StageMapDefinition {
+  readonly mapKey: string;
+  readonly mapFile: string;
+  readonly tileWidth: number;
+  readonly tileHeight: number;
+  readonly mapWidth: number;
+  readonly mapHeight: number;
+  readonly sections: readonly MapSectionDefinition[];
+  readonly layers: readonly MapLayerDefinition[];
+  readonly objectDefinitions: readonly MapObjectDefinition[];
+  readonly chainRules: readonly MapChainRule[];
+}
+
 export type TrapKind =
   | "spike"
   | "falling-object"
@@ -112,6 +246,7 @@ export interface WorldDefinition {
 
 export interface ContentRegistry {
   worlds: readonly WorldDefinition[];
+  worldMaps: readonly WorldMapThemeDefinition[];
   stages: readonly StageDefinition[];
   bosses: readonly BossDefinition[];
   skills: readonly SkillDefinition[];
