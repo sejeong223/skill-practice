@@ -1,6 +1,6 @@
 # Task: T03 적·함정·사망·희소 체크포인트·재시작
 
-## Status: pending
+## Status: done
 
 ## Goal
 
@@ -82,6 +82,16 @@
 
 ## Validation
 
+## Acceptance Verification
+
+- [x] Normal stages use one sparse checkpoint; boss stages respawn at stage spawn.
+- [x] Checkpoint activation persists an in-memory snapshot and respawn position.
+- [x] Enemy contact and lethal traps request death; nonlethal traps knock the player back.
+- [x] Death count is tracked globally and per stage.
+- [x] Current-stage coins reset while banked progress remains untouched.
+- [x] Fixed traps keep their positions and randomized traps derive positions from attempt seed.
+- [x] Restart happens immediately without lives or a death overlay.
+
 - npm run lint — death/checkpoint event 타입 통과
 - npm run build — systems import 통과
 - npm run dev — 함정·적·낙사·체크포인트·사망 통계를 수동 확인
@@ -100,6 +110,10 @@ Task: T03-traps-enemies-checkpoints
 ~~~
 
 ## Progress
+
+- [x] Implementation complete
+- [x] Validation passed: lint, build, dev server HTTP 200
+- commit: pending
 
 - [ ] 구현 완료
 - [ ] 검증 통과

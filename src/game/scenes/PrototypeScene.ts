@@ -1,19 +1,26 @@
 import * as Phaser from "phaser";
 import { GAME_HEIGHT, GAME_WIDTH } from "../config";
+import { createDefaultProgressState, createRuntimeStageState } from "../core/constants";
+import type { ProgressState, RuntimeStageState } from "../core/types";
 import { GameplayEventBus } from "../core/events";
-import { createDefaultProgressState } from "../core/constants";
+import { getStageDefinition } from "../data";
 import { SKILL_DEFINITIONS } from "../data/skills";
 import { TOOL_DEFINITIONS } from "../data/tools";
+import { CheckpointSystem } from "../systems/CheckpointSystem";
 import { PlayerAnimator } from "../entities/PlayerAnimator";
 import { Player } from "../entities/Player";
 import { DEFAULT_PLAYER_TUNING } from "../entities/playerTypes";
 import { DEFAULT_KEYBINDS, InputManager } from "../input/InputManager";
 import { CombatSystem } from "../systems/CombatSystem";
+import { DeathSystem } from "../systems/DeathSystem";
 import { DefenseToolSystem } from "../systems/DefenseToolSystem";
 import { DrawbackDiscovery } from "../systems/DrawbackDiscovery";
+import { EnemySystem } from "../systems/EnemySystem";
 import { PlayerController } from "../systems/PlayerController";
+import { RestartController } from "../systems/RestartController";
 import { SkillSystem } from "../systems/SkillSystem";
 import { StrayDogEvent } from "../systems/StrayDogEvent";
+import { TrapSystem } from "../systems/TrapSystem";
 
 interface PrototypeSceneData {
   readonly assetLoadError?: string | null;
@@ -27,6 +34,13 @@ export class PrototypeScene extends Phaser.Scene {
   private stateText?: Phaser.GameObjects.Text;
   private eventLogText?: Phaser.GameObjects.Text;
   private eventBus?: GameplayEventBus;
+  private progress?: ProgressState;
+  private runtime?: RuntimeStageState;
+  private checkpointSystem?: CheckpointSystem;
+  private restartController?: RestartController;
+  private deathSystem?: DeathSystem;
+  private enemySystem?: EnemySystem;
+  private trapSystem?: TrapSystem;
   private skillSystem?: SkillSystem;
   private combatSystem?: CombatSystem;
   private defenseToolSystem?: DefenseToolSystem;
@@ -38,6 +52,9 @@ export class PrototypeScene extends Phaser.Scene {
   }
 
   public create(data: PrototypeSceneData = {}): void {
+    const stage = getStageDefinition("world-01-stage-1");
+    this.progress = createDefaultProgressState();
+    this.runtime = createRuntimeStageState(stage.id, 1);
     this.cameras.main.setBackgroundColor("#f5e7c7");
     this.createBackdrop();
 
@@ -77,7 +94,56 @@ export class PrototypeScene extends Phaser.Scene {
     );
     this.strayDogEvent = new StrayDogEvent(this.eventBus);
     this.drawbackDiscovery = new DrawbackDiscovery(
-      createDefaultProgressState(),
+      this.progress,
+      this.eventBus,
+    );
+
+    this.checkpointSystem = new CheckpointSystem(
+      this.player,
+      this.eventBus,
+      stage.id,
+      this.runtime,
+    );
+    this.restartController = new RestartController(
+      this.player,
+      this.checkpointSystem,
+      { x: 218, y: GAME_HEIGHT - 88, facing: 1 },
+      stage.id,
+      this.runtime,
+      this.eventBus,
+      () => {
+        this.enemySystem?.resetForAttempt();
+        this.trapSystem?.resetForAttempt(
+          (this.runtime?.randomSeed ?? 1) + (this.runtime?.attempt ?? 1),
+        );
+        this.combatSystem?.resetForStage();
+      },
+    );
+    this.enemySystem = new EnemySystem(
+      this,
+      this.player,
+      this.eventBus,
+      stage.id,
+      () => this.checkpointSystem?.getSnapshot()?.checkpointId ?? null,
+    );
+    this.enemySystem.spawn(
+      stage.segments.flatMap((segment) => segment.enemies),
+    );
+    this.trapSystem = new TrapSystem(
+      this,
+      this.player,
+      this.eventBus,
+      stage.id,
+      () => this.checkpointSystem?.getSnapshot()?.checkpointId ?? null,
+    );
+    this.trapSystem.spawn(
+      stage.segments.flatMap((segment) => segment.traps),
+      this.runtime.randomSeed,
+    );
+    this.deathSystem = new DeathSystem(
+      this.progress,
+      this.runtime,
+      this.restartController,
       this.eventBus,
     );
 
@@ -87,12 +153,16 @@ export class PrototypeScene extends Phaser.Scene {
 
     this.eventBus.on("slipper-hit", (payload) => {
       this.eventLogText?.setText("event: slipper-hit  combo " + payload.comboCount);
+      this.enemySystem?.damageInFront(1, payload.now);
     });
     this.eventBus.on("slipper-sneeze", () => {
       this.eventLogText?.setText("event: 에취!  slipper-sneeze  knockback 3m");
     });
     this.eventBus.on("bite-hit", () => {
       this.eventLogText?.setText("event: bite-hit");
+    });
+    this.eventBus.on("bite-hit", (payload) => {
+      this.enemySystem?.damageInFront(2, payload.now);
     });
     this.eventBus.on("skill-used", (payload) => {
       this.eventLogText?.setText("event: skill-used  " + payload.skillId);
@@ -107,11 +177,39 @@ export class PrototypeScene extends Phaser.Scene {
         "event: drawback-discovered  " + payload.drawbackId,
       );
     });
+    this.eventBus.on("checkpoint-reached", (payload) => {
+      this.eventLogText?.setText(
+        "event: checkpoint-reached  " + payload.checkpointId,
+      );
+    });
+    this.eventBus.on("enemy-contact", (payload) => {
+      this.eventLogText?.setText(
+        "event: enemy-contact  " + payload.enemyId,
+      );
+    });
+    this.eventBus.on("trap-triggered", (payload) => {
+      this.eventLogText?.setText(
+        "event: trap-triggered  " + payload.trapId,
+      );
+    });
+    this.eventBus.on("death", (payload) => {
+      this.eventLogText?.setText(
+        "event: death  " + payload.cause + "  retrying",
+      );
+    });
+    this.eventBus.on("restart", (payload) => {
+      this.eventLogText?.setText(
+        "event: restart  attempt " + payload.attempt,
+      );
+    });
 
     this.events.once("shutdown", () => {
       this.inputManager?.destroy();
       this.strayDogEvent?.destroy();
       this.drawbackDiscovery?.destroy();
+      this.deathSystem?.destroy();
+      this.enemySystem?.destroy();
+      this.trapSystem?.destroy();
       this.eventBus?.clear();
     });
 
@@ -171,14 +269,39 @@ export class PrototypeScene extends Phaser.Scene {
     }
 
     this.combatSystem?.update(time);
+    this.enemySystem?.update(time);
+    this.trapSystem?.update(time);
     this.playerAnimator?.update(time);
+
+    const checkpointId = this.checkpointSystem?.getSnapshot()?.checkpointId;
+    const firstCheckpointId = getStageDefinition("world-01-stage-1").checkpointIds[0];
+    if (
+      this.player &&
+      !checkpointId &&
+      firstCheckpointId &&
+      this.player.x >= 620
+    ) {
+      this.checkpointSystem?.activate(
+        firstCheckpointId,
+        620,
+        GAME_HEIGHT - 88,
+        this.player.flipX ? -1 : 1,
+        time,
+      );
+    }
 
     if (this.player && this.stateText) {
       this.stateText.setText(
         "state: " +
           this.player.getAnimationState() +
           "   velocity: " +
-          Math.round(this.player.body.velocity.x),
+          Math.round(this.player.body.velocity.x) +
+          "   deaths: " +
+          (this.progress?.deathsTotal ?? 0) +
+          "   coins: " +
+          (this.runtime?.currentStageCoins ?? 0) +
+          "   checkpoint: " +
+          (checkpointId ?? "spawn"),
       );
     }
   }

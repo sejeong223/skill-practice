@@ -38,6 +38,46 @@ export interface GameplayEventMap {
     drawbackId: string;
     now: number;
   };
+  "death-requested": {
+    stageId: string;
+    cause: "enemy" | "trap" | "fall" | "tool-drawback" | "scripted";
+    checkpointId: string | null;
+    now: number;
+  };
+  death: {
+    stageId: string;
+    cause: "enemy" | "trap" | "fall" | "tool-drawback" | "scripted";
+    checkpointId: string | null;
+    now: number;
+  };
+  restart: {
+    stageId: string;
+    checkpointId: string | null;
+    attempt: number;
+    now: number;
+  };
+  "checkpoint-reached": {
+    stageId: string;
+    checkpointId: string;
+    x: number;
+    y: number;
+    now: number;
+  };
+  "enemy-contact": {
+    enemyId: string;
+    damage: number;
+    now: number;
+  };
+  "enemy-defeated": {
+    enemyId: string;
+    loot: string[];
+    now: number;
+  };
+  "trap-triggered": {
+    trapId: string;
+    lethal: boolean;
+    now: number;
+  };
 }
 
 export type GameplayEventType = keyof GameplayEventMap;
