@@ -7,10 +7,10 @@
 [P02 핵심 게임플레이](./phases/2026-09-21-legendary-rib-corgi/P02-core-gameplay/phase.md)
 
 ## Active Task
-[T01 플레이어 물리·입력·점프·기본 애니메이션](./phases/2026-09-21-legendary-rib-corgi/P02-core-gameplay/T01-player-controller-input.md)
+[T02 스킬 쿨다운·슬리퍼 공격·밥그릇·장비 부작용](./phases/2026-09-21-legendary-rib-corgi/P02-core-gameplay/T02-skills-equipment-combat.md)
 
 ## Status
-- T03 구현·검증 완료
+- T01 구현·검증 완료
 
 ## Next Step (IMPORTANT)
-T01 청사진을 읽고 코기 플레이어 물리·입력·점프·idle/run 애니메이션을 구현 시작
+T02 청사진을 읽고 스킬 쿨다운·슬리퍼 공격·밥그릇 방어·장비 부작용을 구현 시작

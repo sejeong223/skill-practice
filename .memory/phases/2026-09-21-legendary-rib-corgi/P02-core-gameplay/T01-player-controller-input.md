@@ -1,6 +1,6 @@
 # Task: T01 플레이어 물리·입력·점프·기본 애니메이션
 
-## Status: pending
+## Status: done
 
 ## Goal
 
@@ -110,11 +110,11 @@ WASD·방향키와 Space만으로 코기를 정밀하게 이동·점프할 수 �
 
 ## Acceptance Criteria
 
-- [ ] WASD와 방향키가 같은 이동 결과를 만든다.
-- [ ] Space 점프, coyote window, jump buffer가 동작한다.
-- [ ] J/K/L이 각각 attack/dash/bark edge event를 1회씩 발생시킨다.
-- [ ] 플레이어가 바닥·플랫폼과 충돌하고, 대각선 이동이나 key repeat로 속도가 누적되지 않는다.
-- [ ] 컨트롤 lock/unlock으로 컷신과 사망 연출 중 조작을 차단할 수 있다.
++ [x] WASD와 방향키가 같은 이동 결과를 만든다.
++ [x] Space 점프, coyote window, jump buffer가 동작한다.
++ [x] J/K/L이 각각 attack/dash/bark edge event를 1회씩 발생시킨다.
++ [x] 플레이어가 바닥·플랫폼과 충돌하고, 대각선 이동이나 key repeat로 속도가 누적되지 않는다.
++ [x] 컨트롤 lock/unlock으로 컷신과 사망 연출 중 조작을 차단할 수 있다.
 
 ## Validation
 
@@ -137,6 +137,6 @@ Task: T01-player-controller-input
 
 ## Progress
 
-- [ ] 구현 완료
-- [ ] 검증 통과
-- commit: pending
++ [x] 구현 완료
++ [x] 검증 통과
++ commit: T01 commit recorded in git history

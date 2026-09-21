@@ -1,14 +1,21 @@
 import * as Phaser from "phaser";
 import { GAME_HEIGHT, GAME_WIDTH } from "../config";
+import { PlayerAnimator } from "../entities/PlayerAnimator";
+import { Player } from "../entities/Player";
+import { DEFAULT_PLAYER_TUNING } from "../entities/playerTypes";
+import { DEFAULT_KEYBINDS, InputManager } from "../input/InputManager";
+import { PlayerController } from "../systems/PlayerController";
 
 interface PrototypeSceneData {
   readonly assetLoadError?: string | null;
 }
 
 export class PrototypeScene extends Phaser.Scene {
-  private player?: Phaser.Physics.Arcade.Image;
-  private cursors?: Phaser.Types.Input.Keyboard.CursorKeys;
-  private jumpKey?: Phaser.Input.Keyboard.Key;
+  private player?: Player;
+  private inputManager?: InputManager;
+  private playerController?: PlayerController;
+  private playerAnimator?: PlayerAnimator;
+  private stateText?: Phaser.GameObjects.Text;
 
   public constructor() {
     super("PrototypeScene");
@@ -27,38 +34,47 @@ export class PrototypeScene extends Phaser.Scene {
     );
     this.physics.add.existing(ground, true);
 
-    this.player = this.physics.add.image(
-      218,
-      GAME_HEIGHT - 190,
-      "corgi-reference",
-    );
-    this.player.setDisplaySize(228, 152);
-    this.player.setCollideWorldBounds(true);
+    this.player = new Player(this, 218, GAME_HEIGHT - 88);
     this.physics.add.collider(this.player, ground);
 
-    this.cursors = this.input.keyboard?.createCursorKeys();
-    this.jumpKey = this.input.keyboard?.addKey(
-      Phaser.Input.Keyboard.KeyCodes.SPACE,
+    this.inputManager = new InputManager(this, DEFAULT_KEYBINDS);
+    this.playerController = new PlayerController(
+      this.player,
+      this.inputManager,
+      DEFAULT_PLAYER_TUNING,
     );
+    this.playerAnimator = new PlayerAnimator(this.player);
+
+    this.events.once("shutdown", () => {
+      this.inputManager?.destroy();
+    });
 
     this.add
-      .text(36, 32, "T02  ·  Phaser runtime shell", {
+      .text(36, 32, "T01  ·  Corgi player controller", {
         color: "#5f3942",
         fontFamily: "monospace",
         fontSize: "22px",
       })
       .setResolution(2);
     this.add
-      .text(36, 64, "방향키 이동   SPACE 점프   ·   1280 × 720 FIT", {
+      .text(36, 64, "WASD / 방향키 이동   SPACE 점프   J 공격   K 돌진   L 짖기", {
         color: "#8b5a56",
         fontFamily: "sans-serif",
         fontSize: "18px",
       })
       .setResolution(2);
 
+    this.stateText = this.add
+      .text(36, GAME_HEIGHT - 44, "state: idle", {
+        color: "#8b5a56",
+        fontFamily: "monospace",
+        fontSize: "16px",
+      })
+      .setResolution(2);
+
     if (data.assetLoadError) {
       this.add
-        .text(36, GAME_HEIGHT - 42, data.assetLoadError, {
+        .text(36, GAME_HEIGHT - 70, data.assetLoadError, {
           color: "#8f283d",
           fontFamily: "monospace",
           fontSize: "16px",
@@ -67,29 +83,17 @@ export class PrototypeScene extends Phaser.Scene {
     }
   }
 
-  public update(): void {
-    if (!this.player || !this.cursors) {
-      return;
-    }
+  public update(time: number, delta: number): void {
+    this.playerController?.update(time, delta);
+    this.playerAnimator?.update(time);
 
-    const speed = 220;
-
-    if (this.cursors.left.isDown) {
-      this.player.setVelocityX(-speed);
-      this.player.setFlipX(true);
-    } else if (this.cursors.right.isDown) {
-      this.player.setVelocityX(speed);
-      this.player.setFlipX(false);
-    } else {
-      this.player.setVelocityX(0);
-    }
-
-    if (
-      this.jumpKey &&
-      Phaser.Input.Keyboard.JustDown(this.jumpKey) &&
-      this.player.body?.blocked.down
-    ) {
-      this.player.setVelocityY(-470);
+    if (this.player && this.stateText) {
+      this.stateText.setText(
+        "state: " +
+          this.player.getAnimationState() +
+          "   velocity: " +
+          Math.round(this.player.body.velocity.x),
+      );
     }
   }
 
