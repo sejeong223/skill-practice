@@ -30,4 +30,33 @@ export interface StageEventMap {
   "shop-requested": {
     stageId: StageId;
   };
+  "player-name-confirmed": {
+    playerName: string;
+  };
+  "skill-unlocked": {
+    skillId: string;
+  };
+  "tool-purchased": {
+    toolId: string;
+    bankedCoins: number;
+  };
+  "collectible-found": {
+    collectibleId: string;
+    firstDiscovery: boolean;
+  };
+  "keybinds-changed": {
+    keybinds: Record<string, string>;
+  };
+  "drawback-discovered": {
+    toolId: string;
+    drawbackId: string;
+  };
+  "death-count-updated": {
+    stageId: StageId;
+    deathsTotal: number;
+  };
+  "equipment-change-requested": {
+    attackToolId?: string;
+    defenseToolId?: string;
+  };
 }

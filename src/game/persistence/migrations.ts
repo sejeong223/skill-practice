@@ -1,0 +1,131 @@
+import { DEFAULT_KEYBINDS, createDefaultProgressState } from "../core/constants";
+import { SKILL_DEFINITIONS } from "../data/skills";
+import { STAGE_IDS } from "../core/constants";
+import { TOOL_DEFINITIONS } from "../data/tools";
+import type { InputAction, ProgressState, SkillId, StageId, ToolId } from "../core/types";
+
+const validSkillIds = new Set<string>(SKILL_DEFINITIONS.map((definition) => definition.id));
+const validToolIds = new Set<string>(TOOL_DEFINITIONS.map((definition) => definition.id));
+const validStageIds = new Set<string>(STAGE_IDS);
+const validAttackToolIds = new Set<string>(
+  TOOL_DEFINITIONS.filter((definition) => definition.slot === "attack").map((definition) => definition.id),
+);
+const validDefenseToolIds = new Set<string>(
+  TOOL_DEFINITIONS.filter((definition) => definition.slot === "defense").map((definition) => definition.id),
+);
+
+type UnknownRecord = Record<string, unknown>;
+
+function isRecord(value: unknown): value is UnknownRecord {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function warn(message: string): void {
+  console.warn("[ProgressStore] " + message);
+}
+
+function isStringArray(value: unknown): value is string[] {
+  return Array.isArray(value) && value.every((item) => typeof item === "string");
+}
+
+function isNonNegativeInteger(value: unknown): value is number {
+  return typeof value === "number" && Number.isInteger(value) && value >= 0;
+}
+
+function readStageIds(value: unknown): StageId[] {
+  if (!isStringArray(value)) {
+    throw new Error("stage IDs must be an array of strings");
+  }
+  return [...new Set(value.filter((id): id is StageId => validStageIds.has(id)))];
+}
+
+function readToolIds(value: unknown): ToolId[] {
+  if (!isStringArray(value)) {
+    throw new Error("tool IDs must be an array of strings");
+  }
+  return [...new Set(value.filter((id) => validToolIds.has(id)))];
+}
+
+export function migrateSave(input: unknown): ProgressState {
+  const fallback = createDefaultProgressState();
+  if (!isRecord(input)) {
+    warn("save is not an object; using defaults");
+    return fallback;
+  }
+
+  const schemaVersion = input.schemaVersion === undefined ? 0 : input.schemaVersion;
+  if (typeof schemaVersion !== "number" || schemaVersion > 1) {
+    warn("unsupported schema version; using defaults");
+    return fallback;
+  }
+  const rawProgress = isRecord(input.progress) ? input.progress : input;
+
+  try {
+    const clearedStages = readStageIds(rawProgress.clearedStages ?? []);
+    const ownedToolIds = readToolIds(rawProgress.ownedToolIds ?? fallback.ownedToolIds);
+    const unlockedSkills = rawProgress.unlockedSkills;
+    if (!isStringArray(unlockedSkills)) {
+      throw new Error("unlocked skills must be an array of strings");
+    }
+    const seenCutsceneIds = rawProgress.seenCutsceneIds;
+    const collectedItems = rawProgress.collectedItems;
+    const discoveredDrawbackIds = rawProgress.discoveredDrawbackIds;
+    if (!isStringArray(seenCutsceneIds) || !isStringArray(collectedItems) || !isStringArray(discoveredDrawbackIds)) {
+      throw new Error("collection fields must be arrays of strings");
+    }
+    if (!isNonNegativeInteger(rawProgress.bankedCoins) || !isNonNegativeInteger(rawProgress.deathsTotal)) {
+      throw new Error("coins and deaths must be non-negative integers");
+    }
+    if (typeof rawProgress.playerName !== "string") {
+      throw new Error("player name must be a string");
+    }
+    if (!isRecord(rawProgress.deathsByStage) || !isRecord(rawProgress.keybinds)) {
+      throw new Error("deaths and keybinds must be objects");
+    }
+
+    const deathsByStage: Partial<Record<StageId, number>> = {};
+    for (const [stageId, count] of Object.entries(rawProgress.deathsByStage)) {
+      if (validStageIds.has(stageId) && isNonNegativeInteger(count)) {
+        deathsByStage[stageId as StageId] = count;
+      }
+    }
+    const keybinds = { ...DEFAULT_KEYBINDS } as Record<InputAction, string>;
+    for (const action of Object.keys(DEFAULT_KEYBINDS) as InputAction[]) {
+      const key = rawProgress.keybinds[action];
+      if (typeof key === "string" && key.length > 0) {
+        keybinds[action] = key;
+      }
+    }
+    const safeOwnedTools = ownedToolIds.length > 0 ? ownedToolIds : fallback.ownedToolIds;
+    const attackToolId = typeof rawProgress.equippedAttackToolId === "string" &&
+      validAttackToolIds.has(rawProgress.equippedAttackToolId) &&
+      safeOwnedTools.includes(rawProgress.equippedAttackToolId)
+      ? rawProgress.equippedAttackToolId
+      : fallback.equippedAttackToolId;
+    const defenseToolId = typeof rawProgress.equippedDefenseToolId === "string" &&
+      validDefenseToolIds.has(rawProgress.equippedDefenseToolId) &&
+      safeOwnedTools.includes(rawProgress.equippedDefenseToolId)
+      ? rawProgress.equippedDefenseToolId
+      : fallback.equippedDefenseToolId;
+
+    return {
+      version: 1,
+      playerName: rawProgress.playerName.trim() || fallback.playerName,
+      clearedStages,
+      unlockedSkills: [...new Set(unlockedSkills.filter((id): id is SkillId => validSkillIds.has(id)))],
+      ownedToolIds: safeOwnedTools,
+      equippedAttackToolId: attackToolId,
+      equippedDefenseToolId: defenseToolId,
+      bankedCoins: rawProgress.bankedCoins,
+      collectedItems: [...new Set(collectedItems)],
+      deathsTotal: rawProgress.deathsTotal,
+      deathsByStage,
+      seenCutsceneIds: [...new Set(seenCutsceneIds)],
+      discoveredDrawbackIds: [...new Set(discoveredDrawbackIds)],
+      keybinds,
+    };
+  } catch (error) {
+    warn("invalid save fields; using defaults (" + String(error) + ")");
+    return fallback;
+  }
+}

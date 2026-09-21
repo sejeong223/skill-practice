@@ -1,6 +1,6 @@
 # Task: T01 localStorage 진행 저장·안전 금고 코인·수집품
 
-## Status: pending
+## Status: done
 
 ## Goal
 
@@ -77,6 +77,14 @@
 
 ## Validation
 
+## Acceptance Verification
+
+- [x] Versioned localStorage envelope restores progress and keybinds without touching stage position.
+- [x] Death clears current-stage coins while preserving banked coins.
+- [x] Stage clear commits current-stage coins exactly once.
+- [x] Duplicate collectibles do not grant a second discovery reward.
+- [x] Invalid and legacy saves fall back or migrate without stopping the game.
+
 - npm run lint — persistence/economy 타입 통과
 - npm run build — localStorage 접근이 server render에서 실행되지 않음
 - npm run dev — 새로고침·사망·클리어·재구매·수집품 중복을 수동 확인
@@ -95,6 +103,10 @@ Task: T01-progress-economy-save
 ~~~
 
 ## Progress
+
+- [x] 구현 완료
+- [x] 검증 통과: lint, build
+- commit: pending
 
 - [ ] 구현 완료
 - [ ] 검증 통과

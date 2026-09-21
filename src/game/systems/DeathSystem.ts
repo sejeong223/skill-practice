@@ -1,4 +1,5 @@
 import { GameplayEventBus } from "../core/events";
+import { GameEventBus } from "../bridge/GameEventBus";
 import { isStageId } from "../data/validateContent";
 import type { ProgressState, RuntimeStageState, StageId } from "../core/types";
 import { RestartController } from "./RestartController";
@@ -14,6 +15,7 @@ export class DeathSystem {
   private readonly runtime: RuntimeStageState;
   private readonly restartController: RestartController;
   private readonly eventBus: GameplayEventBus;
+  private readonly persistenceEventBus?: GameEventBus;
   private readonly unsubscribe: () => void;
   private handlingDeath = false;
 
@@ -22,11 +24,13 @@ export class DeathSystem {
     runtime: RuntimeStageState,
     restartController: RestartController,
     eventBus: GameplayEventBus,
+    persistenceEventBus?: GameEventBus,
   ) {
     this.progress = progress;
     this.runtime = runtime;
     this.restartController = restartController;
     this.eventBus = eventBus;
+    this.persistenceEventBus = persistenceEventBus;
     this.unsubscribe = eventBus.on("death-requested", (payload) => {
       if (!isStageId(payload.stageId)) {
         return;
@@ -49,6 +53,10 @@ export class DeathSystem {
     this.progress.deathsTotal += 1;
     this.progress.deathsByStage[context.stageId] =
       (this.progress.deathsByStage[context.stageId] ?? 0) + 1;
+    this.persistenceEventBus?.emit("death-count-updated", {
+      stageId: context.stageId,
+      deathsTotal: this.progress.deathsTotal,
+    });
     this.runtime.currentStageCoins = 0;
     this.runtime.attempt += 1;
 

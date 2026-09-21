@@ -1,4 +1,5 @@
 import { GameplayEventBus } from "../core/events";
+import { GameEventBus } from "../bridge/GameEventBus";
 import type { SkillDefinition, SkillId } from "../core/types";
 import { Player } from "../entities/Player";
 import { SkillCooldowns } from "./SkillCooldowns";
@@ -21,17 +22,20 @@ export class SkillSystem {
   private readonly cooldowns = new SkillCooldowns();
   private readonly unlocked = new Set<SkillId>();
   private readonly eventBus?: GameplayEventBus;
+  private readonly persistenceEventBus?: GameEventBus;
 
   public constructor(
     player: Player,
     definitions: readonly SkillDefinition[],
     eventBus?: GameplayEventBus,
+    persistenceEventBus?: GameEventBus,
   ) {
     this.player = player;
     this.definitions = new Map(
       definitions.map((definition) => [definition.id, definition]),
     );
     this.eventBus = eventBus;
+    this.persistenceEventBus = persistenceEventBus;
   }
 
   public unlockAfterBoss(bossId: string): SkillId | null {
@@ -44,6 +48,9 @@ export class SkillSystem {
     }
 
     this.unlocked.add(definition.id);
+    this.persistenceEventBus?.emit("skill-unlocked", {
+      skillId: definition.id,
+    });
     return definition.id;
   }
 

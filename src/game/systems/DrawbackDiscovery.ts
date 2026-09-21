@@ -1,14 +1,21 @@
 import { GameplayEventBus } from "../core/events";
+import { GameEventBus } from "../bridge/GameEventBus";
 import type { ProgressState } from "../core/types";
 
 export class DrawbackDiscovery {
   private readonly progress: ProgressState;
   private readonly eventBus: GameplayEventBus;
+  private readonly persistenceEventBus?: GameEventBus;
   private readonly unsubscribe: () => void;
 
-  public constructor(progress: ProgressState, eventBus: GameplayEventBus) {
+  public constructor(
+    progress: ProgressState,
+    eventBus: GameplayEventBus,
+    persistenceEventBus?: GameEventBus,
+  ) {
     this.progress = progress;
     this.eventBus = eventBus;
+    this.persistenceEventBus = persistenceEventBus;
     this.unsubscribe = eventBus.on("drawback-triggered", (payload) => {
       this.discover(payload.toolId, payload.drawbackId, payload.now);
     });
@@ -28,6 +35,10 @@ export class DrawbackDiscovery {
       toolId,
       drawbackId,
       now,
+    });
+    this.persistenceEventBus?.emit("drawback-discovered", {
+      toolId,
+      drawbackId,
     });
     return true;
   }
