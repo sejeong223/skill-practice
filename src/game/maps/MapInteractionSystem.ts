@@ -5,7 +5,7 @@ import type {
   MapChainTrigger,
   MapPropertyValue,
 } from "../core/contentTypes";
-import type { MapRuntimeSnapshot } from "../core/runtimeTypes";
+import type { MapObjectRuntimeState, MapRuntimeSnapshot } from "../core/runtimeTypes";
 import { GameplayEventBus } from "../core/events";
 import { StageRandom } from "../random/StageRandom";
 import { Player } from "../entities/Player";
@@ -146,6 +146,16 @@ export class MapInteractionSystem {
 
   public getPlayer(): Player {
     return this.player;
+  }
+
+  public getDebugState(): {
+    readonly firedChainIds: readonly string[];
+    readonly objectStates: Readonly<Record<string, MapObjectRuntimeState>>;
+  } {
+    return {
+      firedChainIds: this.registry.getFiredChainIds(),
+      objectStates: this.registry.getObjectStates(),
+    };
   }
 
   public destroy(): void {

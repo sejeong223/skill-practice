@@ -15,6 +15,10 @@ import {
   ContentRegistryError,
   validateContentRegistry,
 } from "./validateContent";
+import {
+  validateCampaignMaps,
+  validateStageMap,
+} from "./validateMaps";
 
 export const CONTENT_REGISTRY: ContentRegistry = {
   worlds: WORLD_DEFINITIONS,
@@ -108,4 +112,6 @@ export {
   WORLD_MAP_THEMES,
   ContentRegistryError,
   validateContentRegistry,
+  validateCampaignMaps,
+  validateStageMap,
 };

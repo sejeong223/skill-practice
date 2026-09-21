@@ -10,7 +10,7 @@
 
 | Phase | Status | Summary | Blueprint |
 | :--- | :--- | :--- | :--- |
-| P01 | in_progress | 맵 스키마, Tiled 로더, 연쇄 이벤트, 런타임, 카메라, 검증 기반 | [P01](../phases/2026-09-21-world-map-design/P01-map-foundation-runtime/phase.md) |
+| P01 | done | 맵 스키마, Tiled 로더, 연쇄 이벤트, 런타임, 카메라, 검증 기반 | [P01](../phases/2026-09-21-world-map-design/P01-map-foundation-runtime/phase.md) |
 | P02 | pending | World 1 뒷골목의 타일셋·4개 스테이지·냥아치 초소 보스 맵 | [P02](../phases/2026-09-21-world-map-design/P02-world01-back-alley/phase.md) |
 | P03 | pending | World 2 놀이터의 타일셋·4개 스테이지·놀이터 관리실 보스 맵 | [P03](../phases/2026-09-21-world-map-design/P03-world02-playground/phase.md) |
 | P04 | pending | World 3 뒷산의 타일셋·4개 스테이지·산 정상 보스 맵 | [P04](../phases/2026-09-21-world-map-design/P04-world03-mountain/phase.md) |

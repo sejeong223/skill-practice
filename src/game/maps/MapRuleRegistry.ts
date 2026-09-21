@@ -66,6 +66,14 @@ export class MapRuleRegistry {
     return this.objects.get(objectId);
   }
 
+  public getObjectStates(): Readonly<Record<string, MapObjectRuntimeState>> {
+    return Object.fromEntries(this.objects.entries());
+  }
+
+  public getFiredChainIds(): readonly string[] {
+    return [...this.firedChainIds];
+  }
+
   public setObjectState(
     objectId: string,
     patch: Partial<MapObjectRuntimeState>,

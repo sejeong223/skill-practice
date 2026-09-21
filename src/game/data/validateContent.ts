@@ -8,6 +8,7 @@ import {
 } from "../core/constants";
 import type { ContentRegistry } from "../core/contentTypes";
 import type { SkillId, StageId } from "../core/types";
+import { validateCampaignMaps } from "./validateMaps";
 
 export class ContentRegistryError extends Error {
   public readonly issues: readonly string[];
@@ -218,6 +219,9 @@ export function validateContentRegistry(registry: ContentRegistry): void {
       issues.push("Every tool needs a hidden drawback: " + tool.id);
     }
   }
+
+  const mapReport = validateCampaignMaps(registry);
+  issues.push(...mapReport.errors);
 
   if (issues.length > 0) {
     throw new ContentRegistryError(issues);

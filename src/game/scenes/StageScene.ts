@@ -7,6 +7,7 @@ import { CameraDirector } from "../camera/CameraDirector";
 import { GameplayEventBus } from "../core/events";
 import { getStageDefinition, getWorldMapTheme } from "../data";
 import type { StageDefinition } from "../core/types";
+import { MapDebugOverlay } from "../debug/MapDebugOverlay";
 import { Player } from "../entities/Player";
 import { DEFAULT_PLAYER_TUNING } from "../entities/playerTypes";
 import { DEFAULT_KEYBINDS, InputManager } from "../input/InputManager";
@@ -35,6 +36,7 @@ export class StageScene extends Phaser.Scene {
   private eventBus?: GameEventBus;
   private gameplayEventBus?: GameplayEventBus;
   private mapInteraction?: MapInteractionSystem;
+  private debugOverlay?: MapDebugOverlay;
   private statusText?: Phaser.GameObjects.Text;
   private stageId: StageId = "world-01-stage-1";
   private stageDefinition?: StageDefinition;
@@ -77,9 +79,20 @@ export class StageScene extends Phaser.Scene {
       this.player,
       this.gameplayEventBus,
       stage.id,
-      new StageRandom(this.runtime.runtimeState.randomSeed),
+      new StageRandom(this.runtime!.runtimeState.randomSeed),
       this.loadedMap,
     );
+
+    if (process.env.NODE_ENV !== "production") {
+      this.debugOverlay = new MapDebugOverlay(
+        this,
+        stage,
+        this.runtime,
+        this.player,
+        this.mapInteraction,
+        this.loadedMap,
+      );
+    }
 
     const gameplayLayer = this.loadedMap?.layers.gameplay;
     if (gameplayLayer) {
@@ -138,6 +151,7 @@ export class StageScene extends Phaser.Scene {
 
     this.events.once("shutdown", () => {
       this.inputManager?.destroy();
+      this.debugOverlay?.destroy();
       this.mapInteraction?.destroy();
       this.runtime?.destroy();
       this.loadedMap?.destroy();
@@ -153,6 +167,7 @@ export class StageScene extends Phaser.Scene {
     }
     this.playerController?.update(time, delta);
     this.mapInteraction?.update(time, delta);
+    this.debugOverlay?.update();
     this.syncSectionCamera();
   }
 

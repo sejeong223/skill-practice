@@ -9,4 +9,4 @@
 
 ## Progress
 
-- done: 0/2 (blocked until P01 complete)
+- done: 0/2 (ready after collaborative map review)

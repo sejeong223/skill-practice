@@ -1,6 +1,6 @@
 # Task: T05 맵 검증과 디버그 표시
 
-## Status: pending
+## Status: done
 
 ## Goal
 
@@ -79,6 +79,6 @@ Task: T05-map-validation-debug
 
 ## Progress
 
-- [ ] 구현 완료
-- [ ] 검증 통과
+- [x] 구현 완료
+- [x] 검증 통과 (`npm.cmd run lint`, `npm.cmd run build`)
 - commit: pending

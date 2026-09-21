@@ -8,11 +8,12 @@ import {
 import type {
   BossDefinition,
   CutsceneDefinition,
+  MapObjectDefinition,
   StageMapDefinition,
   StageSegment,
   WorldDefinition,
 } from "../core/contentTypes";
-import { createDefaultStageSections } from "./worldMaps";
+import { createDefaultStageSections, WORLD_MAP_THEMES } from "./worldMaps";
 import type {
   SkillId,
   StageDefinition,
@@ -167,9 +168,40 @@ function createSegment(
 
 function createStageMap(
   stageId: StageId,
+  worldId: WorldId,
   isBoss: boolean,
 ): StageMapDefinition {
   const mapWidth = isBoss ? BOSS_MAP_WIDTH : NORMAL_MAP_WIDTH;
+  const gameplayLayerId = worldId + "-gameplay";
+  const requiredObjects: MapObjectDefinition[] = [
+    {
+      id: stageId + "-exit",
+      kind: "exit",
+      x: mapWidth - 112,
+      y: 360,
+      width: 32,
+      height: 160,
+      visualKey: "exit",
+      layerId: gameplayLayerId,
+      collision: false,
+      properties: {},
+    },
+  ];
+
+  if (!isBoss) {
+    requiredObjects.unshift({
+      id: stageId + "-checkpoint",
+      kind: "checkpoint",
+      x: 2496,
+      y: 400,
+      width: 18,
+      height: 120,
+      visualKey: "checkpoint",
+      layerId: gameplayLayerId,
+      collision: false,
+      properties: {},
+    });
+  }
 
   return {
     mapKey: stageId + "-map",
@@ -179,8 +211,8 @@ function createStageMap(
     mapWidth,
     mapHeight: 720,
     sections: isBoss ? [] : createDefaultStageSections(stageId),
-    layers: [],
-    objectDefinitions: [],
+    layers: WORLD_MAP_THEMES.find((theme) => theme.worldId === worldId)?.layers ?? [],
+    objectDefinitions: requiredObjects,
     chainRules: [],
   };
 }
@@ -208,7 +240,7 @@ function createNormalStage(
     cutsceneIds: [blueprint.id + "-world-intro"],
     themeId: blueprint.id + "-theme",
     mapKey: id + "-map",
-    map: createStageMap(id, false),
+    map: createStageMap(id, blueprint.id, false),
     checkpointSectionIndex: 4,
   };
 }
@@ -237,7 +269,7 @@ function createBossStage(blueprint: WorldBlueprint): StageDefinition {
     bossId: blueprint.id + "-boss",
     themeId: blueprint.id + "-theme",
     mapKey: id + "-map",
-    map: createStageMap(id, true),
+    map: createStageMap(id, blueprint.id, true),
   };
 }
 

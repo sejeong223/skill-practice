@@ -92,7 +92,7 @@ export function createDefaultStageSections(
       safe: false,
       vertical: false,
       checkpointId: stageId + "-checkpoint",
-      mapObjectIds: [],
+      mapObjectIds: [stageId + "-checkpoint"],
     },
     {
       id: stageId + "-section-5",
@@ -102,7 +102,7 @@ export function createDefaultStageSections(
       width: NORMAL_MAP_SAFE_LENGTH,
       safe: true,
       vertical: false,
-      mapObjectIds: [],
+      mapObjectIds: [stageId + "-exit"],
     },
   ];
 }
