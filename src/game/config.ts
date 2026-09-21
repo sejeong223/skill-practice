@@ -2,6 +2,7 @@ import * as Phaser from "phaser";
 import { BootScene } from "./scenes/BootScene";
 import { PreloadScene } from "./scenes/PreloadScene";
 import { PrototypeScene } from "./scenes/PrototypeScene";
+import { StageScene } from "./scenes/StageScene";
 
 export const GAME_WIDTH = 1280;
 export const GAME_HEIGHT = 720;
@@ -40,7 +41,7 @@ export function createPhaserConfig(
         debug: false,
       },
     },
-    scene: [BootScene, PreloadScene, PrototypeScene],
+    scene: [BootScene, PreloadScene, PrototypeScene, StageScene],
   };
 }
 

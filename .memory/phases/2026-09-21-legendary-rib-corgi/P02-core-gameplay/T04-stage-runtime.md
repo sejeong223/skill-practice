@@ -1,6 +1,6 @@
 # Task: T04 데이터 기반 스테이지 런타임·카메라·시드 랜덤
 
-## Status: pending
+## Status: done
 
 ## Goal
 
@@ -75,6 +75,14 @@ StageDefinition을 읽어 플랫폼·함정·적·코인·수집품·체크포�
 
 ## Validation
 
+## Acceptance Verification
+
+- [x] One StageDefinition builds platforms, traps, enemies, coins, collectibles, checkpoint, and exit entities.
+- [x] CameraDirector follows the player with lerp and stage bounds.
+- [x] Fixed traps skip RNG; randomized traps use StageRandom for attempt-seeded offsets.
+- [x] StageRuntime guards enter/play/pause/cutscene/dying/completed status transitions.
+- [x] GameEventBus exposes typed stage lifecycle, coin, death, checkpoint, cutscene, and shop events.
+
 - npm run lint — StageScene/Factory/EventBus 타입 통과
 - npm run build — StageScene production build 통과
 - npm run dev — 샘플 stage를 로드해 camera follow·seed retry·stage complete 확인
@@ -93,6 +101,10 @@ Task: T04-stage-runtime
 ~~~
 
 ## Progress
+
+- [x] 구현 완료
+- [x] 검증 통과: lint, build, dev server HTTP 200
+- commit: pending
 
 - [ ] 구현 완료
 - [ ] 검증 통과

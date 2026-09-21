@@ -1,5 +1,6 @@
 import * as Phaser from "phaser";
 import { GAME_HEIGHT, GAME_WIDTH } from "../config";
+import { CameraDirector } from "../camera/CameraDirector";
 import { createDefaultProgressState, createRuntimeStageState } from "../core/constants";
 import type { ProgressState, RuntimeStageState } from "../core/types";
 import { GameplayEventBus } from "../core/events";
@@ -41,6 +42,7 @@ export class PrototypeScene extends Phaser.Scene {
   private deathSystem?: DeathSystem;
   private enemySystem?: EnemySystem;
   private trapSystem?: TrapSystem;
+  private cameraDirector?: CameraDirector;
   private skillSystem?: SkillSystem;
   private combatSystem?: CombatSystem;
   private defenseToolSystem?: DefenseToolSystem;
@@ -55,6 +57,7 @@ export class PrototypeScene extends Phaser.Scene {
     const stage = getStageDefinition("world-01-stage-1");
     this.progress = createDefaultProgressState();
     this.runtime = createRuntimeStageState(stage.id, 1);
+    this.physics.world.setBounds(0, 0, stage.mapWidth, stage.mapHeight);
     this.cameras.main.setBackgroundColor("#f5e7c7");
     this.createBackdrop();
 
@@ -69,6 +72,8 @@ export class PrototypeScene extends Phaser.Scene {
 
     this.player = new Player(this, 218, GAME_HEIGHT - 88);
     this.physics.add.collider(this.player, ground);
+    this.cameraDirector = new CameraDirector(this, this.player, stage);
+    this.cameraDirector.followPlayer();
 
     this.inputManager = new InputManager(this, DEFAULT_KEYBINDS);
     this.playerController = new PlayerController(
