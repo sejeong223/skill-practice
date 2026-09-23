@@ -4,7 +4,7 @@
 
 ## Goal
 
-World 1의 따뜻한 주거지 뒷골목을 16×16 타일과 동일한 픽셀 아트 규칙으로 구현하고, 맨홀·개미·쓰레기통·빨랫줄·실외기·상자·구름·가시·비둘기·깃발·뼈 코인을 게임에서 로드할 수 있게 한다.
+World 1의 화창한 낮 주거지 뒷골목을 16×16 타일과 동일한 픽셀 아트 규칙으로 구현하고, 맨홀·개미·쓰레기통·빨랫줄·실외기·상자·구름·가시·비둘기·깃발·뼈 코인을 게임에서 로드할 수 있게 한다.
 
 ## Decision Summary
 
@@ -18,8 +18,8 @@ World 1의 따뜻한 주거지 뒷골목을 16×16 타일과 동일한 픽셀 �
 - Related Files:
   - `public/assets/pixel/tiles/world-01/world-01-tileset.svg` :: exact 16px grid tileset; new code-native pixel atlas
   - `public/assets/pixel/tiles/world-01/world-01-tileset-concept.png` :: generated visual exploration; not used for Tiled cell sampling
-  - `public/assets/pixel/backgrounds/world-01/world-01-far.png` :: distant houses and sunset; new generated asset
-  - `public/assets/pixel/backgrounds/world-01/world-01-mid.png` :: brick walls, wires, signs; new generated asset
+  - `public/assets/pixel/backgrounds/world-01/world-01-far.png` :: distant houses under a clear daytime sky; generated asset, recolored for sunny noon
+  - `public/assets/pixel/backgrounds/world-01/world-01-mid.png` :: brick walls, wires, signs in neutral daylight; generated asset, recolored to reduce orange cast
   - `public/assets/pixel/backgrounds/world-01/world-01-foreground.png` :: fence silhouettes and occlusion props; new generated asset
   - `public/assets/pixel/props/world-01/*` :: generated hazard props and code-native triggered states
 

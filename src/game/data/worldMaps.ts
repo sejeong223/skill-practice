@@ -32,11 +32,11 @@ export const WORLD_MAP_THEMES: readonly WorldMapThemeDefinition[] = [
       "name-bubble",
     ],
     {
-    far: "#f2c078",
-    mid: "#d98963",
-    gameplay: "#6b4950",
-    foreground: "#3d2d3a",
-    accent: "#e85d5d",
+      far: "#9bdcf2",
+      mid: "#c8d6ca",
+      gameplay: "#68736e",
+      foreground: "#33454b",
+      accent: "#e3c95f",
     },
   ),
   createTheme("world-02", "world-02-tileset", ["swing", "slide", "seesaw", "jungle-gym"], {
