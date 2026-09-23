@@ -16,11 +16,12 @@ World 1의 따뜻한 주거지 뒷골목을 16×16 타일과 동일한 픽셀 �
 ### I01. 타일셋과 배경/전경 에셋
 
 - Related Files:
-  - `public/assets/pixel/tiles/world-01/world-01-tileset.png` :: 16px tileset; new generated asset
+  - `public/assets/pixel/tiles/world-01/world-01-tileset.svg` :: exact 16px grid tileset; new code-native pixel atlas
+  - `public/assets/pixel/tiles/world-01/world-01-tileset-concept.png` :: generated visual exploration; not used for Tiled cell sampling
   - `public/assets/pixel/backgrounds/world-01/world-01-far.png` :: distant houses and sunset; new generated asset
   - `public/assets/pixel/backgrounds/world-01/world-01-mid.png` :: brick walls, wires, signs; new generated asset
   - `public/assets/pixel/backgrounds/world-01/world-01-foreground.png` :: fence silhouettes and occlusion props; new generated asset
-  - `public/assets/pixel/props/world-01/*.png` :: hazard props and state variants; new generated assets
+  - `public/assets/pixel/props/world-01/*` :: generated hazard props and code-native triggered states
 
 #### Details
 
