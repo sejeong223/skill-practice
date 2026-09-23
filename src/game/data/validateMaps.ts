@@ -8,6 +8,8 @@ import type {
 } from "../core/contentTypes";
 import { STAGE_IDS } from "../core/constants";
 import type { StageDefinition, StageId } from "../core/types";
+import { DEFAULT_PLAYER_TUNING } from "../entities/playerTypes";
+import { WORLD01_GIMMICK_MAX_GAP_MS } from "./world01Gimmicks";
 
 export interface MapValidationReport {
   readonly stageId: StageId;
@@ -181,14 +183,14 @@ export function validateCampaignMaps(
   const world01Gimmicks = world01Stages.flatMap(
     (stage) => stage.map?.gimmicks ?? [],
   );
-  if (world01Gimmicks.length < 54) {
-    errors.push("world-01: 기믹 카탈로그는 최소 54개여야 합니다.");
+  if (world01Gimmicks.length < 66) {
+    errors.push("world-01: 기믹 카탈로그는 최소 66개여야 합니다.");
   }
 
   const minimums: Readonly<Partial<Record<GimmickKind, number>>> = {
-    "ground-collapse": 8,
-    "ground-rise": 8,
-    "revealed-white-spike": 8,
+    "ground-collapse": 12,
+    "ground-rise": 12,
+    "revealed-white-spike": 12,
     "jump-pigeon": 8,
     "fake-bone-green": 2,
     "fake-bone-reverse": 2,
@@ -209,6 +211,41 @@ export function validateCampaignMaps(
       errors.push(
         "world-01: " + kind + " 기믹이 최소 " + minimum + "개 필요합니다.",
       );
+    }
+  }
+
+  for (const stage of world01Stages) {
+    const map = stage.map;
+    if (!map) {
+      continue;
+    }
+
+    const routePoints = [
+      { x: stage.spawn.x, y: stage.spawn.y },
+      ...map.gimmicks
+        .map((gimmick) => ({
+          x: gimmick.x + gimmick.width / 2,
+          y: gimmick.y + gimmick.height,
+        }))
+        .sort((left, right) => left.x - right.x),
+      { x: map.mapWidth - 96, y: stage.spawn.y },
+    ];
+
+    for (let index = 1; index < routePoints.length; index += 1) {
+      const previous = routePoints[index - 1];
+      const current = routePoints[index];
+      const travelMs =
+        (Math.hypot(current.x - previous.x, current.y - previous.y) /
+          DEFAULT_PLAYER_TUNING.runSpeed) *
+        1000;
+      if (travelMs > WORLD01_GIMMICK_MAX_GAP_MS) {
+        errors.push(
+          stage.id + ": 함정 사이 공백이 8초를 초과합니다 (" +
+            Math.round(travelMs) +
+            "ms).",
+        );
+        break;
+      }
     }
   }
 

@@ -133,6 +133,9 @@ export class StageRuntime {
           }));
           break;
         case "enemy-spawn":
+          if (object.properties.active === false) {
+            break;
+          }
           this.add("enemy", object.id, this.factory.create(this.scene, {
             kind: "enemy",
             definition: this.toEnemyDefinition(object),

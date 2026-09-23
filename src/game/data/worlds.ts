@@ -14,7 +14,7 @@ import type {
   WorldDefinition,
 } from "../core/contentTypes";
 import { createDefaultStageSections, WORLD_MAP_THEMES } from "./worldMaps";
-import { getWorld01GimmicksForStage } from "./world01Gimmicks";
+import { WORLD01_STAGE_MAPS } from "./world01Maps";
 import type {
   SkillId,
   StageDefinition,
@@ -40,7 +40,7 @@ const WORLD_BLUEPRINTS: readonly WorldBlueprint[] = [
     stageTitles: [
       "무법지대 뒷골목",
       "빨래방 지붕길",
-      "도둑고양이 지름길",
+      "도둑고양이 통로",
       "담벼락 위의 추격전",
     ],
     bossTitle: "냥아치 연합 초소",
@@ -204,10 +204,7 @@ function createStageMap(
     });
   }
 
-  const gimmicks =
-    worldId === "world-01" && !isBoss
-      ? getWorld01GimmicksForStage(stageId)
-      : [];
+  const gimmicks: StageMapDefinition["gimmicks"] = [];
   const gimmickObjects: MapObjectDefinition[] = gimmicks.map((gimmick) => ({
     id: gimmick.objectId,
     kind: "interactive",
@@ -246,6 +243,9 @@ function createNormalStage(
   stageNumber: 1 | 2 | 3 | 4,
 ): StageDefinition {
   const id = stageIdFor(blueprint.id, stageNumber);
+  const map = blueprint.id === "world-01"
+    ? WORLD01_STAGE_MAPS[stageNumber]
+    : createStageMap(id, blueprint.id, false);
 
   return {
     id,
@@ -256,15 +256,15 @@ function createNormalStage(
     spawn: { x: 96, y: 440 },
     checkpointIds: [id + "-checkpoint"],
     mapWidth: NORMAL_MAP_WIDTH,
-    mapHeight: 720,
+    mapHeight: map.mapHeight,
     segments: [192, 1152, 1152, 1152, 192].map((length, index) =>
       createSegment(id, index + 1, false, length),
     ),
     collectibleIds: [id + "-memory"],
     cutsceneIds: [blueprint.id + "-world-intro"],
     themeId: blueprint.id + "-theme",
-    mapKey: id + "-map",
-    map: createStageMap(id, blueprint.id, false),
+    mapKey: map.mapKey,
+    map,
     checkpointSectionIndex: 4,
   };
 }

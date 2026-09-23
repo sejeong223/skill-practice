@@ -11,6 +11,24 @@ import type { StageId } from "../core/types";
 type World01StageNumber = 1 | 2 | 3 | 4;
 type GauntletSection = 2 | 3 | 4;
 
+export const WORLD01_GIMMICK_MAX_GAP_MS = 8000;
+
+export function getWorld01FloorY(
+  stageNumber: World01StageNumber,
+  x: number,
+): number {
+  if (stageNumber !== 2 && stageNumber !== 4) {
+    return 512;
+  }
+
+  const ascentStart = 1344;
+  const ascentSteps = Math.min(
+    18,
+    Math.floor(Math.max(0, x - ascentStart) / 64),
+  );
+  return 512 - ascentSteps * 16;
+}
+
 const instantTrap: GimmickOutcome = {
   kind: "instant-death",
   deathCause: "trap",
@@ -50,7 +68,7 @@ function makeGimmick(
     kind,
     trigger,
     x,
-    y: 440,
+    y: getWorld01FloorY(stageNumber, x) - 96,
     width: 64,
     height: 96,
     visualKey,
@@ -144,6 +162,15 @@ const coreLayout: readonly {
   },
 ];
 
+const coreXOverrides: Readonly<
+  Partial<Record<World01StageNumber, Readonly<Partial<Record<number, number>>>>>
+> = {
+  4: {
+    5: 2650,
+    7: 3560,
+  },
+};
+
 const coreGimmicks = ([1, 2, 3, 4] as const).flatMap((stageNumber) =>
   coreLayout.map((entry, index) =>
     makeGimmick(
@@ -152,7 +179,7 @@ const coreGimmicks = ([1, 2, 3, 4] as const).flatMap((stageNumber) =>
       (stageNumber - 1) * coreLayout.length + index + 1,
       entry.kind,
       entry.trigger,
-      entry.x,
+      coreXOverrides[stageNumber]?.[index] ?? entry.x,
       entry.visualKey,
       entry.counterplay,
       instantTrap,
@@ -249,15 +276,72 @@ const specialGimmicks: readonly WorldGimmickDefinition[] = [
     action: "do-not-collect",
     notes: "뒤로 밀려나는 가짜 뼈다귀를 먹지 않는다.",
   }, { ...instantTrap, kind: "forced-control-death", deathCause: "scripted", controlOverride: "drift-backward", durationMs: 1800 }, "reverse-control"),
-  makeGimmick(4, 4, 54, "fake-bone-fire", "collect", 3500, "bone-coin", {
+  makeGimmick(4, 4, 54, "fake-bone-fire", "collect", 3390, "bone-coin", {
     action: "do-not-collect",
     notes: "엉덩이에 불이 붙는 가짜 뼈다귀를 먹지 않는다.",
   }, { ...instantTrap, kind: "launch-death", deathCause: "scripted", controlOverride: "launch-up", durationMs: 1700 }, "fire-launch"),
 ];
 
+const recurringPositions: Readonly<
+  Record<World01StageNumber, { collapse: number; rise: number; spike: number }>
+> = {
+  1: { collapse: 1040, rise: 2330, spike: 3300 },
+  2: { collapse: 1100, rise: 2320, spike: 3000 },
+  3: { collapse: 1040, rise: 2310, spike: 3180 },
+  4: { collapse: 1060, rise: 3470, spike: 3000 },
+};
+
+const recurringGimmicks = ([1, 2, 3, 4] as const).flatMap((stageNumber) => {
+  const positions = recurringPositions[stageNumber];
+  const entries = [
+    {
+      sectionIndex: 2 as const,
+      kind: "ground-collapse" as const,
+      trigger: "walk-enter" as const,
+      x: positions.collapse,
+      visualKey: "ground",
+      counterplay: jumpBeforeZone,
+    },
+    {
+      sectionIndex: stageNumber === 4 ? 4 as const : 3 as const,
+      kind: "ground-rise" as const,
+      trigger: "timed-after-enter" as const,
+      x: positions.rise,
+      visualKey: "ground",
+      counterplay: {
+        action: "micro-forward-then-back" as const,
+        notes: "짧게 전진해 솟는 순간을 유도한 뒤 즉시 뒤로 물러난다.",
+      },
+    },
+    {
+      sectionIndex: 4 as const,
+      kind: "revealed-white-spike" as const,
+      trigger: "walk-enter" as const,
+      x: positions.spike,
+      visualKey: "white-spike",
+      counterplay: precisionMovement,
+    },
+  ];
+
+  return entries.map((entry, index) =>
+    makeGimmick(
+      stageNumber,
+      entry.sectionIndex,
+      55 + (stageNumber - 1) * entries.length + index,
+      entry.kind,
+      entry.trigger,
+      entry.x,
+      entry.visualKey,
+      entry.counterplay,
+      instantTrap,
+    ),
+  );
+});
+
 export const WORLD01_GIMMICKS: readonly WorldGimmickDefinition[] = [
   ...coreGimmicks,
   ...specialGimmicks,
+  ...recurringGimmicks,
 ];
 
 export const WORLD01_GIMMICK_COUNT = WORLD01_GIMMICKS.length;
@@ -265,9 +349,9 @@ export const WORLD01_GIMMICK_COUNT = WORLD01_GIMMICKS.length;
 export const WORLD01_GIMMICK_MINIMUMS: Readonly<
   Partial<Record<GimmickKind, number>>
 > = {
-  "ground-collapse": 8,
-  "ground-rise": 8,
-  "revealed-white-spike": 8,
+  "ground-collapse": 12,
+  "ground-rise": 12,
+  "revealed-white-spike": 12,
   "jump-pigeon": 8,
   "fake-bone-green": 2,
   "fake-bone-reverse": 2,
@@ -285,4 +369,3 @@ export function getWorld01GimmicksForStage(
 ): readonly WorldGimmickDefinition[] {
   return WORLD01_GIMMICKS.filter((gimmick) => gimmick.stageId === stageId);
 }
-

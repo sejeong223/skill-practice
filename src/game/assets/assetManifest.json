@@ -228,13 +228,40 @@
     "required": false
   },
   {
-    "key": "world-01-map-placeholder",
+    "key": "world-01-stage-1-map",
     "kind": "tilemap",
     "url": "/assets/pixel/maps/world-01/world-01-stage-1.json",
     "tileWidth": 16,
     "tileHeight": 16,
     "worldId": "world-01",
-    "required": false
+    "required": true
+  },
+  {
+    "key": "world-01-stage-2-map",
+    "kind": "tilemap",
+    "url": "/assets/pixel/maps/world-01/world-01-stage-2.json",
+    "tileWidth": 16,
+    "tileHeight": 16,
+    "worldId": "world-01",
+    "required": true
+  },
+  {
+    "key": "world-01-stage-3-map",
+    "kind": "tilemap",
+    "url": "/assets/pixel/maps/world-01/world-01-stage-3.json",
+    "tileWidth": 16,
+    "tileHeight": 16,
+    "worldId": "world-01",
+    "required": true
+  },
+  {
+    "key": "world-01-stage-4-map",
+    "kind": "tilemap",
+    "url": "/assets/pixel/maps/world-01/world-01-stage-4.json",
+    "tileWidth": 16,
+    "tileHeight": 16,
+    "worldId": "world-01",
+    "required": true
   },
   {
     "key": "world-02-map-placeholder",

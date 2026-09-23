@@ -25,7 +25,7 @@ export class MapRuleRegistry {
     for (const definition of objectDefinitions) {
       this.definitions.set(definition.id, definition);
       this.objects.set(definition.id, {
-        active: true,
+        active: definition.properties.active !== false,
         x: definition.x,
         y: definition.y,
         collision: definition.collision,
@@ -144,7 +144,7 @@ export class MapRuleRegistry {
 
     for (const definition of this.definitions.values()) {
       this.objects.set(definition.id, {
-        active: true,
+        active: definition.properties.active !== false,
         x: definition.x,
         y: definition.y,
         collision: definition.collision,

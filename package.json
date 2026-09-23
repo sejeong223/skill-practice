@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "world01:maps": "node scripts/world01-maps.mjs",
+    "world01:maps:check": "node scripts/world01-maps.mjs --check"
   },
   "dependencies": {
     "next": "16.3.5",

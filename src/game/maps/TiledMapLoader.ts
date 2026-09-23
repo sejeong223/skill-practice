@@ -73,14 +73,14 @@ export class TiledMapLoader {
         const kind = TiledMapLoader.readKind(properties.kind ?? object.type);
 
         objects.push({
-          id: String(object.id),
+          id: TiledMapLoader.readString(properties.mapObjectId, String(object.id)),
           kind,
           x: object.x ?? 0,
           y: object.y ?? 0,
           width: object.width ?? 0,
           height: object.height ?? 0,
           visualKey: TiledMapLoader.readString(properties.visualKey, object.name),
-          layerId: objectLayer.name,
+          layerId: TiledMapLoader.readString(properties.layerId, objectLayer.name),
           collision: TiledMapLoader.readBoolean(properties.collision, false),
           triggerId: TiledMapLoader.readOptionalString(properties.triggerId),
           variantPool: TiledMapLoader.readStringList(properties.variantPool),
