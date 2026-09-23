@@ -58,7 +58,7 @@ export function PhaserGame({
     <div
       ref={mountRef}
       className={className}
-      aria-label="전설의 무한 육즙 왕갈비뼈 게임 화면"
+      aria-label="짧은 다리의 역습: 전설의 왕갈비뼈를 찾아서 게임 화면"
     />
   );
 }

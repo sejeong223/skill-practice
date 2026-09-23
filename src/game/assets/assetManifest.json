@@ -147,7 +147,35 @@
     "tileWidth": 16,
     "tileHeight": 16,
     "worldId": "world-01",
-    "required": false
+    "required": true
+  },
+  {
+    "key": "world-01-background-far",
+    "kind": "image",
+    "url": "/assets/pixel/backgrounds/world-01/world-01-far.png",
+    "worldId": "world-01",
+    "required": true
+  },
+  {
+    "key": "world-01-background-mid",
+    "kind": "image",
+    "url": "/assets/pixel/backgrounds/world-01/world-01-mid.png",
+    "worldId": "world-01",
+    "required": true
+  },
+  {
+    "key": "world-01-background-foreground",
+    "kind": "image",
+    "url": "/assets/pixel/backgrounds/world-01/world-01-foreground.png",
+    "worldId": "world-01",
+    "required": true
+  },
+  {
+    "key": "world-01-props",
+    "kind": "atlas",
+    "url": "/assets/pixel/props/world-01/world-01-props.png",
+    "worldId": "world-01",
+    "required": true
   },
   {
     "key": "world-02-tileset",

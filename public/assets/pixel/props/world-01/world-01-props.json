@@ -1,0 +1,28 @@
+{
+  "frames": {
+    "ant": { "frame": { "x": 60, "y": 285, "w": 135, "h": 92 }, "rotated": false, "trimmed": false, "spriteSourceSize": { "x": 0, "y": 0, "w": 135, "h": 92 }, "sourceSize": { "w": 135, "h": 92 } },
+    "bone-coin": { "frame": { "x": 306, "y": 280, "w": 154, "h": 105 }, "rotated": false, "trimmed": false, "spriteSourceSize": { "x": 0, "y": 0, "w": 154, "h": 105 }, "sourceSize": { "w": 154, "h": 105 } },
+    "fake-checkpoint": { "frame": { "x": 525, "y": 70, "w": 178, "h": 300 }, "rotated": false, "trimmed": false, "spriteSourceSize": { "x": 0, "y": 0, "w": 178, "h": 300 }, "sourceSize": { "w": 178, "h": 300 } },
+    "cat-box": { "frame": { "x": 744, "y": 205, "w": 210, "h": 188 }, "rotated": false, "trimmed": false, "spriteSourceSize": { "x": 0, "y": 0, "w": 210, "h": 188 }, "sourceSize": { "w": 210, "h": 188 } },
+    "cat-box-triggered": { "frame": { "x": 744, "y": 205, "w": 210, "h": 188 }, "rotated": false, "trimmed": false, "spriteSourceSize": { "x": 0, "y": 0, "w": 210, "h": 188 }, "sourceSize": { "w": 210, "h": 188 } },
+    "cloud": { "frame": { "x": 990, "y": 210, "w": 235, "h": 165 }, "rotated": false, "trimmed": false, "spriteSourceSize": { "x": 0, "y": 0, "w": 235, "h": 165 }, "sourceSize": { "w": 235, "h": 165 } },
+    "pigeon": { "frame": { "x": 45, "y": 480, "w": 190, "h": 198 }, "rotated": false, "trimmed": false, "spriteSourceSize": { "x": 0, "y": 0, "w": 190, "h": 198 }, "sourceSize": { "w": 190, "h": 198 } },
+    "white-spike": { "frame": { "x": 304, "y": 500, "w": 164, "h": 174 }, "rotated": false, "trimmed": false, "spriteSourceSize": { "x": 0, "y": 0, "w": 164, "h": 174 }, "sourceSize": { "w": 164, "h": 174 } },
+    "white-spike-triggered": { "frame": { "x": 304, "y": 500, "w": 164, "h": 174 }, "rotated": false, "trimmed": false, "spriteSourceSize": { "x": 0, "y": 0, "w": 164, "h": 174 }, "sourceSize": { "w": 164, "h": 174 } },
+    "manhole": { "frame": { "x": 510, "y": 505, "w": 225, "h": 174 }, "rotated": false, "trimmed": false, "spriteSourceSize": { "x": 0, "y": 0, "w": 225, "h": 174 }, "sourceSize": { "w": 225, "h": 174 } },
+    "trash-can": { "frame": { "x": 750, "y": 462, "w": 202, "h": 202 }, "rotated": false, "trimmed": false, "spriteSourceSize": { "x": 0, "y": 0, "w": 202, "h": 202 }, "sourceSize": { "w": 202, "h": 202 } },
+    "clothesline": { "frame": { "x": 976, "y": 465, "w": 245, "h": 205 }, "rotated": false, "trimmed": false, "spriteSourceSize": { "x": 0, "y": 0, "w": 245, "h": 205 }, "sourceSize": { "w": 245, "h": 205 } },
+    "air-conditioner": { "frame": { "x": 30, "y": 745, "w": 228, "h": 205 }, "rotated": false, "trimmed": false, "spriteSourceSize": { "x": 0, "y": 0, "w": 228, "h": 205 }, "sourceSize": { "w": 228, "h": 205 } },
+    "name-bubble": { "frame": { "x": 305, "y": 760, "w": 176, "h": 155 }, "rotated": false, "trimmed": false, "spriteSourceSize": { "x": 0, "y": 0, "w": 176, "h": 155 }, "sourceSize": { "w": 176, "h": 155 } },
+    "bone-coin-fire": { "frame": { "x": 520, "y": 710, "w": 305, "h": 245 }, "rotated": false, "trimmed": false, "spriteSourceSize": { "x": 0, "y": 0, "w": 305, "h": 245 }, "sourceSize": { "w": 305, "h": 245 } },
+    "bone-coin-green": { "frame": { "x": 1020, "y": 755, "w": 202, "h": 185 }, "rotated": false, "trimmed": false, "spriteSourceSize": { "x": 0, "y": 0, "w": 202, "h": 185 }, "sourceSize": { "w": 202, "h": 185 } },
+    "bone-coin-reverse": { "frame": { "x": 302, "y": 1020, "w": 190, "h": 208 }, "rotated": false, "trimmed": false, "spriteSourceSize": { "x": 0, "y": 0, "w": 190, "h": 208 }, "sourceSize": { "w": 190, "h": 208 } }
+  },
+  "meta": {
+    "app": "Phaser",
+    "image": "world-01-props.png",
+    "format": "RGBA8888",
+    "size": { "w": 1254, "h": 1254 },
+    "scale": "1"
+  }
+}

@@ -164,7 +164,9 @@ function createTheme(
       depth: 20,
       scrollFactorX: 1.05,
       scrollFactorY: 1.05,
-      assetKey: worldId + "-foreground",
+      assetKey: worldId === "world-01"
+        ? "world-01-background-foreground"
+        : worldId + "-foreground",
     },
   ];
 

@@ -13,6 +13,7 @@ import { GameEventBridge } from "./GameEventBridge";
 import { CutsceneOverlay } from "./CutsceneOverlay";
 import { GameOverlay } from "./GameOverlay";
 import { PhaserGame } from "./PhaserGame";
+import { IntroTitleOverlay } from "./IntroTitleOverlay";
 
 export interface GameShellProps {
   readonly initialStageId: StageId;
@@ -45,6 +46,11 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
   const autoSaveRef = useRef<AutoSaveCoordinator | null>(null);
   const [toast, setToast] = useState("진행 상태를 준비하는 중...");
   const [mode, setMode] = useState<UiMode>("safe");
+  const [introGateStep, setIntroGateStep] = useState<"intro" | "title" | "ready">("intro");
+
+  useEffect(() => eventBus.on("cutscene-finished", (payload) => {
+    if (payload.cutsceneId === "intro-home") setIntroGateStep("title");
+  }), [eventBus]);
 
   useEffect(() => {
     const loaded = storeRef.current.load();
@@ -86,6 +92,7 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
     next.playerName = safeName;
     replaceProgress(next);
     eventBus.emit("player-name-confirmed", { playerName: safeName });
+    setIntroGateStep("ready");
   }, [eventBus, replaceProgress]);
 
   const handlePurchase = useCallback((tool: ToolDefinition): void => {
@@ -120,7 +127,8 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
       <PhaserGame className="phaser-viewport" gameEventBus={eventBus} />
       <GameEventBridge eventBus={eventBus} onEvent={handleEvent} />
       <CutsceneOverlay eventBus={eventBus} onSkip={() => eventBus.emit("cutscene-skip-requested", {})} />
-      <GameOverlay stageTitle={stage.title} runtime={runtime} progress={progress} skills={SKILL_DEFINITIONS} tools={TOOL_DEFINITIONS} cooldowns={{}} alive={mode !== "dead" && mode !== "cutscene"} safeZone={mode === "safe"} onNameConfirm={handleNameConfirm} onEquip={handleEquip} onPurchase={handlePurchase} onKeybindChange={handleKeybindChange} />
+      {introGateStep === "title" && <IntroTitleOverlay initialName={progress.playerName} onConfirm={handleNameConfirm} />}
+      {introGateStep === "ready" && <GameOverlay stageTitle={stage.title} runtime={runtime} progress={progress} skills={SKILL_DEFINITIONS} tools={TOOL_DEFINITIONS} cooldowns={{}} alive={mode !== "dead" && mode !== "cutscene"} safeZone={mode === "safe"} onEquip={handleEquip} onPurchase={handlePurchase} onKeybindChange={handleKeybindChange} />}
       <div className="game-toast" role="status">{toast}</div>
       {onExit && <button className="exit-button" type="button" onClick={onExit}>나가기</button>}
     </div>

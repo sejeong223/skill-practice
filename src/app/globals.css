@@ -93,6 +93,17 @@ body {
 .game-shell { position: relative; width: 100%; aspect-ratio: 16 / 9; overflow: hidden; border: 4px solid #5f3942; border-radius: 14px; background: #f5e7c7; box-shadow: 0 18px 0 #d0a777, 0 26px 40px rgb(95 57 66 / 20%); }
 .game-shell > .phaser-viewport { position: absolute; inset: 0; width: 100%; height: 100%; aspect-ratio: auto; border: 0; border-radius: 0; box-shadow: none; }
 .game-shell > .phaser-viewport canvas { width: 100%; height: 100%; }
+.intro-title-overlay { position: absolute; inset: 0; z-index: 9; display: grid; place-items: center; padding: 24px; color: #fff8e5; background: rgb(39 35 49 / 72%); }
+.intro-title-card, .intro-name-card { width: min(100%, 680px); padding: clamp(22px, 4vw, 42px); border: 4px solid #f0b95f; background: #5f3942; box-shadow: 8px 8px 0 rgb(39 35 49 / 55%), inset 0 0 0 4px #5f3942, inset 0 0 0 6px #b0645d; text-align: center; }
+.intro-title-card { animation: title-card-enter 420ms steps(5, end) both; }
+.intro-title-kicker { margin: 0 0 14px; color: #f0b95f; font: 800 10px var(--font-geist-mono), monospace; letter-spacing: .18em; }
+.intro-title-card h2 { max-width: 600px; margin: 0 auto; color: #fff8e5; font-size: clamp(24px, 4vw, 44px); line-height: 1.35; letter-spacing: -.06em; text-wrap: balance; }
+.intro-title-card > p:not(.intro-title-kicker), .intro-name-card > p:not(.intro-title-kicker) { margin: 14px 0 20px; color: #f5e7c7; font-size: clamp(12px, 1.5vw, 16px); }
+.intro-name-card h2 { margin: 0; color: #fff8e5; font-size: clamp(20px, 3vw, 30px); }
+.intro-name-card form { max-width: 460px; margin: 24px auto 0; }
+.intro-name-card input { min-height: 44px; padding: 10px 12px; border: 2px solid #f0b95f; background: #fff8e5; font-size: 16px; }
+.intro-name-card .primary-button, .intro-title-card .primary-button { min-height: 42px; padding: 9px 18px; border-color: #f0b95f; background: #e8cda0; }
+@keyframes title-card-enter { from { opacity: 0; transform: translateY(12px) scale(.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
 .game-overlay { position: absolute; inset: 0; z-index: 3; padding: 16px; overflow: auto; pointer-events: none; color: #5f3942; }
 .game-hud, .overlay-panel, .game-toast, .exit-button { pointer-events: auto; }
 .game-hud { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 10px 12px; border: 2px solid #5f3942; background: rgb(245 231 199 / 92%); box-shadow: 4px 4px 0 rgb(95 57 66 / 30%); font-family: var(--font-geist-mono), monospace; font-size: 11px; }
@@ -153,6 +164,8 @@ form { display: flex; gap: 6px; margin-top: 10px; } form input { min-width: 0; f
 .cutscene-footer { display: flex; justify-content: space-between; width: min(100%, 800px); margin-top: 10px; color: #f5e7c7; font: 10px var(--font-geist-mono), monospace; }
 
 @media (max-width: 720px) {
+  .intro-title-overlay { padding: 14px; }
+  .intro-name-card form { flex-direction: column; }
   .overlay-columns { grid-template-columns: 1fr; }
   .game-overlay { padding: 8px; }
   .hud-stats { max-width: 58%; }

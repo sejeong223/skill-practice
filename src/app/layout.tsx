@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "전설의 무한 육즙 왕갈비뼈",
+  title: "짧은 다리의 역습: 전설의 왕갈비뼈를 찾아서",
   description: "코기의 생일을 훔쳐 간 냥아치 연합을 쫓는 억까 플랫폼 게임",
 };
 

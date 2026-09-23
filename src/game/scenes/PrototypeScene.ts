@@ -208,7 +208,13 @@ export class PrototypeScene extends Phaser.Scene {
     this.persistenceEventBus?.on("cutscene-skip-requested", () => this.cutsceneDirector?.skip());
    this.persistenceEventBus?.on("cutscene-requested", (payload) => { void this.cutsceneDirector?.play(payload.cutsceneId); });
     this.persistenceEventBus?.on("cutscene-finished", (payload) => {
-      if (payload.cutsceneId === "intro-home") this.persistenceEventBus?.emit("stage-started", { stageId: stage.id, attempt: 1 });
+      if (payload.cutsceneId === "intro-home") {
+        this.player?.lockControl("intro-name");
+        this.persistenceEventBus?.emit("stage-started", { stageId: stage.id, attempt: 1 });
+      }
+    });
+    this.persistenceEventBus?.on("player-name-confirmed", () => {
+      this.player?.unlockControl("intro-name");
     });
     if (!this.cutsceneDirector) this.persistenceEventBus?.emit("stage-started", { stageId: stage.id, attempt: 1 });
     this.eventBus.on("checkpoint-reached", (payload) => {

@@ -45,7 +45,10 @@ export class ParallaxRenderer {
     mapHeight: number,
     fallbackColor: number,
   ): Phaser.GameObjects.GameObject {
-    if (this.scene.textures.exists(assetKey)) {
+    const canDrawTexture = assetKey !== "world-01-tileset" &&
+      this.scene.textures.exists(assetKey);
+
+    if (canDrawTexture) {
       return this.scene.add
         .tileSprite(0, 0, mapWidth, mapHeight, assetKey)
         .setOrigin(0)
