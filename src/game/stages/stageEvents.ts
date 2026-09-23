@@ -23,6 +23,12 @@ export interface StageEventMap {
     stageId: StageId;
     checkpointId: string | null;
   };
+  "gimmick-diagnostics": {
+    stageId: StageId;
+    gimmickId: string;
+    status: "armed" | "triggered" | "escaped" | "dead";
+    counterpresses: number;
+  };
   "stage-completed": {
     stageId: StageId;
     nextStageId: StageId | null;

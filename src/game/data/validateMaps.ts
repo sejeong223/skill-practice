@@ -1,5 +1,6 @@
 import type {
   ContentRegistry,
+  GimmickKind,
   MapObjectDefinition,
   MapSectionDefinition,
   StageMapDefinition,
@@ -105,6 +106,7 @@ export function validateStageMap(
   }
 
   validateChainReferences(objects, map, objectById, ruleIds, theme, errors);
+  validateGimmicks(stage, map, objectById, sections, errors);
   validateSafeSections(sections, objects, map, objectById, errors);
 
   if (theme.tilesetKey.length === 0 || map.layers.some((layer) => !layer.assetKey)) {
@@ -173,12 +175,91 @@ export function validateCampaignMaps(
     report.warnings.map((warning) => report.stageId + ": " + warning),
   );
 
+  const world01Stages = registry.stages.filter(
+    (stage) => stage.worldId === "world-01" && stage.kind === "normal",
+  );
+  const world01Gimmicks = world01Stages.flatMap(
+    (stage) => stage.map?.gimmicks ?? [],
+  );
+  if (world01Gimmicks.length < 54) {
+    errors.push("world-01: 기믹 카탈로그는 최소 54개여야 합니다.");
+  }
+
+  const minimums: Readonly<Partial<Record<GimmickKind, number>>> = {
+    "ground-collapse": 8,
+    "ground-rise": 8,
+    "revealed-white-spike": 8,
+    "jump-pigeon": 8,
+    "fake-bone-green": 2,
+    "fake-bone-reverse": 2,
+    "fake-bone-fire": 2,
+    "fake-checkpoint": 3,
+    "box-cat-arm": 3,
+    "cloud-rain": 3,
+    "ant-trip": 2,
+    "forward-jump-wall": 3,
+    "name-bubble-control-loss": 2,
+  };
+  const counts = new Map<GimmickKind, number>();
+  for (const gimmick of world01Gimmicks) {
+    counts.set(gimmick.kind, (counts.get(gimmick.kind) ?? 0) + 1);
+  }
+  for (const [kind, minimum] of Object.entries(minimums) as [GimmickKind, number][]) {
+    if ((counts.get(kind) ?? 0) < minimum) {
+      errors.push(
+        "world-01: " + kind + " 기믹이 최소 " + minimum + "개 필요합니다.",
+      );
+    }
+  }
+
   return {
     reports,
     errors,
     warnings,
     valid: errors.length === 0,
   };
+}
+
+function validateGimmicks(
+  stage: StageDefinition,
+  map: StageMapDefinition,
+  objectById: ReadonlyMap<string, MapObjectDefinition>,
+  sections: readonly MapSectionDefinition[],
+  errors: string[],
+): void {
+  for (const gimmick of map.gimmicks) {
+    if (gimmick.stageId !== stage.id) {
+      errors.push("기믹 stageId가 맵 스테이지와 일치하지 않습니다: " + gimmick.id);
+    }
+    if (stage.kind === "boss") {
+      errors.push("보스 맵에는 일반 기믹을 배치할 수 없습니다: " + gimmick.id);
+    }
+    if (![2, 3, 4].includes(gimmick.sectionIndex)) {
+      errors.push("기믹은 구간 2~4에만 배치할 수 있습니다: " + gimmick.id);
+    }
+    const section = sections.find((candidate) => candidate.index === gimmick.sectionIndex);
+    const object = objectById.get(gimmick.objectId);
+    if (!object) {
+      errors.push("기믹 오브젝트가 없습니다: " + gimmick.objectId);
+    } else if (section && !isObjectInsideSection(object, section)) {
+      errors.push("기믹이 지정된 구간 밖에 배치되었습니다: " + gimmick.id);
+    }
+    if (gimmick.hintPolicy !== "none") {
+      errors.push("월드1 기믹은 힌트를 가질 수 없습니다: " + gimmick.id);
+    }
+    if (gimmick.lethal !== true) {
+      errors.push("월드1 기믹은 lethal이어야 합니다: " + gimmick.id);
+    }
+    if (gimmick.chainIds.length === 0) {
+      errors.push("기믹 chainId가 비어 있습니다: " + gimmick.id);
+    }
+    if (
+      gimmick.counterplay.action === "mash-jump" &&
+      gimmick.counterplay.requiredPresses !== 100
+    ) {
+      errors.push("연타 탈출 기믹은 100회 입력을 요구해야 합니다: " + gimmick.id);
+    }
+  }
 }
 
 function validateNormalSections(

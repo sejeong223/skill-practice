@@ -38,7 +38,12 @@ export type MapChainTrigger =
   | "enemy-defeated"
   | "checkpoint-reached"
   | "timer"
-  | "chain-fired";
+  | "chain-fired"
+  | "player-jump"
+  | "jump-over"
+  | "input-mash"
+  | "timer-expired"
+  | "dialogue-enter";
 
 export type MapChainActionKind =
   | "activate-object"
@@ -47,7 +52,87 @@ export type MapChainActionKind =
   | "spawn-enemy"
   | "set-collision"
   | "emit-event"
-  | "camera-effect";
+  | "camera-effect"
+  | "force-control"
+  | "request-death"
+  | "set-player-tint"
+  | "clear-control";
+
+export type GimmickKind =
+  | "ant-trip"
+  | "forward-jump-wall"
+  | "ground-collapse"
+  | "ground-rise"
+  | "fake-bone-green"
+  | "fake-bone-reverse"
+  | "fake-bone-fire"
+  | "fake-checkpoint"
+  | "box-cat-arm"
+  | "cloud-rain"
+  | "revealed-white-spike"
+  | "jump-pigeon"
+  | "name-bubble-control-loss";
+
+export type GimmickTrigger =
+  | "walk-enter"
+  | "forward-jump"
+  | "jump-over"
+  | "timed-after-enter"
+  | "collect"
+  | "checkpoint-touch"
+  | "jump-in-zone"
+  | "dialogue-enter";
+
+export type GimmickRuntimeStatus =
+  | "armed"
+  | "triggered"
+  | "escaped"
+  | "dead";
+
+export interface GimmickCounterplay {
+  readonly action:
+    | "move-backward"
+    | "avoid-jump"
+    | "jump-before-zone"
+    | "micro-forward-then-back"
+    | "do-not-collect"
+    | "jump-then-back"
+    | "mash-jump"
+    | "precision-movement";
+  readonly requiredPresses?: number;
+  readonly windowMs?: number;
+  readonly notes: string;
+}
+
+export interface GimmickOutcome {
+  readonly kind: "instant-death" | "forced-control-death" | "launch-death";
+  readonly deathCause: "trap" | "scripted";
+  readonly controlOverride?: "run-left" | "drift-backward" | "launch-up";
+  readonly durationMs?: number;
+  readonly deathDelayMs?: number;
+}
+
+export interface WorldGimmickDefinition {
+  readonly id: string;
+  readonly worldId: WorldId;
+  readonly stageId: StageId;
+  readonly sectionIndex: 2 | 3 | 4;
+  readonly objectId: string;
+  readonly kind: GimmickKind;
+  readonly trigger: GimmickTrigger;
+  readonly x: number;
+  readonly y: number;
+  readonly width: number;
+  readonly height: number;
+  readonly visualKey: string;
+  readonly variantKey?: string;
+  readonly hintPolicy: "none";
+  readonly lethal: true;
+  readonly counterplay: GimmickCounterplay;
+  readonly outcome: GimmickOutcome;
+  readonly seedGroup?: string;
+  readonly chainIds: readonly string[];
+}
 
 export interface MapSectionDefinition {
   readonly id: string;
@@ -139,6 +224,7 @@ export interface StageMapDefinition {
   readonly sections: readonly MapSectionDefinition[];
   readonly layers: readonly MapLayerDefinition[];
   readonly objectDefinitions: readonly MapObjectDefinition[];
+  readonly gimmicks: readonly WorldGimmickDefinition[];
   readonly chainRules: readonly MapChainRule[];
 }
 

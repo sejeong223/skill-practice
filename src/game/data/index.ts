@@ -9,6 +9,11 @@ import type {
 } from "../core/types";
 import { BOSS_DEFINITIONS, CUTSCENE_DEFINITIONS, STAGE_DEFINITIONS, WORLD_DEFINITIONS } from "./worlds";
 import { WORLD_MAP_THEMES } from "./worldMaps";
+import {
+  WORLD01_GIMMICK_COUNT,
+  WORLD01_GIMMICK_MINIMUMS,
+  WORLD01_GIMMICKS,
+} from "./world01Gimmicks";
 import { SKILL_DEFINITIONS } from "./skills";
 import { TOOL_DEFINITIONS } from "./tools";
 import {
@@ -110,6 +115,9 @@ export {
   TOOL_DEFINITIONS,
   WORLD_DEFINITIONS,
   WORLD_MAP_THEMES,
+  WORLD01_GIMMICKS,
+  WORLD01_GIMMICK_COUNT,
+  WORLD01_GIMMICK_MINIMUMS,
   ContentRegistryError,
   validateContentRegistry,
   validateCampaignMaps,

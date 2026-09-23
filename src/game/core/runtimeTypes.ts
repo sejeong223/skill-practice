@@ -1,3 +1,4 @@
+import type { GimmickRuntimeStatus } from "./contentTypes";
 import type { StageId } from "./types";
 
 export interface MapObjectRuntimeState {
@@ -6,6 +7,14 @@ export interface MapObjectRuntimeState {
   readonly y: number;
   readonly collision: boolean;
   readonly variant?: string;
+}
+
+export interface GimmickRuntimeState {
+  readonly gimmickId: string;
+  readonly status: GimmickRuntimeStatus;
+  readonly startedAt: number | null;
+  readonly counterpresses: number;
+  readonly snapshotSeed: number;
 }
 
 export interface MapRuntimeSnapshot {
@@ -18,6 +27,7 @@ export interface MapRuntimeSnapshot {
   readonly spawnedEntityIds: readonly string[];
   readonly firedChainIds: readonly string[];
   readonly objectStates: Readonly<Record<string, MapObjectRuntimeState>>;
+  readonly gimmickStates: Readonly<Record<string, GimmickRuntimeState>>;
 }
 
 export interface CheckpointSnapshot {

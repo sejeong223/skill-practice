@@ -14,6 +14,7 @@ import type {
   WorldDefinition,
 } from "../core/contentTypes";
 import { createDefaultStageSections, WORLD_MAP_THEMES } from "./worldMaps";
+import { getWorld01GimmicksForStage } from "./world01Gimmicks";
 import type {
   SkillId,
   StageDefinition,
@@ -203,6 +204,28 @@ function createStageMap(
     });
   }
 
+  const gimmicks =
+    worldId === "world-01" && !isBoss
+      ? getWorld01GimmicksForStage(stageId)
+      : [];
+  const gimmickObjects: MapObjectDefinition[] = gimmicks.map((gimmick) => ({
+    id: gimmick.objectId,
+    kind: "interactive",
+    x: gimmick.x,
+    y: gimmick.y,
+    width: gimmick.width,
+    height: gimmick.height,
+    visualKey: gimmick.visualKey,
+    layerId: gameplayLayerId,
+    collision: false,
+    properties: {
+      gimmickId: gimmick.id,
+      gimmickKind: gimmick.kind,
+      trigger: gimmick.trigger,
+      hintPolicy: gimmick.hintPolicy,
+    },
+  }));
+
   return {
     mapKey: stageId + "-map",
     mapFile: "/assets/pixel/maps/" + stageId + ".json",
@@ -212,7 +235,8 @@ function createStageMap(
     mapHeight: 720,
     sections: isBoss ? [] : createDefaultStageSections(stageId),
     layers: WORLD_MAP_THEMES.find((theme) => theme.worldId === worldId)?.layers ?? [],
-    objectDefinitions: requiredObjects,
+    objectDefinitions: [...gimmickObjects, ...requiredObjects],
+    gimmicks,
     chainRules: [],
   };
 }

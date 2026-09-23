@@ -12,13 +12,33 @@ import {
 import type { WorldId } from "../core/types";
 
 export const WORLD_MAP_THEMES: readonly WorldMapThemeDefinition[] = [
-  createTheme("world-01", "world-01-tileset", ["alley", "laundry", "roof", "fence"], {
+  createTheme(
+    "world-01",
+    "world-01-tileset",
+    [
+      "alley",
+      "laundry",
+      "roof",
+      "fence",
+      "ant",
+      "invisible-wall",
+      "ground",
+      "white-spike",
+      "pigeon",
+      "bone-coin",
+      "fake-checkpoint",
+      "cat-box",
+      "cloud",
+      "name-bubble",
+    ],
+    {
     far: "#f2c078",
     mid: "#d98963",
     gameplay: "#6b4950",
     foreground: "#3d2d3a",
     accent: "#e85d5d",
-  }),
+    },
+  ),
   createTheme("world-02", "world-02-tileset", ["swing", "slide", "seesaw", "jungle-gym"], {
     far: "#9bd8e5",
     mid: "#f4c95d",

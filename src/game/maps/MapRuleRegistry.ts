@@ -121,6 +121,7 @@ export class MapRuleRegistry {
       spawnedEntityIds: [...this.spawnedEntityIds],
       firedChainIds: [...this.firedChainIds],
       objectStates,
+      gimmickStates: {},
     };
   }
 

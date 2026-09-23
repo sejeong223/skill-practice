@@ -106,6 +106,25 @@ export interface GameplayEventMap {
     checkpointId: string | null;
     now: number;
   };
+  "gimmick-triggered": {
+    stageId: string;
+    gimmickId: string;
+    kind: string;
+    trigger: string;
+    now: number;
+  };
+  "gimmick-counterplay-progress": {
+    gimmickId: string;
+    current: number;
+    required: number;
+    now: number;
+  };
+  "gimmick-outcome": {
+    gimmickId: string;
+    outcome: "instant-death" | "forced-control-death" | "launch-death";
+    deathCause: "trap" | "scripted";
+    now: number;
+  };
 }
 
 export type GameplayEventType = keyof GameplayEventMap;
