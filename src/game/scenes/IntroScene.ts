@@ -192,6 +192,7 @@ export class IntroScene extends Phaser.Scene {
       this.progress.seenCutsceneIds.push(INTRO_CUTSCENE.id);
     }
     this.actorRig?.stop();
+    this.actorRig?.hideOwnerAndBag();
     this.audioManager?.stopMusic();
     this.eventBus?.emit("cutscene-finished", {
       cutsceneId: INTRO_CUTSCENE.id,

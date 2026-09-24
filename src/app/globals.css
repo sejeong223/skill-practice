@@ -218,9 +218,8 @@ form { display: flex; gap: 6px; margin-top: 10px; } form input { min-width: 0; f
   width: 100%;
   gap: 6px;
   margin-top: 10px;
-  padding: 10px 0 0;
+  padding: 0;
   border: 0;
-  border-top: 2px dashed #8b5a56;
   background: transparent;
 }
 

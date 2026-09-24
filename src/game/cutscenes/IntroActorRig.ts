@@ -29,6 +29,7 @@ export class IntroActorRig {
   private readonly corgi: Phaser.GameObjects.Sprite;
   private readonly cat: Phaser.GameObjects.Sprite;
   private readonly owner: Phaser.GameObjects.Sprite;
+  private readonly ribPlate: Phaser.GameObjects.Container;
   private readonly rib: Phaser.GameObjects.Image;
   private readonly slipper: Phaser.GameObjects.Image;
   private readonly corgiCarry: Phaser.GameObjects.Image;
@@ -80,6 +81,9 @@ export class IntroActorRig {
       .setDepth(layout.ownerEntry.depth)
       .setVisible(false)
       .setAlpha(0);
+
+    this.ribPlate = this.createRibPlate(layout.rib.x, layout.rib.y + 48);
+    this.ribPlate.setVisible(false).setAlpha(0);
 
     this.rib = scene.add
       .image(layout.rib.x, layout.rib.y, "intro-rib")
@@ -143,6 +147,10 @@ export class IntroActorRig {
       .setFrame(OWNER_FRAME.enter)
       .setVisible(false)
       .setAlpha(0);
+    this.ribPlate
+      .setPosition(this.layout.rib.x, this.layout.rib.y + 48)
+      .setVisible(false)
+      .setAlpha(0);
     this.rib
       .setPosition(this.layout.rib.x, this.layout.rib.y)
       .setVisible(false)
@@ -162,6 +170,7 @@ export class IntroActorRig {
     this.scene.tweens.killTweensOf(this.corgiCarry);
     this.scene.tweens.killTweensOf(this.cat);
     this.scene.tweens.killTweensOf(this.owner);
+    this.scene.tweens.killTweensOf(this.ribPlate);
     this.scene.tweens.killTweensOf(this.rib);
     this.scene.tweens.killTweensOf(this.slipper);
     this.scene.tweens.killTweensOf(this.bag);
@@ -174,9 +183,17 @@ export class IntroActorRig {
     this.corgiCarry.destroy();
     this.cat.destroy();
     this.owner.destroy();
+    this.ribPlate.destroy(true);
     this.rib.destroy();
     this.slipper.destroy();
     this.bag.destroy();
+  }
+
+  public hideOwnerAndBag(): void {
+    this.scene.tweens.killTweensOf(this.owner);
+    this.scene.tweens.killTweensOf(this.bag);
+    this.owner.setVisible(false).setAlpha(0);
+    this.bag.setVisible(false).setAlpha(0);
   }
 
   private playCorgiAction(action: ActorAction): void {
@@ -269,7 +286,7 @@ export class IntroActorRig {
           alpha: 0,
           duration: 850,
           ease: "Sine.easeIn",
-          onComplete: () => this.owner.setVisible(false),
+          onComplete: () => this.hideOwnerAndBag(),
         });
         break;
       case "reveal":
@@ -341,6 +358,10 @@ export class IntroActorRig {
 
     switch (action.action) {
       case "reveal":
+        this.ribPlate
+          .setPosition(this.layout.rib.x, this.layout.rib.y + 48)
+          .setVisible(true)
+          .setAlpha(0);
         this.rib
           .setPosition(this.layout.rib.x, this.layout.rib.y - 45)
           .setVisible(true)
@@ -351,6 +372,12 @@ export class IntroActorRig {
           y: this.layout.rib.y,
           alpha: 1,
           duration: 650,
+          ease: "Sine.easeOut",
+        });
+        this.scene.tweens.add({
+          targets: this.ribPlate,
+          alpha: 1,
+          duration: 400,
           ease: "Sine.easeOut",
         });
         break;
@@ -376,6 +403,10 @@ export class IntroActorRig {
         });
         break;
       case "hold":
+        this.ribPlate
+          .setPosition(this.layout.rib.x, this.layout.rib.y + 48)
+          .setVisible(true)
+          .setAlpha(1);
         this.rib.setPosition(this.layout.rib.x, this.layout.rib.y).setVisible(true).setAlpha(1);
         break;
       case "enter":
@@ -473,5 +504,40 @@ export class IntroActorRig {
     bag.lineStyle(4, 0x24212a, 1);
     bag.strokeRect(14, 1, 22, 14);
     return this.scene.add.container(x, y, [bag]).setDepth(this.layout.ownerEntry.depth + 1);
+  }
+
+  private createRibPlate(x: number, y: number): Phaser.GameObjects.Container {
+    const art = this.scene.add.graphics();
+    const pixel = 8;
+    const rows = [
+      { row: 0, left: 7, width: 14 },
+      { row: 1, left: 4, width: 20 },
+      { row: 2, left: 2, width: 24 },
+      { row: 3, left: 1, width: 26 },
+      { row: 4, left: 2, width: 24 },
+      { row: 5, left: 4, width: 20 },
+      { row: 6, left: 7, width: 14 },
+    ];
+
+    rows.forEach(({ row, left, width }) => {
+      art.fillStyle(0x5f3942, 1);
+      art.fillRect(left * pixel, row * pixel, width * pixel, pixel);
+    });
+
+    rows.slice(1, 6).forEach(({ row, left, width }) => {
+      art.fillStyle(0xfff8e5, 1);
+      art.fillRect((left + 1) * pixel, row * pixel, (width - 2) * pixel, pixel);
+    });
+
+    [
+      { row: 2, left: 5, width: 16 },
+      { row: 3, left: 4, width: 18 },
+      { row: 4, left: 5, width: 16 },
+    ].forEach(({ row, left, width }) => {
+      art.fillStyle(0xe8cda0, 1);
+      art.fillRect(left * pixel, row * pixel, width * pixel, pixel);
+    });
+
+    return this.scene.add.container(x - 104, y - 24, [art]).setDepth(this.layout.rib.depth - 1);
   }
 }
