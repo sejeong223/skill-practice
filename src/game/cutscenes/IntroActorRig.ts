@@ -338,7 +338,7 @@ export class IntroActorRig {
     switch (action.action) {
       case "reveal":
         this.hideOwnerAndBag();
-        this.corgi.setFlipX(false);
+        this.corgi.setFlipX(true);
         this.ribPlate
           .setPosition(this.layout.rib.x, this.layout.rib.y + 48)
           .setVisible(true)
