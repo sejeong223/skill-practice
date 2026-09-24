@@ -18,9 +18,9 @@ const CAT_FRAME = {
 } as const;
 
 const OWNER_FRAME = {
-  point: 0,
-  retreat: 1,
-  enter: 2,
+  point: 1,
+  retreat: 2,
+  enter: 0,
 } as const;
 
 export class IntroActorRig {
@@ -33,7 +33,6 @@ export class IntroActorRig {
   private readonly rib: Phaser.GameObjects.Image;
   private readonly slipper: Phaser.GameObjects.Image;
   private readonly corgiCarry: Phaser.GameObjects.Image;
-  private readonly bag: Phaser.GameObjects.Container;
   private readonly delayedCalls: Phaser.Time.TimerEvent[] = [];
   private corgiBaseY: number;
   private catBaseY: number;
@@ -99,8 +98,6 @@ export class IntroActorRig {
       .setVisible(false)
       .setAlpha(0);
 
-    this.bag = this.createPixelBag(layout.ownerEntry.x + 30, layout.ownerEntry.y + 80);
-    this.bag.setVisible(false).setAlpha(0);
   }
 
   public playAction(action: ActorAction): void {
@@ -159,10 +156,6 @@ export class IntroActorRig {
       .setPosition(this.layout.slipper.x, this.layout.slipper.y)
       .setVisible(false)
       .setAlpha(0);
-    this.bag
-      .setPosition(this.layout.ownerEntry.x + 30, this.layout.ownerEntry.y + 80)
-      .setVisible(false)
-      .setAlpha(0);
   }
 
   public stop(): void {
@@ -173,7 +166,6 @@ export class IntroActorRig {
     this.scene.tweens.killTweensOf(this.ribPlate);
     this.scene.tweens.killTweensOf(this.rib);
     this.scene.tweens.killTweensOf(this.slipper);
-    this.scene.tweens.killTweensOf(this.bag);
     this.delayedCalls.splice(0).forEach((event) => event.remove(false));
   }
 
@@ -186,14 +178,11 @@ export class IntroActorRig {
     this.ribPlate.destroy(true);
     this.rib.destroy();
     this.slipper.destroy();
-    this.bag.destroy();
   }
 
   public hideOwnerAndBag(): void {
     this.scene.tweens.killTweensOf(this.owner);
-    this.scene.tweens.killTweensOf(this.bag);
     this.owner.setVisible(false).setAlpha(0);
-    this.bag.setVisible(false).setAlpha(0);
   }
 
   private playCorgiAction(action: ActorAction): void {
@@ -236,7 +225,6 @@ export class IntroActorRig {
 
   private playOwnerAction(action: ActorAction): void {
     this.scene.tweens.killTweensOf(this.owner);
-    this.scene.tweens.killTweensOf(this.bag);
 
     switch (action.action) {
       case "enter":
@@ -245,20 +233,9 @@ export class IntroActorRig {
           .setPosition(this.layout.ownerEntry.x - 170, this.layout.ownerEntry.y)
           .setVisible(true)
           .setAlpha(0);
-        this.bag
-          .setPosition(this.layout.ownerEntry.x - 140, this.layout.ownerEntry.y + 95)
-          .setVisible(true)
-          .setAlpha(0);
         this.scene.tweens.add({
           targets: this.owner,
           x: this.layout.ownerEntry.x,
-          alpha: 1,
-          duration: 900,
-          ease: "Sine.easeOut",
-        });
-        this.scene.tweens.add({
-          targets: this.bag,
-          x: this.layout.ownerEntry.x + 30,
           alpha: 1,
           duration: 900,
           ease: "Sine.easeOut",
@@ -270,7 +247,6 @@ export class IntroActorRig {
           .setPosition(this.layout.ownerEntry.x + 150, this.layout.ownerEntry.y - 30)
           .setVisible(true)
           .setAlpha(1);
-        this.bag.setVisible(false);
         this.scene.tweens.add({
           targets: this.owner,
           y: this.layout.ownerEntry.y - 75,
@@ -281,7 +257,7 @@ export class IntroActorRig {
       case "retreat":
         this.owner.setFrame(OWNER_FRAME.retreat);
         this.scene.tweens.add({
-          targets: [this.owner, this.bag],
+          targets: this.owner,
           x: this.layout.ownerEntry.x - 260,
           alpha: 0,
           duration: 850,
@@ -296,7 +272,6 @@ export class IntroActorRig {
       case "throw":
       case "leap":
         this.owner.setVisible(false);
-        this.bag.setVisible(false);
         break;
       case "surprise":
         this.owner.setFrame(OWNER_FRAME.point).setVisible(true).setAlpha(1);
@@ -358,6 +333,7 @@ export class IntroActorRig {
 
     switch (action.action) {
       case "reveal":
+        this.hideOwnerAndBag();
         this.ribPlate
           .setPosition(this.layout.rib.x, this.layout.rib.y + 48)
           .setVisible(true)
@@ -366,7 +342,6 @@ export class IntroActorRig {
           .setPosition(this.layout.rib.x, this.layout.rib.y - 45)
           .setVisible(true)
           .setAlpha(0);
-        this.bag.setVisible(false);
         this.scene.tweens.add({
           targets: this.rib,
           y: this.layout.rib.y,
@@ -493,17 +468,6 @@ export class IntroActorRig {
         });
       },
     });
-  }
-
-  private createPixelBag(x: number, y: number): Phaser.GameObjects.Container {
-    const bag = this.scene.add.graphics();
-    bag.fillStyle(0x24212a, 1);
-    bag.fillRect(4, 10, 42, 42);
-    bag.lineStyle(4, 0x54404a, 1);
-    bag.strokeRect(4, 10, 42, 42);
-    bag.lineStyle(4, 0x24212a, 1);
-    bag.strokeRect(14, 1, 22, 14);
-    return this.scene.add.container(x, y, [bag]).setDepth(this.layout.ownerEntry.depth + 1);
   }
 
   private createRibPlate(x: number, y: number): Phaser.GameObjects.Container {
