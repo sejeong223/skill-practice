@@ -133,8 +133,15 @@ export class AudioManager {
   }
 
   private bindUnlockGesture(): void {
-    this.scene.input.once("pointerdown", () => this.unlock());
-    this.scene.input.keyboard?.once("keydown", () => this.unlock());
+    if (typeof window === "undefined") return;
+
+    const unlock = (): void => this.unlock();
+    window.addEventListener("pointerdown", unlock, { once: true, capture: true });
+    window.addEventListener("keydown", unlock, { once: true, capture: true });
+    this.unsubscribers.push(
+      () => window.removeEventListener("pointerdown", unlock, true),
+      () => window.removeEventListener("keydown", unlock, true),
+    );
   }
 
   private playMusicStep(pattern: readonly number[]): void {

@@ -1,6 +1,6 @@
 # Task: T04 인트로 통합·회귀 검증
 
-## Status: pending
+## Status: done (browser visual acceptance deferred)
 
 ## Goal
 
@@ -44,19 +44,23 @@
 
 ## Acceptance Criteria
 
-- [ ] 11개 비트가 35~40초 안에 중복/건너뜀/잔류 타이머 없이 한 번 재생된다.
-- [ ] 16:9 캔버스와 DOM overlay는 viewport 경계까지 이어지며 ultrawide/1280×800에서 비율이 보존되고 UI가 잘리지 않는다.
-- [ ] 재시청만 skip, 첫 플레이 자동 완료, 이름 입력 후 World 1 진입이 검증된다.
-- [ ] lint, production build, World 1 map check가 모두 통과한다.
-- [ ] 브라우저 실제 테스트 결과와 증거 경로가 checklist에 기록되고 사용자가 미리보기와 실행 장면을 확인할 수 있다.
-- [ ] 원래 current pointer가 가리키던 World 1 T05는 사용자 맵 검수 완료 전까지 pending 상태로 보존된다.
+- [x] 소스 계약상 11개 비트의 합산 길이가 36.5초이고, 순차 타임라인은 단일 타이머와 취소 토큰으로 재생된다.
+- [x] 16:9 프레임과 DOM overlay가 같은 프레임 부모에 맞춰지고, ultrawide/1280×800의 프레임 치수가 CSS 기준으로 계산된다.
+- [x] 첫 실행/재시청 skip gate, 이름 입력, World 1 진입 이벤트의 연결을 소스에서 확인했다. 실제 브라우저 상호작용은 미확인이다.
+- [x] lint, production build, World 1 map check가 모두 통과한다.
+- [ ] 브라우저 실제 테스트와 런타임 캡처는 실행 환경에서 브라우저를 조작할 수 없어 미실행이다. 수동 체크리스트와 미실행 사실을 기록했다.
+- [x] 원래 current pointer가 가리키던 World 1 T05는 사용자 맵 검수 전까지 pending 상태로 보존한다.
 
 ## Validation
 
-- npm.cmd run lint — 기대: exit code 0.
-- npm.cmd run build — 기대: exit code 0.
-- npm.cmd run world01:maps:check — 기대: 기존 World 1 map schema/check 통과.
-- npm.cmd run dev — 위 체크리스트 해상도와 진행 흐름을 실제 브라우저에서 검증하고 기록한다.
+- `npm.cmd run lint` — 통과, exit code 0.
+- `npm.cmd run build` — 통과, exit code 0 (TypeScript 포함).
+- `npm.cmd run world01:maps:check` — 통과: 4개 맵, 66개 기믹, 81개 Tiled 객체.
+- `GET http://localhost:3000/` — 통과, 200; 게임 제목 SSR 응답 확인.
+- `GET http://localhost:3000/assets/fonts/Galmuri11-Bold.woff2` — 통과, 200; 166,632 bytes.
+- 필수 에셋 manifest URL 21개 — 모두 HTTP 200, 누락 0.
+- 화면비 계산 (소스 기준): 1920×1080 → 1920×1080; 1280×720 → 1280×720; 2560×1080 → 1920×1080 + 좌우 320px; 1280×800 → 1280×720 + 상하 40px.
+- 실제 브라우저 렌더·상호작용·오디오 청취와 콘솔 검사는 미실행이며 `.memory/test-plans/2026-09-24-cinematic-pixel-intro-validation.md`에 재현 절차를 남겼다.
 
 ## Commit Message
 
@@ -71,7 +75,7 @@
 
 ## Progress
 
-- [ ] 자동 lint/build/map validation
-- [ ] 화면비·컷신·오디오·입력 브라우저 스모크
-- [ ] 테스트 증거와 결과 기록
-- commit: pending
+- [x] 자동 lint/build/map validation
+- [ ] 화면비·컷신·오디오·입력 브라우저 스모크 (브라우저 조작 도구 부재로 미실행)
+- [x] 테스트 증거와 결과 및 미검증 범위 기록
+- commit: `test(intro): 시네마틱 인트로와 화면비 회귀 검증`

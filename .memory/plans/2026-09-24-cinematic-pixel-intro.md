@@ -19,8 +19,10 @@
 
 | Phase | Status | Summary | Blueprint |
 | :--- | :--- | :--- | :--- |
-| P01 | in_progress | 픽셀 스토리보드 검수 후 전체 뷰포트와 로컬 픽셀 UI 기반을 준비한다. | [P01](../phases/2026-09-24-cinematic-pixel-intro/P01-pixel-storyboard-and-shell/phase.md) |
-| P02 | pending | 승인된 실내 미술 자산과 배우·카메라·대사·음향을 실제 인트로 장면으로 연결한다. | [P02](../phases/2026-09-24-cinematic-pixel-intro/P02-cinematic-home-scene/phase.md) |
+| P01 | done | 픽셀 스토리보드 검수 후 전체 뷰포트와 로컬 픽셀 UI 기반을 준비한다. | [P01](../phases/2026-09-24-cinematic-pixel-intro/P01-pixel-storyboard-and-shell/phase.md) |
+| P02 | done* | 승인된 실내 미술 자산과 배우·카메라·대사·음향을 인트로 장면으로 연결했다. 브라우저 육안 승인만 미실행이다. | [P02](../phases/2026-09-24-cinematic-pixel-intro/P02-cinematic-home-scene/phase.md) |
+
+전체 구현 Task는 완료했다. 브라우저 실제 장면 승인과 오디오 청취는 실행 환경에 브라우저 조작 기능이 없어 미확인으로 남겼으며, 재현 절차는 [통합 검증 체크리스트](../test-plans/2026-09-24-cinematic-pixel-intro-validation.md)에 기록했다.
 
 ## Execution order
 
@@ -40,9 +42,9 @@
 
 ## Definition of done
 
-- [ ] 승인된 집 구도와 코기·고양이 디자인으로 11개 비트가 실제 움직이는 Phaser 장면에서 재생된다.
-- [ ] 첫 재생은 약 36.5초 자동 재생되고, 장면·자막·대사·타이틀·입력 UI가 픽셀 스타일로 일관된다.
-- [ ] 컷신 종료 후 타이틀과 이름 입력이 나타나며, 확인하면 World 1 첫 스테이지로 진입한다.
-- [ ] 16:9에서는 캔버스와 오버레이가 뷰포트 전체를 채우고, 비표준 화면비에서도 잘림·늘어짐·레이아웃 불일치가 없다.
-- [ ] lint, production build, World 1 map validation이 통과하고 브라우저에서 콘솔 오류 없이 재생된다.
-- [ ] World 1 T05는 사용자 맵 검수 전까지 계속 pending으로 남고 완료 처리되지 않는다.
+- [ ] 브라우저에서 승인된 집 구도와 코기·고양이 디자인으로 11개 비트의 실제 움직임을 육안 승인한다. (브라우저 미실행)
+- [ ] 첫 재생의 실제 자동 재생과 장면·자막·대사·타이틀·입력 UI의 시각 일관성을 육안 승인한다. (브라우저 미실행)
+- [ ] 타이틀/이름 입력 후 World 1 첫 스테이지 진입을 브라우저에서 확인한다. (소스 연결 및 HTTP만 확인)
+- [ ] 16:9와 비표준 화면비에서 실제 잘림·늘어짐·오버레이 정렬이 없는지 육안 승인한다. (프레임 크기만 계산)
+- [x] lint, production build, World 1 map validation 통과; 앱 루트, 폰트, 필수 에셋 HTTP 응답 확인. 브라우저 콘솔 검사는 미실행이다.
+- [x] World 1 T05는 사용자 맵 검수 전까지 pending으로 보존했다.
