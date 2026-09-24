@@ -101,10 +101,14 @@ textarea {
 @keyframes title-card-enter { from { opacity: 0; transform: translateY(12px) scale(.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
 .game-overlay { position: absolute; inset: 0; z-index: 3; padding: 16px; overflow: auto; pointer-events: none; color: #5f3942; }
 .game-hud, .overlay-panel, .game-toast, .exit-button { pointer-events: auto; }
-.game-hud { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 10px 12px; border: 2px solid #5f3942; background: rgb(245 231 199 / 92%); box-shadow: 4px 4px 0 rgb(95 57 66 / 30%); font-family: "Galmuri11Pixel"; font-size: 11px; }
+.game-hud { display: inline-flex; width: fit-content; max-width: calc(100% - 32px); align-items: center; justify-content: flex-start; gap: 12px; padding: 6px 8px; border: 2px solid #5f3942; background: rgb(245 231 199 / 92%); box-shadow: 4px 4px 0 rgb(95 57 66 / 30%); font-family: "Galmuri11Pixel"; font-size: 11px; }
+.hud-stage { display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+.status-menu-button { flex: 0 0 auto; align-self: center; padding: 6px 9px; }
 .hud-label, .panel-kicker, .shop-slot { display: block; color: #b0645d; font-size: 9px; letter-spacing: .12em; font-weight: 800; }
+.hud-stage .hud-label { display: inline; }
 .hud-subtitle { display: block; margin-top: 3px; color: #8b5a56; font-size: 9px; }
-.hud-stats { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 5px 12px; max-width: 70%; }
+.hud-stage .hud-subtitle { margin-top: 0; }
+.hud-stats { display: flex; flex-wrap: nowrap; justify-content: flex-start; gap: 5px 12px; max-width: none; }
 .hud-stats span { white-space: nowrap; }
 .overlay-columns { display: grid; grid-template-columns: minmax(220px, 1fr) minmax(300px, 1.35fr); gap: 12px; margin-top: 12px; }
 .overlay-stack { display: grid; align-content: start; gap: 12px; }
@@ -217,7 +221,7 @@ form { display: flex; gap: 6px; margin-top: 10px; } form input { min-width: 0; f
   display: grid;
   width: 100%;
   gap: 6px;
-  margin-top: 10px;
+  margin-top: 0;
   padding: 0;
   border: 0;
   background: transparent;

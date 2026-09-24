@@ -1,9 +1,20 @@
 import * as Phaser from "phaser";
 import type { WorldMapThemeDefinition } from "../core/contentTypes";
 
+interface ScrollableGameObject extends Phaser.GameObjects.GameObject {
+  setScrollFactor(x: number, y?: number): ScrollableGameObject;
+  setVisible(visible: boolean): ScrollableGameObject;
+}
+
+interface ParallaxLayer {
+  readonly gameObject: ScrollableGameObject;
+  readonly scrollFactorX: number;
+  readonly scrollFactorY: number;
+}
+
 export class ParallaxRenderer {
   private readonly scene: Phaser.Scene;
-  private readonly layers: Phaser.GameObjects.GameObject[] = [];
+  private readonly layers: ParallaxLayer[] = [];
 
   public constructor(scene: Phaser.Scene) {
     this.scene = scene;
@@ -17,6 +28,11 @@ export class ParallaxRenderer {
     this.destroy();
 
     for (const layer of theme.layers) {
+      // The tilemap owns gameplay pixels. An opaque fallback here would cover
+      // the sky and midground that were rendered at lower depths.
+      if (layer.kind === "gameplay") {
+        continue;
+      }
       const gameObject = this.createLayer(
         layer.assetKey,
         layer.depth,
@@ -26,14 +42,30 @@ export class ParallaxRenderer {
         mapHeight,
         this.colorForLayer(theme, layer.kind),
       );
-      this.layers.push(gameObject);
+      this.layers.push({
+        gameObject,
+        scrollFactorX: layer.scrollFactorX,
+        scrollFactorY: layer.scrollFactorY,
+      });
     }
 
-    return this.layers;
+    return this.layers.map((layer) => layer.gameObject);
+  }
+
+  public setOverview(overview: boolean): void {
+    for (const layer of this.layers) {
+      // Normal parallax artwork tiles during scrolling. Hide it in the
+      // full-map review so repeated scenery cannot obscure the route layout.
+      layer.gameObject.setVisible(!overview);
+      layer.gameObject.setScrollFactor(
+        overview ? 1 : layer.scrollFactorX,
+        overview ? 1 : layer.scrollFactorY,
+      );
+    }
   }
 
   public destroy(): void {
-    this.layers.splice(0).forEach((layer) => layer.destroy());
+    this.layers.splice(0).forEach((layer) => layer.gameObject.destroy());
   }
 
   private createLayer(
@@ -44,7 +76,7 @@ export class ParallaxRenderer {
     mapWidth: number,
     mapHeight: number,
     fallbackColor: number,
-  ): Phaser.GameObjects.GameObject {
+  ): ScrollableGameObject {
     const canDrawTexture = assetKey !== "world-01-tileset" &&
       this.scene.textures.exists(assetKey);
 

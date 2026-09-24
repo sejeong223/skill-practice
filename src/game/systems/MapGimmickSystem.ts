@@ -16,6 +16,13 @@ import { MapInteractionSystem } from "../maps/MapInteractionSystem";
 
 type RuntimeEntry = GimmickRuntimeState;
 
+export interface MapGimmickDebugState {
+  readonly gimmickId: string;
+  readonly status: GimmickRuntimeStatus;
+  readonly counterpresses: number;
+  readonly lastOutcome: string;
+}
+
 const MAP_TRIGGER_BY_GIMMICK = {
   "walk-enter": "object-enter",
   "forward-jump": "player-jump",
@@ -54,6 +61,7 @@ export class MapGimmickSystem {
   private bubble?: Phaser.GameObjects.Container;
   private bubbleText?: Phaser.GameObjects.Text;
   private readonly snapshotSeed: number;
+  private lastOutcome = "none";
 
   public constructor(
     scene: Phaser.Scene,
@@ -256,6 +264,24 @@ export class MapGimmickSystem {
     ) as Readonly<Record<string, GimmickRuntimeState>>;
   }
 
+  public getDebugState(): MapGimmickDebugState {
+    const active = this.map.gimmicks.find(
+      (gimmick) => this.entries.get(gimmick.id)?.status === "triggered",
+    );
+    const nearest = active ?? [...this.map.gimmicks].sort(
+      (left, right) =>
+        Math.abs(left.x + left.width / 2 - this.player.x) -
+        Math.abs(right.x + right.width / 2 - this.player.x),
+    )[0];
+    const state = nearest ? this.entries.get(nearest.id) : undefined;
+    return {
+      gimmickId: nearest?.id ?? "none",
+      status: state?.status ?? "armed",
+      counterpresses: state?.counterpresses ?? 0,
+      lastOutcome: this.lastOutcome,
+    };
+  }
+
   public destroy(): void {
     this.unsubscribeMapObject();
     this.hideNameBubble();
@@ -347,6 +373,7 @@ export class MapGimmickSystem {
       });
       if (counterpresses >= (gimmick.counterplay.requiredPresses ?? 100)) {
         this.setStatus(gimmick, "escaped", now);
+        this.lastOutcome = "escaped: " + gimmick.id;
         this.mapInteraction.triggerObject(gimmick.objectId, "input-mash", now);
         this.hideNameBubble();
         return;
@@ -528,6 +555,8 @@ export class MapGimmickSystem {
       counterpresses: previous?.counterpresses ?? 0,
       snapshotSeed: previous?.snapshotSeed ?? this.snapshotSeed,
     });
+    if (status === "escaped") this.lastOutcome = "escaped: " + gimmick.id;
+    if (status === "dead") this.lastOutcome = "dead: " + gimmick.id;
   }
 
   private requestDeath(gimmick: WorldGimmickDefinition, now: number): void {
@@ -535,6 +564,7 @@ export class MapGimmickSystem {
       return;
     }
     this.setStatus(gimmick, "dead", now);
+    this.lastOutcome = "dead: " + gimmick.id + " (" + gimmick.outcome.kind + ")";
     this.eventBus.emit("gimmick-outcome", {
       gimmickId: gimmick.id,
       outcome: gimmick.outcome.kind,

@@ -9,6 +9,8 @@ export interface HudProps {
   readonly attackTool?: ToolDefinition;
   readonly defenseTool?: ToolDefinition;
   readonly cooldowns: Partial<Record<SkillId, number>>;
+  readonly statusOpen: boolean;
+  readonly onToggleStatus: () => void;
 }
 
 export function Hud({
@@ -18,6 +20,8 @@ export function Hud({
   attackTool,
   defenseTool,
   cooldowns,
+  statusOpen,
+  onToggleStatus,
 }: HudProps): ReactElement {
   const activeCooldowns = Object.entries(cooldowns)
     .filter(([, value]) => (value ?? 0) > 0)
@@ -25,7 +29,7 @@ export function Hud({
     .join(", ");
   return (
     <div className="game-hud" aria-label="게임 HUD">
-      <div>
+      <div className="hud-stage">
         <span className="hud-label">STAGE</span>
         <strong>{stageTitle}</strong>
         <span className="hud-subtitle">{runtime.checkpointId ? "CHECKPOINT" : "SPAWN"}</span>
@@ -36,6 +40,14 @@ export function Hud({
         <span><b>장비</b> {attackTool?.id ?? "없음"} / {defenseTool?.id ?? "없음"}</span>
         <span><b>쿨다운</b> {activeCooldowns || "준비"}</span>
       </div>
+      <button
+        className="tiny-button status-menu-button"
+        type="button"
+        aria-expanded={statusOpen}
+        onClick={onToggleStatus}
+      >
+        {statusOpen ? "닫기" : "상태 / 설정"}
+      </button>
     </div>
   );
 }

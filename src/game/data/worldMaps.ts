@@ -161,7 +161,7 @@ function createTheme(
     {
       layerId: worldId + "-foreground",
       kind: "foreground",
-      depth: 20,
+      depth: worldId === "world-01" ? -10 : 20,
       scrollFactorX: 1.05,
       scrollFactorY: 1.05,
       assetKey: worldId === "world-01"

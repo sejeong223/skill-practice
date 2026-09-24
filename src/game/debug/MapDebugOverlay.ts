@@ -5,6 +5,8 @@ import { Player } from "../entities/Player";
 import type { LoadedMap } from "../maps/mapTypes";
 import { MapInteractionSystem } from "../maps/MapInteractionSystem";
 import { StageRuntime } from "../stages/StageRuntime";
+import type { MapGimmickDebugState } from "../systems/MapGimmickSystem";
+import { CONTENT_REGISTRY, validateCampaignMaps } from "../data";
 
 interface BoundedObject {
   getBounds?: () => Phaser.Geom.Rectangle;
@@ -16,11 +18,13 @@ export class MapDebugOverlay {
   private readonly runtime: StageRuntime;
   private readonly player: Player;
   private readonly mapInteraction: MapInteractionSystem;
+  private readonly getGimmickState: () => MapGimmickDebugState;
   private readonly loadedMap: LoadedMap | null;
   private readonly text: Phaser.GameObjects.Text;
   private readonly graphics: Phaser.GameObjects.Graphics;
   private readonly toggleKey?: Phaser.Input.Keyboard.Key;
-  private visible = true;
+  private visible = false;
+  private readonly campaignReport = validateCampaignMaps(CONTENT_REGISTRY);
 
   public constructor(
     scene: Phaser.Scene,
@@ -29,6 +33,7 @@ export class MapDebugOverlay {
     player: Player,
     mapInteraction: MapInteractionSystem,
     loadedMap: LoadedMap | null,
+    getGimmickState: () => MapGimmickDebugState,
   ) {
     this.scene = scene;
     this.stage = stage;
@@ -36,6 +41,7 @@ export class MapDebugOverlay {
     this.player = player;
     this.mapInteraction = mapInteraction;
     this.loadedMap = loadedMap;
+    this.getGimmickState = getGimmickState;
     this.graphics = scene.add.graphics().setDepth(1500);
     this.text = scene.add.text(12, 12, "", {
       color: "#f8f1de",
@@ -44,6 +50,8 @@ export class MapDebugOverlay {
       fontSize: "13px",
       padding: { x: 8, y: 6 },
     }).setScrollFactor(0).setDepth(1600).setResolution(2);
+    this.text.setVisible(false);
+    this.graphics.setVisible(false);
 
     if (scene.input.keyboard) {
       this.toggleKey = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F1);
@@ -64,6 +72,10 @@ export class MapDebugOverlay {
       .map(([id]) => id)
       .slice(0, 5);
     const screenX = (this.player.x - camera.scrollX) * camera.zoom;
+    const gimmick = this.getGimmickState();
+    const worldErrors = this.campaignReport.reports
+      .filter((report) => report.stageId.startsWith("world-01-"))
+      .reduce((count, report) => count + report.errors.length, 0);
 
     this.text.setText([
       "[F1] map debug",
@@ -77,6 +89,10 @@ export class MapDebugOverlay {
       "player screen x: " + Math.round(screenX) +
         "  camera: " + Math.round(camera.scrollX) + "," + Math.round(camera.scrollY),
       "bounds: " + this.stage.mapWidth + "x" + this.stage.mapHeight,
+      "gimmick: " + gimmick.gimmickId + " / " + gimmick.status +
+        " / presses " + gimmick.counterpresses,
+      "last outcome: " + gimmick.lastOutcome,
+      "World 1 map validation: " + (worldErrors === 0 ? "PASS" : "FAIL " + worldErrors),
     ]);
 
     this.drawDiagnostics(section);

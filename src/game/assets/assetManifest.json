@@ -30,10 +30,10 @@
     "key": "corgi-run",
     "kind": "spritesheet",
     "url": "/assets/pixel/characters/corgi/corgi-run.png",
-    "frameWidth": 32,
-    "frameHeight": 48,
-    "frameCount": 6,
-    "required": false
+    "frameWidth": 112,
+    "frameHeight": 128,
+    "frameCount": 4,
+    "required": true
   },
   {
     "key": "corgi-jump",

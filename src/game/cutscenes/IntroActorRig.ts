@@ -9,6 +9,17 @@ const CORGI_FRAME = {
   determined: 7,
 } as const;
 
+const CORGI_FLIP_X = {
+  ownerArrival: true,
+  idle: false,
+  eager: true,
+  surprised: false,
+  determined: false,
+  slipperCarry: true,
+} as const;
+
+const CORGI_SURPRISE_BASELINE_OFFSET = 18;
+
 const CAT_FRAME = {
   crouch: 0,
   jump: 2,
@@ -23,13 +34,14 @@ const OWNER_FRAME = {
   enter: 0,
 } as const;
 
+const OWNER_POINT_Y_OFFSET = -75;
+
 export class IntroActorRig {
   private readonly scene: Phaser.Scene;
   private readonly layout: IntroHomeLayout;
   private readonly corgi: Phaser.GameObjects.Sprite;
   private readonly cat: Phaser.GameObjects.Sprite;
   private readonly owner: Phaser.GameObjects.Sprite;
-  private readonly ribPlate: Phaser.GameObjects.Container;
   private readonly rib: Phaser.GameObjects.Image;
   private readonly slipper: Phaser.GameObjects.Image;
   private readonly corgiCarry: Phaser.GameObjects.Image;
@@ -52,7 +64,7 @@ export class IntroActorRig {
       .sprite(layout.corgiWait.x, layout.corgiWait.y, "intro-corgi-actions", CORGI_FRAME.idle)
       .setOrigin(0.5, 0.92)
       .setScale(0.54)
-      .setFlipX(true)
+      .setFlipX(CORGI_FLIP_X.ownerArrival)
       .setDepth(layout.corgiWait.depth);
     this.corgiBaseY = layout.corgiWait.y;
 
@@ -60,7 +72,7 @@ export class IntroActorRig {
       .image(layout.corgiWait.x, layout.corgiWait.y, "intro-corgi-carry-slipper")
       .setOrigin(0.5, 0.92)
       .setDisplaySize(370, 246)
-      .setFlipX(true)
+      .setFlipX(false)
       .setDepth(layout.corgiWait.depth)
       .setVisible(false);
 
@@ -80,9 +92,6 @@ export class IntroActorRig {
       .setDepth(layout.ownerEntry.depth)
       .setVisible(false)
       .setAlpha(0);
-
-    this.ribPlate = this.createRibPlate(layout.rib.x, layout.rib.y + 48);
-    this.ribPlate.setVisible(false).setAlpha(0);
 
     this.rib = scene.add
       .image(layout.rib.x, layout.rib.y, "intro-rib")
@@ -128,10 +137,12 @@ export class IntroActorRig {
     this.corgi
       .setPosition(this.layout.corgiWait.x, this.corgiBaseY)
       .setFrame(CORGI_FRAME.idle)
+      .setFlipX(CORGI_FLIP_X.ownerArrival)
       .setVisible(true)
       .setAlpha(1);
     this.corgiCarry
       .setPosition(this.layout.corgiWait.x, this.corgiBaseY)
+      .setFlipX(false)
       .setVisible(false)
       .setAlpha(1);
     this.cat
@@ -142,10 +153,6 @@ export class IntroActorRig {
     this.owner
       .setPosition(this.layout.ownerEntry.x, this.layout.ownerEntry.y)
       .setFrame(OWNER_FRAME.enter)
-      .setVisible(false)
-      .setAlpha(0);
-    this.ribPlate
-      .setPosition(this.layout.rib.x, this.layout.rib.y + 48)
       .setVisible(false)
       .setAlpha(0);
     this.rib
@@ -166,7 +173,6 @@ export class IntroActorRig {
     this.scene.tweens.killTweensOf(this.corgiCarry);
     this.scene.tweens.killTweensOf(this.cat);
     this.scene.tweens.killTweensOf(this.owner);
-    this.scene.tweens.killTweensOf(this.ribPlate);
     this.scene.tweens.killTweensOf(this.rib);
     this.scene.tweens.killTweensOf(this.slipper);
     this.delayedCalls.splice(0).forEach((event) => event.remove(false));
@@ -178,7 +184,6 @@ export class IntroActorRig {
     this.corgiCarry.destroy();
     this.cat.destroy();
     this.owner.destroy();
-    this.ribPlate.destroy(true);
     this.rib.destroy();
     this.slipper.destroy();
   }
@@ -191,23 +196,39 @@ export class IntroActorRig {
   private playCorgiAction(action: ActorAction): void {
     this.scene.tweens.killTweensOf(this.corgi);
     this.scene.tweens.killTweensOf(this.corgiCarry);
+    if (action.action !== "surprise") this.corgi.setY(this.corgiBaseY);
 
     switch (action.action) {
       case "enter":
       case "hold":
-        this.corgi.setFrame(CORGI_FRAME.eager).setVisible(true).setAlpha(1);
+        this.corgi
+          .setFrame(CORGI_FRAME.eager)
+          .setFlipX(CORGI_FLIP_X.eager)
+          .setVisible(true)
+          .setAlpha(1);
         this.corgiCarry.setVisible(false);
         break;
       case "surprise":
-        this.corgi.setFrame(CORGI_FRAME.surprised).setFlipX(false).setVisible(true);
+        this.corgi
+          .setY(this.corgiBaseY + CORGI_SURPRISE_BASELINE_OFFSET)
+          .setFrame(CORGI_FRAME.surprised)
+          .setFlipX(CORGI_FLIP_X.surprised)
+          .setVisible(true);
         this.corgiCarry.setVisible(false);
         break;
       case "leap":
         this.playCorgiLeap(action.x, action.y);
         break;
       case "retreat":
-        if (this.slipperAttached) this.corgiCarry.setVisible(true);
-        else this.corgi.setFrame(CORGI_FRAME.determined).setVisible(true);
+        if (this.slipperAttached) {
+          this.corgiCarry.setFlipX(CORGI_FLIP_X.slipperCarry).setVisible(true);
+        }
+        else {
+          this.corgi
+            .setFrame(CORGI_FRAME.determined)
+            .setFlipX(CORGI_FLIP_X.determined)
+            .setVisible(true);
+        }
         this.scene.tweens.add({
           targets: this.slipperAttached ? this.corgiCarry : this.corgi,
           x: action.x ?? this.layout.dogDoor.x - 90,
@@ -221,7 +242,7 @@ export class IntroActorRig {
       case "steal":
       case "taunt":
       case "throw":
-        this.corgi.setFrame(CORGI_FRAME.idle);
+        this.corgi.setFrame(CORGI_FRAME.idle).setFlipX(CORGI_FLIP_X.idle);
         break;
     }
   }
@@ -233,12 +254,11 @@ export class IntroActorRig {
       case "enter":
         this.owner
           .setFrame(OWNER_FRAME.enter)
-          .setPosition(this.layout.ownerEntry.x - 170, this.layout.ownerEntry.y)
+          .setPosition(this.layout.ownerEntry.x, this.layout.ownerEntry.y)
           .setVisible(true)
           .setAlpha(0);
         this.scene.tweens.add({
           targets: this.owner,
-          x: this.layout.ownerEntry.x,
           alpha: 1,
           duration: 900,
           ease: "Sine.easeOut",
@@ -247,15 +267,9 @@ export class IntroActorRig {
       case "point":
         this.owner
           .setFrame(OWNER_FRAME.point)
-          .setPosition(this.layout.ownerEntry.x + 150, this.layout.ownerEntry.y - 30)
+          .setPosition(this.layout.ownerEntry.x, this.layout.ownerEntry.y + OWNER_POINT_Y_OFFSET)
           .setVisible(true)
           .setAlpha(1);
-        this.scene.tweens.add({
-          targets: this.owner,
-          y: this.layout.ownerEntry.y - 75,
-          duration: 300,
-          ease: "Sine.easeOut",
-        });
         break;
       case "retreat":
         this.owner.setFrame(OWNER_FRAME.retreat);
@@ -277,7 +291,11 @@ export class IntroActorRig {
         this.owner.setVisible(false);
         break;
       case "surprise":
-        this.owner.setFrame(OWNER_FRAME.point).setVisible(true).setAlpha(1);
+        this.owner
+          .setFrame(OWNER_FRAME.point)
+          .setPosition(this.layout.ownerEntry.x, this.layout.ownerEntry.y + OWNER_POINT_Y_OFFSET)
+          .setVisible(true)
+          .setAlpha(1);
         break;
     }
   }
@@ -338,11 +356,7 @@ export class IntroActorRig {
     switch (action.action) {
       case "reveal":
         this.hideOwnerAndBag();
-        this.corgi.setFlipX(true);
-        this.ribPlate
-          .setPosition(this.layout.rib.x, this.layout.rib.y + 48)
-          .setVisible(true)
-          .setAlpha(0);
+        this.corgi.setFlipX(CORGI_FLIP_X.idle);
         this.rib
           .setPosition(this.layout.rib.x, this.layout.rib.y - 45)
           .setDisplaySize(170, 170)
@@ -355,12 +369,6 @@ export class IntroActorRig {
           y: this.layout.rib.y,
           alpha: 1,
           duration: 650,
-          ease: "Sine.easeOut",
-        });
-        this.scene.tweens.add({
-          targets: this.ribPlate,
-          alpha: 1,
-          duration: 400,
           ease: "Sine.easeOut",
         });
         break;
@@ -378,7 +386,7 @@ export class IntroActorRig {
         break;
       case "taunt":
         this.rib
-          .setPosition(this.layout.balcony.x - 10, this.layout.balcony.y - 112)
+          .setPosition(this.layout.balcony.x - 10, this.layout.balcony.y - 25)
           .setDisplaySize(76, 76)
           .setRotation(0)
           .setDepth(this.layout.balcony.depth + 1)
@@ -396,10 +404,6 @@ export class IntroActorRig {
         });
         break;
       case "hold":
-        this.ribPlate
-          .setPosition(this.layout.rib.x, this.layout.rib.y + 48)
-          .setVisible(true)
-          .setAlpha(1);
         this.rib
           .setPosition(this.layout.rib.x, this.layout.rib.y)
           .setDisplaySize(170, 170)
@@ -428,16 +432,21 @@ export class IntroActorRig {
       case "reveal":
         this.slipperAttached = true;
         this.slipper.setVisible(false).setAlpha(0);
-        this.corgi.setVisible(false);
+        this.corgi.setY(this.corgiBaseY).setVisible(false);
         this.corgiCarry
-          .setPosition(this.corgi.x, this.corgi.y)
+          .setPosition(this.corgi.x, this.corgiBaseY)
+          .setFlipX(CORGI_FLIP_X.slipperCarry)
           .setVisible(true)
           .setAlpha(1);
         break;
       case "throw":
         this.slipperAttached = false;
         this.corgiCarry.setVisible(false);
-        this.corgi.setFrame(CORGI_FRAME.determined).setVisible(true).setAlpha(1);
+        this.corgi
+          .setFrame(CORGI_FRAME.determined)
+          .setFlipX(CORGI_FLIP_X.determined)
+          .setVisible(true)
+          .setAlpha(1);
         this.slipper.setVisible(true).setAlpha(1);
         this.scene.tweens.add({
           targets: this.slipper,
@@ -465,6 +474,7 @@ export class IntroActorRig {
     const targetX = x ?? this.layout.dogDoor.x;
     const landingY = y ?? this.corgiBaseY;
     const actor = this.slipperAttached ? this.corgiCarry : this.corgi;
+    actor.setFlipX(this.slipperAttached ? CORGI_FLIP_X.slipperCarry : CORGI_FLIP_X.determined);
     if (this.slipperAttached) {
       actor.setPosition(this.corgiCarry.x, this.corgiCarry.y).setVisible(true).setAlpha(1);
     } else {
@@ -495,38 +505,4 @@ export class IntroActorRig {
     });
   }
 
-  private createRibPlate(x: number, y: number): Phaser.GameObjects.Container {
-    const art = this.scene.add.graphics();
-    const pixel = 8;
-    const rows = [
-      { row: 0, left: 7, width: 14 },
-      { row: 1, left: 4, width: 20 },
-      { row: 2, left: 2, width: 24 },
-      { row: 3, left: 1, width: 26 },
-      { row: 4, left: 2, width: 24 },
-      { row: 5, left: 4, width: 20 },
-      { row: 6, left: 7, width: 14 },
-    ];
-
-    rows.forEach(({ row, left, width }) => {
-      art.fillStyle(0x5f3942, 1);
-      art.fillRect(left * pixel, row * pixel, width * pixel, pixel);
-    });
-
-    rows.slice(1, 6).forEach(({ row, left, width }) => {
-      art.fillStyle(0xfff8e5, 1);
-      art.fillRect((left + 1) * pixel, row * pixel, (width - 2) * pixel, pixel);
-    });
-
-    [
-      { row: 2, left: 5, width: 16 },
-      { row: 3, left: 4, width: 18 },
-      { row: 4, left: 5, width: 16 },
-    ].forEach(({ row, left, width }) => {
-      art.fillStyle(0xe8cda0, 1);
-      art.fillRect(left * pixel, row * pixel, width * pixel, pixel);
-    });
-
-    return this.scene.add.container(x - 104, y - 24, [art]).setDepth(this.layout.rib.depth - 1);
-  }
 }

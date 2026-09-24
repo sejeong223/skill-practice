@@ -2,8 +2,6 @@
 
 import { useState, type FormEvent, type ReactElement } from "react";
 
-const GAME_TITLE = "짧은 다리의 역습: 전설의 왕갈비뼈를 찾아서";
-
 export interface IntroTitleOverlayProps {
   readonly initialName: string;
   readonly onConfirm: (name: string) => void;
@@ -26,7 +24,11 @@ export function IntroTitleOverlay({
       {phase === "title" ? (
         <section className="intro-title-card" aria-labelledby="intro-game-title">
           <p className="intro-title-kicker">A VERY SHORT-LEGGED ADVENTURE</p>
-          <h2 id="intro-game-title">{GAME_TITLE}</h2>
+          <h2 id="intro-game-title">
+            짧은 다리의 역습:
+            <br />
+            전설의 왕갈비뼈를 찾아서
+          </h2>
           <p>왕갈비뼈를 되찾기 위한 코기의 추격이 시작된다</p>
           <button
             className="primary-button"

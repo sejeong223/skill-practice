@@ -1,5 +1,6 @@
 import type {
   ContentRegistry,
+  GimmickCounterplay,
   GimmickKind,
   MapObjectDefinition,
   MapSectionDefinition,
@@ -9,7 +10,10 @@ import type {
 import { STAGE_IDS } from "../core/constants";
 import type { StageDefinition, StageId } from "../core/types";
 import { DEFAULT_PLAYER_TUNING } from "../entities/playerTypes";
-import { WORLD01_GIMMICK_MAX_GAP_MS } from "./world01Gimmicks";
+import {
+  WORLD01_GIMMICK_MAX_GAP_MS,
+  WORLD01_GIMMICK_MINIMUMS,
+} from "./world01Gimmicks";
 
 export interface MapValidationReport {
   readonly stageId: StageId;
@@ -187,26 +191,11 @@ export function validateCampaignMaps(
     errors.push("world-01: 기믹 카탈로그는 최소 66개여야 합니다.");
   }
 
-  const minimums: Readonly<Partial<Record<GimmickKind, number>>> = {
-    "ground-collapse": 12,
-    "ground-rise": 12,
-    "revealed-white-spike": 12,
-    "jump-pigeon": 8,
-    "fake-bone-green": 2,
-    "fake-bone-reverse": 2,
-    "fake-bone-fire": 2,
-    "fake-checkpoint": 3,
-    "box-cat-arm": 3,
-    "cloud-rain": 3,
-    "ant-trip": 2,
-    "forward-jump-wall": 3,
-    "name-bubble-control-loss": 2,
-  };
   const counts = new Map<GimmickKind, number>();
   for (const gimmick of world01Gimmicks) {
     counts.set(gimmick.kind, (counts.get(gimmick.kind) ?? 0) + 1);
   }
-  for (const [kind, minimum] of Object.entries(minimums) as [GimmickKind, number][]) {
+  for (const [kind, minimum] of Object.entries(WORLD01_GIMMICK_MINIMUMS) as [GimmickKind, number][]) {
     if ((counts.get(kind) ?? 0) < minimum) {
       errors.push(
         "world-01: " + kind + " 기믹이 최소 " + minimum + "개 필요합니다.",
@@ -247,6 +236,17 @@ export function validateCampaignMaps(
         break;
       }
     }
+  }
+
+  const gimmicksByWorld = new Map<string, number>();
+  for (const stage of registry.stages) {
+    const count = stage.map?.gimmicks.length ?? 0;
+    if (count > 0) {
+      gimmicksByWorld.set(stage.worldId, (gimmicksByWorld.get(stage.worldId) ?? 0) + count);
+    }
+  }
+  for (const [worldId, count] of gimmicksByWorld) {
+    if (count < 30) errors.push(worldId + ": 기믹은 최소 30개여야 합니다.");
   }
 
   return {
@@ -290,11 +290,48 @@ function validateGimmicks(
     if (gimmick.chainIds.length === 0) {
       errors.push("기믹 chainId가 비어 있습니다: " + gimmick.id);
     }
+    for (const chainId of gimmick.chainIds) {
+      if (!map.chainRules.some((rule) => rule.id === chainId && rule.sourceId === gimmick.objectId)) {
+        errors.push("기믹 chainId가 source 오브젝트에 연결되지 않았습니다: " + gimmick.id);
+      }
+    }
+    const expectedCounterplay: Partial<Record<GimmickKind, GimmickCounterplay["action"]>> = {
+      "ant-trip": "move-backward",
+      "forward-jump-wall": "move-backward",
+      "ground-collapse": "jump-before-zone",
+      "ground-rise": "micro-forward-then-back",
+      "revealed-white-spike": "precision-movement",
+      "jump-pigeon": "precision-movement",
+      "fake-bone-green": "do-not-collect",
+      "fake-bone-reverse": "do-not-collect",
+      "fake-bone-fire": "do-not-collect",
+      "fake-checkpoint": "move-backward",
+      "box-cat-arm": "jump-then-back",
+      "cloud-rain": "precision-movement",
+      "name-bubble-control-loss": "mash-jump",
+    };
+    if (expectedCounterplay[gimmick.kind] !== gimmick.counterplay.action) {
+      errors.push("기믹 counterplay가 정의와 일치하지 않습니다: " + gimmick.id);
+    }
     if (
       gimmick.counterplay.action === "mash-jump" &&
-      gimmick.counterplay.requiredPresses !== 100
+      (gimmick.counterplay.requiredPresses !== 100 ||
+        !gimmick.counterplay.windowMs || gimmick.counterplay.windowMs <= 0 ||
+        gimmick.outcome.controlOverride !== "run-left")
     ) {
-      errors.push("연타 탈출 기믹은 100회 입력을 요구해야 합니다: " + gimmick.id);
+      errors.push("연타 탈출 기믹은 왼쪽 강제 이동 중 100회 제한 시간 입력이어야 합니다: " + gimmick.id);
+    }
+    if (
+      gimmick.kind === "fake-bone-reverse" &&
+      (gimmick.outcome.kind !== "forced-control-death" || gimmick.outcome.controlOverride !== "drift-backward")
+    ) {
+      errors.push("역방향 가짜 코인은 강제 후진 사망 결과여야 합니다: " + gimmick.id);
+    }
+    if (
+      gimmick.kind === "fake-bone-fire" &&
+      (gimmick.outcome.kind !== "launch-death" || gimmick.outcome.controlOverride !== "launch-up")
+    ) {
+      errors.push("불붙은 가짜 코인은 발사 사망 결과여야 합니다: " + gimmick.id);
     }
   }
 }
@@ -419,10 +456,7 @@ function validateSafeSections(
         continue;
       }
 
-      if (
-        object.kind === "trap" &&
-        (object.properties.lethal === true || object.properties.forcedMovement === true)
-      ) {
+      if (object.properties.lethal === true || object.properties.forcedMovement === true) {
         errors.push("safe 구간에 lethal 또는 forced movement 오브젝트가 있습니다: " + object.id);
       }
       if (object.properties.blocking === true) {

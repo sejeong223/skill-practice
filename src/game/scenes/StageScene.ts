@@ -14,6 +14,7 @@ import type { EnemyDefinition } from "../core/contentTypes";
 import { MapDebugOverlay } from "../debug/MapDebugOverlay";
 import { Enemy } from "../entities/Enemy";
 import { Player } from "../entities/Player";
+import { PlayerAnimator } from "../entities/PlayerAnimator";
 import { DEFAULT_PLAYER_TUNING } from "../entities/playerTypes";
 import { InputManager, toKeybindMap } from "../input/InputManager";
 import { ParallaxRenderer } from "../maps/ParallaxRenderer";
@@ -37,6 +38,7 @@ export interface StageSceneData {
 
 export class StageScene extends Phaser.Scene {
   private player?: Player;
+  private playerAnimator?: PlayerAnimator;
   private inputManager?: InputManager;
   private playerController?: PlayerController;
   private cameraDirector?: CameraDirector;
@@ -56,7 +58,10 @@ export class StageScene extends Phaser.Scene {
   private persistenceEventBus?: GameEventBus;
   private readonly mapEnemies = new Map<string, Enemy>();
   private debugOverlay?: MapDebugOverlay;
-  private statusText?: Phaser.GameObjects.Text;
+  private stageBackdrop?: Phaser.GameObjects.Rectangle;
+  private stageReviewKey?: Phaser.Input.Keyboard.Key;
+  private overviewKey?: Phaser.Input.Keyboard.Key;
+  private mapOverview = false;
   private stageId: StageId = "world-01-stage-1";
   private stageDefinition?: StageDefinition;
   private activeSectionId?: string;
@@ -67,6 +72,7 @@ export class StageScene extends Phaser.Scene {
 
   public create(data: StageSceneData = {}): void {
     this.stageId = data.stageId ?? "world-01-stage-1";
+    this.mapOverview = false;
     const stage = getStageDefinition(this.stageId);
     this.stageDefinition = stage;
     const registeredProgress = this.registry.get("progressState") as ProgressState | undefined;
@@ -80,11 +86,15 @@ export class StageScene extends Phaser.Scene {
       : undefined;
     this.eventBus = this.persistenceEventBus ?? new GameEventBus();
     this.physics.world.setBounds(0, 0, stage.mapWidth, stage.mapHeight);
-    this.add.rectangle(stage.mapWidth / 2, GAME_HEIGHT / 2, stage.mapWidth, GAME_HEIGHT, 0xf5e7c7).setDepth(-40);
+    this.stageBackdrop = this.add
+      .rectangle(stage.mapWidth / 2, GAME_HEIGHT / 2, stage.mapWidth, GAME_HEIGHT, 0xf5e7c7)
+      .setDepth(-40);
     this.parallaxRenderer = new ParallaxRenderer(this);
     this.parallaxRenderer.render(theme, stage.mapWidth, stage.mapHeight);
 
     this.player = new Player(this, stage.spawn.x, stage.spawn.y);
+    this.player.setDepth(10);
+    this.playerAnimator = new PlayerAnimator(this.player);
     this.inputManager = new InputManager(this, toKeybindMap(this.progress.keybinds));
     this.playerController = new PlayerController(
       this.player,
@@ -174,6 +184,12 @@ export class StageScene extends Phaser.Scene {
         this.player,
         this.mapInteraction,
         this.loadedMap,
+        () => this.gimmickSystem?.getDebugState() ?? {
+          gimmickId: "none",
+          status: "armed",
+          counterpresses: 0,
+          lastOutcome: "none",
+        },
       );
     }
 
@@ -214,13 +230,6 @@ export class StageScene extends Phaser.Scene {
       else this.destroyMapEnemy(payload.objectId);
     });
     this.gameplayEventBus.on("map-reset", () => this.restoreMapEnemies());
-    this.gameplayEventBus.on("death", (payload) => {
-      const deathCount = this.progress.deathsByStage[this.stageId] ?? 0;
-      this.statusText?.setText(
-        `death ${deathCount}${payload.gimmickId ? " · " + payload.gimmickId : ""}`,
-      );
-    });
-
     this.cameraDirector = new CameraDirector(this, this.player, stage);
     this.cameraDirector.followPlayer();
     this.syncSectionCamera();
@@ -230,28 +239,25 @@ export class StageScene extends Phaser.Scene {
       this.mapInteraction?.reset(snapshot);
       this.gimmickSystem?.reset(snapshot);
     });
-    this.eventUnsubscribers.push(this.eventBus.on("stage-completed", (payload) => {
+    this.eventUnsubscribers.push(this.eventBus.on("stage-completed", () => {
       this.runtime?.setStatus("completed");
-      this.statusText?.setText(
-        "completed: " + payload.stageId + "  next: " + (payload.nextStageId ?? "none"),
-      );
-    }));
-    this.eventUnsubscribers.push(this.eventBus.on("coin-changed", (payload) => {
-      this.statusText?.setText(
-        "play: " + payload.stageId + "  coins: " + payload.currentStageCoins,
-      );
     }));
 
-    this.statusText = this.add.text(36, 32, "stage: " + stage.title, {
-      color: "#5f3942",
-      fontFamily: "monospace",
-      fontSize: "18px",
-    }).setScrollFactor(0).setResolution(2);
+    if (process.env.NODE_ENV !== "production" && this.input.keyboard) {
+      this.stageReviewKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F2);
+      this.stageReviewKey.on("down", this.reviewNextWorld01Stage, this);
+      this.overviewKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F3);
+      this.overviewKey.on("down", this.toggleMapOverview, this);
+    }
 
     this.events.once("shutdown", () => {
       this.inputManager?.destroy();
+      this.stageReviewKey?.off("down", this.reviewNextWorld01Stage, this);
+      if (this.stageReviewKey) this.input.keyboard?.removeKey(this.stageReviewKey, true);
+      this.overviewKey?.off("down", this.toggleMapOverview, this);
+      if (this.overviewKey) this.input.keyboard?.removeKey(this.overviewKey, true);
       this.unsubscribeKeybinds?.();
-      for (const unsubscribe of this.eventUnsubscribers) unsubscribe();
+      this.eventUnsubscribers.splice(0).forEach((unsubscribe) => unsubscribe());
       this.debugOverlay?.destroy();
       this.mapInteraction?.destroy();
       this.gimmickSystem?.destroy();
@@ -271,6 +277,7 @@ export class StageScene extends Phaser.Scene {
       return;
     }
     this.playerController?.update(time, delta);
+    this.playerAnimator?.update();
     this.gimmickSystem?.update(time, delta);
     this.mapInteraction?.update(time, delta);
     for (const enemy of this.mapEnemies.values()) enemy.updateMovement(time);
@@ -299,7 +306,6 @@ export class StageScene extends Phaser.Scene {
       stageId: this.stageId,
       checkpointId,
     });
-    this.statusText?.setText("checkpoint: " + checkpointId);
   }
 
   private spawnMapEnemy(
@@ -388,5 +394,47 @@ export class StageScene extends Phaser.Scene {
 
     this.activeSectionId = section?.id;
     this.cameraDirector.setSectionMode(section);
+  }
+
+  private reviewNextWorld01Stage(): void {
+    const stages: readonly StageId[] = [
+      "world-01-stage-1",
+      "world-01-stage-2",
+      "world-01-stage-3",
+      "world-01-stage-4",
+    ];
+    const currentIndex = stages.indexOf(this.stageId);
+    if (currentIndex < 0) return;
+    const nextStageId = stages[(currentIndex + 1) % stages.length];
+    this.scene.restart({
+      stageId: nextStageId,
+      seed: this.runtime?.runtimeState.randomSeed ?? 1,
+      playerName: this.progress.playerName,
+    });
+  }
+
+  private toggleMapOverview(): void {
+    if (!this.stageDefinition || this.stageDefinition.worldId !== "world-01") return;
+    this.mapOverview = !this.mapOverview;
+    if (this.mapOverview) {
+      this.cameraDirector?.pauseFollow();
+      this.parallaxRenderer?.setOverview(true);
+      const skyColor = Phaser.Display.Color.HexStringToColor(
+        getWorldMapTheme(this.stageDefinition.worldId).palette.far,
+      ).color;
+      this.stageBackdrop?.setFillStyle(skyColor);
+      this.cameras.main.setBackgroundColor(skyColor);
+      this.cameras.main.setZoom(this.cameras.main.width / this.stageDefinition.mapWidth);
+      this.cameras.main.centerOn(
+        this.stageDefinition.mapWidth / 2,
+        this.stageDefinition.mapHeight / 2,
+      );
+      return;
+    }
+    this.cameras.main.setZoom(1);
+    this.parallaxRenderer?.setOverview(false);
+    this.stageBackdrop?.setFillStyle(0xf5e7c7);
+    this.cameras.main.setBackgroundColor(0xf5e7c7);
+    this.cameraDirector?.followPlayer();
   }
 }

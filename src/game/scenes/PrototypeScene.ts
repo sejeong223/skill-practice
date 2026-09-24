@@ -62,7 +62,8 @@ export class PrototypeScene extends Phaser.Scene {
 
   public create(data: PrototypeSceneData = {}): void {
     const stage = getStageDefinition("world-01-stage-1");
-    this.progress = createDefaultProgressState();
+    const registeredProgress = this.registry.get("progressState") as ProgressState | undefined;
+    this.progress = registeredProgress ?? createDefaultProgressState();
     this.runtime = createRuntimeStageState(stage.id, 1);
     this.physics.world.setBounds(0, 0, stage.mapWidth, stage.mapHeight);
     this.cameras.main.setBackgroundColor("#f5e7c7");
@@ -304,7 +305,7 @@ export class PrototypeScene extends Phaser.Scene {
     this.combatSystem?.update(time);
     this.enemySystem?.update(time);
     this.trapSystem?.update(time);
-    this.playerAnimator?.update(time);
+    this.playerAnimator?.update();
 
     const checkpointId = this.checkpointSystem?.getSnapshot()?.checkpointId;
     const firstCheckpointId = getStageDefinition("world-01-stage-1").checkpointIds[0];

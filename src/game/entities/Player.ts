@@ -21,20 +21,20 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     scene: Phaser.Scene,
     x: number,
     y: number,
-    textureKey = "corgi-reference",
+    textureKey = "corgi-run",
   ) {
     super(scene, x, y, textureKey);
     scene.add.existing(this);
     scene.physics.add.existing(this);
 
-    this.setOrigin(0.5, 1);
-    this.setCrop(32, 32, 430, 940);
-    this.setDisplaySize(82, 178);
+    this.setOrigin(0.5, 0.96875);
+    this.setScale(1);
+    this.setAngle(0);
     this.body.setAllowGravity(true);
     this.body.setCollideWorldBounds(true);
     this.body.setMaxVelocity(520, 900);
-    this.body.setSize(40, 122);
-    this.body.setOffset(21, 46);
+    this.body.setSize(72, 40, false);
+    this.body.setOffset(20, 84);
   }
 
   public setAnimationState(state: PlayerAnimationState): void {

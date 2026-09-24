@@ -47,6 +47,7 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
   const autoSaveRef = useRef<AutoSaveCoordinator | null>(null);
   const [toast, setToast] = useState("진행 상태를 준비하는 중...");
   const [mode, setMode] = useState<UiMode>("safe");
+  const [statusOpen, setStatusOpen] = useState(false);
   const [introGateStep, setIntroGateStep] = useState<"intro" | "title" | "ready">("intro");
 
   useEffect(() => {
@@ -96,6 +97,7 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
     }
     if (type === "cutscene-started") setMode("cutscene");
     if (type === "cutscene-finished" || type === "stage-started") setMode("play");
+    if (type === "stage-started") setStatusOpen(false);
     if (type === "death") setMode("dead");
   }, []);
 
