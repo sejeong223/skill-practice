@@ -1,19 +1,18 @@
 # Current Context
 
 ## Active Plan
-[시네마틱 인트로 전체 창 화면](./plans/2026-09-24-cinematic-pixel-intro.md)
+[World 1 Gameplay Polish](./plans/2026-09-25-world01-polish.md)
 
 ## Active Phase
-[P02 실제 집 시네마틱 장면](./phases/2026-09-24-cinematic-pixel-intro/P02-cinematic-home-scene/phase.md)
+[P01 World 1 Gameplay Polish](./phases/2026-09-25-world01-polish/P01-world01-polish/phase.md)
 
 ## Active Task
-없음 — 계획된 구현 Task 4개를 모두 처리했다. 실제 브라우저 육안 승인만 남아 있으며 [T04 수동 체크리스트](./test-plans/2026-09-24-cinematic-pixel-intro-validation.md)를 참고한다.
+[T02 Death Counter and Pause Control](./phases/2026-09-25-world01-polish/P01-world01-polish/T02-death-counter-and-pause.md)
 
 ## Status
-- P01-T01 승인된 스토리보드는 `.memory/design-previews/2026-09-24-cinematic-pixel-intro-preview.png`에 보관했다.
-- P01-T02 전체 뷰포트 셸과 Galmuri 로컬 폰트를 구현하고 검증했다. headless 브라우저가 실행 정책에 막혀 시각 캡처 대신 레이아웃 수치와 폰트 HTTP 응답을 확인했다.
-- P02-T01~T04 인트로 에셋·장면·대사/음향/이름 입력 연결, lint/build/World 1 맵 검사, 홈·폰트·필수 에셋 HTTP 검사를 완료했다. 브라우저 실제 애니메이션·오디오 청취·화면비 육안 검수는 도구 제약으로 미확인이다.
-- 기존 캠페인의 World 1 T05 맵 검수/플레이테스트와 다른 미커밋 코드는 완료 처리하거나 커밋하지 않고 보존한다.
+- T01 월드 1 발판·함정 수정은 구현과 맵 생성/검사, lint, build를 통과했습니다.
+- 브라우저에서 조작하는 수동 플레이 검증은 이 실행 환경에서 진행하지 못했습니다.
+- 다음은 T02 사망 횟수 오버레이와 일시정지 기능입니다.
 
 ## Next Step (IMPORTANT)
-계획된 구현 Task는 마지막 P02-T04까지 모두 처리했다. 최종 사용자 승인 전에 체크리스트에 적힌 첫 실행/재시청/화면비/오디오 브라우저 스모크를 실제 화면에서 확인해야 한다. World 1 T05는 맵 검수 전까지 pending으로 보존한다.
+T02 청사진에 지정된 이벤트 전달, Phaser 일시정지 상태, 사망 횟수 오버레이와 HUD 버튼을 구현하고 lint/build 및 가능한 검증을 실행합니다.

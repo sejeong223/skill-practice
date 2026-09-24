@@ -15,6 +15,7 @@ import type {
 } from "../core/contentTypes";
 import { createDefaultStageSections, WORLD_MAP_THEMES } from "./worldMaps";
 import { WORLD01_STAGE_MAPS } from "./world01Maps";
+import { getWorld01FloorY } from "./world01Gimmicks";
 import type {
   SkillId,
   StageDefinition,
@@ -253,7 +254,10 @@ function createNormalStage(
     title: blueprint.stageTitles[stageNumber - 1],
     subtitle: blueprint.subtitle,
     kind: "normal",
-    spawn: { x: 96, y: 440 },
+    spawn: {
+      x: 96,
+      y: blueprint.id === "world-01" ? getWorld01FloorY(stageNumber, 96) : 440,
+    },
     checkpointIds: [id + "-checkpoint"],
     mapWidth: NORMAL_MAP_WIDTH,
     mapHeight: map.mapHeight,

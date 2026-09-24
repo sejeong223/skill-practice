@@ -24,7 +24,7 @@ export type PlayerAnimationState =
   | "tail-rotor";
 
 export const DEFAULT_PLAYER_TUNING: PlayerTuning = {
-  runSpeed: 220,
+  runSpeed: 240,
   acceleration: 1800,
   deceleration: 2200,
   gravityY: 1200,

@@ -134,6 +134,17 @@ export class MapGimmickSystem {
         continue;
       }
 
+      if (
+        gimmick.kind === "revealed-white-spike" &&
+        this.isGrounded() &&
+        !input.jumpPressed &&
+        this.isMovingForward() &&
+        this.getPlayerBounds().right >= gimmick.x - 96 &&
+        this.getPlayerBounds().left <= gimmick.x
+      ) {
+        this.visuals.get(gimmick.id)?.setVisible(true);
+      }
+
       if (!this.overlapsGimmick(gimmick)) {
         if (
           gimmick.kind === "jump-pigeon" &&
@@ -634,7 +645,7 @@ export class MapGimmickSystem {
     const floorRow = Math.floor((gimmick.y + gimmick.height) / this.map.tileHeight);
     const removed: Array<{ x: number; y: number; index: number }> = [];
     for (let x = tileStartX; x < tileEndX; x += 1) {
-      for (let y = floorRow; y < floorRow + 2; y += 1) {
+      for (let y = floorRow; y < layer.layer.height; y += 1) {
         const tile = layer.getTileAt(x, y);
         if (tile && tile.index >= 0) {
           removed.push({ x, y, index: tile.index });
@@ -676,7 +687,10 @@ export class MapGimmickSystem {
   }
 
   private handleWallImpact(gimmick: WorldGimmickDefinition, now: number): void {
-    this.setPhysicalActive(this.wallBodies.get(gimmick.id), false);
+    const wall = this.wallBodies.get(gimmick.id);
+    wall?.setFillStyle(0x5f3942, 0.9).setStrokeStyle(4, 0xf0b95f, 1);
+    this.setPhysicalActive(wall, false);
+    wall?.setVisible(true);
     this.player.setVelocity(-420, -760);
     this.scene.cameras.main.shake(120, 0.012);
     this.wallDeathDeadlines.set(gimmick.id, now + 620);

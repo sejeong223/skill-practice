@@ -69,7 +69,7 @@ function makeGimmick(
     trigger,
     x,
     y: getWorld01FloorY(stageNumber, x) - 96,
-    width: 64,
+    width: kind === "ground-collapse" ? 192 : 64,
     height: 96,
     visualKey,
     ...(variantKey ? { variantKey } : {}),

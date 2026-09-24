@@ -27,6 +27,7 @@ const {
   WORLD01_GIMMICK_MINIMUMS,
   WORLD01_GIMMICKS,
   WORLD01_GIMMICK_MAX_GAP_MS,
+  getWorld01FloorY,
 } = require(path.join(root, "src/game/data/world01Gimmicks.ts"));
 const { DEFAULT_PLAYER_TUNING } = require(path.join(root, "src/game/entities/playerTypes.ts"));
 const outputDirectory = path.join(root, "public/assets/pixel/maps/world-01");
@@ -74,8 +75,7 @@ function makeMap(stageNumber, definition) {
 
   for (let column = 0; column < width; column += 1) {
     const x = column * tileWidth + tileWidth / 2;
-    const floorY = require(path.join(root, "src/game/data/world01Gimmicks.ts"))
-      .getWorld01FloorY(stageNumber, x);
+    const floorY = getWorld01FloorY(stageNumber, x);
     const firstRow = Math.floor(floorY / tileHeight);
     for (let row = firstRow; row < height; row += 1) {
       ground[row * width + column] = row === firstRow ? 1 : 13;
@@ -195,11 +195,11 @@ function verifyMap(stageNumber, definition, tiledMap) {
   if (tiledMap.width * tileWidth !== 3840) errors.push("맵 너비가 3840px가 아님");
 
   const points = [
-    { x: 96, y: 440 },
+    { x: 96, y: getWorld01FloorY(stageNumber, 96) },
     ...stageGimmicks
       .map((gimmick) => ({ x: gimmick.x + gimmick.width / 2, y: gimmick.y + gimmick.height }))
       .sort((left, right) => left.x - right.x),
-    { x: 3744, y: 440 },
+    { x: 3744, y: getWorld01FloorY(stageNumber, 3744) },
   ];
   for (let index = 1; index < points.length; index += 1) {
     const previous = points[index - 1];
