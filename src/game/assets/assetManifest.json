@@ -298,5 +298,50 @@
     "tileHeight": 16,
     "worldId": "world-05",
     "required": false
+  },
+  {
+    "key": "intro-home",
+    "kind": "image",
+    "url": "/assets/pixel/cutscenes/intro/intro-home.png",
+    "required": true
+  },
+  {
+    "key": "intro-corgi-actions",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/cutscenes/intro/intro-corgi-actions.png",
+    "frameWidth": 443,
+    "frameHeight": 443,
+    "frameCount": 8,
+    "required": true
+  },
+  {
+    "key": "intro-tuxedo-actions",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/cutscenes/intro/intro-tuxedo-actions.png",
+    "frameWidth": 443,
+    "frameHeight": 443,
+    "frameCount": 7,
+    "required": true
+  },
+  {
+    "key": "intro-owner-hands",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/cutscenes/intro/intro-owner-hands.png",
+    "frameWidth": 630,
+    "frameHeight": 623,
+    "frameCount": 3,
+    "required": true
+  },
+  {
+    "key": "intro-rib",
+    "kind": "image",
+    "url": "/assets/pixel/cutscenes/intro/intro-rib.png",
+    "required": true
+  },
+  {
+    "key": "intro-slipper",
+    "kind": "image",
+    "url": "/assets/pixel/cutscenes/intro/intro-slipper.png",
+    "required": true
   }
 ]

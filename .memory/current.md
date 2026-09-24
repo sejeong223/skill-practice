@@ -7,7 +7,7 @@
 [P02 실제 집 시네마틱 장면](./phases/2026-09-24-cinematic-pixel-intro/P02-cinematic-home-scene/phase.md)
 
 ## Active Task
-[T01 인트로 픽셀 에셋](./phases/2026-09-24-cinematic-pixel-intro/P02-cinematic-home-scene/T01-intro-pixel-assets.md)
+[T02 인트로 씬과 배우 애니메이션](./phases/2026-09-24-cinematic-pixel-intro/P02-cinematic-home-scene/T02-intro-scene-and-actor-animation.md)
 
 ## Status
 - P01-T01 승인된 스토리보드는 `.memory/design-previews/2026-09-24-cinematic-pixel-intro-preview.png`에 보관했다.
@@ -15,4 +15,4 @@
 - 기존 캠페인의 World 1 T05 맵 검수/플레이테스트와 다른 미커밋 코드는 완료 처리하거나 커밋하지 않고 보존한다.
 
 ## Next Step (IMPORTANT)
-P02-T01 청사진을 읽고 승인된 스토리보드의 집/코기/주인/턱시도 고양이/왕갈비뼈를 제작용 픽셀 에셋으로 준비한다. T01 완료 후 Task별 한국어 커밋을 하고 T02로 이동한다.
+P02-T01 픽셀 배경·배우·소품 에셋을 manifest에 등록했고, lint/build 및 로컬 HTTP 응답을 확인했다. 다음은 P02-T02 청사진을 읽고 IntroScene과 컷신 애니메이션을 구현한다. 매 Task마다 한국어 커밋을 하고 마지막 Task까지 순차 진행한다.
