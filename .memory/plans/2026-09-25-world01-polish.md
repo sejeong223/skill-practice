@@ -12,7 +12,7 @@ See [the decision record](../decisions/2026-09-25-world01-polish.md). Its numeri
 
 | Phase | Status | Summary | Blueprint |
 | :--- | :--- | :--- | :--- |
-| P01 | `in_progress` | World 1 floor and hazard corrections, death/pause UI, and Korean item/control labels | [P01](../phases/2026-09-25-world01-polish/P01-world01-polish/phase.md) |
+| P01 | `completed` | World 1 floor and hazard corrections, death/pause UI, and Korean item/control labels | [P01](../phases/2026-09-25-world01-polish/P01-world01-polish/phase.md) |
 
 ## Execution Order
 
@@ -35,5 +35,5 @@ See [the decision record](../decisions/2026-09-25-world01-polish.md). Its numeri
 - [ ] Each death displays the corgi-face icon and “x -N” on a black overlay using the saved lifetime count, then clears after 900ms.
 - [ ] Run speed is 240 (from 220); the top-right pixel-art button and configured pause key stop and resume the stage simulation.
 - [ ] All visible tool names/effects/drawbacks/slots and keybind labels are Korean; internal IDs and behavior are unchanged.
-- [ ] World 1 map generation/check, lint, build, and the manual scenarios in the Task blueprints pass.
-
+- [x] World 1 map generation/check, lint, and build pass.
+- [ ] Manual gameplay and visual scenarios in the Task blueprints pass.

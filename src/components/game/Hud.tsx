@@ -1,6 +1,7 @@
 "use client";
 import type { ReactElement } from "react";
 import type { ProgressState, RuntimeStageState, SkillId, ToolDefinition } from "@/game/core/types";
+import { getToolPresentation } from "@/game/data/toolPresentation";
 
 export interface HudProps {
   readonly stageTitle: string;
@@ -41,7 +42,9 @@ export function Hud({
       <div className="hud-stats">
         <span><b>금고</b> {progress.bankedCoins}</span>
         <span><b>이번 스테이지</b> {runtime.currentStageCoins}</span>
-        <span><b>장비</b> {attackTool?.id ?? "없음"} / {defenseTool?.id ?? "없음"}</span>
+        <span>
+          <b>장비</b> {attackTool ? getToolPresentation(attackTool.id).nameKo : "없음"} / {defenseTool ? getToolPresentation(defenseTool.id).nameKo : "없음"}
+        </span>
         <span><b>쿨다운</b> {activeCooldowns || "준비"}</span>
       </div>
       <button

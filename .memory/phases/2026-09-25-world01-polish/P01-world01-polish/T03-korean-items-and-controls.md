@@ -1,6 +1,6 @@
 # Task: T03 Korean Item and Control Labels
 
-## Status: pending
+## Status: done
 
 ## Goal
 
@@ -71,18 +71,18 @@ Replace every visible English tool name, tool effect, tool drawback, and tool sl
 
 ## Commit Message
 
-    feat(game-ui): localize item and key labels
+    feat(game-ui): 아이템과 조작키를 한국어로 표시
 
     Plan: 2026-09-25-world01-polish
     Phase: P01-world01-polish
     Task: T03-korean-items-and-controls
 
-    - Add Korean presentation for tools without changing gameplay IDs.
-    - Render actions and bound keys with Korean labels.
+    - 도구 ID를 유지하면서 한국어 표시 정보를 추가한다.
+    - 조작 이름과 키 표시를 한국어로 바꾼다.
 
 ## Progress
 
-- [ ] Implementation complete
-- [ ] Validation passed
+- [x] Implementation complete
+- [x] Validation passed (lint, build)
+- [ ] Manual visual review of all tool and keybind entries
 - commit: pending
-
