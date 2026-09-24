@@ -1,19 +1,20 @@
 # Current Context
 
 ## Active Plan
-[전설의 무한 육즙 왕갈비뼈 월드별 억까 캠페인](./plans/2026-09-23-legendary-rib-world-campaign.md)
+[픽셀 시네마틱 인트로와 전체 창 화면](./plans/2026-09-24-cinematic-pixel-intro.md)
 
 ## Active Phase
-[P01 World 1 무법지대 뒷골목](./phases/2026-09-23-legendary-rib-world-campaign/P01-world01-back-alley/phase.md)
+[P01 픽셀 스토리보드와 전체 화면 기반](./phases/2026-09-24-cinematic-pixel-intro/P01-pixel-storyboard-and-shell/phase.md)
 
 ## Active Task
-[T05 World 1 검증과 수동 플레이테스트](./phases/2026-09-23-legendary-rib-world-campaign/P01-world01-back-alley/T05-world01-validation-and-playtest.md)
+[T02 전체 창 게임 셸과 로컬 픽셀 폰트](./phases/2026-09-24-cinematic-pixel-intro/P01-pixel-storyboard-and-shell/T02-full-viewport-pixel-shell.md)
 
 ## Status
-- 기존 P01 맵 기반 런타임과 P02 이전 뒷골목 계획은 선행 기반으로 완료·보존
-- 새 캠페인 P01은 World 1 설계부터 시작하며, 월드 완료 전 다음 Phase로 진행하지 않음
-- T03 맵 디자인은 사용자 승인 후 4개 단일 루트 Tiled 맵으로 구현 완료
-- T04 World 1 조작·기믹 런타임 구현 및 검증 완료
+- T01 픽셀 스토리보드를 사용자에게 제시하고 승인받아 .memory/design-previews/2026-09-24-cinematic-pixel-intro-preview.png에 저장했다.
+- T01 승인 이미지 검수 통과: 5칸 구성, 밝은 낮의 집 배치, 입구/강아지 문 왼쪽·거실 중앙·베란다 오른쪽, 배우/소품 픽셀 표현.
+- 전체 창 표시 요구는 인트로 계획에 포함했다. Phaser 1280×720 및 16:9 픽셀 비율을 보존하고 비표준 화면비에는 테마색 여백을 둔다.
+- 이전 Active Task였던 World 1 T05 맵 검수와 실제 플레이테스트는 pending 그대로 보존하며, 이 계획 완료 뒤 사용자와 함께 재개한다.
+- 기존 캠페인의 World 1 T05 상태/청사진은 완료 처리하거나 변경하지 않았다.
 
 ## Next Step (IMPORTANT)
-T03 구현 전에 World 1 맵 디자인을 제시했고 사용자가 승인했습니다. T04 런타임을 완료했으며, 다음은 T05 검증 청사진을 확인합니다. 수동 점검 결과를 사용자와 확인하기 전에는 P02로 진행하지 않습니다.
+P01-T02 청사진을 읽고 page/header/max-width 레이아웃을 전체 뷰포트 셸로 바꾼다. Phaser와 DOM 오버레이를 같은 16:9 프레임에 정렬하고 Galmuri 로컬 폰트 및 OFL 라이선스를 등록한다. Task별 한국어 커밋을 유지하며 World 1 T05는 pending으로 보존한다.
