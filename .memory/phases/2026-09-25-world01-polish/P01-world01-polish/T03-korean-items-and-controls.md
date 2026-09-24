@@ -85,4 +85,4 @@ Replace every visible English tool name, tool effect, tool drawback, and tool sl
 - [x] Implementation complete
 - [x] Validation passed (lint, build)
 - [ ] Manual visual review of all tool and keybind entries
-- commit: pending
+- commit: 8e46f03

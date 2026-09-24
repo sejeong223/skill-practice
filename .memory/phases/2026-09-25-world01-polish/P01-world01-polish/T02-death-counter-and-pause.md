@@ -88,4 +88,4 @@ On every death, briefly cover the game with a black screen showing a corgi-face 
 - [x] Implementation complete
 - [x] Validation passed (lint, build)
 - [ ] Manual in-game death and pause interaction review
-- commit: pending
+- commit: d13d4e5
