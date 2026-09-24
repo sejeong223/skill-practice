@@ -12,7 +12,17 @@ export interface CameraAction {
 
 export interface ActorAction {
   readonly actor: "corgi" | "owner" | "tuxedo-cat" | "rib" | "slipper";
-  readonly action: "enter" | "reveal" | "steal" | "taunt" | "hold" | "throw" | "leap";
+  readonly action:
+    | "enter"
+    | "reveal"
+    | "steal"
+    | "taunt"
+    | "hold"
+    | "throw"
+    | "leap"
+    | "point"
+    | "retreat"
+    | "surprise";
   readonly x?: number;
   readonly y?: number;
 }

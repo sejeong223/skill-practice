@@ -1,0 +1,455 @@
+import * as Phaser from "phaser";
+import type { ActorAction } from "./types";
+import type { IntroHomeLayout } from "./introLayout";
+
+const CORGI_FRAME = {
+  idle: 0,
+  eager: 1,
+  surprised: 4,
+  slipper: 6,
+  determined: 7,
+} as const;
+
+const CAT_FRAME = {
+  crouch: 0,
+  jump: 2,
+  withRib: 3,
+  taunt: 5,
+  retreat: 6,
+} as const;
+
+const OWNER_FRAME = {
+  point: 0,
+  retreat: 1,
+  enter: 2,
+} as const;
+
+export class IntroActorRig {
+  private readonly scene: Phaser.Scene;
+  private readonly layout: IntroHomeLayout;
+  private readonly corgi: Phaser.GameObjects.Sprite;
+  private readonly cat: Phaser.GameObjects.Sprite;
+  private readonly owner: Phaser.GameObjects.Sprite;
+  private readonly rib: Phaser.GameObjects.Image;
+  private readonly slipper: Phaser.GameObjects.Image;
+  private readonly bag: Phaser.GameObjects.Container;
+  private readonly delayedCalls: Phaser.Time.TimerEvent[] = [];
+  private corgiBaseY: number;
+  private catBaseY: number;
+  private slipperAttached = false;
+
+  public constructor(scene: Phaser.Scene, layout: IntroHomeLayout) {
+    this.scene = scene;
+    this.layout = layout;
+
+    const background = scene.add
+      .image(layout.background.x, layout.background.y, "intro-home")
+      .setDisplaySize(layout.worldSize.width, layout.worldSize.height)
+      .setDepth(layout.background.depth);
+    background.setName("intro-home-background");
+
+    this.corgi = scene.add
+      .sprite(layout.corgiWait.x, layout.corgiWait.y, "intro-corgi-actions", CORGI_FRAME.idle)
+      .setOrigin(0.5, 0.92)
+      .setScale(0.54)
+      .setFlipX(true)
+      .setDepth(layout.corgiWait.depth);
+    this.corgiBaseY = layout.corgiWait.y;
+
+    this.cat = scene.add
+      .sprite(layout.balcony.x, layout.balcony.y, "intro-tuxedo-actions", CAT_FRAME.crouch)
+      .setOrigin(0.5, 0.92)
+      .setScale(0.48)
+      .setFlipX(false)
+      .setDepth(layout.balcony.depth)
+      .setVisible(false);
+    this.catBaseY = layout.balcony.y;
+
+    this.owner = scene.add
+      .sprite(layout.ownerEntry.x, layout.ownerEntry.y, "intro-owner-hands", OWNER_FRAME.enter)
+      .setOrigin(0.5, 0.5)
+      .setScale(0.38)
+      .setDepth(layout.ownerEntry.depth)
+      .setVisible(false)
+      .setAlpha(0);
+
+    this.rib = scene.add
+      .image(layout.rib.x, layout.rib.y, "intro-rib")
+      .setDisplaySize(170, 170)
+      .setDepth(layout.rib.depth)
+      .setVisible(false)
+      .setAlpha(0);
+
+    this.slipper = scene.add
+      .image(layout.slipper.x, layout.slipper.y, "intro-slipper")
+      .setDisplaySize(145, 145)
+      .setDepth(layout.slipper.depth)
+      .setVisible(false)
+      .setAlpha(0);
+
+    this.bag = this.createPixelBag(layout.ownerEntry.x + 30, layout.ownerEntry.y + 80);
+    this.bag.setVisible(false).setAlpha(0);
+  }
+
+  public playAction(action: ActorAction): void {
+    switch (action.actor) {
+      case "corgi":
+        this.playCorgiAction(action);
+        break;
+      case "owner":
+        this.playOwnerAction(action);
+        break;
+      case "tuxedo-cat":
+        this.playCatAction(action);
+        break;
+      case "rib":
+        this.playRibAction(action);
+        break;
+      case "slipper":
+        this.playSlipperAction(action);
+        break;
+    }
+  }
+
+  public reset(): void {
+    this.stop();
+    this.slipperAttached = false;
+    this.corgiBaseY = this.layout.corgiWait.y;
+    this.catBaseY = this.layout.balcony.y;
+    this.corgi
+      .setPosition(this.layout.corgiWait.x, this.corgiBaseY)
+      .setFrame(CORGI_FRAME.idle)
+      .setVisible(true)
+      .setAlpha(1);
+    this.cat
+      .setPosition(this.layout.balcony.x, this.catBaseY)
+      .setFrame(CAT_FRAME.crouch)
+      .setVisible(false)
+      .setAlpha(1);
+    this.owner
+      .setPosition(this.layout.ownerEntry.x, this.layout.ownerEntry.y)
+      .setFrame(OWNER_FRAME.enter)
+      .setVisible(false)
+      .setAlpha(0);
+    this.rib
+      .setPosition(this.layout.rib.x, this.layout.rib.y)
+      .setVisible(false)
+      .setAlpha(0);
+    this.slipper
+      .setPosition(this.layout.slipper.x, this.layout.slipper.y)
+      .setVisible(false)
+      .setAlpha(0);
+    this.bag
+      .setPosition(this.layout.ownerEntry.x + 30, this.layout.ownerEntry.y + 80)
+      .setVisible(false)
+      .setAlpha(0);
+  }
+
+  public stop(): void {
+    this.scene.tweens.killTweensOf(this.corgi);
+    this.scene.tweens.killTweensOf(this.cat);
+    this.scene.tweens.killTweensOf(this.owner);
+    this.scene.tweens.killTweensOf(this.rib);
+    this.scene.tweens.killTweensOf(this.slipper);
+    this.scene.tweens.killTweensOf(this.bag);
+    this.delayedCalls.splice(0).forEach((event) => event.remove(false));
+  }
+
+  public destroy(): void {
+    this.stop();
+    this.corgi.destroy();
+    this.cat.destroy();
+    this.owner.destroy();
+    this.rib.destroy();
+    this.slipper.destroy();
+    this.bag.destroy();
+  }
+
+  private playCorgiAction(action: ActorAction): void {
+    this.scene.tweens.killTweensOf(this.corgi);
+
+    switch (action.action) {
+      case "enter":
+      case "hold":
+        this.corgi.setFrame(CORGI_FRAME.eager).setVisible(true).setAlpha(1);
+        break;
+      case "surprise":
+        this.corgi.setFrame(CORGI_FRAME.surprised).setVisible(true);
+        break;
+      case "leap":
+        this.playCorgiLeap(action.x, action.y);
+        break;
+      case "retreat":
+        this.corgi.setFrame(CORGI_FRAME.determined);
+        this.scene.tweens.add({
+          targets: this.corgi,
+          x: action.x ?? this.layout.dogDoor.x - 90,
+          alpha: 0,
+          duration: 750,
+          ease: "Sine.easeIn",
+        });
+        break;
+      case "point":
+      case "reveal":
+      case "steal":
+      case "taunt":
+      case "throw":
+        this.corgi.setFrame(CORGI_FRAME.idle);
+        break;
+    }
+  }
+
+  private playOwnerAction(action: ActorAction): void {
+    this.scene.tweens.killTweensOf(this.owner);
+    this.scene.tweens.killTweensOf(this.bag);
+
+    switch (action.action) {
+      case "enter":
+        this.owner
+          .setFrame(OWNER_FRAME.enter)
+          .setPosition(this.layout.ownerEntry.x - 170, this.layout.ownerEntry.y)
+          .setVisible(true)
+          .setAlpha(0);
+        this.bag
+          .setPosition(this.layout.ownerEntry.x - 140, this.layout.ownerEntry.y + 95)
+          .setVisible(true)
+          .setAlpha(0);
+        this.scene.tweens.add({
+          targets: this.owner,
+          x: this.layout.ownerEntry.x,
+          alpha: 1,
+          duration: 900,
+          ease: "Sine.easeOut",
+        });
+        this.scene.tweens.add({
+          targets: this.bag,
+          x: this.layout.ownerEntry.x + 30,
+          alpha: 1,
+          duration: 900,
+          ease: "Sine.easeOut",
+        });
+        break;
+      case "point":
+        this.owner
+          .setFrame(OWNER_FRAME.point)
+          .setPosition(this.layout.ownerEntry.x + 150, this.layout.ownerEntry.y - 30)
+          .setVisible(true)
+          .setAlpha(1);
+        this.bag.setVisible(false);
+        this.scene.tweens.add({
+          targets: this.owner,
+          y: this.layout.ownerEntry.y - 75,
+          duration: 300,
+          ease: "Sine.easeOut",
+        });
+        break;
+      case "retreat":
+        this.owner.setFrame(OWNER_FRAME.retreat);
+        this.scene.tweens.add({
+          targets: [this.owner, this.bag],
+          x: this.layout.ownerEntry.x - 260,
+          alpha: 0,
+          duration: 850,
+          ease: "Sine.easeIn",
+          onComplete: () => this.owner.setVisible(false),
+        });
+        break;
+      case "reveal":
+      case "steal":
+      case "taunt":
+      case "hold":
+      case "throw":
+      case "leap":
+        this.owner.setVisible(false);
+        this.bag.setVisible(false);
+        break;
+      case "surprise":
+        this.owner.setFrame(OWNER_FRAME.point).setVisible(true).setAlpha(1);
+        break;
+    }
+  }
+
+  private playCatAction(action: ActorAction): void {
+    this.scene.tweens.killTweensOf(this.cat);
+
+    switch (action.action) {
+      case "enter":
+        this.cat
+          .setFrame(CAT_FRAME.jump)
+          .setPosition(this.layout.balcony.x + 150, this.layout.balcony.y - 220)
+          .setVisible(true)
+          .setAlpha(1);
+        this.scene.tweens.add({
+          targets: this.cat,
+          x: this.layout.balcony.x,
+          y: this.catBaseY,
+          duration: 800,
+          ease: "Sine.easeInOut",
+          onComplete: () => this.cat.setFrame(CAT_FRAME.crouch),
+        });
+        break;
+      case "steal":
+        this.cat.setFrame(CAT_FRAME.withRib).setVisible(true);
+        break;
+      case "taunt":
+        this.cat.setFrame(CAT_FRAME.taunt).setVisible(true);
+        break;
+      case "retreat":
+      case "leap":
+        this.cat.setFrame(CAT_FRAME.retreat).setVisible(true);
+        this.scene.tweens.add({
+          targets: this.cat,
+          x: action.x ?? this.layout.balcony.x + 270,
+          y: action.y ?? this.catBaseY - 140,
+          alpha: 0,
+          duration: 800,
+          ease: "Sine.easeIn",
+        });
+        break;
+      case "hold":
+        this.cat.setFrame(CAT_FRAME.crouch).setVisible(true);
+        break;
+      case "point":
+      case "reveal":
+      case "throw":
+      case "surprise":
+        this.cat.setFrame(CAT_FRAME.crouch);
+        break;
+    }
+  }
+
+  private playRibAction(action: ActorAction): void {
+    this.scene.tweens.killTweensOf(this.rib);
+
+    switch (action.action) {
+      case "reveal":
+        this.rib
+          .setPosition(this.layout.rib.x, this.layout.rib.y - 45)
+          .setVisible(true)
+          .setAlpha(0);
+        this.bag.setVisible(false);
+        this.scene.tweens.add({
+          targets: this.rib,
+          y: this.layout.rib.y,
+          alpha: 1,
+          duration: 650,
+          ease: "Sine.easeOut",
+        });
+        break;
+      case "steal":
+        this.scene.tweens.add({
+          targets: this.rib,
+          x: this.layout.balcony.x - 35,
+          y: this.layout.balcony.y - 70,
+          alpha: 0,
+          duration: 520,
+          ease: "Sine.easeIn",
+          onComplete: () => this.rib.setVisible(false),
+        });
+        break;
+      case "throw":
+        this.rib.setVisible(true).setAlpha(1);
+        this.scene.tweens.add({
+          targets: this.rib,
+          x: action.x ?? this.layout.balcony.x,
+          y: action.y ?? this.layout.balcony.y - 120,
+          duration: 700,
+          ease: "Sine.easeIn",
+        });
+        break;
+      case "hold":
+        this.rib.setPosition(this.layout.rib.x, this.layout.rib.y).setVisible(true).setAlpha(1);
+        break;
+      case "enter":
+      case "taunt":
+      case "leap":
+      case "point":
+      case "retreat":
+      case "surprise":
+        this.rib.setVisible(false);
+        break;
+    }
+  }
+
+  private playSlipperAction(action: ActorAction): void {
+    this.scene.tweens.killTweensOf(this.slipper);
+
+    switch (action.action) {
+      case "hold":
+      case "reveal":
+        this.slipperAttached = true;
+        this.slipper.setVisible(true).setAlpha(1);
+        this.syncHeldSlipper();
+        this.corgi.setFrame(CORGI_FRAME.slipper);
+        break;
+      case "throw":
+        this.slipperAttached = false;
+        this.slipper.setVisible(true).setAlpha(1);
+        this.scene.tweens.add({
+          targets: this.slipper,
+          x: action.x ?? this.layout.dogDoor.x,
+          y: action.y ?? this.layout.dogDoor.y,
+          duration: 500,
+          ease: "Sine.easeIn",
+        });
+        break;
+      case "enter":
+      case "steal":
+      case "taunt":
+      case "leap":
+      case "point":
+      case "retreat":
+      case "surprise":
+        this.slipperAttached = false;
+        this.slipper.setVisible(false);
+        break;
+    }
+  }
+
+  private playCorgiLeap(x?: number, y?: number): void {
+    const targetX = x ?? this.layout.dogDoor.x;
+    const landingY = y ?? this.corgiBaseY;
+    this.corgi.setFrame(CORGI_FRAME.determined).setVisible(true).setAlpha(1);
+    this.scene.tweens.add({
+      targets: this.corgi,
+      x: targetX,
+      y: landingY - 100,
+      duration: 330,
+      ease: "Sine.easeOut",
+      onUpdate: () => this.syncHeldSlipper(),
+      onComplete: () => {
+        this.corgiBaseY = landingY;
+        this.scene.tweens.add({
+          targets: this.corgi,
+          y: landingY,
+          duration: 230,
+          ease: "Sine.easeIn",
+          onUpdate: () => this.syncHeldSlipper(),
+          onComplete: () => {
+            if (targetX < this.layout.dogDoor.x) {
+              this.corgi.setVisible(false);
+              this.slipperAttached = false;
+              this.slipper.setVisible(false);
+            }
+          },
+        });
+      },
+    });
+  }
+
+  private syncHeldSlipper(): void {
+    if (!this.slipperAttached) return;
+    this.slipper.setPosition(this.corgi.x - 52, this.corgi.y - 105);
+  }
+
+  private createPixelBag(x: number, y: number): Phaser.GameObjects.Container {
+    const bag = this.scene.add.graphics();
+    bag.fillStyle(0x24212a, 1);
+    bag.fillRect(4, 10, 42, 42);
+    bag.lineStyle(4, 0x54404a, 1);
+    bag.strokeRect(4, 10, 42, 42);
+    bag.lineStyle(4, 0x24212a, 1);
+    bag.strokeRect(14, 1, 22, 14);
+    return this.scene.add.container(x, y, [bag]).setDepth(this.layout.ownerEntry.depth + 1);
+  }
+}

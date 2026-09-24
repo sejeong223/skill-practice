@@ -2,6 +2,7 @@ import * as Phaser from "phaser";
 import type { GameEventBus } from "./bridge/GameEventBus";
 import { BootScene } from "./scenes/BootScene";
 import { PreloadScene } from "./scenes/PreloadScene";
+import { IntroScene } from "./scenes/IntroScene";
 import { PrototypeScene } from "./scenes/PrototypeScene";
 import { StageScene } from "./scenes/StageScene";
 import type { ProgressState } from "./core/types";
@@ -53,7 +54,7 @@ export function createPhaserConfig(
         debug: false,
       },
     },
-    scene: [BootScene, PreloadScene, PrototypeScene, StageScene],
+    scene: [BootScene, PreloadScene, IntroScene, PrototypeScene, StageScene],
   };
 }
 

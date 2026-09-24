@@ -57,7 +57,7 @@ export class PreloadScene extends Phaser.Scene {
   }
 
   public create(): void {
-    this.scene.start("PrototypeScene", {
+    this.scene.start("IntroScene", {
       assetLoadError: this.loadError,
     });
   }

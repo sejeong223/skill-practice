@@ -9,7 +9,6 @@ import { createDefaultProgressState, createRuntimeStageState } from "../core/con
 import type { ProgressState, RuntimeStageState } from "../core/types";
 import { GameplayEventBus } from "../core/events";
 import { getStageDefinition } from "../data";
-import type { StageSceneData } from "./StageScene";
 import { SKILL_DEFINITIONS } from "../data/skills";
 import { TOOL_DEFINITIONS } from "../data/tools";
 import { CheckpointSystem } from "../systems/CheckpointSystem";
@@ -56,7 +55,6 @@ export class PrototypeScene extends Phaser.Scene {
   private defenseToolSystem?: DefenseToolSystem;
   private strayDogEvent?: StrayDogEvent;
   private drawbackDiscovery?: DrawbackDiscovery;
-  private unsubscribeNameConfirmation?: () => void;
 
   public constructor() {
     super("PrototypeScene");
@@ -209,20 +207,6 @@ export class PrototypeScene extends Phaser.Scene {
     });
     this.persistenceEventBus?.on("cutscene-skip-requested", () => this.cutsceneDirector?.skip());
    this.persistenceEventBus?.on("cutscene-requested", (payload) => { void this.cutsceneDirector?.play(payload.cutsceneId); });
-    this.persistenceEventBus?.on("cutscene-finished", (payload) => {
-      if (payload.cutsceneId === "intro-home") {
-        this.player?.lockControl("intro-name");
-        this.persistenceEventBus?.emit("stage-started", { stageId: stage.id, attempt: 1 });
-      }
-    });
-    this.unsubscribeNameConfirmation = this.persistenceEventBus?.on("player-name-confirmed", (payload) => {
-      this.player?.unlockControl("intro-name");
-      this.unsubscribeNameConfirmation?.();
-      this.scene.start("StageScene", {
-        stageId: stage.id,
-        playerName: payload.playerName,
-      } satisfies StageSceneData);
-    });
     if (!this.cutsceneDirector) this.persistenceEventBus?.emit("stage-started", { stageId: stage.id, attempt: 1 });
     this.eventBus.on("checkpoint-reached", (payload) => {
       this.eventLogText?.setText(
@@ -251,7 +235,6 @@ export class PrototypeScene extends Phaser.Scene {
     });
 
     this.events.once("shutdown", () => {
-      this.unsubscribeNameConfirmation?.();
       this.inputManager?.destroy();
       this.strayDogEvent?.destroy();
       this.drawbackDiscovery?.destroy();
@@ -302,9 +285,6 @@ export class PrototypeScene extends Phaser.Scene {
        })
        .setResolution(2);
    }
-    if (this.cutsceneDirector) {
-      this.time.delayedCall(250, () => { void this.cutsceneDirector?.play("intro-home"); });
-    }
  }
 
  public update(time: number, delta: number): void {
