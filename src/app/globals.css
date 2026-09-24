@@ -130,7 +130,7 @@ textarea {
 .equipment-slot select, .keybind-row code, input { border: 1px solid #8b5a56; background: #fff8e5; color: #5f3942; font: inherit; }
 .equipment-slot select { max-width: 100px; padding: 4px; font-size: 9px; }
 .record-list, .keybind-list { display: grid; gap: 5px; }
-.record-row { display: grid; grid-template-columns: 20px 1fr auto; align-items: center; gap: 6px; padding: 6px; background: #f5e7c7; font-size: 10px; }
+.record-row { display: grid; grid-template-columns: 30px 1fr auto; align-items: center; gap: 6px; padding: 6px; background: #f5e7c7; font-size: 10px; }
 .record-row small { display: block; margin-top: 2px; color: #8b5a56; font-size: 9px; line-height: 1.3; }
 .record-icon { color: #b0645d; font-weight: 900; }
 .is-locked { opacity: .52; } .record-warning { color: #b42d65 !important; }

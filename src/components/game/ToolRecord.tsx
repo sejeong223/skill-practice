@@ -16,7 +16,7 @@ export function ToolRecord({ progress, tool, onEquip }: ToolRecordProps): ReactE
   const presentation = getToolPresentation(tool.id);
   return (
     <div className={"record-row " + (owned ? "is-owned" : "is-locked")}>
-      <span className="record-icon">{tool.slot === "attack" ? "A" : "D"}</span>
+      <span className="record-icon">{tool.slot === "attack" ? "공격" : "방어"}</span>
       <span>
         <strong>{presentation.nameKo}</strong>
         <small>{presentation.effectKo}</small>
