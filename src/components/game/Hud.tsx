@@ -11,6 +11,8 @@ export interface HudProps {
   readonly cooldowns: Partial<Record<SkillId, number>>;
   readonly statusOpen: boolean;
   readonly onToggleStatus: () => void;
+  readonly paused: boolean;
+  readonly onTogglePause: () => void;
 }
 
 export function Hud({
@@ -22,6 +24,8 @@ export function Hud({
   cooldowns,
   statusOpen,
   onToggleStatus,
+  paused,
+  onTogglePause,
 }: HudProps): ReactElement {
   const activeCooldowns = Object.entries(cooldowns)
     .filter(([, value]) => (value ?? 0) > 0)
@@ -47,6 +51,20 @@ export function Hud({
         onClick={onToggleStatus}
       >
         {statusOpen ? "닫기" : "상태 / 설정"}
+      </button>
+      <button
+        className="pause-button"
+        type="button"
+        aria-label={paused ? "계속하기" : "일시정지"}
+        onClick={onTogglePause}
+      >
+        <svg viewBox="0 0 16 16" shapeRendering="crispEdges" aria-hidden="true">
+          {paused ? (
+            <path d="M4 2h3v2h2v2h2v2h2v2h-2v2H9v2H7v2H4z" />
+          ) : (
+            <path d="M3 2h4v12H3zM9 2h4v12H9z" />
+          )}
+        </svg>
       </button>
     </div>
   );

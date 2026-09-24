@@ -85,6 +85,12 @@ export interface StageEventMap {
     stageId: StageId;
     deathsTotal: number;
   };
+  "pause-requested": {
+    paused: boolean;
+  };
+  "pause-state-changed": {
+    paused: boolean;
+  };
   "equipment-change-requested": {
     attackToolId?: string;
     defenseToolId?: string;

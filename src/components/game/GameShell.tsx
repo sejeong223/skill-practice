@@ -14,6 +14,7 @@ import { CutsceneOverlay } from "./CutsceneOverlay";
 import { GameOverlay } from "./GameOverlay";
 import { PhaserGame } from "./PhaserGame";
 import { IntroTitleOverlay } from "./IntroTitleOverlay";
+import { DeathCounterOverlay } from "./DeathCounterOverlay";
 
 export interface GameShellProps {
   readonly initialStageId: StageId;
@@ -47,6 +48,10 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
   const autoSaveRef = useRef<AutoSaveCoordinator | null>(null);
   const [toast, setToast] = useState("진행 상태를 준비하는 중...");
   const [mode, setMode] = useState<UiMode>("safe");
+  const [paused, setPaused] = useState(false);
+  const [deathOverlayVisible, setDeathOverlayVisible] = useState(false);
+  const [deathOverlayCount, setDeathOverlayCount] = useState(0);
+  const deathOverlayTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [statusOpen, setStatusOpen] = useState(false);
   const [introGateStep, setIntroGateStep] = useState<"intro" | "title" | "ready">("intro");
 
@@ -82,6 +87,19 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
     setProgress(cloneProgress(progressRef.current));
   }, []);
 
+  useEffect(() => {
+    const unsubscribe = eventBus.on("pause-state-changed", ({ paused: nextPaused }) => {
+      setPaused(nextPaused);
+    });
+    return unsubscribe;
+  }, [eventBus]);
+
+  useEffect(() => () => {
+    if (deathOverlayTimeoutRef.current) {
+      clearTimeout(deathOverlayTimeoutRef.current);
+    }
+  }, []);
+
   const handleEvent = useCallback((type: GameEventType): void => {
     const messages: Partial<Record<GameEventType, string>> = {
       "coin-changed": "코인 상태가 저장되었습니다.",
@@ -98,7 +116,19 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
     if (type === "cutscene-started") setMode("cutscene");
     if (type === "cutscene-finished" || type === "stage-started") setMode("play");
     if (type === "stage-started") setStatusOpen(false);
-    if (type === "death") setMode("dead");
+    if (type === "death") {
+      setDeathOverlayCount(progressRef.current.deathsTotal);
+      setDeathOverlayVisible(true);
+      setMode("dead");
+      if (deathOverlayTimeoutRef.current) {
+        clearTimeout(deathOverlayTimeoutRef.current);
+      }
+      deathOverlayTimeoutRef.current = setTimeout(() => {
+        setDeathOverlayVisible(false);
+        setMode("play");
+        deathOverlayTimeoutRef.current = null;
+      }, 900);
+    }
   }, []);
 
   const handleNameConfirm = useCallback((name: string): void => {
@@ -145,7 +175,8 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
         <GameEventBridge eventBus={eventBus} onEvent={handleEvent} />
         <CutsceneOverlay eventBus={eventBus} onSkip={() => eventBus.emit("cutscene-skip-requested", {})} />
         {introGateStep === "title" && <IntroTitleOverlay initialName={progress.playerName} onConfirm={handleNameConfirm} />}
-        {introGateStep === "ready" && <GameOverlay stageTitle={stage.title} runtime={runtime} progress={progress} skills={SKILL_DEFINITIONS} tools={TOOL_DEFINITIONS} cooldowns={{}} alive={mode !== "dead" && mode !== "cutscene"} safeZone={mode === "safe"} statusOpen={statusOpen} onEquip={handleEquip} onPurchase={handlePurchase} onKeybindChange={handleKeybindChange} onToggleStatus={() => setStatusOpen((open) => !open)} />}
+        {introGateStep === "ready" && <GameOverlay stageTitle={stage.title} runtime={runtime} progress={progress} skills={SKILL_DEFINITIONS} tools={TOOL_DEFINITIONS} cooldowns={{}} alive={mode !== "dead" && mode !== "cutscene"} safeZone={mode === "safe"} statusOpen={statusOpen} onEquip={handleEquip} onPurchase={handlePurchase} onKeybindChange={handleKeybindChange} onToggleStatus={() => setStatusOpen((open) => !open)} paused={paused} onTogglePause={() => eventBus.emit("pause-requested", { paused: !paused })} />}
+        <DeathCounterOverlay deathCount={deathOverlayCount} visible={deathOverlayVisible} />
         {introGateStep === "ready" && <div className="game-toast" role="status">{toast}</div>}
         {onExit && <button className="exit-button" type="button" onClick={onExit}>나가기</button>}
       </div>

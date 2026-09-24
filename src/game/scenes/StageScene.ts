@@ -242,6 +242,9 @@ export class StageScene extends Phaser.Scene {
     this.eventUnsubscribers.push(this.eventBus.on("stage-completed", () => {
       this.runtime?.setStatus("completed");
     }));
+    this.eventUnsubscribers.push(this.eventBus.on("pause-requested", ({ paused }) => {
+      this.setPaused(paused);
+    }));
 
     if (process.env.NODE_ENV !== "production" && this.input.keyboard) {
       this.stageReviewKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F2);
@@ -273,6 +276,10 @@ export class StageScene extends Phaser.Scene {
   }
 
   public update(time: number, delta: number): void {
+    const input = this.inputManager?.getSnapshot();
+    if (input?.pausePressed) {
+      this.setPaused(this.runtime?.getStatus() !== "paused");
+    }
     if (this.runtime?.getStatus() !== "play") {
       return;
     }
@@ -283,6 +290,23 @@ export class StageScene extends Phaser.Scene {
     for (const enemy of this.mapEnemies.values()) enemy.updateMovement(time);
     this.debugOverlay?.update();
     this.syncSectionCamera();
+  }
+
+  private setPaused(paused: boolean): void {
+    const runtime = this.runtime;
+    if (!runtime) return;
+
+    if (paused && runtime.getStatus() === "play") {
+      runtime.pause();
+      this.physics.world.pause();
+    } else if (!paused && runtime.getStatus() === "paused") {
+      runtime.resume();
+      this.physics.world.resume();
+    }
+
+    this.eventBus?.emit("pause-state-changed", {
+      paused: runtime.getStatus() === "paused",
+    });
   }
 
   private activateCheckpoint(checkpointId: string): void {

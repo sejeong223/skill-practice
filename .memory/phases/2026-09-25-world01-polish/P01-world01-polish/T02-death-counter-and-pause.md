@@ -1,6 +1,6 @@
 # Task: T02 Death Counter and Pause Control
 
-## Status: pending
+## Status: done
 
 ## Goal
 
@@ -74,18 +74,18 @@ On every death, briefly cover the game with a black screen showing a corgi-face 
 
 ## Commit Message
 
-    feat(game-ui): add death counter and pause control
+    feat(game-ui): 사망 횟수와 일시정지 기능 추가
 
     Plan: 2026-09-25-world01-polish
     Phase: P01-world01-polish
     Task: T02-death-counter-and-pause
 
-    - Show the persisted death total on a brief black overlay.
-    - Pause and resume the stage with a pixel-art control.
+    - 저장된 사망 횟수를 검은 오버레이에 잠시 표시한다.
+    - 픽셀 아트 버튼과 지정 키로 게임을 멈추고 다시 시작한다.
 
 ## Progress
 
-- [ ] Implementation complete
-- [ ] Validation passed
+- [x] Implementation complete
+- [x] Validation passed (lint, build)
+- [ ] Manual in-game death and pause interaction review
 - commit: pending
-

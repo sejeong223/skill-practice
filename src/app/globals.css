@@ -292,3 +292,52 @@ form { display: flex; gap: 6px; margin-top: 10px; } form input { min-width: 0; f
   .item-card { padding: 14px 16px; }
   .item-card h2 { font-size: clamp(16px, 3vw, 22px); }
 }
+
+.pause-button {
+  position: absolute;
+  top: 16px;
+  right: 74px;
+  z-index: 5;
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  padding: 4px;
+  border: 2px solid #5f3942;
+  background: #e8cda0;
+  color: #5f3942;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.pause-button svg {
+  display: block;
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+  image-rendering: pixelated;
+}
+
+.death-counter-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: grid;
+  place-items: center;
+  background: #000;
+  color: #fff8e5;
+  pointer-events: auto;
+}
+
+.death-counter-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font: 700 clamp(24px, 4vw, 40px) "Galmuri11Pixel";
+}
+
+.death-counter-content img {
+  width: 64px;
+  height: 64px;
+  image-rendering: pixelated;
+}

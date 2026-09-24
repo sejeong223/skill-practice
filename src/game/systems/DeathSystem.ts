@@ -62,6 +62,10 @@ export class DeathSystem {
       stageId: context.stageId,
       deathsTotal: this.progress.deathsTotal,
     });
+    this.persistenceEventBus?.emit("death", {
+      stageId: context.stageId,
+      cause: context.cause,
+    });
     this.runtime.currentStageCoins = 0;
     this.runtime.attempt += 1;
 

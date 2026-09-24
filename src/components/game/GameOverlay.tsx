@@ -16,13 +16,15 @@ export interface GameOverlayProps {
   readonly alive: boolean;
   readonly safeZone: boolean;
   readonly statusOpen: boolean;
+  readonly paused: boolean;
+  readonly onTogglePause: () => void;
   readonly onEquip: (tool: ToolDefinition) => void;
   readonly onPurchase: (tool: ToolDefinition) => void;
   readonly onKeybindChange: (action: InputAction, key: string) => void;
   readonly onToggleStatus: () => void;
 }
 
-export function GameOverlay({ stageTitle, runtime, progress, skills, tools, cooldowns, alive, safeZone, statusOpen, onEquip, onPurchase, onKeybindChange, onToggleStatus }: GameOverlayProps): ReactElement {
+export function GameOverlay({ stageTitle, runtime, progress, skills, tools, cooldowns, alive, safeZone, statusOpen, paused, onTogglePause, onEquip, onPurchase, onKeybindChange, onToggleStatus }: GameOverlayProps): ReactElement {
   const attackTool = tools.find((tool) => tool.id === progress.equippedAttackToolId);
   const defenseTool = tools.find((tool) => tool.id === progress.equippedDefenseToolId);
   return (
@@ -36,6 +38,8 @@ export function GameOverlay({ stageTitle, runtime, progress, skills, tools, cool
         cooldowns={cooldowns}
         statusOpen={statusOpen}
         onToggleStatus={onToggleStatus}
+        paused={paused}
+        onTogglePause={onTogglePause}
       />
       {statusOpen && (
         <div className="overlay-columns">
