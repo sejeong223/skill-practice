@@ -128,13 +128,15 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
   const stage = getStageDefinition(initialStageId);
   return (
     <div className="game-shell">
-      <PhaserGame className="phaser-viewport" gameEventBus={eventBus} progressState={sharedProgressState} />
-      <GameEventBridge eventBus={eventBus} onEvent={handleEvent} />
-      <CutsceneOverlay eventBus={eventBus} onSkip={() => eventBus.emit("cutscene-skip-requested", {})} />
-      {introGateStep === "title" && <IntroTitleOverlay initialName={progress.playerName} onConfirm={handleNameConfirm} />}
-      {introGateStep === "ready" && <GameOverlay stageTitle={stage.title} runtime={runtime} progress={progress} skills={SKILL_DEFINITIONS} tools={TOOL_DEFINITIONS} cooldowns={{}} alive={mode !== "dead" && mode !== "cutscene"} safeZone={mode === "safe"} onEquip={handleEquip} onPurchase={handlePurchase} onKeybindChange={handleKeybindChange} />}
-      <div className="game-toast" role="status">{toast}</div>
-      {onExit && <button className="exit-button" type="button" onClick={onExit}>나가기</button>}
+      <div className="game-content-frame">
+        <PhaserGame className="phaser-viewport" gameEventBus={eventBus} progressState={sharedProgressState} />
+        <GameEventBridge eventBus={eventBus} onEvent={handleEvent} />
+        <CutsceneOverlay eventBus={eventBus} onSkip={() => eventBus.emit("cutscene-skip-requested", {})} />
+        {introGateStep === "title" && <IntroTitleOverlay initialName={progress.playerName} onConfirm={handleNameConfirm} />}
+        {introGateStep === "ready" && <GameOverlay stageTitle={stage.title} runtime={runtime} progress={progress} skills={SKILL_DEFINITIONS} tools={TOOL_DEFINITIONS} cooldowns={{}} alive={mode !== "dead" && mode !== "cutscene"} safeZone={mode === "safe"} statusOpen={statusOpen} onEquip={handleEquip} onPurchase={handlePurchase} onKeybindChange={handleKeybindChange} onToggleStatus={() => setStatusOpen((open) => !open)} />}
+        <div className="game-toast" role="status">{toast}</div>
+        {onExit && <button className="exit-button" type="button" onClick={onExit}>나가기</button>}
+      </div>
     </div>
   );
 }
