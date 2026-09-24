@@ -150,6 +150,9 @@ export class IntroActorRig {
       .setAlpha(0);
     this.rib
       .setPosition(this.layout.rib.x, this.layout.rib.y)
+      .setDisplaySize(170, 170)
+      .setRotation(0)
+      .setDepth(this.layout.rib.depth)
       .setVisible(false)
       .setAlpha(0);
     this.slipper
@@ -196,7 +199,7 @@ export class IntroActorRig {
         this.corgiCarry.setVisible(false);
         break;
       case "surprise":
-        this.corgi.setFrame(CORGI_FRAME.surprised).setVisible(true);
+        this.corgi.setFrame(CORGI_FRAME.surprised).setFlipX(false).setVisible(true);
         this.corgiCarry.setVisible(false);
         break;
       case "leap":
@@ -306,6 +309,7 @@ export class IntroActorRig {
         break;
       case "retreat":
       case "leap":
+        this.rib.setVisible(false).setDisplaySize(170, 170).setDepth(this.layout.rib.depth);
         this.cat.setFrame(CAT_FRAME.retreat).setVisible(true);
         this.scene.tweens.add({
           targets: this.cat,
@@ -334,12 +338,16 @@ export class IntroActorRig {
     switch (action.action) {
       case "reveal":
         this.hideOwnerAndBag();
+        this.corgi.setFlipX(false);
         this.ribPlate
           .setPosition(this.layout.rib.x, this.layout.rib.y + 48)
           .setVisible(true)
           .setAlpha(0);
         this.rib
           .setPosition(this.layout.rib.x, this.layout.rib.y - 45)
+          .setDisplaySize(170, 170)
+          .setRotation(0)
+          .setDepth(this.layout.rib.depth)
           .setVisible(true)
           .setAlpha(0);
         this.scene.tweens.add({
@@ -357,6 +365,7 @@ export class IntroActorRig {
         });
         break;
       case "steal":
+        this.rib.setDisplaySize(170, 170).setRotation(0);
         this.scene.tweens.add({
           targets: this.rib,
           x: this.layout.balcony.x - 35,
@@ -366,6 +375,15 @@ export class IntroActorRig {
           ease: "Sine.easeIn",
           onComplete: () => this.rib.setVisible(false),
         });
+        break;
+      case "taunt":
+        this.rib
+          .setPosition(this.layout.balcony.x - 10, this.layout.balcony.y - 112)
+          .setDisplaySize(76, 76)
+          .setRotation(0)
+          .setDepth(this.layout.balcony.depth + 1)
+          .setVisible(true)
+          .setAlpha(1);
         break;
       case "throw":
         this.rib.setVisible(true).setAlpha(1);
@@ -382,15 +400,22 @@ export class IntroActorRig {
           .setPosition(this.layout.rib.x, this.layout.rib.y + 48)
           .setVisible(true)
           .setAlpha(1);
-        this.rib.setPosition(this.layout.rib.x, this.layout.rib.y).setVisible(true).setAlpha(1);
+        this.rib
+          .setPosition(this.layout.rib.x, this.layout.rib.y)
+          .setDisplaySize(170, 170)
+          .setRotation(0)
+          .setDepth(this.layout.rib.depth)
+          .setVisible(true)
+          .setAlpha(1);
         break;
       case "enter":
-      case "taunt":
       case "leap":
       case "point":
-      case "retreat":
       case "surprise":
         this.rib.setVisible(false);
+        break;
+      case "retreat":
+        this.rib.setVisible(false).setDisplaySize(170, 170).setDepth(this.layout.rib.depth);
         break;
     }
   }
