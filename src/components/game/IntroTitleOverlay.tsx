@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type FormEvent, type ReactElement } from "react";
+import { useState, type FormEvent, type ReactElement } from "react";
 
 const GAME_TITLE = "짧은 다리의 역습: 전설의 왕갈비뼈를 찾아서";
 
@@ -15,11 +15,6 @@ export function IntroTitleOverlay({
 }: IntroTitleOverlayProps): ReactElement {
   const [phase, setPhase] = useState<"title" | "name">("title");
   const [name, setName] = useState(initialName);
-
-  useEffect(() => {
-    const timeout = window.setTimeout(() => setPhase("name"), 2200);
-    return () => window.clearTimeout(timeout);
-  }, []);
 
   const submit = (event: FormEvent<HTMLFormElement>): void => {
     event.preventDefault();

@@ -6,7 +6,6 @@ const CORGI_FRAME = {
   idle: 0,
   eager: 1,
   surprised: 4,
-  slipper: 6,
   determined: 7,
 } as const;
 
@@ -32,6 +31,7 @@ export class IntroActorRig {
   private readonly owner: Phaser.GameObjects.Sprite;
   private readonly rib: Phaser.GameObjects.Image;
   private readonly slipper: Phaser.GameObjects.Image;
+  private readonly corgiCarry: Phaser.GameObjects.Image;
   private readonly bag: Phaser.GameObjects.Container;
   private readonly delayedCalls: Phaser.Time.TimerEvent[] = [];
   private corgiBaseY: number;
@@ -55,6 +55,14 @@ export class IntroActorRig {
       .setFlipX(true)
       .setDepth(layout.corgiWait.depth);
     this.corgiBaseY = layout.corgiWait.y;
+
+    this.corgiCarry = scene.add
+      .image(layout.corgiWait.x, layout.corgiWait.y, "intro-corgi-carry-slipper")
+      .setOrigin(0.5, 0.92)
+      .setDisplaySize(370, 246)
+      .setFlipX(true)
+      .setDepth(layout.corgiWait.depth)
+      .setVisible(false);
 
     this.cat = scene.add
       .sprite(layout.balcony.x, layout.balcony.y, "intro-tuxedo-actions", CAT_FRAME.crouch)
@@ -121,6 +129,10 @@ export class IntroActorRig {
       .setFrame(CORGI_FRAME.idle)
       .setVisible(true)
       .setAlpha(1);
+    this.corgiCarry
+      .setPosition(this.layout.corgiWait.x, this.corgiBaseY)
+      .setVisible(false)
+      .setAlpha(1);
     this.cat
       .setPosition(this.layout.balcony.x, this.catBaseY)
       .setFrame(CAT_FRAME.crouch)
@@ -147,6 +159,7 @@ export class IntroActorRig {
 
   public stop(): void {
     this.scene.tweens.killTweensOf(this.corgi);
+    this.scene.tweens.killTweensOf(this.corgiCarry);
     this.scene.tweens.killTweensOf(this.cat);
     this.scene.tweens.killTweensOf(this.owner);
     this.scene.tweens.killTweensOf(this.rib);
@@ -158,6 +171,7 @@ export class IntroActorRig {
   public destroy(): void {
     this.stop();
     this.corgi.destroy();
+    this.corgiCarry.destroy();
     this.cat.destroy();
     this.owner.destroy();
     this.rib.destroy();
@@ -167,22 +181,26 @@ export class IntroActorRig {
 
   private playCorgiAction(action: ActorAction): void {
     this.scene.tweens.killTweensOf(this.corgi);
+    this.scene.tweens.killTweensOf(this.corgiCarry);
 
     switch (action.action) {
       case "enter":
       case "hold":
         this.corgi.setFrame(CORGI_FRAME.eager).setVisible(true).setAlpha(1);
+        this.corgiCarry.setVisible(false);
         break;
       case "surprise":
         this.corgi.setFrame(CORGI_FRAME.surprised).setVisible(true);
+        this.corgiCarry.setVisible(false);
         break;
       case "leap":
         this.playCorgiLeap(action.x, action.y);
         break;
       case "retreat":
-        this.corgi.setFrame(CORGI_FRAME.determined);
+        if (this.slipperAttached) this.corgiCarry.setVisible(true);
+        else this.corgi.setFrame(CORGI_FRAME.determined).setVisible(true);
         this.scene.tweens.add({
-          targets: this.corgi,
+          targets: this.slipperAttached ? this.corgiCarry : this.corgi,
           x: action.x ?? this.layout.dogDoor.x - 90,
           alpha: 0,
           duration: 750,
@@ -378,12 +396,17 @@ export class IntroActorRig {
       case "hold":
       case "reveal":
         this.slipperAttached = true;
-        this.slipper.setVisible(true).setAlpha(1);
-        this.syncHeldSlipper();
-        this.corgi.setFrame(CORGI_FRAME.slipper);
+        this.slipper.setVisible(false).setAlpha(0);
+        this.corgi.setVisible(false);
+        this.corgiCarry
+          .setPosition(this.corgi.x, this.corgi.y)
+          .setVisible(true)
+          .setAlpha(1);
         break;
       case "throw":
         this.slipperAttached = false;
+        this.corgiCarry.setVisible(false);
+        this.corgi.setFrame(CORGI_FRAME.determined).setVisible(true).setAlpha(1);
         this.slipper.setVisible(true).setAlpha(1);
         this.scene.tweens.add({
           targets: this.slipper,
@@ -402,6 +425,7 @@ export class IntroActorRig {
       case "surprise":
         this.slipperAttached = false;
         this.slipper.setVisible(false);
+        this.corgiCarry.setVisible(false);
         break;
     }
   }
@@ -409,25 +433,28 @@ export class IntroActorRig {
   private playCorgiLeap(x?: number, y?: number): void {
     const targetX = x ?? this.layout.dogDoor.x;
     const landingY = y ?? this.corgiBaseY;
-    this.corgi.setFrame(CORGI_FRAME.determined).setVisible(true).setAlpha(1);
+    const actor = this.slipperAttached ? this.corgiCarry : this.corgi;
+    if (this.slipperAttached) {
+      actor.setPosition(this.corgiCarry.x, this.corgiCarry.y).setVisible(true).setAlpha(1);
+    } else {
+      this.corgi.setFrame(CORGI_FRAME.determined).setVisible(true).setAlpha(1);
+    }
     this.scene.tweens.add({
-      targets: this.corgi,
+      targets: actor,
       x: targetX,
       y: landingY - 100,
       duration: 330,
       ease: "Sine.easeOut",
-      onUpdate: () => this.syncHeldSlipper(),
       onComplete: () => {
         this.corgiBaseY = landingY;
         this.scene.tweens.add({
-          targets: this.corgi,
+          targets: actor,
           y: landingY,
           duration: 230,
           ease: "Sine.easeIn",
-          onUpdate: () => this.syncHeldSlipper(),
           onComplete: () => {
             if (targetX < this.layout.dogDoor.x) {
-              this.corgi.setVisible(false);
+              actor.setVisible(false);
               this.slipperAttached = false;
               this.slipper.setVisible(false);
             }
@@ -435,11 +462,6 @@ export class IntroActorRig {
         });
       },
     });
-  }
-
-  private syncHeldSlipper(): void {
-    if (!this.slipperAttached) return;
-    this.slipper.setPosition(this.corgi.x - 52, this.corgi.y - 105);
   }
 
   private createPixelBag(x: number, y: number): Phaser.GameObjects.Container {

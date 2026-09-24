@@ -47,12 +47,16 @@ export interface StageEventMap {
     beat: CutsceneBeat;
     index: number;
     skipAllowed: boolean;
+    manualAdvance?: boolean;
+    captionIndex?: number;
+    captionCount?: number;
   };
   "cutscene-finished": {
     cutsceneId: string;
     skipped: boolean;
   };
   "cutscene-skip-requested": Record<string, never>;
+  "cutscene-advance-requested": Record<string, never>;
   "shop-requested": {
     stageId: StageId;
   };

@@ -2,22 +2,25 @@ import * as Phaser from "phaser";
 import type { GameEventBus } from "../bridge/GameEventBus";
 import type { ProgressState } from "../core/types";
 import { AudioManager } from "../audio/AudioManager";
-import { CutsceneTimeline } from "../cutscenes/CutsceneTimeline";
 import { IntroActorRig } from "../cutscenes/IntroActorRig";
 import { INTRO_HOME_LAYOUT } from "../cutscenes/introLayout";
 import { INTRO_CUTSCENE } from "../data/cutscenes/intro";
-import type { CameraAction } from "../cutscenes/types";
+import type { CameraAction, CutsceneBeat, DialogueLine } from "../cutscenes/types";
 
 interface IntroSceneData {
   readonly assetLoadError?: string | null;
 }
 
 export class IntroScene extends Phaser.Scene {
-  private readonly timeline = new CutsceneTimeline();
   private readonly unsubscribers: Array<() => void> = [];
   private actorRig?: IntroActorRig;
   private eventBus?: GameEventBus;
   private audioManager?: AudioManager;
+  private progress?: ProgressState;
+  private currentBeat?: CutsceneBeat;
+  private currentCaptions: Array<{ readonly narration?: string; readonly dialogue?: DialogueLine }> = [];
+  private beatIndex = 0;
+  private captionIndex = 0;
   private active = false;
   private skipAllowed = false;
   private skipped = false;
@@ -57,6 +60,7 @@ export class IntroScene extends Phaser.Scene {
     if (!this.eventBus) return;
     this.unsubscribers.push(
       this.eventBus.on("cutscene-skip-requested", () => this.skip()),
+      this.eventBus.on("cutscene-advance-requested", () => this.advance()),
       this.eventBus.on("cutscene-requested", (payload) => {
         if (payload.cutsceneId === INTRO_CUTSCENE.id) this.startCutscene();
       }),
@@ -81,28 +85,72 @@ export class IntroScene extends Phaser.Scene {
     this.actorRig?.reset();
     this.active = true;
     this.skipped = false;
-    const progress = this.registry.get("progressState") as ProgressState | undefined;
-    this.skipAllowed = progress?.seenCutsceneIds.includes(INTRO_CUTSCENE.id) ?? false;
+    this.progress = this.registry.get("progressState") as ProgressState | undefined;
+    this.skipAllowed = this.progress?.seenCutsceneIds.includes(INTRO_CUTSCENE.id) ?? false;
+    this.beatIndex = 0;
 
     this.eventBus?.emit("cutscene-started", {
       cutsceneId: INTRO_CUTSCENE.id,
       skipAllowed: this.skipAllowed,
     });
 
-    void this.timeline
-      .play(INTRO_CUTSCENE.beats, (beat, index) => {
-        if (!this.active) return;
-        const beatSkipAllowed = this.skipAllowed && beat.skipAllowedAfterSeen;
-        this.eventBus?.emit("cutscene-beat", {
-          cutsceneId: INTRO_CUTSCENE.id,
-          beat,
-          index,
-          skipAllowed: beatSkipAllowed,
-        });
-        beat.actors?.forEach((action) => this.actorRig?.playAction(action));
-        beat.camera?.forEach((action) => this.applyCameraAction(action));
-      })
-      .then(() => this.finishCutscene(progress));
+    this.playBeat();
+  }
+
+  private playBeat(): void {
+    if (!this.active) return;
+    const beat = INTRO_CUTSCENE.beats[this.beatIndex];
+    if (!beat) {
+      this.finishCutscene();
+      return;
+    }
+
+    this.currentBeat = beat;
+    this.currentCaptions = [];
+    if (beat.narration) this.currentCaptions.push({ narration: beat.narration });
+    beat.dialogue?.forEach((line) => this.currentCaptions.push({ dialogue: line }));
+    if (this.currentCaptions.length === 0) this.currentCaptions.push({});
+    this.captionIndex = 0;
+
+    beat.actors?.forEach((action) => this.actorRig?.playAction(action));
+    beat.camera?.forEach((action) => this.applyCameraAction(action));
+    this.emitCurrentCaption();
+  }
+
+  private emitCurrentCaption(): void {
+    const beat = this.currentBeat;
+    const caption = this.currentCaptions[this.captionIndex];
+    if (!beat || !caption) return;
+
+    const visibleBeat: CutsceneBeat = {
+      ...beat,
+      narration: caption.narration,
+      dialogue: caption.dialogue ? [caption.dialogue] : undefined,
+      itemCard: this.captionIndex === 0 ? beat.itemCard : undefined,
+      soundCue: this.captionIndex === 0 ? beat.soundCue : undefined,
+      musicKey: this.captionIndex === 0 ? beat.musicKey : undefined,
+    };
+    this.eventBus?.emit("cutscene-beat", {
+      cutsceneId: INTRO_CUTSCENE.id,
+      beat: visibleBeat,
+      index: this.beatIndex,
+      skipAllowed: this.skipAllowed && beat.skipAllowedAfterSeen,
+      manualAdvance: true,
+      captionIndex: this.captionIndex,
+      captionCount: this.currentCaptions.length,
+    });
+  }
+
+  private advance(): void {
+    if (!this.active) return;
+    if (this.captionIndex + 1 < this.currentCaptions.length) {
+      this.captionIndex += 1;
+      this.emitCurrentCaption();
+      return;
+    }
+
+    this.beatIndex += 1;
+    this.playBeat();
   }
 
   private skip(): void {
@@ -111,7 +159,7 @@ export class IntroScene extends Phaser.Scene {
     this.actorRig?.stop();
     this.audioManager?.stopAllSounds();
     this.cameras.main.fadeOut(300, 0, 0, 0);
-    this.timeline.skip();
+    this.finishCutscene();
   }
 
   private applyCameraAction(action: CameraAction): void {
@@ -137,11 +185,11 @@ export class IntroScene extends Phaser.Scene {
     }
   }
 
-  private finishCutscene(progress?: ProgressState): void {
+  private finishCutscene(): void {
     if (!this.active) return;
     this.active = false;
-    if (progress && !progress.seenCutsceneIds.includes(INTRO_CUTSCENE.id)) {
-      progress.seenCutsceneIds.push(INTRO_CUTSCENE.id);
+    if (this.progress && !this.progress.seenCutsceneIds.includes(INTRO_CUTSCENE.id)) {
+      this.progress.seenCutsceneIds.push(INTRO_CUTSCENE.id);
     }
     this.actorRig?.stop();
     this.audioManager?.stopMusic();
@@ -150,6 +198,8 @@ export class IntroScene extends Phaser.Scene {
       skipped: this.skipped,
     });
     this.skipAllowed = false;
+    this.currentBeat = undefined;
+    this.currentCaptions = [];
   }
 
   private showAssetError(message: string): void {
@@ -178,7 +228,8 @@ export class IntroScene extends Phaser.Scene {
 
   private cleanup(): void {
     this.active = false;
-    this.timeline.cancel();
+    this.currentBeat = undefined;
+    this.currentCaptions = [];
     this.actorRig?.destroy();
     this.actorRig = undefined;
     this.unsubscribers.splice(0).forEach((unsubscribe) => unsubscribe());

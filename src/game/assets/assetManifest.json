@@ -343,5 +343,11 @@
     "kind": "image",
     "url": "/assets/pixel/cutscenes/intro/intro-slipper.png",
     "required": true
+  },
+  {
+    "key": "intro-corgi-carry-slipper",
+    "kind": "image",
+    "url": "/assets/pixel/cutscenes/intro/intro-corgi-carry-slipper-v1.png",
+    "required": true
   }
 ]

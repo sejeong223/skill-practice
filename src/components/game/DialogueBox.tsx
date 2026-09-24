@@ -7,6 +7,8 @@ export interface DialogueBoxProps {
   readonly lines: readonly DialogueLine[];
   readonly durationMs: number;
   readonly resetKey: string;
+  readonly forceReveal?: boolean;
+  readonly onComplete?: () => void;
 }
 
 const SPEAKER_LABELS: Readonly<Record<DialogueLine["speaker"], string>> = {
@@ -16,7 +18,7 @@ const SPEAKER_LABELS: Readonly<Record<DialogueLine["speaker"], string>> = {
   cat: "턱시도",
 };
 
-export function DialogueBox({ lines, durationMs, resetKey }: DialogueBoxProps): ReactElement {
+export function DialogueBox({ lines, durationMs, resetKey, forceReveal, onComplete }: DialogueBoxProps): ReactElement {
   return (
     <div className="dialogue-box">
       {lines.map((line) => (
@@ -27,6 +29,8 @@ export function DialogueBox({ lines, durationMs, resetKey }: DialogueBoxProps): 
             text={line.text}
             durationMs={durationMs}
             resetKey={resetKey + ":" + line.speaker + ":" + line.text}
+            forceReveal={forceReveal}
+            onComplete={onComplete}
           />
         </p>
       ))}

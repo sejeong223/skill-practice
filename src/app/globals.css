@@ -244,11 +244,18 @@ form { display: flex; gap: 6px; margin-top: 10px; } form input { min-width: 0; f
 .speaker-corgi .dialogue-speaker { color: #e8cda0; }
 
 .cutscene-footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
   z-index: 1;
   width: min(100%, 900px);
   margin-top: 0;
   font-size: 11px;
 }
+
+.cutscene-footer > span { margin-right: auto; }
+.cutscene-footer .primary-button { min-height: 34px; padding: 6px 10px; font-size: 10px; }
 
 .item-card {
   position: relative;
