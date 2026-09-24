@@ -166,6 +166,7 @@ export interface MapChainActionDefinition {
   readonly targetId?: string;
   readonly value?: MapPropertyValue;
   readonly delayMs?: number;
+  readonly durationMs?: number;
   readonly eventType?: string;
 }
 

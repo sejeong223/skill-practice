@@ -5,10 +5,15 @@ import type {
   MapChainTrigger,
   MapPropertyValue,
 } from "../core/contentTypes";
-import type { MapObjectRuntimeState, MapRuntimeSnapshot } from "../core/runtimeTypes";
+import type {
+  GimmickRuntimeState,
+  MapObjectRuntimeState,
+  MapRuntimeSnapshot,
+} from "../core/runtimeTypes";
 import { GameplayEventBus } from "../core/events";
 import { StageRandom } from "../random/StageRandom";
 import { Player } from "../entities/Player";
+import type { StageId } from "../core/types";
 import type { LoadedMap } from "./mapTypes";
 import { MapRuleRegistry } from "./MapRuleRegistry";
 
@@ -22,7 +27,7 @@ export class MapInteractionSystem {
   private readonly scene: Phaser.Scene;
   private readonly player: Player;
   private readonly eventBus: GameplayEventBus;
-  private readonly stageId: string;
+  private readonly stageId: StageId;
   private readonly random: StageRandom;
   private readonly registry: MapRuleRegistry;
   private readonly pendingActions: PendingAction[] = [];
@@ -31,9 +36,10 @@ export class MapInteractionSystem {
     scene: Phaser.Scene,
     player: Player,
     eventBus: GameplayEventBus,
-    stageId: string,
+    stageId: StageId,
     random: StageRandom,
     loadedMap: LoadedMap | null,
+    private readonly getCheckpointId: () => string | null = () => null,
   ) {
     this.scene = scene;
     this.player = player;
@@ -121,8 +127,14 @@ export class MapInteractionSystem {
     return true;
   }
 
-  public createSnapshot(checkpointId: string): MapRuntimeSnapshot {
-    return this.registry.createSnapshot(checkpointId, this.random.seed);
+  public createSnapshot(
+    checkpointId: string,
+    gimmickStates: Readonly<Record<string, GimmickRuntimeState>> = {},
+  ): MapRuntimeSnapshot {
+    return {
+      ...this.registry.createSnapshot(checkpointId, this.random.seed),
+      gimmickStates,
+    };
   }
 
   public reset(snapshot: MapRuntimeSnapshot | null, now = this.scene.time.now): void {
@@ -190,6 +202,11 @@ export class MapInteractionSystem {
   ): void {
     const targetId = action.targetId;
     const current = targetId ? this.registry.getObjectState(targetId) : undefined;
+    const rule = this.registry.getRule(chainId);
+    const sourceId = rule?.sourceId;
+    const sourceDefinition = sourceId
+      ? this.registry.getObjectDefinition(sourceId)
+      : undefined;
 
     if (targetId && action.type === "activate-object") {
       this.emitState(targetId, this.registry.setObjectState(targetId, { active: true }), now);
@@ -209,6 +226,37 @@ export class MapInteractionSystem {
         }),
         now,
       );
+    } else if (action.type === "set-player-tint") {
+      this.player.setGimmickTint(typeof action.value === "string" ? action.value : null);
+    } else if (action.type === "force-control" && sourceId) {
+      const kind = action.value;
+      if (kind === "run-left" || kind === "drift-backward" || kind === "launch-up") {
+        this.player.startControlOverride(kind, action.durationMs ?? 0, sourceId);
+      }
+    } else if (action.type === "clear-control") {
+      this.player.clearControlOverride(targetId ?? sourceId ?? "");
+    } else if (action.type === "request-death") {
+      const cause = sourceDefinition?.properties.deathCause === "scripted"
+        ? "scripted"
+        : "trap";
+      const outcome = sourceDefinition?.properties.gimmickOutcome;
+      const outcomeKinds = [
+        "instant-death",
+        "forced-control-death",
+        "launch-death",
+      ] as const;
+      this.eventBus.emit("death-requested", {
+        stageId: this.stageId,
+        cause,
+        checkpointId: this.getCheckpointId(),
+        ...(sourceDefinition?.properties.gimmickId
+          ? { gimmickId: String(sourceDefinition.properties.gimmickId) }
+          : {}),
+        ...(outcomeKinds.includes(outcome as typeof outcomeKinds[number])
+          ? { outcome: outcome as typeof outcomeKinds[number] }
+          : {}),
+        now,
+      });
     } else if (action.type === "emit-event" || action.type === "camera-effect") {
       const objectId = targetId ?? chainId;
       const state = current ?? {

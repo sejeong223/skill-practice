@@ -38,9 +38,10 @@ function cloneProgress(progress: ProgressState): ProgressState {
 export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElement {
   const eventBus = useMemo(() => new GameEventBus(), []);
   const storeRef = useRef(new ProgressStore());
-  const [progress, setProgress] = useState<ProgressState>(() => createDefaultProgressState());
+  const [sharedProgressState] = useState<ProgressState>(() => createDefaultProgressState());
+  const [progress, setProgress] = useState<ProgressState>(() => cloneProgress(sharedProgressState));
   const [runtime] = useState<RuntimeStageState>(() => createRuntimeStageState(initialStageId));
-  const progressRef = useRef<ProgressState>(progress);
+  const progressRef = useRef<ProgressState>(sharedProgressState);
   const runtimeRef = useRef<RuntimeStageState>(runtime);
   const economyRef = useRef<EconomySystem | null>(null);
   const autoSaveRef = useRef<AutoSaveCoordinator | null>(null);
@@ -81,6 +82,9 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
       "stage-completed": "스테이지 클리어를 저장했습니다.",
     };
     setToast(messages[type] ?? "게임 이벤트: " + type);
+    if (type === "death-count-updated") {
+      setProgress(cloneProgress(progressRef.current));
+    }
     if (type === "cutscene-started") setMode("cutscene");
     if (type === "cutscene-finished" || type === "stage-started") setMode("play");
     if (type === "death") setMode("dead");
@@ -124,7 +128,7 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
   const stage = getStageDefinition(initialStageId);
   return (
     <div className="game-shell">
-      <PhaserGame className="phaser-viewport" gameEventBus={eventBus} />
+      <PhaserGame className="phaser-viewport" gameEventBus={eventBus} progressState={sharedProgressState} />
       <GameEventBridge eventBus={eventBus} onEvent={handleEvent} />
       <CutsceneOverlay eventBus={eventBus} onSkip={() => eventBus.emit("cutscene-skip-requested", {})} />
       {introGateStep === "title" && <IntroTitleOverlay initialName={progress.playerName} onConfirm={handleNameConfirm} />}

@@ -3,11 +3,14 @@ import { GameEventBus } from "../bridge/GameEventBus";
 import { isStageId } from "../data/validateContent";
 import type { ProgressState, RuntimeStageState, StageId } from "../core/types";
 import { RestartController } from "./RestartController";
+import type { GimmickOutcome } from "../core/contentTypes";
 
 export interface DeathContext {
   stageId: StageId;
   cause: "enemy" | "trap" | "fall" | "tool-drawback" | "scripted";
   checkpointId: string | null;
+  gimmickId?: string;
+  outcome?: GimmickOutcome["kind"];
 }
 
 export class DeathSystem {
@@ -40,6 +43,8 @@ export class DeathSystem {
         stageId: payload.stageId,
         cause: payload.cause,
         checkpointId: payload.checkpointId,
+        gimmickId: payload.gimmickId,
+        outcome: payload.outcome,
       });
     });
   }
@@ -65,6 +70,8 @@ export class DeathSystem {
       stageId: context.stageId,
       cause: context.cause,
       checkpointId: context.checkpointId,
+      ...(context.gimmickId ? { gimmickId: context.gimmickId } : {}),
+      ...(context.outcome ? { outcome: context.outcome } : {}),
       now,
     });
     this.restartController.restartAtCheckpointOrSpawn();

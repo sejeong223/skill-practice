@@ -42,12 +42,16 @@ export interface GameplayEventMap {
     stageId: string;
     cause: "enemy" | "trap" | "fall" | "tool-drawback" | "scripted";
     checkpointId: string | null;
+    gimmickId?: string;
+    outcome?: "instant-death" | "forced-control-death" | "launch-death";
     now: number;
   };
   death: {
     stageId: string;
     cause: "enemy" | "trap" | "fall" | "tool-drawback" | "scripted";
     checkpointId: string | null;
+    gimmickId?: string;
+    outcome?: "instant-death" | "forced-control-death" | "launch-death";
     now: number;
   };
   restart: {

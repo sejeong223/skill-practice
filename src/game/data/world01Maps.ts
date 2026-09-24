@@ -78,6 +78,8 @@ function createGimmickObject(
       trigger: gimmick.trigger,
       hintPolicy: gimmick.hintPolicy,
       lethal: gimmick.lethal,
+      gimmickOutcome: gimmick.outcome.kind,
+      deathCause: gimmick.outcome.deathCause,
       counterplayAction: gimmick.counterplay.action,
       chainId,
       seedGroup: gimmick.seedGroup ?? "world01-stage-" + stageId,
@@ -94,22 +96,46 @@ function createChainRules(
   const gimmickRules = gimmicks.flatMap((gimmick): MapChainRule[] => {
     const actions: MapChainRule["actions"][number][] = [];
     if (gimmick.kind === "fake-bone-green") {
-      actions.push({ type: "set-player-tint", value: "green" });
+      actions.push({ type: "set-player-tint", value: "#40d850" });
     } else if (gimmick.kind === "fake-bone-fire") {
-      actions.push({ type: "force-control", value: "launch-up" });
+      actions.push({ type: "force-control", value: "launch-up", durationMs: 0 });
     } else if (gimmick.kind === "fake-bone-reverse") {
-      actions.push({ type: "force-control", value: "drift-backward" });
+      actions.push({ type: "force-control", value: "drift-backward", durationMs: 0 });
     } else if (gimmick.kind === "name-bubble-control-loss") {
-      actions.push({ type: "force-control", value: "run-left" });
+      actions.push({
+        type: "force-control",
+        value: "run-left",
+        durationMs: gimmick.outcome.durationMs ?? 2600,
+      });
     }
     if (gimmick.kind === "fake-checkpoint") {
       actions.push({ type: "activate-object", targetId: gimmick.id + "-spikes" });
     }
-    if (gimmick.kind !== "name-bubble-control-loss") {
+    const environmentDriven = [
+      "ground-collapse",
+      "ground-rise",
+      "forward-jump-wall",
+      "fake-bone-reverse",
+      "fake-bone-fire",
+      "name-bubble-control-loss",
+    ].includes(gimmick.kind);
+    if (gimmick.kind === "fake-bone-green") {
+      actions.push({
+        type: "request-death",
+        eventType: "world01-gimmick:fake-bone-green",
+        delayMs: gimmick.outcome.deathDelayMs ?? 450,
+      });
+    } else if (gimmick.kind === "fake-checkpoint") {
+      actions.push({
+        type: "request-death",
+        eventType: "world01-gimmick:fake-checkpoint",
+        delayMs: 100,
+      });
+    } else if (!environmentDriven) {
       actions.push({
         type: "request-death",
         eventType: "world01-gimmick:" + gimmick.kind,
-        delayMs: gimmick.outcome.durationMs ?? gimmick.outcome.deathDelayMs ?? 0,
+        delayMs: gimmick.outcome.deathDelayMs ?? 0,
       });
     }
 
@@ -132,7 +158,7 @@ function createChainRules(
         id: gimmick.id + "-escaped",
         trigger: "input-mash",
         sourceId: gimmick.objectId,
-        actions: [{ type: "clear-control" }],
+        actions: [{ type: "clear-control", targetId: gimmick.objectId }],
         randomized: false,
         seedGroup: gimmick.seedGroup,
       },

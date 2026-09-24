@@ -38,6 +38,7 @@ export class RestartController {
   public restartAtCheckpointOrSpawn(): void {
     const target = this.checkpointSystem.getRespawnPosition() ?? this.spawn;
 
+    this.player.clearAllControlOverrides();
     this.player.resetTo(new Phaser.Math.Vector2(target.x, target.y));
     this.player.setFlipX(target.facing < 0);
     this.onMapRestore?.(this.checkpointSystem.getSnapshot());

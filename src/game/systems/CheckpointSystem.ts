@@ -9,6 +9,7 @@ export class CheckpointSystem {
   private readonly stageId: StageId;
   private readonly runtime: RuntimeStageState;
   private readonly createMapSnapshot?: (checkpointId: string) => MapRuntimeSnapshot | null;
+  private readonly isFakeCheckpoint?: (checkpointId: string) => boolean;
   private snapshot: CheckpointSnapshot | null = null;
 
   public constructor(
@@ -17,12 +18,14 @@ export class CheckpointSystem {
     stageId: StageId,
     runtime: RuntimeStageState,
     createMapSnapshot?: (checkpointId: string) => MapRuntimeSnapshot | null,
+    isFakeCheckpoint?: (checkpointId: string) => boolean,
   ) {
     this.player = player;
     this.eventBus = eventBus;
     this.stageId = stageId;
     this.runtime = runtime;
     this.createMapSnapshot = createMapSnapshot;
+    this.isFakeCheckpoint = isFakeCheckpoint;
   }
 
   public activate(
@@ -32,7 +35,7 @@ export class CheckpointSystem {
     facing: 1 | -1,
     now: number,
   ): boolean {
-    if (this.snapshot) {
+    if (this.snapshot || this.isFakeCheckpoint?.(checkpointId)) {
       return false;
     }
 

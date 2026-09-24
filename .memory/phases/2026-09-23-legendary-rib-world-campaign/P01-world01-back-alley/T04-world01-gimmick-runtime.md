@@ -1,6 +1,6 @@
 # Task: T04 World 1 기믹 런타임과 조작 파훼
 
-## Status: pending
+## Status: done
 
 ## Goal
 
@@ -96,6 +96,6 @@ Task: T04-world01-gimmick-runtime
 
 ## Progress
 
-- [ ] 구현 완료
-- [ ] 검증 통과
-- commit: pending
+- [x] 구현 완료
+- [x] 검증 통과 (`npm.cmd run lint`, `npm.cmd run build`, `npm.cmd run world01:maps:check`)
+- commit: `feat(gameplay): 월드1 억까 조작과 즉사 런타임 구현`

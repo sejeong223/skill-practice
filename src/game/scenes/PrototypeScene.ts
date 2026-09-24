@@ -9,6 +9,7 @@ import { createDefaultProgressState, createRuntimeStageState } from "../core/con
 import type { ProgressState, RuntimeStageState } from "../core/types";
 import { GameplayEventBus } from "../core/events";
 import { getStageDefinition } from "../data";
+import type { StageSceneData } from "./StageScene";
 import { SKILL_DEFINITIONS } from "../data/skills";
 import { TOOL_DEFINITIONS } from "../data/tools";
 import { CheckpointSystem } from "../systems/CheckpointSystem";
@@ -55,6 +56,7 @@ export class PrototypeScene extends Phaser.Scene {
   private defenseToolSystem?: DefenseToolSystem;
   private strayDogEvent?: StrayDogEvent;
   private drawbackDiscovery?: DrawbackDiscovery;
+  private unsubscribeNameConfirmation?: () => void;
 
   public constructor() {
     super("PrototypeScene");
@@ -213,8 +215,13 @@ export class PrototypeScene extends Phaser.Scene {
         this.persistenceEventBus?.emit("stage-started", { stageId: stage.id, attempt: 1 });
       }
     });
-    this.persistenceEventBus?.on("player-name-confirmed", () => {
+    this.unsubscribeNameConfirmation = this.persistenceEventBus?.on("player-name-confirmed", (payload) => {
       this.player?.unlockControl("intro-name");
+      this.unsubscribeNameConfirmation?.();
+      this.scene.start("StageScene", {
+        stageId: stage.id,
+        playerName: payload.playerName,
+      } satisfies StageSceneData);
     });
     if (!this.cutsceneDirector) this.persistenceEventBus?.emit("stage-started", { stageId: stage.id, attempt: 1 });
     this.eventBus.on("checkpoint-reached", (payload) => {
@@ -244,6 +251,7 @@ export class PrototypeScene extends Phaser.Scene {
     });
 
     this.events.once("shutdown", () => {
+      this.unsubscribeNameConfirmation?.();
       this.inputManager?.destroy();
       this.strayDogEvent?.destroy();
       this.drawbackDiscovery?.destroy();

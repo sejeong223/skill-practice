@@ -24,6 +24,7 @@ export class PlayerController {
   public update(_time: number, delta: number): void {
     const snapshot = this.input.getSnapshot();
     const grounded = this.isGrounded();
+    const controlOverride = this.player.getControlOverride();
 
     if (grounded) {
       this.coyoteRemainingMs = this.tuning.coyoteTimeMs;
@@ -41,6 +42,16 @@ export class PlayerController {
         0,
         this.jumpBufferRemainingMs - delta,
       );
+    }
+
+    if (controlOverride) {
+      if (controlOverride.kind === "run-left" || controlOverride.kind === "drift-backward") {
+        this.player.setVelocityX(-this.tuning.runSpeed);
+        this.player.setFlipX(true);
+      }
+      this.jumpBufferRemainingMs = 0;
+      this.updateAirState(grounded);
+      return;
     }
 
     if (!this.controlEnabled || this.player.isControlLocked()) {

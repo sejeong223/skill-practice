@@ -1,16 +1,21 @@
 import * as Phaser from "phaser";
 import { GAME_HEIGHT } from "../config";
-import { createRuntimeStageState } from "../core/constants";
-import type { StageId } from "../core/types";
+import {
+  createDefaultProgressState,
+  createRuntimeStageState,
+} from "../core/constants";
+import type { ProgressState, StageId } from "../core/types";
 import { GameEventBus } from "../bridge/GameEventBus";
 import { CameraDirector } from "../camera/CameraDirector";
 import { GameplayEventBus } from "../core/events";
 import { getStageDefinition, getWorldMapTheme } from "../data";
 import type { StageDefinition } from "../core/types";
+import type { EnemyDefinition } from "../core/contentTypes";
 import { MapDebugOverlay } from "../debug/MapDebugOverlay";
+import { Enemy } from "../entities/Enemy";
 import { Player } from "../entities/Player";
 import { DEFAULT_PLAYER_TUNING } from "../entities/playerTypes";
-import { DEFAULT_KEYBINDS, InputManager } from "../input/InputManager";
+import { InputManager, toKeybindMap } from "../input/InputManager";
 import { ParallaxRenderer } from "../maps/ParallaxRenderer";
 import { MapInteractionSystem } from "../maps/MapInteractionSystem";
 import { TiledMapLoader } from "../maps/TiledMapLoader";
@@ -18,11 +23,16 @@ import type { LoadedMap } from "../maps/mapTypes";
 import { StageRandom } from "../random/StageRandom";
 import { StageBuilder } from "../stages/StageBuilder";
 import { StageRuntime } from "../stages/StageRuntime";
+import { CheckpointSystem } from "../systems/CheckpointSystem";
+import { DeathSystem } from "../systems/DeathSystem";
+import { MapGimmickSystem } from "../systems/MapGimmickSystem";
 import { PlayerController } from "../systems/PlayerController";
+import { RestartController } from "../systems/RestartController";
 
 export interface StageSceneData {
   readonly stageId?: StageId;
   readonly seed?: number;
+  readonly playerName?: string;
 }
 
 export class StageScene extends Phaser.Scene {
@@ -36,6 +46,15 @@ export class StageScene extends Phaser.Scene {
   private eventBus?: GameEventBus;
   private gameplayEventBus?: GameplayEventBus;
   private mapInteraction?: MapInteractionSystem;
+  private gimmickSystem?: MapGimmickSystem;
+  private checkpointSystem?: CheckpointSystem;
+  private restartController?: RestartController;
+  private deathSystem?: DeathSystem;
+  private progress = createDefaultProgressState();
+  private unsubscribeKeybinds?: () => void;
+  private readonly eventUnsubscribers: Array<() => void> = [];
+  private persistenceEventBus?: GameEventBus;
+  private readonly mapEnemies = new Map<string, Enemy>();
   private debugOverlay?: MapDebugOverlay;
   private statusText?: Phaser.GameObjects.Text;
   private stageId: StageId = "world-01-stage-1";
@@ -50,30 +69,41 @@ export class StageScene extends Phaser.Scene {
     this.stageId = data.stageId ?? "world-01-stage-1";
     const stage = getStageDefinition(this.stageId);
     this.stageDefinition = stage;
+    const registeredProgress = this.registry.get("progressState") as ProgressState | undefined;
+    this.progress = registeredProgress ?? createDefaultProgressState(data.playerName);
+    if (data.playerName) this.progress.playerName = data.playerName;
     const theme = getWorldMapTheme(stage.worldId);
     const seed = data.seed ?? 1;
+    const sharedEventBus = this.registry.get("gameEventBus");
+    this.persistenceEventBus = sharedEventBus instanceof GameEventBus
+      ? sharedEventBus
+      : undefined;
+    this.eventBus = this.persistenceEventBus ?? new GameEventBus();
     this.physics.world.setBounds(0, 0, stage.mapWidth, stage.mapHeight);
     this.add.rectangle(stage.mapWidth / 2, GAME_HEIGHT / 2, stage.mapWidth, GAME_HEIGHT, 0xf5e7c7).setDepth(-40);
     this.parallaxRenderer = new ParallaxRenderer(this);
     this.parallaxRenderer.render(theme, stage.mapWidth, stage.mapHeight);
 
     this.player = new Player(this, stage.spawn.x, stage.spawn.y);
-    this.inputManager = new InputManager(this, DEFAULT_KEYBINDS);
+    this.inputManager = new InputManager(this, toKeybindMap(this.progress.keybinds));
     this.playerController = new PlayerController(
       this.player,
       this.inputManager,
       DEFAULT_PLAYER_TUNING,
     );
-    this.eventBus = new GameEventBus();
+    const runtimeState = createRuntimeStageState(stage.id, seed);
     this.loadedMap = TiledMapLoader.load(this, stage, theme);
-    this.runtime = new StageBuilder(undefined, this.eventBus).build(
+    this.runtime = new StageBuilder(undefined, this.eventBus, this.progress).build(
       this,
       stage,
       seed,
-      createRuntimeStageState(stage.id, seed),
+      runtimeState,
       this.loadedMap,
     );
     this.gameplayEventBus = new GameplayEventBus();
+    this.unsubscribeKeybinds = this.persistenceEventBus?.on("keybinds-changed", (payload) => {
+      this.inputManager?.setKeybinds(toKeybindMap(payload.keybinds));
+    });
     this.mapInteraction = new MapInteractionSystem(
       this,
       this.player,
@@ -81,6 +111,59 @@ export class StageScene extends Phaser.Scene {
       stage.id,
       new StageRandom(this.runtime!.runtimeState.randomSeed),
       this.loadedMap,
+      () => this.runtime?.runtimeState.checkpointId ?? null,
+    );
+    const map = stage.map;
+    if (map) {
+      this.gimmickSystem = new MapGimmickSystem(
+        this,
+        this.player,
+        this.inputManager,
+        stage,
+        map,
+        this.gameplayEventBus,
+        this.mapInteraction,
+        this.loadedMap,
+        data.playerName ?? this.progress.playerName,
+        () => this.runtime?.runtimeState.checkpointId ?? null,
+      );
+    }
+    this.checkpointSystem = new CheckpointSystem(
+      this.player,
+      this.gameplayEventBus,
+      stage.id,
+      this.runtime.runtimeState,
+      (checkpointId) => {
+        const snapshot = this.mapInteraction?.createSnapshot(
+          checkpointId,
+          this.gimmickSystem?.getSnapshotStates(),
+        ) ?? null;
+        this.runtime?.setMapSnapshot(snapshot);
+        return snapshot;
+      },
+      (checkpointId) => map?.objectDefinitions.some(
+        (object) => object.id === checkpointId && object.properties.fakeCheckpoint === true,
+      ) ?? false,
+    );
+    this.restartController = new RestartController(
+      this.player,
+      this.checkpointSystem,
+      { ...stage.spawn, facing: 1 },
+      stage.id,
+      this.runtime.runtimeState,
+      this.gameplayEventBus,
+      undefined,
+      (snapshot) => {
+        this.mapInteraction?.reset(snapshot?.mapSnapshot ?? null);
+        this.gimmickSystem?.reset(snapshot?.mapSnapshot ?? null);
+      },
+    );
+    this.deathSystem = new DeathSystem(
+      this.progress,
+      this.runtime.runtimeState,
+      this.restartController,
+      this.gameplayEventBus,
+      this.persistenceEventBus,
     );
 
     if (process.env.NODE_ENV !== "production") {
@@ -124,24 +207,40 @@ export class StageScene extends Phaser.Scene {
       );
     }
 
+    this.gameplayEventBus.on("map-object-state-changed", (payload) => {
+      const object = this.loadedMap?.objects.find((candidate) => candidate.id === payload.objectId);
+      if (object?.kind !== "enemy-spawn") return;
+      if (payload.active) this.spawnMapEnemy(object, payload.x, payload.y);
+      else this.destroyMapEnemy(payload.objectId);
+    });
+    this.gameplayEventBus.on("map-reset", () => this.restoreMapEnemies());
+    this.gameplayEventBus.on("death", (payload) => {
+      const deathCount = this.progress.deathsByStage[this.stageId] ?? 0;
+      this.statusText?.setText(
+        `death ${deathCount}${payload.gimmickId ? " · " + payload.gimmickId : ""}`,
+      );
+    });
+
     this.cameraDirector = new CameraDirector(this, this.player, stage);
     this.cameraDirector.followPlayer();
     this.syncSectionCamera();
     this.runtime.start();
     this.runtime.getEventBus().on("map-state-restored", () => {
-      this.mapInteraction?.reset(this.runtime?.getMapSnapshot() ?? null);
+      const snapshot = this.runtime?.getMapSnapshot() ?? null;
+      this.mapInteraction?.reset(snapshot);
+      this.gimmickSystem?.reset(snapshot);
     });
-    this.eventBus.on("stage-completed", (payload) => {
+    this.eventUnsubscribers.push(this.eventBus.on("stage-completed", (payload) => {
       this.runtime?.setStatus("completed");
       this.statusText?.setText(
         "completed: " + payload.stageId + "  next: " + (payload.nextStageId ?? "none"),
       );
-    });
-    this.eventBus.on("coin-changed", (payload) => {
+    }));
+    this.eventUnsubscribers.push(this.eventBus.on("coin-changed", (payload) => {
       this.statusText?.setText(
         "play: " + payload.stageId + "  coins: " + payload.currentStageCoins,
       );
-    });
+    }));
 
     this.statusText = this.add.text(36, 32, "stage: " + stage.title, {
       color: "#5f3942",
@@ -151,13 +250,19 @@ export class StageScene extends Phaser.Scene {
 
     this.events.once("shutdown", () => {
       this.inputManager?.destroy();
+      this.unsubscribeKeybinds?.();
+      for (const unsubscribe of this.eventUnsubscribers) unsubscribe();
       this.debugOverlay?.destroy();
       this.mapInteraction?.destroy();
+      this.gimmickSystem?.destroy();
+      this.deathSystem?.destroy();
+      this.checkpointSystem?.resetForStage();
+      this.clearMapEnemies();
       this.runtime?.destroy();
       this.loadedMap?.destroy();
       this.parallaxRenderer?.destroy();
       this.gameplayEventBus?.clear();
-      this.eventBus?.clear();
+      if (!this.persistenceEventBus) this.eventBus?.clear();
     });
   }
 
@@ -166,26 +271,103 @@ export class StageScene extends Phaser.Scene {
       return;
     }
     this.playerController?.update(time, delta);
+    this.gimmickSystem?.update(time, delta);
     this.mapInteraction?.update(time, delta);
+    for (const enemy of this.mapEnemies.values()) enemy.updateMovement(time);
     this.debugOverlay?.update();
     this.syncSectionCamera();
   }
 
   private activateCheckpoint(checkpointId: string): void {
-    if (this.runtime?.getStatus() !== "play") {
+    if (
+      this.runtime?.getStatus() !== "play" ||
+      !this.player ||
+      !this.checkpointSystem
+    ) {
       return;
     }
     this.mapInteraction?.triggerObject(checkpointId, "checkpoint-reached");
-    this.runtime.runtimeState.checkpointId = checkpointId;
-    this.runtime.runtimeState.checkpointUsed = true;
-    this.runtime.setMapSnapshot(
-      this.mapInteraction?.createSnapshot(checkpointId) ?? null,
+    const activated = this.checkpointSystem.activate(
+      checkpointId,
+      this.player.x,
+      this.player.y,
+      this.player.flipX ? -1 : 1,
+      this.time.now,
     );
+    if (!activated) return;
     this.eventBus?.emit("checkpoint-activated", {
       stageId: this.stageId,
       checkpointId,
     });
     this.statusText?.setText("checkpoint: " + checkpointId);
+  }
+
+  private spawnMapEnemy(
+    object: NonNullable<LoadedMap["objects"][number]>,
+    x: number,
+    y: number,
+  ): void {
+    if (!this.player || this.mapEnemies.has(object.id)) return;
+    const enemyKinds: readonly EnemyDefinition["kind"][] = [
+      "stray-cat",
+      "alley-cat",
+      "junkyard-cat",
+      "factory-cat",
+      "storm-cat",
+      "guard-cat",
+    ];
+    const requestedKind = object.properties.enemyKind;
+    const kind = enemyKinds.includes(requestedKind as EnemyDefinition["kind"])
+      ? requestedKind as EnemyDefinition["kind"]
+      : "stray-cat";
+    const numberProperty = (key: string, fallback: number): number =>
+      typeof object.properties[key] === "number" ? object.properties[key] as number : fallback;
+    const enemy = new Enemy(this, {
+      id: object.id,
+      kind,
+      spawn: { x: x + object.width / 2, y: y + object.height / 2 },
+      patrol: {
+        minX: numberProperty("patrolMinX", x - 96),
+        maxX: numberProperty("patrolMaxX", x + 144),
+        speed: numberProperty("patrolSpeed", 48),
+      },
+      health: numberProperty("health", 2),
+      contactDamage: numberProperty("contactDamage", 1),
+      canBeStunned: true,
+      loot: [],
+    });
+    this.mapEnemies.set(object.id, enemy);
+    this.physics.add.overlap(this.player, enemy, () => {
+      if (!enemy.active) return;
+      this.gameplayEventBus?.emit("death-requested", {
+        stageId: this.stageId,
+        cause: "enemy",
+        checkpointId: this.runtime?.runtimeState.checkpointId ?? null,
+        now: this.time.now,
+      });
+    });
+  }
+
+  private destroyMapEnemy(objectId: string): void {
+    const enemy = this.mapEnemies.get(objectId);
+    enemy?.destroy();
+    this.mapEnemies.delete(objectId);
+  }
+
+  private clearMapEnemies(): void {
+    for (const enemy of this.mapEnemies.values()) enemy.destroy();
+    this.mapEnemies.clear();
+  }
+
+  private restoreMapEnemies(): void {
+    this.clearMapEnemies();
+    for (const object of this.loadedMap?.objects ?? []) {
+      if (object.kind !== "enemy-spawn") continue;
+      if (this.mapInteraction?.getObjectState(object.id)?.active) {
+        const state = this.mapInteraction.getObjectState(object.id);
+        this.spawnMapEnemy(object, state?.x ?? object.x, state?.y ?? object.y);
+      }
+    }
   }
 
   private syncSectionCamera(): void {

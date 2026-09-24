@@ -154,8 +154,8 @@ export class StageRuntime {
           this.add("checkpoint", object.id, this.factory.create(this.scene, {
             kind: "checkpoint",
             id: object.id,
-            x: object.x,
-            y: object.y,
+            x: object.x + object.width / 2,
+            y: object.y + object.height / 2,
           }));
           break;
         case "exit":
@@ -163,8 +163,8 @@ export class StageRuntime {
           this.add("exit", object.id, this.factory.create(this.scene, {
             kind: "exit",
             id: object.id,
-            x: object.x,
-            y: object.y,
+            x: object.x + object.width / 2,
+            y: object.y + object.height / 2,
           }));
           break;
         default:
