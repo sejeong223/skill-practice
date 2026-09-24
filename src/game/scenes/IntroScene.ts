@@ -21,6 +21,7 @@ export class IntroScene extends Phaser.Scene {
   private active = false;
   private skipAllowed = false;
   private skipped = false;
+  private nameConfirmed = false;
 
   public constructor() {
     super("IntroScene");
@@ -58,6 +59,16 @@ export class IntroScene extends Phaser.Scene {
       this.eventBus.on("cutscene-skip-requested", () => this.skip()),
       this.eventBus.on("cutscene-requested", (payload) => {
         if (payload.cutsceneId === INTRO_CUTSCENE.id) this.startCutscene();
+      }),
+      this.eventBus.on("player-name-confirmed", (payload) => {
+        if (this.active || this.nameConfirmed) return;
+        this.nameConfirmed = true;
+        const progress = this.registry.get("progressState") as ProgressState | undefined;
+        if (progress) progress.playerName = payload.playerName;
+        this.scene.start("StageScene", {
+          stageId: "world-01-stage-1",
+          playerName: payload.playerName,
+        });
       }),
     );
   }
@@ -98,6 +109,7 @@ export class IntroScene extends Phaser.Scene {
     if (!this.active || !this.skipAllowed) return;
     this.skipped = true;
     this.actorRig?.stop();
+    this.audioManager?.stopAllSounds();
     this.cameras.main.fadeOut(300, 0, 0, 0);
     this.timeline.skip();
   }
@@ -146,13 +158,13 @@ export class IntroScene extends Phaser.Scene {
       .setStrokeStyle(6, 0xe7ba75, 1);
     const title = this.add.text(640, 290, "인트로 에셋 오류", {
       color: "#fff0d1",
-      fontFamily: "Galmuri11, monospace",
+      fontFamily: "Galmuri11Pixel, monospace",
       fontSize: "32px",
       align: "center",
     });
     const detail = this.add.text(640, 380, message, {
       color: "#f5c6a0",
-      fontFamily: "Galmuri11, monospace",
+      fontFamily: "Galmuri11Pixel, monospace",
       fontSize: "18px",
       align: "center",
       wordWrap: { width: 760 },

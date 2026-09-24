@@ -7,7 +7,7 @@
 [P02 실제 집 시네마틱 장면](./phases/2026-09-24-cinematic-pixel-intro/P02-cinematic-home-scene/phase.md)
 
 ## Active Task
-[T03 픽셀 대사·오디오·이름 입력 게이트](./phases/2026-09-24-cinematic-pixel-intro/P02-cinematic-home-scene/T03-pixel-dialogue-audio-and-gate.md)
+[T04 인트로 통합 검증](./phases/2026-09-24-cinematic-pixel-intro/P02-cinematic-home-scene/T04-intro-integration-validation.md)
 
 ## Status
 - P01-T01 승인된 스토리보드는 `.memory/design-previews/2026-09-24-cinematic-pixel-intro-preview.png`에 보관했다.
@@ -15,4 +15,4 @@
 - 기존 캠페인의 World 1 T05 맵 검수/플레이테스트와 다른 미커밋 코드는 완료 처리하거나 커밋하지 않고 보존한다.
 
 ## Next Step (IMPORTANT)
-P02-T02 전용 IntroScene, 배우 rig, 11비트 카메라/동작 타임라인을 연결했고 lint/build 및 36,500ms 타이밍을 확인했다. 브라우저 실행 제한으로 실제 재생 캡처는 남기지 못했다. 다음은 P02-T03 청사진을 읽고 픽셀 대사/오디오/타이틀·이름 확인을 연결한다. 매 Task마다 한국어 커밋을 하고 마지막 Task까지 순차 진행한다.
+P02-T03 픽셀 타이프라이터 자막, 장면별 칩튠/효과음, 제목·이름 입력과 StageScene 진입을 연결했고 lint/build 및 cue/시간 계약을 확인했다. 브라우저 실행 제한으로 실제 상호작용 캡처와 기기 오디오 청취 검증은 할 수 없었다. 다음은 P02-T04 청사진을 읽고 첫 진입/재시청/화면비/World 1 회귀를 통합 검증한다. 매 Task마다 한국어 커밋을 하고 마지막 Task까지 진행한다.

@@ -49,9 +49,18 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
   const [mode, setMode] = useState<UiMode>("safe");
   const [introGateStep, setIntroGateStep] = useState<"intro" | "title" | "ready">("intro");
 
-  useEffect(() => eventBus.on("cutscene-finished", (payload) => {
-    if (payload.cutsceneId === "intro-home") setIntroGateStep("title");
-  }), [eventBus]);
+  useEffect(() => {
+    const removeStart = eventBus.on("cutscene-started", (payload) => {
+      if (payload.cutsceneId === "intro-home") setIntroGateStep("intro");
+    });
+    const removeFinish = eventBus.on("cutscene-finished", (payload) => {
+      if (payload.cutsceneId === "intro-home") setIntroGateStep("title");
+    });
+    return () => {
+      removeStart();
+      removeFinish();
+    };
+  }, [eventBus]);
 
   useEffect(() => {
     const loaded = storeRef.current.load();
@@ -81,7 +90,7 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
       "keybinds-changed": "키 설정을 저장했습니다.",
       "stage-completed": "스테이지 클리어를 저장했습니다.",
     };
-    setToast(messages[type] ?? "게임 이벤트: " + type);
+    if (messages[type]) setToast(messages[type]);
     if (type === "death-count-updated") {
       setProgress(cloneProgress(progressRef.current));
     }
@@ -91,10 +100,11 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
   }, []);
 
   const handleNameConfirm = useCallback((name: string): void => {
-    const safeName = name.replace(/[<>]/g, "").trim().slice(0, 20) || "코기";
+    const safeName = name.trim().replace(/[<>]/g, "").slice(0, 20) || "코기";
     const next = cloneProgress(progressRef.current);
     next.playerName = safeName;
     replaceProgress(next);
+    setToast("무법지대 뒷골목으로 출발!");
     eventBus.emit("player-name-confirmed", { playerName: safeName });
     setIntroGateStep("ready");
   }, [eventBus, replaceProgress]);
@@ -134,7 +144,7 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
         <CutsceneOverlay eventBus={eventBus} onSkip={() => eventBus.emit("cutscene-skip-requested", {})} />
         {introGateStep === "title" && <IntroTitleOverlay initialName={progress.playerName} onConfirm={handleNameConfirm} />}
         {introGateStep === "ready" && <GameOverlay stageTitle={stage.title} runtime={runtime} progress={progress} skills={SKILL_DEFINITIONS} tools={TOOL_DEFINITIONS} cooldowns={{}} alive={mode !== "dead" && mode !== "cutscene"} safeZone={mode === "safe"} statusOpen={statusOpen} onEquip={handleEquip} onPurchase={handlePurchase} onKeybindChange={handleKeybindChange} onToggleStatus={() => setStatusOpen((open) => !open)} />}
-        <div className="game-toast" role="status">{toast}</div>
+        {introGateStep === "ready" && <div className="game-toast" role="status">{toast}</div>}
         {onExit && <button className="exit-button" type="button" onClick={onExit}>나가기</button>}
       </div>
     </div>

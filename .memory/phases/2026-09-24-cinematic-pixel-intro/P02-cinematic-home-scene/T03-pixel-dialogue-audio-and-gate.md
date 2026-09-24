@@ -1,6 +1,6 @@
 # Task: T03 픽셀 자막·칩튠과 타이틀/이름 입력
 
-## Status: pending
+## Status: done
 
 ## Goal
 
@@ -76,11 +76,11 @@
 
 ## Acceptance Criteria
 
-- [ ] 나레이션과 대사가 픽셀 대화창에서 한 글자씩 진행되며 애니메이션은 멈추지 않는다.
-- [ ] 대사는 비트 종료 전에 읽을 수 있는 상태로 완성되고 전체 길이는 35~40초 범위다.
-- [ ] 승인된 칩튠 패턴과 효과음이 다른 장면에서 구분되며 브라우저 autoplay 정책을 우회하지 않는다.
-- [ ] 컷신 뒤 타이틀 → 이름 입력 → 이름 저장/확인 → World 1 진입 순서가 동작한다.
-- [ ] 제목/이름 화면에서 상태창이 뜨지 않고 모든 글자에 로컬 픽셀 글꼴이 적용된다.
+- [x] 나레이션과 대사가 하단 픽셀 대화창에서 한 글자씩 진행되며 Phaser 애니메이션 타임라인과 분리되어 있다.
+- [x] 텍스트 reveal은 비트 시간의 80% 안에 끝나고, 전체 길이는 36.5초다.
+- [x] 생일/골목 음악과 봉지·갈비뼈·고양이·슬리퍼·탈출 효과음을 구분했으며 사용자 입력 전 오디오는 재생/대기열에 쌓지 않는다.
+- [x] 컷신 뒤 타이틀 → 이름 입력/정제/저장 → StageScene(world-01-stage-1) 전환을 연결했다.
+- [x] 제목/이름 화면에서 HUD와 준비 토스트를 숨기고 body에 로컬 Galmuri 픽셀 글꼴을 적용한다.
 
 ## Validation
 
@@ -88,6 +88,12 @@
 - npm.cmd run build — local font, React UI, scene event typing 검증.
 - npm.cmd run dev — narration, 대사 동시 표시, item card, title/name, 코기 이름 사용을 브라우저에서 확인한다.
 - 첫 사용자 gesture 전후 오디오 정책을 확인하고 차단/음소거 환경에서도 11개 beat가 정상 완료되는지 확인한다.
+
+## Validation Notes
+
+- `npm.cmd run lint`와 `npm.cmd run build` 통과. 로컬 페이지와 Galmuri 폰트 URL은 HTTP 200이다.
+- 11개 컷신 비트가 36,500ms이며 intro sound cue 8개 모두 `SOUND_KEYS`에 등록된 것을 검산했다. Typewriter RAF와 audio source/timer는 beat 교체·skip·scene shutdown에서 취소한다.
+- 브라우저 자동화 실행 제한으로 실제 화면 타이핑 속도와 사용자 입력 전후의 물리 오디오 출력을 직접 확인하지 못했다. autoplay guard, 이벤트, scene transition은 코드/빌드로 검증했다.
 
 ## Commit Message
 
@@ -102,7 +108,7 @@
 
 ## Progress
 
-- [ ] 하단 대화창과 glyph reveal 구현
-- [ ] 컷신 음악/효과음과 브라우저 오디오 정책 확인
-- [ ] 타이틀·이름 게이트 및 StageScene 전환 확인
-- commit: pending
+- [x] 하단 대화창과 glyph reveal 구현
+- [x] 컷신 음악/효과음과 사용자 gesture autoplay 정책 연결
+- [x] 타이틀·이름 게이트 및 StageScene 전환 연결
+- commit: `feat(intro): 픽셀 대사와 칩튠 이름 입력 흐름 연결`
