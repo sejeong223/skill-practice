@@ -1,6 +1,7 @@
 import * as Phaser from "phaser";
 import { PIXEL_ASSETS } from "../assets/assetManifest";
 import type { PixelAssetDefinition } from "../assets/assetTypes";
+import type { ProgressState } from "../core/types";
 
 export class PreloadScene extends Phaser.Scene {
   private loadError: string | null = null;
@@ -57,6 +58,15 @@ export class PreloadScene extends Phaser.Scene {
   }
 
   public create(): void {
+    const progress = this.registry.get("progressState") as ProgressState | undefined;
+    if (!this.loadError && progress?.onboardingCompleted) {
+      this.scene.start("StageScene", {
+        stageId: "world-01-stage-1",
+        playerName: progress.playerName,
+      });
+      return;
+    }
+
     this.scene.start("IntroScene", {
       assetLoadError: this.loadError,
     });

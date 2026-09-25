@@ -31,6 +31,7 @@ export type ToolSlot = "attack" | "defense";
 
 export interface ProgressState {
   version: number;
+  onboardingCompleted: boolean;
   playerName: string;
   clearedStages: StageId[];
   unlockedSkills: SkillId[];

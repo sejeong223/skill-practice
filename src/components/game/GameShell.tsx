@@ -5,6 +5,7 @@ import { createDefaultProgressState, createRuntimeStageState } from "@/game/core
 import { SKILL_DEFINITIONS } from "@/game/data/skills";
 import { TOOL_DEFINITIONS } from "@/game/data/tools";
 import { getStageDefinition } from "@/game/data";
+import { INTRO_CUTSCENE } from "@/game/data/cutscenes/intro";
 import { GameEventBus, type GameEventType } from "@/game/bridge/GameEventBus";
 import { AutoSaveCoordinator } from "@/game/persistence/AutoSaveCoordinator";
 import { ProgressStore } from "@/game/persistence/ProgressStore";
@@ -41,6 +42,7 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
   const storeRef = useRef(new ProgressStore());
   const [sharedProgressState] = useState<ProgressState>(() => createDefaultProgressState());
   const [progress, setProgress] = useState<ProgressState>(() => cloneProgress(sharedProgressState));
+  const [progressLoaded, setProgressLoaded] = useState(false);
   const [runtime] = useState<RuntimeStageState>(() => createRuntimeStageState(initialStageId));
   const progressRef = useRef<ProgressState>(sharedProgressState);
   const runtimeRef = useRef<RuntimeStageState>(runtime);
@@ -72,9 +74,17 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
     const loaded = storeRef.current.load();
     Object.assign(progressRef.current, cloneProgress(loaded));
     setProgress(cloneProgress(progressRef.current));
+    setIntroGateStep(
+      loaded.onboardingCompleted
+        ? "ready"
+        : loaded.seenCutsceneIds.includes(INTRO_CUTSCENE.id)
+          ? "title"
+          : "intro",
+    );
     economyRef.current = new EconomySystem(progressRef.current, runtimeRef.current, eventBus);
     const autoSave = new AutoSaveCoordinator(storeRef.current, progressRef.current, eventBus);
     autoSaveRef.current = autoSave;
+    setProgressLoaded(true);
     return () => {
       autoSave.destroy();
       autoSaveRef.current = null;
@@ -135,6 +145,7 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
     const safeName = name.trim().replace(/[<>]/g, "").slice(0, 20) || "코기";
     const next = cloneProgress(progressRef.current);
     next.playerName = safeName;
+    next.onboardingCompleted = true;
     replaceProgress(next);
     setToast("무법지대 뒷골목으로 출발!");
     eventBus.emit("player-name-confirmed", { playerName: safeName });
@@ -171,7 +182,7 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
   return (
     <div className="game-shell">
       <div className="game-content-frame">
-        <PhaserGame className="phaser-viewport" gameEventBus={eventBus} progressState={sharedProgressState} />
+        {progressLoaded && <PhaserGame className="phaser-viewport" gameEventBus={eventBus} progressState={sharedProgressState} />}
         <GameEventBridge eventBus={eventBus} onEvent={handleEvent} />
         <CutsceneOverlay eventBus={eventBus} onSkip={() => eventBus.emit("cutscene-skip-requested", {})} />
         {introGateStep === "title" && <IntroTitleOverlay initialName={progress.playerName} onConfirm={handleNameConfirm} />}

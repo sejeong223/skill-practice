@@ -51,9 +51,12 @@ export class IntroScene extends Phaser.Scene {
     }
 
     this.actorRig = new IntroActorRig(this, INTRO_HOME_LAYOUT);
+    this.progress = this.registry.get("progressState") as ProgressState | undefined;
     this.bindEvents();
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, this.cleanup, this);
-    this.startCutscene();
+    if (!this.progress?.seenCutsceneIds.includes(INTRO_CUTSCENE.id)) {
+      this.startCutscene();
+    }
   }
 
   private bindEvents(): void {
@@ -68,7 +71,10 @@ export class IntroScene extends Phaser.Scene {
         if (this.active || this.nameConfirmed) return;
         this.nameConfirmed = true;
         const progress = this.registry.get("progressState") as ProgressState | undefined;
-        if (progress) progress.playerName = payload.playerName;
+        if (progress) {
+          progress.playerName = payload.playerName;
+          progress.onboardingCompleted = true;
+        }
         this.scene.start("StageScene", {
           stageId: "world-01-stage-1",
           playerName: payload.playerName,

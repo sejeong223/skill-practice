@@ -55,7 +55,7 @@ export const DEFAULT_KEYBINDS: Readonly<Record<InputAction, string>> = {
   pause: "Escape",
 };
 
-export const DEFAULT_VERSION = 1;
+export const DEFAULT_VERSION = 2;
 export const DEFAULT_ATTACK_TOOL_ID = "rabbit-slipper";
 export const DEFAULT_DEFENSE_TOOL_ID = "upside-down-bowl";
 export const DEFAULT_DEFENSE_CHARGES = 3;
@@ -72,6 +72,7 @@ export function createDefaultProgressState(
 ): ProgressState {
   return {
     version: DEFAULT_VERSION,
+    onboardingCompleted: false,
     playerName,
     clearedStages: [],
     unlockedSkills: [],

@@ -1,4 +1,4 @@
-import { DEFAULT_KEYBINDS, createDefaultProgressState } from "../core/constants";
+import { DEFAULT_KEYBINDS, DEFAULT_VERSION, createDefaultProgressState } from "../core/constants";
 import { SKILL_DEFINITIONS } from "../data/skills";
 import { STAGE_IDS } from "../core/constants";
 import { TOOL_DEFINITIONS } from "../data/tools";
@@ -54,7 +54,7 @@ export function migrateSave(input: unknown): ProgressState {
   }
 
   const schemaVersion = input.schemaVersion === undefined ? 0 : input.schemaVersion;
-  if (typeof schemaVersion !== "number" || schemaVersion > 1) {
+  if (typeof schemaVersion !== "number" || schemaVersion > 2) {
     warn("unsupported schema version; using defaults");
     return fallback;
   }
@@ -73,6 +73,9 @@ export function migrateSave(input: unknown): ProgressState {
     if (!isStringArray(seenCutsceneIds) || !isStringArray(collectedItems) || !isStringArray(discoveredDrawbackIds)) {
       throw new Error("collection fields must be arrays of strings");
     }
+    const onboardingCompleted = typeof rawProgress.onboardingCompleted === "boolean"
+      ? rawProgress.onboardingCompleted
+      : seenCutsceneIds.includes("intro-home");
     if (!isNonNegativeInteger(rawProgress.bankedCoins) || !isNonNegativeInteger(rawProgress.deathsTotal)) {
       throw new Error("coins and deaths must be non-negative integers");
     }
@@ -109,7 +112,8 @@ export function migrateSave(input: unknown): ProgressState {
       : fallback.equippedDefenseToolId;
 
     return {
-      version: 1,
+      version: DEFAULT_VERSION,
+      onboardingCompleted,
       playerName: rawProgress.playerName.trim() || fallback.playerName,
       clearedStages,
       unlockedSkills: [...new Set(unlockedSkills.filter((id): id is SkillId => validSkillIds.has(id)))],
