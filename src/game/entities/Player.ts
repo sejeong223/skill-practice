@@ -1,6 +1,10 @@
 import * as Phaser from "phaser";
 import type { PlayerAnimationState } from "./playerTypes";
 
+const PLAYER_FRAME_HEIGHT = 128;
+const PLAYER_BODY_HEIGHT = 40;
+const PLAYER_BODY_OFFSET_X = 20;
+
 export type PlayerControlOverrideKind = "run-left" | "drift-backward" | "launch-up";
 
 export interface PlayerControlOverride {
@@ -16,6 +20,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   private readonly controlLocks = new Set<string>();
   private controlOverride?: PlayerControlOverride;
   private readonly escapePresses = new Map<string, number>();
+  private footAnchorY = 99;
 
   public constructor(
     scene: Phaser.Scene,
@@ -27,14 +32,17 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     scene.add.existing(this);
     scene.physics.add.existing(this);
 
-    this.setOrigin(0.5, 0.96875);
+    this.setOrigin(0.5, this.footAnchorY / PLAYER_FRAME_HEIGHT);
     this.setScale(1);
     this.setAngle(0);
     this.body.setAllowGravity(true);
     this.body.setCollideWorldBounds(true);
     this.body.setMaxVelocity(520, 900);
-    this.body.setSize(72, 40, false);
-    this.body.setOffset(20, 84);
+    this.body.setSize(72, PLAYER_BODY_HEIGHT, false);
+    this.body.setOffset(
+      PLAYER_BODY_OFFSET_X,
+      this.footAnchorY - PLAYER_BODY_HEIGHT,
+    );
   }
 
   public setAnimationState(state: PlayerAnimationState): void {
@@ -43,6 +51,20 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
   public getAnimationState(): PlayerAnimationState {
     return this.animationState;
+  }
+
+  // Keep the sprite's visible paws and the unchanged bottom of its body in line.
+  public alignFeetToFrame(footAnchorY: number): void {
+    if (this.footAnchorY === footAnchorY) {
+      return;
+    }
+
+    this.footAnchorY = footAnchorY;
+    this.setOrigin(0.5, footAnchorY / PLAYER_FRAME_HEIGHT);
+    this.body.setOffset(
+      PLAYER_BODY_OFFSET_X,
+      footAnchorY - PLAYER_BODY_HEIGHT,
+    );
   }
 
   public lockControl(reason: string): void {

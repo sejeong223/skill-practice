@@ -2,6 +2,8 @@ import { Player } from "./Player";
 
 const RUN_ANIMATION_KEY = "corgi-run";
 const RUN_FRAME_RATE = 10;
+// Opaque paw rows in corgi-run.png, measured per animation frame.
+const RUN_FRAME_FOOT_ANCHORS = [99, 99, 100, 104] as const;
 
 export class PlayerAnimator {
   private readonly player: Player;
@@ -14,6 +16,10 @@ export class PlayerAnimator {
   public update(): void {
     if (this.player.getAnimationState() === "run") {
       this.playRunAnimation();
+      const frameIndex = Number(this.player.frame.name);
+      const footAnchor =
+        RUN_FRAME_FOOT_ANCHORS[frameIndex] ?? RUN_FRAME_FOOT_ANCHORS[0];
+      this.player.alignFeetToFrame(footAnchor);
       return;
     }
 
@@ -22,6 +28,8 @@ export class PlayerAnimator {
       this.activeAnimationKey = null;
       this.player.setTexture(RUN_ANIMATION_KEY, 0);
     }
+
+    this.player.alignFeetToFrame(RUN_FRAME_FOOT_ANCHORS[0]);
   }
 
   private playRunAnimation(): void {
