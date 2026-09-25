@@ -95,4 +95,4 @@ Task: T01-one-time-onboarding
 ## Progress
 - [x] 구현 완료
 - [x] 검증 통과
-- commit: `TBD`
+- commit: `30170fc`

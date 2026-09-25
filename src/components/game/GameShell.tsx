@@ -16,6 +16,7 @@ import { GameOverlay } from "./GameOverlay";
 import { PhaserGame } from "./PhaserGame";
 import { IntroTitleOverlay } from "./IntroTitleOverlay";
 import { DeathCounterOverlay } from "./DeathCounterOverlay";
+import { ResetProgressDialog } from "./ResetProgressDialog";
 
 export interface GameShellProps {
   readonly initialStageId: StageId;
@@ -53,6 +54,7 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
   const [paused, setPaused] = useState(false);
   const [deathOverlayVisible, setDeathOverlayVisible] = useState(false);
   const [deathOverlayCount, setDeathOverlayCount] = useState(0);
+  const [resetProgressDialogOpen, setResetProgressDialogOpen] = useState(false);
   const deathOverlayTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [statusOpen, setStatusOpen] = useState(false);
   const [introGateStep, setIntroGateStep] = useState<"intro" | "title" | "ready">("intro");
@@ -178,6 +180,13 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
     eventBus.emit("keybinds-changed", { keybinds: { ...next.keybinds } });
   }, [eventBus, replaceProgress]);
 
+  const handleResetProgress = useCallback((): void => {
+    autoSaveRef.current?.destroy();
+    autoSaveRef.current = null;
+    storeRef.current.clear();
+    window.location.reload();
+  }, []);
+
   const stage = getStageDefinition(initialStageId);
   return (
     <div className="game-shell">
@@ -186,7 +195,13 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
         <GameEventBridge eventBus={eventBus} onEvent={handleEvent} />
         <CutsceneOverlay eventBus={eventBus} onSkip={() => eventBus.emit("cutscene-skip-requested", {})} />
         {introGateStep === "title" && <IntroTitleOverlay initialName={progress.playerName} onConfirm={handleNameConfirm} />}
-        {introGateStep === "ready" && <GameOverlay stageTitle={stage.title} runtime={runtime} progress={progress} skills={SKILL_DEFINITIONS} tools={TOOL_DEFINITIONS} cooldowns={{}} alive={mode !== "dead" && mode !== "cutscene"} safeZone={mode === "safe"} statusOpen={statusOpen} onEquip={handleEquip} onPurchase={handlePurchase} onKeybindChange={handleKeybindChange} onToggleStatus={() => setStatusOpen((open) => !open)} paused={paused} onTogglePause={() => eventBus.emit("pause-requested", { paused: !paused })} />}
+        {introGateStep === "ready" && <GameOverlay stageTitle={stage.title} runtime={runtime} progress={progress} skills={SKILL_DEFINITIONS} tools={TOOL_DEFINITIONS} cooldowns={{}} alive={mode !== "dead" && mode !== "cutscene"} safeZone={mode === "safe"} statusOpen={statusOpen} onEquip={handleEquip} onPurchase={handlePurchase} onKeybindChange={handleKeybindChange} onToggleStatus={() => setStatusOpen((open) => !open)} paused={paused} onTogglePause={() => eventBus.emit("pause-requested", { paused: !paused })} onResetProgress={() => setResetProgressDialogOpen(true)} />}
+        {resetProgressDialogOpen && (
+          <ResetProgressDialog
+            onCancel={() => setResetProgressDialogOpen(false)}
+            onConfirm={handleResetProgress}
+          />
+        )}
         <DeathCounterOverlay deathCount={deathOverlayCount} visible={deathOverlayVisible} />
         {introGateStep === "ready" && <div className="game-toast" role="status">{toast}</div>}
         {onExit && <button className="exit-button" type="button" onClick={onExit}>나가기</button>}

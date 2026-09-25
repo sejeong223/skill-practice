@@ -14,6 +14,7 @@ export interface HudProps {
   readonly onToggleStatus: () => void;
   readonly paused: boolean;
   readonly onTogglePause: () => void;
+  readonly onResetProgress: () => void;
 }
 
 export function Hud({
@@ -27,6 +28,7 @@ export function Hud({
   onToggleStatus,
   paused,
   onTogglePause,
+  onResetProgress,
 }: HudProps): ReactElement {
   const activeCooldowns = Object.entries(cooldowns)
     .filter(([, value]) => (value ?? 0) > 0)
@@ -67,6 +69,17 @@ export function Hud({
           ) : (
             <path d="M3 2h4v12H3zM9 2h4v12H9z" />
           )}
+        </svg>
+      </button>
+      <button
+        className="reset-progress-button"
+        type="button"
+        aria-label="저장된 진행 초기화"
+        title="저장된 진행 초기화"
+        onClick={onResetProgress}
+      >
+        <svg viewBox="0 0 16 16" shapeRendering="crispEdges" aria-hidden="true">
+          <path d="M7 1h5v2H7zM5 3h2v2H5zM3 5h2v5H3zM5 10h2v2H5zM7 12h5v2H7zM12 10h2v2h-2zM14 7h2v3h-2zM12 4h2v3h-2zM10 2h3v2h-3zM8 5h3v2H8zM9 7h3v2H9z" />
         </svg>
       </button>
     </div>

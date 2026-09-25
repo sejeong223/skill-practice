@@ -1,6 +1,6 @@
 # Task: T02 확인형 저장 진행 초기화 버튼
 
-## Status: pending
+## Status: done
 
 ## Goal
 플레이 중 사용자가 일시정지 옆 회전 픽셀 버튼을 눌러 확인한 경우에만 저장된 진행 전체를 제거하고 첫 실행 화면으로 돌아가게 한다.
@@ -85,6 +85,6 @@ Task: T02-reset-progress-button
 ```
 
 ## Progress
-- [ ] 구현 완료
-- [ ] 검증 통과
+- [x] 구현 완료
+- [x] 검증 통과
 - commit: pending

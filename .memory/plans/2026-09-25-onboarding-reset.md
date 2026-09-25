@@ -6,7 +6,7 @@
 ## Phases
 | Phase | Status | Summary | Blueprint |
 | :--- | :--- | :--- | :--- |
-| P01 | `in_progress` | 온보딩 완료 상태 저장과 확인형 전체 진행 초기화 구현 | [P01](../phases/2026-09-25-onboarding-reset/P01-onboarding-and-reset/phase.md) |
+| P01 | `done ✅` | 온보딩 완료 상태 저장과 확인형 전체 진행 초기화 구현 | [P01](../phases/2026-09-25-onboarding-reset/P01-onboarding-and-reset/phase.md) |
 
 ## Decisions
 - [확정 결정](../decisions/2026-09-25-onboarding-reset.md)
