@@ -56,4 +56,4 @@ Task: T01-align-ant-trigger
 ## Progress
 - [x] 구현 완료
 - [x] 검증 통과
-- commit: pending
+- commit: `3b048be`
