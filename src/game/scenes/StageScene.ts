@@ -70,6 +70,7 @@ export class StageScene extends Phaser.Scene {
   private cutsceneDirector?: CutsceneDirector;
   private calicoSprite?: Phaser.GameObjects.Sprite;
   private calicoBoss?: World01CalicoBoss;
+  private victorySequenceStarted = false;
   private combatSystem?: CombatSystem;
   private defenseToolSystem?: DefenseToolSystem;
   private strayDogEvent?: StrayDogEvent;
@@ -87,6 +88,7 @@ export class StageScene extends Phaser.Scene {
 
   public create(data: StageSceneData = {}): void {
     this.stageId = data.stageId ?? "world-01-stage-1";
+    this.victorySequenceStarted = false;
     this.mapOverview = false;
     const stage = getStageDefinition(this.stageId);
     this.stageDefinition = stage;
@@ -283,7 +285,7 @@ export class StageScene extends Phaser.Scene {
         (remaining) => this.eventBus?.emit("boss-hearts-changed", {
           stageId: "world-01-stage-boss", remaining,
         }),
-        () => this.handleCalicoDefeat(),
+        () => { void this.handleCalicoDefeat(); },
         (now) => this.handleCalicoThirdHit(now),
       );
       this.cutsceneDirector = new CutsceneDirector(
@@ -292,6 +294,11 @@ export class StageScene extends Phaser.Scene {
       this.eventUnsubscribers.push(
         this.eventBus.on("cutscene-skip-requested", () => this.cutsceneDirector?.skip()),
         this.eventBus.on("cutscene-advance-requested", () => this.cutsceneDirector?.advance()),
+        this.eventBus.on("cutscene-beat", ({ cutsceneId, index }) => {
+          if (cutsceneId === "world-01-boss-clear" && index === 7) {
+            this.calicoBoss?.showCollapseFrame();
+          }
+        }),
       );
       this.runtime.setStatus("cutscene");
       if (!this.progress.seenCutsceneIds.includes("world-01-boss-intro")) {
@@ -392,8 +399,18 @@ export class StageScene extends Phaser.Scene {
     this.syncSectionCamera();
   }
 
-  private handleCalicoDefeat(): void {
+  private async handleCalicoDefeat(): Promise<void> {
+    if (this.victorySequenceStarted || !this.calicoBoss?.isDefeated()) return;
+    this.victorySequenceStarted = true;
+    this.calicoBoss.stopAttacks();
     this.runtime?.setStatus("cutscene");
+    await this.cutsceneDirector?.play("world-01-boss-clear");
+    if (!this.scene.isActive() || !this.calicoBoss?.isDefeated()) return;
+    this.runtime?.complete();
+    this.scene.start("World01StageClearScene", {
+      stageId: "world-01-stage-boss",
+      nextStageId: "world-02-stage-1",
+    });
   }
 
   private handleCalicoThirdHit(now: number): void {

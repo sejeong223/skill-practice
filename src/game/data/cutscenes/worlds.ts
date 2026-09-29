@@ -11,6 +11,17 @@ const WORLD01_BOSS_INTRO_LINES = [
   { speaker: "calico", text: "억울하면 어디 한 번 지나가 봐라냥! 자, 간다냥!" },
 ] as const;
 
+const WORLD01_BOSS_CLEAR_LINES = [
+  { speaker: "calico", text: "윽... 이 둔해보이는 애가 대체 어떻게 날 때린 거냐옹...?!" },
+  { speaker: "corgi", text: "패배자는 말이 없다! 턱시도 그 녀석 어디로 갔냐 멍?!" },
+  { speaker: "calico", text: "칫... 어차피 턱시도 형님을 따라가 봤자 넌 끝이다냥!" },
+  { speaker: "calico", text: "형님은 '동네 놀이터'로 가셨다냥!" },
+  { speaker: "corgi", text: "놀이터? 그 모래사장과 미끄럼틀이 난무하는 곳을 말하는 건가?" },
+  { speaker: "calico", text: "그래냥! 그곳을 지키는 우리 연합의 '치즈 태비' 녀석은 나랑 차원이 다르다냥!" },
+  { speaker: "calico", text: "네 짧은 다리로는 미끄럼틀 하나도 못 올라가고 미끄러져서 평생 태초마을이나 빙빙 돌 거다냥!" },
+  { speaker: "calico", text: "말을 마친 후 기절한다." },
+] as const;
+
 export const WORLD_CUTSCENES: readonly CutsceneScript[] = [
   { id: "world-01-intro", stageId: "world-01-stage-1", beats: [{ id: "alley", durationMs: 3200, narration: "무법지대 뒷골목. 왕갈비뼈를 훔쳐간 냥아치 연합의 흔적이 골목 끝으로 이어진다.", musicKey: "world-01-alley", skipAllowedAfterSeen: true }] },
   { id: "world-02-intro", stageId: "world-02-stage-1", beats: [{ id: "playground", durationMs: 3200, narration: "삐걱거리는 놀이터. 미끄럼틀 아래에서 고양이들의 수상한 웃음소리가 들린다.", musicKey: "world-02-amusement", skipAllowedAfterSeen: true }] },
@@ -27,7 +38,16 @@ export const WORLD_CUTSCENES: readonly CutsceneScript[] = [
       skipAllowedAfterSeen: true,
     })),
   },
-  { id: "world-01-boss-clear", stageId: "world-01-stage-boss", beats: [{ id: "bark-reward", durationMs: 2400, narration: "첫 우두머리를 넘어서자 코기의 목청이 한층 더 우렁차졌다.", dialogue: [{ speaker: "corgi", text: "멍!" }], soundCue: "bark", skipAllowedAfterSeen: true }] },
+  {
+    id: "world-01-boss-clear",
+    stageId: "world-01-stage-boss",
+    beats: WORLD01_BOSS_CLEAR_LINES.map((line, index) => ({
+      id: `calico-clear-${index + 1}`,
+      durationMs: 3000,
+      dialogue: [line],
+      skipAllowedAfterSeen: true,
+    })),
+  },
   { id: "world-02-boss-clear", stageId: "world-02-stage-boss", beats: [{ id: "bite-reward", durationMs: 2400, narration: "두 번째 승리. 이제 코기의 이빨은 간식 봉지도 긴장하게 만든다.", soundCue: "bark", skipAllowedAfterSeen: true }] },
   { id: "world-03-boss-clear", stageId: "world-03-stage-boss", beats: [{ id: "dash-reward", durationMs: 2400, narration: "세 번째 승리. 짧은 다리에서 믿을 수 없는 돌진이 튀어나온다.", soundCue: "stage-clear", skipAllowedAfterSeen: true }] },
   { id: "world-04-boss-clear", stageId: "world-04-stage-boss", beats: [{ id: "jump-reward", durationMs: 2400, narration: "네 번째 승리. 코기는 드디어 발끝이 바닥에서 멀어지는 기쁨을 알게 된다.", soundCue: "stage-clear", skipAllowedAfterSeen: true }] },

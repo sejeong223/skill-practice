@@ -11,7 +11,7 @@ export function GameEventBridge({ eventBus, onEvent }: GameEventBridgeProps): Re
   useEffect(() => {
     let disposed = false;
     const events: readonly GameEventType[] = [
-      "stage-started", "cutscene-started", "cutscene-finished", "death", "coin-changed", "stage-completed", "boss-hearts-changed", "tool-purchased", "collectible-found", "death-count-updated", "drawback-discovered", "keybinds-changed",
+      "stage-started", "cutscene-started", "cutscene-finished", "death", "coin-changed", "stage-completed", "stage-clear-scene-opened", "boss-hearts-changed", "tool-purchased", "collectible-found", "death-count-updated", "drawback-discovered", "keybinds-changed",
     ];
     const unsubscribe = events.map((type) => eventBus.on(type, () => {
       if (!disposed) onEvent?.(type);

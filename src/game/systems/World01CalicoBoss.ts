@@ -108,10 +108,7 @@ export class World01CalicoBoss {
     this.drawHealth();
     if (health === 0) {
       this.state = { ...this.state, phase: "defeated" };
-      this.clearFishbone();
-      this.clearDogs();
-      this.warning.setVisible(false);
-      this.sprite.setFrame(2).clearTint();
+      this.stopAttacks();
       this.onDefeated();
     }
     return true;
@@ -137,6 +134,18 @@ export class World01CalicoBoss {
 
   public isDefeated(): boolean {
     return this.state.phase === "defeated" && this.state.health === 0;
+  }
+
+  public stopAttacks(): void {
+    this.state = { ...this.state, phase: "defeated" };
+    this.clearFishbone();
+    this.clearDogs();
+    this.warning.setVisible(false);
+    this.sprite.setFrame(0).clearTint();
+  }
+
+  public showCollapseFrame(): void {
+    if (this.isDefeated()) this.sprite.setFrame(2);
   }
 
   public destroy(): void {

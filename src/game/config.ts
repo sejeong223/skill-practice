@@ -5,6 +5,7 @@ import { PreloadScene } from "./scenes/PreloadScene";
 import { IntroScene } from "./scenes/IntroScene";
 import { PrototypeScene } from "./scenes/PrototypeScene";
 import { StageScene } from "./scenes/StageScene";
+import { World01StageClearScene } from "./scenes/World01StageClearScene";
 import type { ProgressState } from "./core/types";
 
 export const GAME_WIDTH = 1280;
@@ -54,7 +55,7 @@ export function createPhaserConfig(
         debug: false,
       },
     },
-    scene: [BootScene, PreloadScene, IntroScene, PrototypeScene, StageScene],
+    scene: [BootScene, PreloadScene, IntroScene, PrototypeScene, StageScene, World01StageClearScene],
   };
 }
 

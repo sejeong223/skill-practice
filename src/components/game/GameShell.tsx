@@ -22,7 +22,7 @@ export interface GameShellProps {
   readonly initialStageId: StageId;
   readonly onExit?: () => void;
 }
-type UiMode = "safe" | "play" | "cutscene" | "dead";
+type UiMode = "safe" | "play" | "cutscene" | "dead" | "stage-clear";
 
 function cloneProgress(progress: ProgressState): ProgressState {
   return {
@@ -149,6 +149,7 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
     }
     if (type === "cutscene-started") setMode("cutscene");
     if (type === "cutscene-finished" || type === "stage-started") setMode("play");
+    if (type === "stage-clear-scene-opened") setMode("stage-clear");
     if (type === "stage-started") setStatusOpen(false);
     if (type === "death") {
       setDeathOverlayCount(progressRef.current.deathsTotal);
@@ -217,7 +218,7 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
         <GameEventBridge eventBus={eventBus} onEvent={handleEvent} />
         <CutsceneOverlay eventBus={eventBus} onSkip={() => eventBus.emit("cutscene-skip-requested", {})} />
         {introGateStep === "title" && <IntroTitleOverlay initialName={progress.playerName} onConfirm={handleNameConfirm} />}
-        {introGateStep === "ready" && <GameOverlay stageTitle={stage.title} runtime={runtime} progress={progress} skills={SKILL_DEFINITIONS} tools={TOOL_DEFINITIONS} cooldowns={{}} bossHearts={activeStageId === "world-01-stage-boss" ? bossHearts : undefined} alive={mode !== "dead" && mode !== "cutscene"} safeZone={mode === "safe"} statusOpen={statusOpen} onEquip={handleEquip} onPurchase={handlePurchase} onKeybindChange={handleKeybindChange} onToggleStatus={() => setStatusOpen((open) => !open)} paused={paused} onTogglePause={() => eventBus.emit("pause-requested", { paused: !paused })} onResetProgress={() => setResetProgressDialogOpen(true)} />}
+        {introGateStep === "ready" && mode !== "stage-clear" && <GameOverlay stageTitle={stage.title} runtime={runtime} progress={progress} skills={SKILL_DEFINITIONS} tools={TOOL_DEFINITIONS} cooldowns={{}} bossHearts={activeStageId === "world-01-stage-boss" ? bossHearts : undefined} alive={mode !== "dead" && mode !== "cutscene"} safeZone={mode === "safe"} statusOpen={statusOpen} onEquip={handleEquip} onPurchase={handlePurchase} onKeybindChange={handleKeybindChange} onToggleStatus={() => setStatusOpen((open) => !open)} paused={paused} onTogglePause={() => eventBus.emit("pause-requested", { paused: !paused })} onResetProgress={() => setResetProgressDialogOpen(true)} />}
         {resetProgressDialogOpen && (
           <ResetProgressDialog
             onCancel={() => setResetProgressDialogOpen(false)}
@@ -225,7 +226,7 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
           />
         )}
         <DeathCounterOverlay deathCount={deathOverlayCount} visible={deathOverlayVisible} />
-        {introGateStep === "ready" && <div className="game-toast" role="status">{toast}</div>}
+        {introGateStep === "ready" && mode !== "stage-clear" && <div className="game-toast" role="status">{toast}</div>}
         {onExit && <button className="exit-button" type="button" onClick={onExit}>나가기</button>}
       </div>
     </div>

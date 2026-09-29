@@ -38,6 +38,10 @@ export interface StageEventMap {
     nextStageId: StageId | null;
     bankedCoins: number;
   };
+  "stage-clear-scene-opened": {
+    stageId: "world-01-stage-boss";
+    nextStageId: "world-02-stage-1";
+  };
   "cutscene-requested": {
     stageId: StageId;
     cutsceneId: string;

@@ -1,6 +1,6 @@
 # Task: T06 삼색이 승리 대화와 황금색 클리어 씬
 
-## Status: pending
+## Status: done
 
 ## Goal
 삼색이 HP가 0이 되면 공격이 멎고 사용자 제공 승리 대화 8줄을 표시한다. 마지막 문장과 함께 삼색이가 기절한 뒤 별도의 클리어 씬을 띄워 화면 중앙에 큰 황금색 `[STAGE CLEAR!]`와 그 아래 `NEXT STAGE ->`를 표시한다. 사용자가 버튼을 누를 때만 월드 2 첫 스테이지로 이동한다.
@@ -96,6 +96,6 @@ Task: T06-victory-dialogue-and-clear-scene
 ```
 
 ## Progress
-- [ ] 구현 완료
-- [ ] 검증 통과
-- commit: pending
+- [x] 구현 완료
+- [x] 검증 통과 (`tsc --noEmit`, `lint`, `build`, 브라우저 12회 명중·승리 대화 8장면·기절 프레임·클리어 배너·대기·Enter 이동)
+- commit: T06 한국어 커밋
