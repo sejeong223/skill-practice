@@ -6,7 +6,7 @@
 ## Phases
 | Phase | Status | Summary | Blueprint |
 | :--- | :--- | :--- | :--- |
-| P01 | in_progress | 캠페인 이동 버그와 월드 1 환경·보스 비주얼을 순차 보정 | [P01](../phases/2026-09-29-world-stage-visual-polish/P01-progression-and-visuals/phase.md) |
+| P01 | done | 캠페인 이동 버그와 월드 1 환경·보스 비주얼 보정 완료 | [P01](../phases/2026-09-29-world-stage-visual-polish/P01-progression-and-visuals/phase.md) |
 
 ## Confirmed Decisions
 - 캠페인 순서는 STAGE_IDS를 기준으로 한다. 월드 1 보스 뒤의 승리 대화와 NEXT STAGE 화면은 보존한다.

@@ -2,7 +2,7 @@
   {
     "key": "corgi-reference",
     "kind": "image",
-    "url": "/assets/pixel/references/characters/corgi/corgi-reference-v2.png",
+    "url": "/assets/pixel/references/characters/corgi-reference-v2.png",
     "required": true
   },
   {
@@ -232,7 +232,7 @@
   {
     "key": "world-01-corgi-face",
     "kind": "image",
-    "url": "/assets/pixel/ui/corgi-face.png",
+    "url": "/assets/pixel/references/characters/corgi-reference-v2.png",
     "worldId": "world-01",
     "required": true
   },

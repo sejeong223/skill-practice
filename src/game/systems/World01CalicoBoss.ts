@@ -223,8 +223,7 @@ export class World01CalicoBoss {
     this.dogs.getActiveDogs().forEach((dog, index) => {
       const image = this.scene.add.image(dog.x, dog.y, "world-01-stray-dog")
         .setDisplaySize(48, 40).setDepth(11)
-        .setFlipX(index === 2)
-        .setTint([0xffffff, 0xeacb9a, 0xc4b5d7][index]);
+        .setFlipX(index === 2);
       this.dogSprites.push(image);
     });
   }

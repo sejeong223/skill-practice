@@ -313,7 +313,7 @@ form { display: flex; gap: 6px; margin-top: 10px; } form input { min-width: 0; f
 .pause-button { right: 58px; }
 .reset-progress-button { right: 16px; }
 .boss-hearts { position: absolute; top: 16px; right: 102px; z-index: 5; display: flex; align-items: center; gap: 5px; min-height: 32px; padding: 2px 7px; border: 2px solid #5f3942; background: rgb(255 248 229 / 95%); white-space: nowrap; }
-.boss-hearts-face { width: 24px; height: 24px; flex: 0 0 24px; background: url("/assets/pixel/ui/corgi-face.png") center / contain no-repeat; image-rendering: pixelated; }
+.boss-hearts-face { width: 24px; height: 24px; flex: 0 0 24px; background: url("/assets/pixel/references/characters/corgi-reference-v2.png") -81.45px -23.27px / 129.02px 64.51px no-repeat; image-rendering: pixelated; }
 .boss-heart { color: #db4053; font: 900 23px monospace; line-height: 1; text-shadow: 1px 2px #5f3942; }
 .boss-heart.is-empty { color: #a7a1a0; text-shadow: none; }
 @media (max-width: 720px) {
@@ -325,7 +325,7 @@ form { display: flex; gap: 6px; margin-top: 10px; } form input { min-width: 0; f
   .game-overlay.has-boss-hearts .hud-stats { display: none; }
   .game-overlay.has-boss-hearts .status-menu-button { position: absolute; top: 56px; left: 8px; }
   .boss-hearts { top: 16px; right: 102px; gap: 3px; padding: 1px 5px; }
-  .boss-hearts-face { width: 20px; height: 20px; flex-basis: 20px; }
+  .boss-hearts-face { width: 20px; height: 20px; flex-basis: 20px; background-position: -67.88px -19.39px; background-size: 107.52px 53.76px; }
   .boss-heart { font-size: 19px; }
 }
 

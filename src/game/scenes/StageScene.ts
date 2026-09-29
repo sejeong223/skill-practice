@@ -285,7 +285,9 @@ export class StageScene extends Phaser.Scene {
       });
     }
     if (stage.id === "world-01-stage-boss") {
-      this.calicoSprite = this.add.sprite(1280, 472, "world-01-calico-boss", 0).setDepth(10);
+      this.calicoSprite = this.add.sprite(1280, 472, "world-01-calico-boss", 0)
+        .setDepth(10)
+        .setFlipX(true);
       this.combatSystem = new CombatSystem(this.player, this.gameplayEventBus, TOOL_DEFINITIONS);
       this.combatSystem.setAttackTool("rabbit-slipper");
       this.defenseToolSystem = new DefenseToolSystem(this.gameplayEventBus, TOOL_DEFINITIONS);
