@@ -3,16 +3,16 @@ import type { GimmickKind, GimmickOutcome, WorldGimmickDefinition } from "../cor
 import type { StageId } from "../core/types";
 
 type Stage = 1 | 2 | 3 | 4;
-type StaticKind = "ant-static" | "white-spike-static" | "seagull-static" | "box-static";
+type StaticKind = "ant-static" | "white-spike-static" | "pigeon-static" | "box-static";
 type DangerKind = StaticKind | "open-manhole";
 type CoinKind = "fake-bone-green" | "fake-bone-reverse" | "fake-bone-fire";
 
-export const WORLD01_STATIC_KINDS: readonly StaticKind[] = ["ant-static", "white-spike-static", "seagull-static", "box-static"];
+export const WORLD01_STATIC_KINDS: readonly StaticKind[] = ["ant-static", "white-spike-static", "pigeon-static", "box-static"];
 const dangers: Readonly<Record<Stage, readonly [DangerKind, number][]>> = {
-  1: [["ant-static", 416], ["white-spike-static", 1088], ["box-static", 2592], ["seagull-static", 3300]],
-  2: [["ant-static", 384], ["open-manhole", 1040], ["seagull-static", 2048], ["white-spike-static", 2704], ["box-static", 3360]],
-  3: [["ant-static", 416], ["box-static", 1168], ["white-spike-static", 2544], ["seagull-static", 3280]],
-  4: [["seagull-static", 400], ["open-manhole", 1056], ["box-static", 1712], ["white-spike-static", 2368], ["ant-static", 3024]],
+  1: [["ant-static", 416], ["white-spike-static", 1088], ["box-static", 2592], ["pigeon-static", 3300]],
+  2: [["ant-static", 384], ["open-manhole", 1040], ["pigeon-static", 2048], ["white-spike-static", 2704], ["box-static", 3360]],
+  3: [["ant-static", 416], ["box-static", 1168], ["white-spike-static", 2544], ["pigeon-static", 3280]],
+  4: [["pigeon-static", 400], ["open-manhole", 1056], ["box-static", 1712], ["white-spike-static", 2368], ["ant-static", 3024]],
 };
 const coins: Readonly<Record<Stage, readonly [CoinKind, number][]>> = {
   1: [["fake-bone-green", 2192]],
@@ -23,7 +23,7 @@ const coins: Readonly<Record<Stage, readonly [CoinKind, number][]>> = {
 const visuals: Readonly<Record<DangerKind, { width: number; height: number; key: string }>> = {
   "ant-static": { width: 32, height: 20, key: "ant" },
   "white-spike-static": { width: 38, height: 28, key: "white-spike" },
-  "seagull-static": { width: 48, height: 32, key: "world-01-seagull-static" },
+  "pigeon-static": { width: 48, height: 32, key: "world-01-pigeon-static" },
   "box-static": { width: 44, height: 36, key: "cat-box" },
   "open-manhole": { width: 80, height: 16, key: "world-01-manhole-open" },
 };
@@ -97,7 +97,7 @@ export const WORLD01_GIMMICKS: readonly WorldGimmickDefinition[] = ([1, 2, 3, 4]
   ]);
 export const WORLD01_GIMMICK_COUNT = WORLD01_GIMMICKS.length;
 export const WORLD01_GIMMICK_MINIMUMS: Readonly<Partial<Record<GimmickKind, number>>> = {
-  "ant-static": 4, "white-spike-static": 4, "seagull-static": 4, "box-static": 4,
+  "ant-static": 4, "white-spike-static": 4, "pigeon-static": 4, "box-static": 4,
   "open-manhole": 2, "fake-bone-green": 2, "fake-bone-reverse": 2, "fake-bone-fire": 2,
 };
 export function getWorld01GimmicksForStage(stageId: StageId): readonly WorldGimmickDefinition[] {

@@ -296,7 +296,7 @@ function validateGimmicks(
     const expectedCounterplay: Partial<Record<GimmickKind, GimmickCounterplay["action"]>> = {
       "ant-static": "jump-before-zone",
       "white-spike-static": "jump-before-zone",
-      "seagull-static": "jump-before-zone",
+      "pigeon-static": "jump-before-zone",
       "box-static": "jump-before-zone",
       "open-manhole": "jump-before-zone",
       "ant-trip": "move-backward",

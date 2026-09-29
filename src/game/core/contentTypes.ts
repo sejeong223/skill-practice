@@ -61,7 +61,7 @@ export type MapChainActionKind =
 export type GimmickKind =
   | "ant-static"
   | "white-spike-static"
-  | "seagull-static"
+  | "pigeon-static"
   | "box-static"
   | "open-manhole"
   | "ant-trip"

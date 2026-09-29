@@ -210,7 +210,7 @@ function verifyMap(stageNumber, definition, tiledMap) {
     errors.push("가짜 체크포인트가 남음");
   }
 
-  const dangerKinds = new Set(["ant-static", "white-spike-static", "seagull-static", "box-static", "open-manhole"]);
+  const dangerKinds = new Set(["ant-static", "white-spike-static", "pigeon-static", "box-static", "open-manhole"]);
   const dangers = stageGimmicks.filter((gimmick) => dangerKinds.has(gimmick.kind)).sort((a, b) => a.x - b.x);
   const staticDangers = dangers.filter((gimmick) => gimmick.kind !== "open-manhole");
   if (staticDangers.length !== 4 || dangers.length !== (stageNumber === 2 || stageNumber === 4 ? 5 : 4)) {

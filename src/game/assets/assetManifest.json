@@ -192,9 +192,9 @@
     "required": true
   },
   {
-    "key": "world-01-seagull-static",
+    "key": "world-01-pigeon-static",
     "kind": "image",
-    "url": "/assets/pixel/props/world-01/seagull-static.png",
+    "url": "/assets/pixel/props/world-01/pigeon-static.png",
     "worldId": "world-01",
     "required": true
   },

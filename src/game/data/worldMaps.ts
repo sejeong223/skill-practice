@@ -41,7 +41,7 @@ export const WORLD_MAP_THEMES: readonly WorldMapThemeDefinition[] = [
       "ant",
       "ground",
       "white-spike",
-      "world-01-seagull-static",
+      "world-01-pigeon-static",
       "world-01-manhole-open",
       "bone-coin",
       "cat-box",

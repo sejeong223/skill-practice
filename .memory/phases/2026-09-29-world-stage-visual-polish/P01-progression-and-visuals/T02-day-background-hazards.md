@@ -1,6 +1,6 @@
 ﻿# Task: T02 낮 배경과 정적 장애물 비주얼
 
-## Status: pending
+## Status: done
 
 ## Goal
 월드 1 2·4단계 배경에 기본 배경과 같은 픽셀 윤곽선을 적용하고, 열린 맨홀은 첨부 격자 스타일로, 새 장애물은 비둘기로 표시한다. 맨홀 낙하 판정과 안전 구간은 그대로 유지한다.
@@ -44,16 +44,18 @@
 - Preserve the map floor holes, their 80px opening, checkpoint count, hazard spacing and fake bone coins.
 
 ## Acceptance Criteria
-- [ ] Stages 2 and 4 retain their daytime scene layouts with visible hard pixel outlines.
-- [ ] Open manhole image matches the supplied blue-gray grid style while the ground opening still causes a fall only after entering it.
-- [ ] All four static birds look like pigeons; no active asset or generated map uses a seagull kind/key.
-- [ ] Map generator check confirms the World 1 hazard and checkpoint layout has not changed.
+- [x] Stages 2 and 4 retain their daytime scene layouts with visible hard pixel outlines.
+- [x] Open manhole image matches the supplied blue-gray grid style while the ground opening still causes a fall only after entering it.
+- [x] All four static birds look like pigeons; no active asset or generated map uses a seagull kind/key.
+- [x] Map generator check confirms the World 1 hazard and checkpoint layout has not changed.
 
 ## Validation
 - npm.cmd run world01:maps — regenerate only intended map changes.
 - npm.cmd run world01:maps:check — all map, floor hole and spacing assertions pass.
 - npx.cmd tsc --noEmit — all renamed kind switches compile.
-- Browser visual check — stages 2/4 backgrounds, visible pigeon and open manhole.
+- npm.cmd run lint — no lint errors.
+- npm.cmd run build — production build succeeds.
+- Browser visual check — stage 2 roof and open manhole at .memory/test-plans/assets/world01-t08-stage2-roof.png; stage 4 clothesline and pigeon at .memory/test-plans/assets/world01-t08-stage4-clothesline.png.
 
 ## Commit Message
 feat(월드1): 낮 배경과 맨홀 비둘기 그림 보정
@@ -66,6 +68,6 @@ Task: T02-day-background-hazards
 - 열린 맨홀과 정적 비둘기를 새 그림에 연결한다
 
 ## Progress
-- [ ] 구현 완료
-- [ ] 검증 통과
-- commit: pending
+- [x] 구현 완료
+- [x] 검증 통과
+- commit: Korean T02 commit

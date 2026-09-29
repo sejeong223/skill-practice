@@ -159,7 +159,7 @@ export class MapGimmickSystem {
       switch (gimmick.kind) {
         case "ant-static":
         case "white-spike-static":
-        case "seagull-static":
+        case "pigeon-static":
         case "box-static":
           this.requestDeath(gimmick, time);
           break;
@@ -480,7 +480,7 @@ export class MapGimmickSystem {
   }
 
   private createGimmickVisual(gimmick: WorldGimmickDefinition): void {
-    const standalone = gimmick.kind === "seagull-static" || gimmick.kind === "open-manhole";
+    const standalone = gimmick.kind === "pigeon-static" || gimmick.kind === "open-manhole";
     const texture = standalone ? gimmick.visualKey : "world-01-props";
     const frame = this.getVisualFrame(gimmick, false);
     if ((!standalone && !frame) || !this.scene.textures.exists(texture)) {
@@ -768,7 +768,7 @@ export class MapGimmickSystem {
     const floorY = gimmick.y + gimmick.height;
     let zone: Phaser.Geom.Rectangle;
     switch (gimmick.kind) {
-      case "seagull-static":
+      case "pigeon-static":
         zone = new Phaser.Geom.Rectangle(gimmick.x + 8, floorY - 31, 32, 30);
         break;
       case "ant-trip": {
@@ -834,7 +834,7 @@ export class MapGimmickSystem {
     switch (gimmick.kind) {
       case "ant-static":
       case "white-spike-static":
-      case "seagull-static":
+      case "pigeon-static":
       case "box-static":
       case "fake-bone-green":
       case "fake-bone-reverse":
@@ -863,7 +863,7 @@ export class MapGimmickSystem {
     switch (gimmick.kind) {
       case "ant-static":
       case "white-spike-static":
-      case "seagull-static":
+      case "pigeon-static":
       case "box-static":
         return [gimmick.width, gimmick.height];
       case "open-manhole": return [96, 48];
@@ -885,7 +885,7 @@ export class MapGimmickSystem {
     return [
       "ant-static",
       "white-spike-static",
-      "seagull-static",
+      "pigeon-static",
       "box-static",
       "open-manhole",
       "ant-trip",
