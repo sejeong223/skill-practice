@@ -3,6 +3,7 @@ import { GAME_HEIGHT } from "../config";
 import {
   createDefaultProgressState,
   createRuntimeStageState,
+  getNextStageId,
 } from "../core/constants";
 import type { ProgressState, StageId } from "../core/types";
 import { GameEventBus } from "../bridge/GameEventBus";
@@ -46,11 +47,6 @@ export interface StageSceneData {
   readonly playerName?: string;
   readonly resumeCheckpointId?: string;
 }
-
-const WORLD01_SEQUENCE: readonly StageId[] = [
-  "world-01-stage-1", "world-01-stage-2", "world-01-stage-3",
-  "world-01-stage-4", "world-01-stage-boss",
-];
 
 export class StageScene extends Phaser.Scene {
   private player?: Player;
@@ -346,8 +342,9 @@ export class StageScene extends Phaser.Scene {
     this.eventUnsubscribers.push(this.eventBus.on("stage-completed", ({ stageId }) => {
       if (stageId !== this.stageId || this.stageTransitionStarted) return;
       this.runtime?.setStatus("completed");
-      const currentIndex = WORLD01_SEQUENCE.indexOf(stageId);
-      if (currentIndex < 0 || currentIndex >= WORLD01_SEQUENCE.length - 1) return;
+      if (stageId === "world-01-stage-boss") return;
+      const nextStageId = getNextStageId(stageId);
+      if (!nextStageId) return;
       this.stageTransitionStarted = true;
       this.add.text(this.cameras.main.centerX, 255, "STAGE CLEAR!", {
         color: "#FFD34D", fontFamily: "Galmuri11Pixel, monospace", fontSize: "42px",
@@ -356,7 +353,7 @@ export class StageScene extends Phaser.Scene {
       this.time.delayedCall(700, () => {
         if (!this.scene.isActive()) return;
         this.scene.start("StageScene", {
-          stageId: WORLD01_SEQUENCE[currentIndex + 1],
+          stageId: nextStageId,
           seed: this.runtime?.runtimeState.randomSeed ?? 1,
           playerName: this.progress.playerName,
         } satisfies StageSceneData);

@@ -1,16 +1,16 @@
-# Current Context
+﻿# Current Context
 
 ## Active Plan
-[월드 1 낮 경로와 삼색이 보스](./plans/2026-09-29-world01-daylight-calico.md)
+[월드 스테이지 진행과 비주얼 보정](./plans/2026-09-29-world-stage-visual-polish.md)
 
 ## Active Phase
-[P01 월드 1 낮 경로와 삼색이 전투](./phases/2026-09-29-world01-daylight-calico/P01-route-and-boss/phase.md) (완료)
+[P01 진행과 월드 1 비주얼](./phases/2026-09-29-world-stage-visual-polish/P01-progression-and-visuals/phase.md) (진행 중)
 
 ## Active Task
-없음 (계획의 모든 Task 완료)
+[T02 낮 배경과 정적 장애물 비주얼](./phases/2026-09-29-world-stage-visual-polish/P01-progression-and-visuals/T02-day-background-hazards.md)
 
 ## Status
-- T07 일반 4개→삼색이 연속 진행, 맨홀 충돌·갈매기 간격·모바일 HUD 수정, 클리어/짖기 저장과 전체 플레이테스트 완료. P01 7/7 완료.
+- T01 완료: STAGE_IDS 전환과 전체 캠페인 이어하기 적용, 자동 테스트·타입·린트·빌드 및 브라우저 씬 전환 확인.
 
 ## Next Step (IMPORTANT)
-다음 Phase나 Task가 이 계획에 없습니다. 월드 2 구현은 별도 계획을 작성한 뒤 진행합니다.
+T02 청사진을 읽고 지붕·빨랫줄·맨홀·정적 비둘기 이미지를 바꾸고 관련 맵 데이터를 갱신한다.

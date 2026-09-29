@@ -39,6 +39,11 @@ export const STAGE_IDS: readonly StageId[] = WORLD_IDS.flatMap((worldId) =>
   STAGE_SUFFIXES.map((stageNumber) => stageIdFor(worldId, stageNumber)),
 );
 
+export function getNextStageId(stageId: StageId): StageId | null {
+  const index = STAGE_IDS.indexOf(stageId);
+  return index < 0 ? null : STAGE_IDS[index + 1] ?? null;
+}
+
 export const BOSS_STAGE_IDS: readonly StageId[] = WORLD_IDS.map((worldId) =>
   stageIdFor(worldId, "boss"),
 );

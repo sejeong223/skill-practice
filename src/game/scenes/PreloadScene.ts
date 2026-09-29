@@ -61,10 +61,13 @@ export class PreloadScene extends Phaser.Scene {
   public create(): void {
     const progress = this.registry.get("progressState") as ProgressState | undefined;
     if (!this.loadError && progress?.onboardingCompleted) {
-      const firstUncleared = STAGE_IDS.slice(0, 5).find(
+      const firstUncleared = STAGE_IDS.find(
         (stageId) => !progress.clearedStages.includes(stageId),
       );
-      if (!firstUncleared) {
+      const world01Complete = STAGE_IDS.slice(0, 5).every(
+        (stageId) => progress.clearedStages.includes(stageId),
+      );
+      if (!firstUncleared || (world01Complete && firstUncleared === "world-02-stage-1")) {
         this.scene.start("World01StageClearScene", {
           stageId: "world-01-stage-boss",
           nextStageId: "world-02-stage-1",
