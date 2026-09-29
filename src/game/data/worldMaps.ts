@@ -9,7 +9,25 @@ import {
   NORMAL_MAP_SAFE_LENGTH,
   NORMAL_MAP_WIDTH,
 } from "../core/constants";
-import type { WorldId } from "../core/types";
+import type { StageId, WorldId } from "../core/types";
+
+export function getWorld01StageTheme(
+  stageId: StageId,
+  base: WorldMapThemeDefinition,
+): WorldMapThemeDefinition {
+  const midAssetKey = stageId === "world-01-stage-2"
+    ? "world-01-roof-day-mid"
+    : stageId === "world-01-stage-4"
+      ? "world-01-clothesline-day-mid"
+      : null;
+  if (!midAssetKey) return base;
+  return {
+    ...base,
+    layers: base.layers.map((layer) => layer.kind === "background-mid"
+      ? { ...layer, assetKey: midAssetKey }
+      : layer),
+  };
+}
 
 export const WORLD_MAP_THEMES: readonly WorldMapThemeDefinition[] = [
   createTheme(

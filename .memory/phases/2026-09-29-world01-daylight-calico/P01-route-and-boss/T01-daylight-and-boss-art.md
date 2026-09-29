@@ -1,6 +1,6 @@
 # Task: T01 낮 지붕·빨랫줄과 보스 PNG 자산
 
-## Status: pending
+## Status: done
 
 ## Goal
 2·4단계에 실제로 표시되는 낮 지붕·빨랫줄 PNG를 만들고, 정지 갈매기·열린 맨홀·삼색이·생선 가시·강아지 무리·코기 얼굴 이미지를 게임 로더에 등록한다. 그림이 제작만 되고 화면에서 쓰이지 않는 상태를 막는다.
@@ -96,6 +96,6 @@ Task: T01-daylight-and-boss-art
 ```
 
 ## Progress
-- [ ] 구현 완료
-- [ ] 검증 통과
-- commit: pending
+- [x] 구현 완료
+- [x] 검증 통과 (`npx.cmd tsc --noEmit`, `npm.cmd run lint`, `npm.cmd run build`)
+- commit: T01 한국어 커밋

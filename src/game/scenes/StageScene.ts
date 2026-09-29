@@ -9,6 +9,7 @@ import { GameEventBus } from "../bridge/GameEventBus";
 import { CameraDirector } from "../camera/CameraDirector";
 import { GameplayEventBus } from "../core/events";
 import { getStageDefinition, getWorldMapTheme } from "../data";
+import { getWorld01StageTheme } from "../data/worldMaps";
 import type { StageDefinition } from "../core/types";
 import type { EnemyDefinition } from "../core/contentTypes";
 import { MapDebugOverlay } from "../debug/MapDebugOverlay";
@@ -78,7 +79,7 @@ export class StageScene extends Phaser.Scene {
     const registeredProgress = this.registry.get("progressState") as ProgressState | undefined;
     this.progress = registeredProgress ?? createDefaultProgressState(data.playerName);
     if (data.playerName) this.progress.playerName = data.playerName;
-    const theme = getWorldMapTheme(stage.worldId);
+    const theme = getWorld01StageTheme(stage.id, getWorldMapTheme(stage.worldId));
     const seed = data.seed ?? 1;
     const sharedEventBus = this.registry.get("gameEventBus");
     this.persistenceEventBus = sharedEventBus instanceof GameEventBus

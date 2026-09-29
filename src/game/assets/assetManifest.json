@@ -164,6 +164,20 @@
     "required": true
   },
   {
+    "key": "world-01-roof-day-mid",
+    "kind": "image",
+    "url": "/assets/pixel/backgrounds/world-01/world-01-roof-day-mid.png",
+    "worldId": "world-01",
+    "required": true
+  },
+  {
+    "key": "world-01-clothesline-day-mid",
+    "kind": "image",
+    "url": "/assets/pixel/backgrounds/world-01/world-01-clothesline-day-mid.png",
+    "worldId": "world-01",
+    "required": true
+  },
+  {
     "key": "world-01-background-foreground",
     "kind": "image",
     "url": "/assets/pixel/backgrounds/world-01/world-01-foreground.png",
@@ -174,6 +188,51 @@
     "key": "world-01-props",
     "kind": "atlas",
     "url": "/assets/pixel/props/world-01/world-01-props.png",
+    "worldId": "world-01",
+    "required": true
+  },
+  {
+    "key": "world-01-seagull-static",
+    "kind": "image",
+    "url": "/assets/pixel/props/world-01/seagull-static.png",
+    "worldId": "world-01",
+    "required": true
+  },
+  {
+    "key": "world-01-manhole-open",
+    "kind": "image",
+    "url": "/assets/pixel/props/world-01/manhole-open.png",
+    "worldId": "world-01",
+    "required": true
+  },
+  {
+    "key": "world-01-calico-boss",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/characters/world-01/calico-boss.png",
+    "frameWidth": 96,
+    "frameHeight": 96,
+    "frameCount": 3,
+    "worldId": "world-01",
+    "required": true
+  },
+  {
+    "key": "world-01-fishbone",
+    "kind": "image",
+    "url": "/assets/pixel/props/world-01/fishbone-projectile.png",
+    "worldId": "world-01",
+    "required": true
+  },
+  {
+    "key": "world-01-stray-dog",
+    "kind": "image",
+    "url": "/assets/pixel/characters/world-01/stray-dog.png",
+    "worldId": "world-01",
+    "required": true
+  },
+  {
+    "key": "world-01-corgi-face",
+    "kind": "image",
+    "url": "/assets/pixel/ui/corgi-face.png",
     "worldId": "world-01",
     "required": true
   },
