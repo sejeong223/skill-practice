@@ -1,6 +1,6 @@
 # Task: T02 보이는 장애물과 실제 열린 맨홀로 일반 4개 경로 재구성
 
-## Status: pending
+## Status: done
 
 ## Goal
 월드 1 일반 맵 네 개를 3840×720 경로로 재생성한다. 시작부터 보이는 개미·백색 가시·갈매기·상자를 맵마다 하나씩, 2·4단계 거리 구간에 실제 80px 열린 맨홀을 하나씩 배치한다. 2·4단계는 최대 32px의 완만한 높낮이와 짧은 점프를 유지한다. 개미 위 투명 벽과 돌발 생성 기믹을 없애 수동 테스트가 가능하게 한다.
@@ -90,6 +90,6 @@ Task: T02-visible-route-and-pits
 ```
 
 ## Progress
-- [ ] 구현 완료
-- [ ] 검증 통과
-- commit: pending
+- [x] 구현 완료
+- [x] 검증 통과 (`world01:maps`, `world01:maps:check`, `tsc --noEmit`, `lint`, `build`)
+- commit: T02 한국어 커밋

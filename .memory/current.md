@@ -7,10 +7,10 @@
 [P01 월드 1 낮 경로와 삼색이 전투](./phases/2026-09-29-world01-daylight-calico/P01-route-and-boss/phase.md)
 
 ## Active Task
-[T02 정적 장애물·열린 맨홀과 일반 4개 경로 재배치](./phases/2026-09-29-world01-daylight-calico/P01-route-and-boss/T02-visible-route-and-pits.md)
+[T03 월드 1 진짜 체크포인트 2곳과 맵 검증](./phases/2026-09-29-world01-daylight-calico/P01-route-and-boss/T03-two-real-checkpoints.md)
 
 ## Status
-- T01 낮 배경과 보스 PNG 자산 구현 및 타입 검사·린트·빌드 완료.
+- T02 정적 장애물 16개, 열린 맨홀 2개, 가짜 간식 코인 6개로 4개 맵을 재생성하고 자동 검증 완료.
 
 ## Next Step (IMPORTANT)
-T02 청사진에 따라 정적 장애물과 열린 맨홀을 구현하고 일반 4개 경로를 재배치합니다.
+T03 청사진에 따라 월드 1 진짜 체크포인트를 2곳으로 줄이고 검증 규칙을 갱신합니다.

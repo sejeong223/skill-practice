@@ -9,10 +9,9 @@ import type {
 } from "../core/contentTypes";
 import { STAGE_IDS } from "../core/constants";
 import type { StageDefinition, StageId } from "../core/types";
-import { DEFAULT_PLAYER_TUNING } from "../entities/playerTypes";
 import {
-  WORLD01_GIMMICK_MAX_GAP_MS,
   WORLD01_GIMMICK_MINIMUMS,
+  WORLD01_STATIC_KINDS,
 } from "./world01Gimmicks";
 
 export interface MapValidationReport {
@@ -187,8 +186,8 @@ export function validateCampaignMaps(
   const world01Gimmicks = world01Stages.flatMap(
     (stage) => stage.map?.gimmicks ?? [],
   );
-  if (world01Gimmicks.length < 66) {
-    errors.push("world-01: 기믹 카탈로그는 최소 66개여야 합니다.");
+  if (world01Gimmicks.length !== 24) {
+    errors.push("world-01: 기믹 카탈로그는 정확히 24개여야 합니다.");
   }
 
   const counts = new Map<GimmickKind, number>();
@@ -209,32 +208,19 @@ export function validateCampaignMaps(
       continue;
     }
 
-    const routePoints = [
-      { x: stage.spawn.x, y: stage.spawn.y },
-      ...map.gimmicks
-        .map((gimmick) => ({
-          x: gimmick.x + gimmick.width / 2,
-          y: gimmick.y + gimmick.height,
-        }))
-        .sort((left, right) => left.x - right.x),
-      { x: map.mapWidth - 96, y: stage.spawn.y },
-    ];
-
-    for (let index = 1; index < routePoints.length; index += 1) {
-      const previous = routePoints[index - 1];
-      const current = routePoints[index];
-      const travelMs =
-        (Math.hypot(current.x - previous.x, current.y - previous.y) /
-          DEFAULT_PLAYER_TUNING.runSpeed) *
-        1000;
-      if (travelMs > WORLD01_GIMMICK_MAX_GAP_MS) {
-        errors.push(
-          stage.id + ": 함정 사이 공백이 8초를 초과합니다 (" +
-            Math.round(travelMs) +
-            "ms).",
-        );
-        break;
+    const dangers = map.gimmicks
+      .filter((gimmick) => WORLD01_STATIC_KINDS.includes(gimmick.kind as typeof WORLD01_STATIC_KINDS[number]) || gimmick.kind === "open-manhole")
+      .sort((left, right) => left.x - right.x);
+    if (dangers.filter((gimmick) => gimmick.kind !== "open-manhole").length !== 4) {
+      errors.push(stage.id + ": 정적 장애물은 정확히 4개여야 합니다.");
+    }
+    for (let index = 1; index < dangers.length; index += 1) {
+      if (dangers[index].x - dangers[index - 1].x < 656) {
+        errors.push(stage.id + ": 물리 위험 간격은 656px 이상이어야 합니다.");
       }
+    }
+    if (map.gimmicks.some((gimmick) => ["fake-checkpoint", "forward-jump-wall"].includes(gimmick.kind))) {
+      errors.push(stage.id + ": 가짜 체크포인트 또는 투명 벽이 남아 있습니다.");
     }
   }
 
@@ -246,7 +232,7 @@ export function validateCampaignMaps(
     }
   }
   for (const [worldId, count] of gimmicksByWorld) {
-    if (count < 30) errors.push(worldId + ": 기믹은 최소 30개여야 합니다.");
+    if (worldId !== "world-01" && count < 30) errors.push(worldId + ": 기믹은 최소 30개여야 합니다.");
   }
 
   return {
@@ -296,6 +282,11 @@ function validateGimmicks(
       }
     }
     const expectedCounterplay: Partial<Record<GimmickKind, GimmickCounterplay["action"]>> = {
+      "ant-static": "jump-before-zone",
+      "white-spike-static": "jump-before-zone",
+      "seagull-static": "jump-before-zone",
+      "box-static": "jump-before-zone",
+      "open-manhole": "jump-before-zone",
       "ant-trip": "move-backward",
       "forward-jump-wall": "move-backward",
       "ground-collapse": "jump-before-zone",

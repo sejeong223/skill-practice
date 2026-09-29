@@ -26,10 +26,9 @@ const {
 const {
   WORLD01_GIMMICK_MINIMUMS,
   WORLD01_GIMMICKS,
-  WORLD01_GIMMICK_MAX_GAP_MS,
   getWorld01FloorY,
+  getWorld01OpenManholes,
 } = require(path.join(root, "src/game/data/world01Gimmicks.ts"));
-const { DEFAULT_PLAYER_TUNING } = require(path.join(root, "src/game/entities/playerTypes.ts"));
 const outputDirectory = path.join(root, "public/assets/pixel/maps/world-01");
 const tileWidth = 16;
 const tileHeight = 16;
@@ -75,6 +74,9 @@ function makeMap(stageNumber, definition) {
 
   for (let column = 0; column < width; column += 1) {
     const x = column * tileWidth + tileWidth / 2;
+    if (getWorld01OpenManholes(stageNumber).some((hole) => x >= hole.x && x < hole.x + hole.width)) {
+      continue;
+    }
     const floorY = getWorld01FloorY(stageNumber, x);
     const firstRow = Math.floor(floorY / tileHeight);
     for (let row = firstRow; row < height; row += 1) {
@@ -194,21 +196,36 @@ function verifyMap(stageNumber, definition, tiledMap) {
   }
   if (tiledMap.width * tileWidth !== 3840) errors.push("맵 너비가 3840px가 아님");
 
-  const points = [
-    { x: 96, y: getWorld01FloorY(stageNumber, 96) },
-    ...stageGimmicks
-      .map((gimmick) => ({ x: gimmick.x + gimmick.width / 2, y: gimmick.y + gimmick.height }))
-      .sort((left, right) => left.x - right.x),
-    { x: 3744, y: getWorld01FloorY(stageNumber, 3744) },
-  ];
-  for (let index = 1; index < points.length; index += 1) {
-    const previous = points[index - 1];
-    const current = points[index];
-    const elapsedMs = Math.hypot(current.x - previous.x, current.y - previous.y) /
-      DEFAULT_PLAYER_TUNING.runSpeed * 1000;
-    if (elapsedMs > WORLD01_GIMMICK_MAX_GAP_MS) {
-      errors.push(`함정 공백 ${Math.round(elapsedMs)}ms가 8초 초과`);
-      break;
+  const dangerKinds = new Set(["ant-static", "white-spike-static", "seagull-static", "box-static", "open-manhole"]);
+  const dangers = stageGimmicks.filter((gimmick) => dangerKinds.has(gimmick.kind)).sort((a, b) => a.x - b.x);
+  const staticDangers = dangers.filter((gimmick) => gimmick.kind !== "open-manhole");
+  if (staticDangers.length !== 4 || dangers.length !== (stageNumber === 2 || stageNumber === 4 ? 5 : 4)) {
+    errors.push("정적 장애물 또는 열린 맨홀 개수가 맞지 않음");
+  }
+  for (let index = 1; index < dangers.length; index += 1) {
+    if (dangers[index].x - dangers[index - 1].x < 656) errors.push("물리 위험 간격이 656px 미만");
+  }
+  const coins = stageGimmicks.filter((gimmick) => gimmick.kind.startsWith("fake-bone-"));
+  if (coins.some((coin) => coin.y + coin.height > getWorld01FloorY(stageNumber, coin.x) - 80)) {
+    errors.push("가짜 코인이 바닥에서 너무 낮음");
+  }
+  if (stageGimmicks.some((gimmick) => ["fake-checkpoint", "forward-jump-wall", "ground-collapse", "ground-rise"].includes(gimmick.kind))) {
+    errors.push("돌발 기믹 또는 가짜 체크포인트가 남음");
+  }
+  const ground = tiledMap.layers.find((layer) => layer.name === "world-01-gameplay")?.data;
+  if (!ground) {
+    errors.push("게임플레이 바닥 타일 없음");
+  } else {
+    for (let column = 0; column < tiledMap.width; column += 1) {
+      const x = column * tileWidth + tileWidth / 2;
+      const hole = getWorld01OpenManholes(stageNumber).some((item) => x >= item.x && x < item.x + item.width);
+      const firstRow = Math.floor(getWorld01FloorY(stageNumber, x) / tileHeight);
+      for (let row = firstRow; row < tiledMap.height; row += 1) {
+        if (hole ? ground[row * tiledMap.width + column] !== 0 : ground[row * tiledMap.width + column] === 0) {
+          errors.push(`바닥/맨홀 타일 불일치: 열 ${column}`);
+          break;
+        }
+      }
     }
   }
 
@@ -250,7 +267,7 @@ function run() {
     }
   }
 
-  if (WORLD01_GIMMICKS.length < 66) problems.push("전체 기믹 카탈로그가 66개 미만");
+  if (WORLD01_GIMMICKS.length !== 24) problems.push("전체 기믹 카탈로그가 24개가 아님");
   for (const [kind, minimum] of Object.entries(WORLD01_GIMMICK_MINIMUMS)) {
     if ((totalCounts.get(kind) ?? 0) < minimum) {
       problems.push(`${kind}: ${totalCounts.get(kind) ?? 0}/${minimum}개`);

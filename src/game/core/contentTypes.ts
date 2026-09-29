@@ -59,6 +59,11 @@ export type MapChainActionKind =
   | "clear-control";
 
 export type GimmickKind =
+  | "ant-static"
+  | "white-spike-static"
+  | "seagull-static"
+  | "box-static"
+  | "open-manhole"
   | "ant-trip"
   | "forward-jump-wall"
   | "ground-collapse"

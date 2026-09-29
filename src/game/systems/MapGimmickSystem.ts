@@ -62,6 +62,7 @@ export class MapGimmickSystem {
   private bubbleText?: Phaser.GameObjects.Text;
   private readonly snapshotSeed: number;
   private lastOutcome = "none";
+  private fallDeathRequested = false;
 
   public constructor(
     scene: Phaser.Scene,
@@ -156,6 +157,14 @@ export class MapGimmickSystem {
       }
 
       switch (gimmick.kind) {
+        case "ant-static":
+        case "white-spike-static":
+        case "seagull-static":
+        case "box-static":
+          this.requestDeath(gimmick, time);
+          break;
+        case "open-manhole":
+          break;
         case "ant-trip":
           this.handleAnt(gimmick, time);
           break;
@@ -214,6 +223,7 @@ export class MapGimmickSystem {
   }
 
   public reset(snapshot: MapRuntimeSnapshot | null): void {
+    this.fallDeathRequested = false;
     this.pendingFatal.clear();
     this.wallDeathDeadlines.clear();
     this.triggeredChainSources.clear();
@@ -235,7 +245,7 @@ export class MapGimmickSystem {
       this.entries.set(gimmick.id, next);
       this.visuals.get(gimmick.id)?.setVisible(this.isDefaultVisible(gimmick));
       if (["fake-bone-green", "fake-bone-reverse", "fake-bone-fire"].includes(gimmick.kind)) {
-        const baseFrame = getAssetFrameKey("world-01-prop-bone-coin");
+        const baseFrame = this.getVisualFrame(gimmick, false);
         if (baseFrame) this.visuals.get(gimmick.id)?.setFrame(baseFrame);
       }
       this.setPhysicalActive(this.wallBodies.get(gimmick.id), false);
@@ -470,15 +480,17 @@ export class MapGimmickSystem {
   }
 
   private createGimmickVisual(gimmick: WorldGimmickDefinition): void {
+    const standalone = gimmick.kind === "seagull-static" || gimmick.kind === "open-manhole";
+    const texture = standalone ? gimmick.visualKey : "world-01-props";
     const frame = this.getVisualFrame(gimmick, false);
-    if (!frame || !this.scene.textures.exists("world-01-props")) {
+    if ((!standalone && !frame) || !this.scene.textures.exists(texture)) {
       return;
     }
     const image = this.scene.add.image(
       gimmick.x + gimmick.width / 2,
       this.getVisualY(gimmick),
-      "world-01-props",
-      frame,
+      texture,
+      standalone ? undefined : frame,
     );
     image.setDisplaySize(...this.getVisualSize(gimmick));
     image.setDepth(gimmick.kind === "fake-checkpoint" ? 2 : 1);
@@ -593,6 +605,17 @@ export class MapGimmickSystem {
   }
 
   private checkWorldBounds(now: number): void {
+    for (const hole of this.map.gimmicks.filter((gimmick) => gimmick.kind === "open-manhole")) {
+      const centerX = this.player.body.center.x;
+      if (
+        centerX >= hole.x &&
+        centerX < hole.x + hole.width &&
+        this.player.body.bottom > hole.y + hole.height + 32
+      ) {
+        this.requestFallDeath(now);
+        return;
+      }
+    }
     if (this.player.body.bottom >= this.stage.mapHeight - 48) {
       const collapsedFloor = [...this.entries.values()].find((entry) => {
         const definition = this.map.gimmicks.find(
@@ -627,6 +650,8 @@ export class MapGimmickSystem {
   }
 
   private requestFallDeath(now: number): void {
+    if (this.fallDeathRequested) return;
+    this.fallDeathRequested = true;
     this.eventBus.emit("death-requested", {
       stageId: this.stage.id,
       cause: "fall",
@@ -743,6 +768,9 @@ export class MapGimmickSystem {
     const floorY = gimmick.y + gimmick.height;
     let zone: Phaser.Geom.Rectangle;
     switch (gimmick.kind) {
+      case "seagull-static":
+        zone = new Phaser.Geom.Rectangle(gimmick.x + 8, floorY - 31, 32, 30);
+        break;
       case "ant-trip": {
         const [visualWidth, visualHeight] = this.getVisualSize(gimmick);
         zone = new Phaser.Geom.Rectangle(
@@ -788,13 +816,7 @@ export class MapGimmickSystem {
     gimmick: WorldGimmickDefinition,
     revealed: boolean,
   ): string | undefined {
-    if (!revealed && [
-      "fake-bone-green",
-      "fake-bone-reverse",
-      "fake-bone-fire",
-    ].includes(gimmick.kind)) {
-      return getAssetFrameKey("world-01-prop-bone-coin");
-    }
+    void revealed;
     if (gimmick.kind === "fake-bone-green") {
       return getAssetFrameKey("world-01-prop-bone-coin-green");
     }
@@ -810,6 +832,16 @@ export class MapGimmickSystem {
   private getVisualY(gimmick: WorldGimmickDefinition): number {
     const floorY = gimmick.y + gimmick.height;
     switch (gimmick.kind) {
+      case "ant-static":
+      case "white-spike-static":
+      case "seagull-static":
+      case "box-static":
+      case "fake-bone-green":
+      case "fake-bone-reverse":
+      case "fake-bone-fire":
+        return gimmick.y + gimmick.height / 2;
+      case "open-manhole":
+        return floorY - 8;
       case "ant-trip":
       case "box-cat-arm":
       case "revealed-white-spike":
@@ -822,10 +854,6 @@ export class MapGimmickSystem {
         return floorY - 120;
       case "name-bubble-control-loss":
         return floorY - 92;
-      case "fake-bone-green":
-      case "fake-bone-reverse":
-      case "fake-bone-fire":
-        return floorY - 58;
       default:
         return floorY - 16;
     }
@@ -833,6 +861,12 @@ export class MapGimmickSystem {
 
   private getVisualSize(gimmick: WorldGimmickDefinition): [number, number] {
     switch (gimmick.kind) {
+      case "ant-static":
+      case "white-spike-static":
+      case "seagull-static":
+      case "box-static":
+        return [gimmick.width, gimmick.height];
+      case "open-manhole": return [96, 48];
       case "ant-trip": return [30, 20];
       case "fake-bone-green":
       case "fake-bone-reverse":
@@ -849,6 +883,11 @@ export class MapGimmickSystem {
 
   private isDefaultVisible(gimmick: WorldGimmickDefinition): boolean {
     return [
+      "ant-static",
+      "white-spike-static",
+      "seagull-static",
+      "box-static",
+      "open-manhole",
       "ant-trip",
       "fake-bone-green",
       "fake-bone-reverse",
