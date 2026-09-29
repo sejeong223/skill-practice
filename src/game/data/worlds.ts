@@ -121,7 +121,7 @@ function createSegment(
     platforms: [
       {
         id: segmentId + "-platform",
-        x: 16,
+        x: isBoss ? length / 2 : 16,
         y: 520,
         width: length - 32,
         height: 32,

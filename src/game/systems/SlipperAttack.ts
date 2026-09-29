@@ -47,6 +47,8 @@ export class SlipperAttackController {
 
     if (!this.holdingSlipper) {
       if (now > this.biteWindowUntil) {
+        this.holdingSlipper = true;
+        this.comboCount = 0;
         return {
           accepted: false,
           kind: "bite-window-expired",
@@ -57,6 +59,7 @@ export class SlipperAttackController {
 
       this.comboCount = 0;
       this.biteWindowUntil = 0;
+      this.holdingSlipper = true;
       this.player.setAnimationState("attack-bite");
       this.eventBus.emit("bite-hit", { now });
 

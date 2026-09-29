@@ -32,6 +32,7 @@ export class StageRuntime {
   public readonly runtimeState: RuntimeStageState;
   private readonly scene: Phaser.Scene;
   private readonly eventBus: GameEventBus;
+  private readonly ownsEventBus: boolean;
   private readonly factory: StageEntityFactory;
   private readonly progress?: ProgressState;
   private readonly loadedMap: LoadedMap | null;
@@ -43,7 +44,7 @@ export class StageRuntime {
     scene: Phaser.Scene,
     definition: StageDefinition,
     runtimeState = createRuntimeStageState(definition.id, 1),
-    eventBus = new GameEventBus(),
+    eventBus?: GameEventBus,
     factory = new StageEntityFactory(),
     progress?: ProgressState,
     loadedMap: LoadedMap | null = null,
@@ -51,7 +52,8 @@ export class StageRuntime {
     this.scene = scene;
     this.definition = definition;
     this.runtimeState = runtimeState;
-    this.eventBus = eventBus;
+    this.eventBus = eventBus ?? new GameEventBus();
+    this.ownsEventBus = eventBus === undefined;
     this.factory = factory;
     this.progress = progress;
     this.loadedMap = loadedMap;
@@ -409,7 +411,7 @@ export class StageRuntime {
 
   public destroy(): void {
     this.clearEntities();
-    this.eventBus.clear();
+    if (this.ownsEventBus) this.eventBus.clear();
   }
 
   private add(kind: StageEntityKind, id: string, entity: StageEntity): void {

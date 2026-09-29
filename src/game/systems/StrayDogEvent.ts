@@ -14,10 +14,12 @@ export class StrayDogEvent {
   private readonly unsubscribe: () => void;
   private dogs: StrayDogAlly[] = [];
   private surgeNumber = 0;
+  private readonly getOrigin: () => { x: number; y: number };
 
-  public constructor(eventBus: GameplayEventBus) {
+  public constructor(eventBus: GameplayEventBus, getOrigin: () => { x: number; y: number } = () => ({ x: 520, y: 500 })) {
     this.eventBus = eventBus;
-    this.unsubscribe = eventBus.on("clang", (payload) => {
+    this.getOrigin = getOrigin;
+    this.unsubscribe = eventBus.on("bowl-broken", (payload) => {
       this.spawnSurge(payload.now);
     });
   }
@@ -36,13 +38,15 @@ export class StrayDogEvent {
   }
 
   private spawnSurge(now: number): void {
+    if (this.dogs.length > 0) return;
     this.surgeNumber += 1;
     const count = 3;
+    const origin = this.getOrigin();
     const dogs = Array.from({ length: count }, (_, index) => ({
       id: "stray-dog-" + this.surgeNumber + "-" + (index + 1),
-      x: 520 + index * 46,
-      y: 500,
-      attacksEnemies: true,
+      x: origin.x + (index - 1) * 48,
+      y: origin.y,
+      attacksEnemies: false,
       blocksPlayerRoute: true,
       collidesWithPlayer: false,
     }));

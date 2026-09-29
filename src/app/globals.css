@@ -312,6 +312,15 @@ form { display: flex; gap: 6px; margin-top: 10px; } form input { min-width: 0; f
 
 .pause-button { right: 58px; }
 .reset-progress-button { right: 16px; }
+.boss-hearts { position: absolute; top: 16px; right: 102px; z-index: 5; display: flex; align-items: center; gap: 5px; min-height: 32px; padding: 2px 7px; border: 2px solid #5f3942; background: rgb(255 248 229 / 95%); white-space: nowrap; }
+.boss-hearts-face { width: 24px; height: 24px; flex: 0 0 24px; background: url("/assets/pixel/ui/corgi-face.png") center / contain no-repeat; image-rendering: pixelated; }
+.boss-heart { color: #db4053; font: 900 23px monospace; line-height: 1; text-shadow: 1px 2px #5f3942; }
+.boss-heart.is-empty { color: #a7a1a0; text-shadow: none; }
+@media (max-width: 720px) {
+  .boss-hearts { top: 56px; right: 16px; gap: 3px; padding: 1px 5px; }
+  .boss-hearts-face { width: 20px; height: 20px; flex-basis: 20px; }
+  .boss-heart { font-size: 19px; }
+}
 
 .pause-button svg,
 .reset-progress-button svg {

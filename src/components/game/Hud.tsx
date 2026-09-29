@@ -10,6 +10,7 @@ export interface HudProps {
   readonly attackTool?: ToolDefinition;
   readonly defenseTool?: ToolDefinition;
   readonly cooldowns: Partial<Record<SkillId, number>>;
+  readonly bossHearts?: 0 | 1 | 2 | 3;
   readonly statusOpen: boolean;
   readonly onToggleStatus: () => void;
   readonly paused: boolean;
@@ -24,6 +25,7 @@ export function Hud({
   attackTool,
   defenseTool,
   cooldowns,
+  bossHearts,
   statusOpen,
   onToggleStatus,
   paused,
@@ -57,6 +59,14 @@ export function Hud({
       >
         {statusOpen ? "닫기" : "상태 / 설정"}
       </button>
+      {bossHearts !== undefined && (
+        <div className="boss-hearts" role="status" aria-label={`코기 남은 하트 ${bossHearts}개`}>
+          <span className="boss-hearts-face" aria-hidden="true" />
+          {([0, 1, 2] as const).map((index) => (
+            <span className={index < bossHearts ? "boss-heart" : "boss-heart is-empty"} aria-hidden="true" key={index}>♥</span>
+          ))}
+        </div>
+      )}
       <button
         className="pause-button"
         type="button"

@@ -13,6 +13,7 @@ export interface GameOverlayProps {
   readonly skills: readonly SkillDefinition[];
   readonly tools: readonly ToolDefinition[];
   readonly cooldowns: Partial<Record<string, number>>;
+  readonly bossHearts?: 0 | 1 | 2 | 3;
   readonly alive: boolean;
   readonly safeZone: boolean;
   readonly statusOpen: boolean;
@@ -25,7 +26,7 @@ export interface GameOverlayProps {
   readonly onToggleStatus: () => void;
 }
 
-export function GameOverlay({ stageTitle, runtime, progress, skills, tools, cooldowns, alive, safeZone, statusOpen, paused, onTogglePause, onResetProgress, onEquip, onPurchase, onKeybindChange, onToggleStatus }: GameOverlayProps): ReactElement {
+export function GameOverlay({ stageTitle, runtime, progress, skills, tools, cooldowns, bossHearts, alive, safeZone, statusOpen, paused, onTogglePause, onResetProgress, onEquip, onPurchase, onKeybindChange, onToggleStatus }: GameOverlayProps): ReactElement {
   const attackTool = tools.find((tool) => tool.id === progress.equippedAttackToolId);
   const defenseTool = tools.find((tool) => tool.id === progress.equippedDefenseToolId);
   return (
@@ -37,6 +38,7 @@ export function GameOverlay({ stageTitle, runtime, progress, skills, tools, cool
         attackTool={attackTool}
         defenseTool={defenseTool}
         cooldowns={cooldowns}
+        bossHearts={bossHearts}
         statusOpen={statusOpen}
         onToggleStatus={onToggleStatus}
         paused={paused}

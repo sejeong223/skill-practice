@@ -19,6 +19,10 @@ export interface StageEventMap {
     stageId: StageId;
     checkpointId: string;
   };
+  "boss-hearts-changed": {
+    stageId: "world-01-stage-boss";
+    remaining: 0 | 1 | 2 | 3;
+  };
   "map-state-restored": {
     stageId: StageId;
     checkpointId: string | null;

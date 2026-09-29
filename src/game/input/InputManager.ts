@@ -14,9 +14,16 @@ export const DEFAULT_KEYBINDS: KeybindMap = {
 };
 
 export function toKeybindMap(keybinds: Readonly<Record<string, string>>): KeybindMap {
-  const normalize = (key: string): string => ({
-    ArrowLeft: "LEFT", ArrowRight: "RIGHT", ArrowUp: "UP", ArrowDown: "DOWN",
-  }[key] ?? key);
+  const normalize = (key: string): string => {
+    const named = ({
+      ArrowLeft: "LEFT", ArrowRight: "RIGHT", ArrowUp: "UP", ArrowDown: "DOWN",
+      Space: "SPACE", Escape: "ESC",
+    } as Record<string, string>)[key];
+    if (named) return named;
+    if (/^Key[A-Z]$/.test(key)) return key.slice(3);
+    if (/^Digit[0-9]$/.test(key)) return key.slice(5);
+    return key;
+  };
   const get = (action: keyof KeybindMap, fallback: string): string[] => [normalize(keybinds[action] ?? fallback)];
   return {
     left: get("left", "A"), right: get("right", "D"), up: get("up", "W"), down: get("down", "S"),

@@ -9,6 +9,7 @@ import { GameEventBus } from "../bridge/GameEventBus";
 import { CameraDirector } from "../camera/CameraDirector";
 import { CutsceneDirector } from "../cutscenes/CutsceneDirector";
 import { CUTSCENE_SCRIPTS } from "../data/cutscenes";
+import { TOOL_DEFINITIONS } from "../data/tools";
 import { GameplayEventBus } from "../core/events";
 import { getStageDefinition, getWorldMapTheme } from "../data";
 import { getWorld01StageTheme } from "../data/worldMaps";
@@ -28,15 +29,20 @@ import { StageRandom } from "../random/StageRandom";
 import { StageBuilder } from "../stages/StageBuilder";
 import { StageRuntime } from "../stages/StageRuntime";
 import { CheckpointSystem } from "../systems/CheckpointSystem";
+import { CombatSystem } from "../systems/CombatSystem";
 import { DeathSystem } from "../systems/DeathSystem";
+import { DefenseToolSystem } from "../systems/DefenseToolSystem";
 import { MapGimmickSystem } from "../systems/MapGimmickSystem";
 import { PlayerController } from "../systems/PlayerController";
 import { RestartController } from "../systems/RestartController";
+import { StrayDogEvent } from "../systems/StrayDogEvent";
+import { World01CalicoBoss } from "../systems/World01CalicoBoss";
 
 export interface StageSceneData {
   readonly stageId?: StageId;
   readonly seed?: number;
   readonly playerName?: string;
+  readonly resumeCheckpointId?: string;
 }
 
 export class StageScene extends Phaser.Scene {
@@ -63,6 +69,10 @@ export class StageScene extends Phaser.Scene {
   private debugOverlay?: MapDebugOverlay;
   private cutsceneDirector?: CutsceneDirector;
   private calicoSprite?: Phaser.GameObjects.Sprite;
+  private calicoBoss?: World01CalicoBoss;
+  private combatSystem?: CombatSystem;
+  private defenseToolSystem?: DefenseToolSystem;
+  private strayDogEvent?: StrayDogEvent;
   private stageBackdrop?: Phaser.GameObjects.Rectangle;
   private stageReviewKey?: Phaser.Input.Keyboard.Key;
   private overviewKey?: Phaser.Input.Keyboard.Key;
@@ -83,6 +93,10 @@ export class StageScene extends Phaser.Scene {
     const registeredProgress = this.registry.get("progressState") as ProgressState | undefined;
     this.progress = registeredProgress ?? createDefaultProgressState(data.playerName);
     if (data.playerName) this.progress.playerName = data.playerName;
+    if (stage.id === "world-01-stage-boss") {
+      this.progress.equippedAttackToolId = "rabbit-slipper";
+      this.progress.equippedDefenseToolId = "upside-down-bowl";
+    }
     const theme = getWorld01StageTheme(stage.id, getWorldMapTheme(stage.worldId));
     const seed = data.seed ?? 1;
     const sharedEventBus = this.registry.get("gameEventBus");
@@ -224,7 +238,10 @@ export class StageScene extends Phaser.Scene {
       this.physics.add.overlap(
         this.player,
         record.entity as Phaser.GameObjects.GameObject,
-        () => this.runtime?.complete(),
+        () => {
+          if (stage.id === "world-01-stage-boss") return;
+          this.runtime?.complete();
+        },
       );
     }
 
@@ -238,9 +255,37 @@ export class StageScene extends Phaser.Scene {
     this.cameraDirector = new CameraDirector(this, this.player, stage);
     this.cameraDirector.followPlayer();
     this.syncSectionCamera();
+    if (data.resumeCheckpointId) {
+      if (stage.id !== "world-01-stage-4") throw new Error("보스 재시작 체크포인트는 4단계에서만 사용합니다.");
+      const save = map?.objectDefinitions.find((object) => object.id === data.resumeCheckpointId && object.kind === "checkpoint");
+      if (!save) throw new Error("4단계 마지막 체크포인트를 찾을 수 없습니다: " + data.resumeCheckpointId);
+      this.player.setPosition(save.x + 40, save.y + save.height);
+      this.checkpointSystem.activate(data.resumeCheckpointId, this.player.x, this.player.y, 1, this.time.now);
+    }
     this.runtime.start();
+    if (data.resumeCheckpointId) {
+      this.eventBus.emit("checkpoint-activated", {
+        stageId: stage.id,
+        checkpointId: data.resumeCheckpointId,
+      });
+    }
     if (stage.id === "world-01-stage-boss") {
-      this.calicoSprite = this.add.sprite(700, 472, "world-01-calico-boss", 0).setDepth(10);
+      this.calicoSprite = this.add.sprite(1280, 472, "world-01-calico-boss", 0).setDepth(10);
+      this.combatSystem = new CombatSystem(this.player, this.gameplayEventBus, TOOL_DEFINITIONS);
+      this.combatSystem.setAttackTool("rabbit-slipper");
+      this.defenseToolSystem = new DefenseToolSystem(this.gameplayEventBus, TOOL_DEFINITIONS);
+      this.strayDogEvent = new StrayDogEvent(this.gameplayEventBus, () => ({
+        x: this.player!.x, y: this.player!.y - 20,
+      }));
+      this.calicoBoss = new World01CalicoBoss(
+        this, this.player, this.calicoSprite, this.defenseToolSystem,
+        this.strayDogEvent, this.gameplayEventBus,
+        (remaining) => this.eventBus?.emit("boss-hearts-changed", {
+          stageId: "world-01-stage-boss", remaining,
+        }),
+        () => this.handleCalicoDefeat(),
+        (now) => this.handleCalicoThirdHit(now),
+      );
       this.cutsceneDirector = new CutsceneDirector(
         this, this.player, this.progress, CUTSCENE_SCRIPTS, this.eventBus, this.cameraDirector,
       );
@@ -250,7 +295,9 @@ export class StageScene extends Phaser.Scene {
       );
       this.runtime.setStatus("cutscene");
       if (!this.progress.seenCutsceneIds.includes("world-01-boss-intro")) {
+        this.cameras.main.setZoom(0.8);
         void this.cutsceneDirector.play("world-01-boss-intro").then(() => {
+          this.cameras.main.setZoom(1);
           if (this.scene.isActive() && this.runtime?.getStatus() === "cutscene") {
             this.runtime.setStatus("play");
           }
@@ -295,8 +342,17 @@ export class StageScene extends Phaser.Scene {
       this.unsubscribeKeybinds?.();
       this.eventUnsubscribers.splice(0).forEach((unsubscribe) => unsubscribe());
       this.debugOverlay?.destroy();
+      this.calicoBoss?.destroy();
+      this.calicoBoss = undefined;
+      this.strayDogEvent?.destroy();
+      this.strayDogEvent = undefined;
+      this.combatSystem?.resetForStage();
+      this.combatSystem = undefined;
+      this.defenseToolSystem = undefined;
       this.cutsceneDirector?.destroy();
+      this.cutsceneDirector = undefined;
       this.calicoSprite?.destroy();
+      this.calicoSprite = undefined;
       this.mapInteraction?.destroy();
       this.gimmickSystem?.destroy();
       this.deathSystem?.destroy();
@@ -320,11 +376,42 @@ export class StageScene extends Phaser.Scene {
     }
     this.playerController?.update(time, delta);
     this.playerAnimator?.update();
+    if (this.calicoBoss && this.player && this.combatSystem) {
+      this.calicoBoss.start(time);
+      this.combatSystem.update(time);
+      if (input?.attackPressed) {
+        const result = this.combatSystem.tryAttack(time);
+        this.calicoBoss.acceptMeleeHit(result, this.player);
+      }
+      this.calicoBoss.update(time, delta);
+    }
     this.gimmickSystem?.update(time, delta);
     this.mapInteraction?.update(time, delta);
     for (const enemy of this.mapEnemies.values()) enemy.updateMovement(time);
     this.debugOverlay?.update();
     this.syncSectionCamera();
+  }
+
+  private handleCalicoDefeat(): void {
+    this.runtime?.setStatus("cutscene");
+  }
+
+  private handleCalicoThirdHit(now: number): void {
+    this.gameplayEventBus?.emit("death-requested", {
+      stageId: "world-01-stage-boss",
+      cause: "enemy",
+      checkpointId: null,
+      now,
+    });
+    this.runtime?.setStatus("dying");
+    this.time.delayedCall(900, () => {
+      if (!this.scene.isActive()) return;
+      this.scene.start("StageScene", {
+        stageId: "world-01-stage-4",
+        resumeCheckpointId: "world-01-stage-4-checkpoint",
+        playerName: this.progress.playerName,
+      } satisfies StageSceneData);
+    });
   }
 
   private setPaused(paused: boolean): void {

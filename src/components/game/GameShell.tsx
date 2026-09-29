@@ -44,7 +44,7 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
   const [sharedProgressState] = useState<ProgressState>(() => createDefaultProgressState());
   const [progress, setProgress] = useState<ProgressState>(() => cloneProgress(sharedProgressState));
   const [progressLoaded, setProgressLoaded] = useState(false);
-  const [runtime] = useState<RuntimeStageState>(() => createRuntimeStageState(initialStageId));
+  const [runtime, setRuntime] = useState<RuntimeStageState>(() => createRuntimeStageState(initialStageId));
   const progressRef = useRef<ProgressState>(sharedProgressState);
   const runtimeRef = useRef<RuntimeStageState>(runtime);
   const economyRef = useRef<EconomySystem | null>(null);
@@ -57,7 +57,29 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
   const [resetProgressDialogOpen, setResetProgressDialogOpen] = useState(false);
   const deathOverlayTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [statusOpen, setStatusOpen] = useState(false);
+  const [activeStageId, setActiveStageId] = useState<StageId>(initialStageId);
+  const [bossHearts, setBossHearts] = useState<0 | 1 | 2 | 3 | undefined>();
   const [introGateStep, setIntroGateStep] = useState<"intro" | "title" | "ready">("intro");
+
+  useEffect(() => {
+    const removeStage = eventBus.on("stage-started", ({ stageId }) => {
+      setActiveStageId(stageId);
+      setBossHearts(stageId === "world-01-stage-boss" ? 3 : undefined);
+      Object.assign(runtimeRef.current, createRuntimeStageState(stageId));
+      setRuntime({ ...runtimeRef.current });
+      setProgress(cloneProgress(progressRef.current));
+    });
+    const removeHearts = eventBus.on("boss-hearts-changed", ({ remaining }) => setBossHearts(remaining));
+    const removeCheckpoint = eventBus.on("checkpoint-activated", ({ checkpointId }) => {
+      runtimeRef.current.checkpointId = checkpointId;
+      setRuntime({ ...runtimeRef.current });
+    });
+    const removeCoins = eventBus.on("coin-changed", ({ currentStageCoins }) => {
+      runtimeRef.current.currentStageCoins = currentStageCoins;
+      setRuntime({ ...runtimeRef.current });
+    });
+    return () => { removeStage(); removeHearts(); removeCheckpoint(); removeCoins(); };
+  }, [eventBus]);
 
   useEffect(() => {
     const removeStart = eventBus.on("cutscene-started", (payload) => {
@@ -187,7 +209,7 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
     window.location.reload();
   }, []);
 
-  const stage = getStageDefinition(initialStageId);
+  const stage = getStageDefinition(activeStageId);
   return (
     <div className="game-shell">
       <div className="game-content-frame">
@@ -195,7 +217,7 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
         <GameEventBridge eventBus={eventBus} onEvent={handleEvent} />
         <CutsceneOverlay eventBus={eventBus} onSkip={() => eventBus.emit("cutscene-skip-requested", {})} />
         {introGateStep === "title" && <IntroTitleOverlay initialName={progress.playerName} onConfirm={handleNameConfirm} />}
-        {introGateStep === "ready" && <GameOverlay stageTitle={stage.title} runtime={runtime} progress={progress} skills={SKILL_DEFINITIONS} tools={TOOL_DEFINITIONS} cooldowns={{}} alive={mode !== "dead" && mode !== "cutscene"} safeZone={mode === "safe"} statusOpen={statusOpen} onEquip={handleEquip} onPurchase={handlePurchase} onKeybindChange={handleKeybindChange} onToggleStatus={() => setStatusOpen((open) => !open)} paused={paused} onTogglePause={() => eventBus.emit("pause-requested", { paused: !paused })} onResetProgress={() => setResetProgressDialogOpen(true)} />}
+        {introGateStep === "ready" && <GameOverlay stageTitle={stage.title} runtime={runtime} progress={progress} skills={SKILL_DEFINITIONS} tools={TOOL_DEFINITIONS} cooldowns={{}} bossHearts={activeStageId === "world-01-stage-boss" ? bossHearts : undefined} alive={mode !== "dead" && mode !== "cutscene"} safeZone={mode === "safe"} statusOpen={statusOpen} onEquip={handleEquip} onPurchase={handlePurchase} onKeybindChange={handleKeybindChange} onToggleStatus={() => setStatusOpen((open) => !open)} paused={paused} onTogglePause={() => eventBus.emit("pause-requested", { paused: !paused })} onResetProgress={() => setResetProgressDialogOpen(true)} />}
         {resetProgressDialogOpen && (
           <ResetProgressDialog
             onCancel={() => setResetProgressDialogOpen(false)}
