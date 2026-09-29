@@ -743,9 +743,16 @@ export class MapGimmickSystem {
     const floorY = gimmick.y + gimmick.height;
     let zone: Phaser.Geom.Rectangle;
     switch (gimmick.kind) {
-      case "ant-trip":
-        zone = new Phaser.Geom.Rectangle(gimmick.x, floorY - 28, gimmick.width, 28);
+      case "ant-trip": {
+        const [visualWidth, visualHeight] = this.getVisualSize(gimmick);
+        zone = new Phaser.Geom.Rectangle(
+          gimmick.x + (gimmick.width - visualWidth) / 2,
+          floorY - visualHeight / 2,
+          visualWidth,
+          visualHeight / 2,
+        );
         break;
+      }
       case "revealed-white-spike":
         zone = new Phaser.Geom.Rectangle(gimmick.x + 12, floorY - 20, gimmick.width - 24, 20);
         break;

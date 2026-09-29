@@ -1,17 +1,16 @@
 # Current Context
 
 ## Active Plan
-[최초 오프닝과 저장 진행 초기화](./plans/2026-09-25-onboarding-reset.md) — 구현 완료
+[개미 위쪽 투명 판정 제거](./plans/2026-09-29-ant-overhead-trigger.md)
 
 ## Active Phase
-[P01 온보딩과 저장 진행 초기화](./phases/2026-09-25-onboarding-reset/P01-onboarding-and-reset/phase.md) — 2/2 Tasks 완료
+[P01 개미 감지 영역](./phases/2026-09-29-ant-overhead-trigger/P01-ant-trigger/phase.md)
 
 ## Active Task
-없음 — 계획된 Task를 모두 완료했습니다.
+[T01 개미 감지 영역을 그림에 맞추기](./phases/2026-09-29-ant-overhead-trigger/P01-ant-trigger/T01-align-ant-trigger.md)
 
 ## Status
-- T01과 T02 구현이 lint/build를 통과했습니다.
-- 각 Task를 한국어 커밋으로 기록했습니다.
+- T01 구현 시작 준비 완료
 
 ## Next Step (IMPORTANT)
-계획된 Task가 모두 완료되었습니다.
+T01 청사진을 읽고 `src/game/systems/MapGimmickSystem.ts`의 개미 감지 영역을 수정한다.
