@@ -45,7 +45,7 @@ const WORLD_BLUEPRINTS: readonly WorldBlueprint[] = [
       "담벼락 위의 추격전",
     ],
     bossTitle: "냥아치 연합 초소",
-    bossName: "턱시도",
+    bossName: "삼색이",
     rewardSkill: "bark",
   },
   {
@@ -59,7 +59,7 @@ const WORLD_BLUEPRINTS: readonly WorldBlueprint[] = [
       "정글짐 냥아치 통로",
     ],
     bossTitle: "놀이공원 관리실",
-    bossName: "고등어",
+    bossName: "치즈 태비",
     rewardSkill: "bite",
   },
   {
@@ -101,7 +101,7 @@ const WORLD_BLUEPRINTS: readonly WorldBlueprint[] = [
       "왕좌 직통 승강로",
     ],
     bossTitle: "우두머리의 옥좌",
-    bossName: "우두머리",
+    bossName: "은회색 우두머리",
     rewardSkill: "tail-rotor",
   },
 ];
@@ -319,7 +319,12 @@ export const BOSS_DEFINITIONS: readonly BossDefinition[] =
     id: blueprint.id + "-boss",
     name: blueprint.bossName,
     worldId: blueprint.id,
-    phases: [
+    phases: blueprint.id === "world-01" ? [{
+      id: "world-01-phase-1",
+      healthThreshold: 1,
+      pattern: "telegraphed-single-fishbone-throw-and-twelve-slipper-hits",
+      telegraph: "삼색이가 생선 가시를 들어 올린 뒤 한 번 던진다",
+    }] : [
       {
         id: blueprint.id + "-phase-1",
         healthThreshold: 1,

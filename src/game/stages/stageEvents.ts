@@ -46,6 +46,7 @@ export interface StageEventMap {
     cutsceneId: string;
     beat: CutsceneBeat;
     index: number;
+    totalBeats: number;
     skipAllowed: boolean;
     manualAdvance?: boolean;
     captionIndex?: number;

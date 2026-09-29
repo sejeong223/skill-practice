@@ -140,6 +140,7 @@ export class IntroScene extends Phaser.Scene {
       cutsceneId: INTRO_CUTSCENE.id,
       beat: visibleBeat,
       index: this.beatIndex,
+      totalBeats: INTRO_CUTSCENE.beats.length,
       skipAllowed: this.skipAllowed && beat.skipAllowedAfterSeen,
       manualAdvance: true,
       captionIndex: this.captionIndex,

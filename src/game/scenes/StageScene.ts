@@ -7,6 +7,8 @@ import {
 import type { ProgressState, StageId } from "../core/types";
 import { GameEventBus } from "../bridge/GameEventBus";
 import { CameraDirector } from "../camera/CameraDirector";
+import { CutsceneDirector } from "../cutscenes/CutsceneDirector";
+import { CUTSCENE_SCRIPTS } from "../data/cutscenes";
 import { GameplayEventBus } from "../core/events";
 import { getStageDefinition, getWorldMapTheme } from "../data";
 import { getWorld01StageTheme } from "../data/worldMaps";
@@ -59,6 +61,8 @@ export class StageScene extends Phaser.Scene {
   private persistenceEventBus?: GameEventBus;
   private readonly mapEnemies = new Map<string, Enemy>();
   private debugOverlay?: MapDebugOverlay;
+  private cutsceneDirector?: CutsceneDirector;
+  private calicoSprite?: Phaser.GameObjects.Sprite;
   private stageBackdrop?: Phaser.GameObjects.Rectangle;
   private stageReviewKey?: Phaser.Input.Keyboard.Key;
   private overviewKey?: Phaser.Input.Keyboard.Key;
@@ -235,6 +239,34 @@ export class StageScene extends Phaser.Scene {
     this.cameraDirector.followPlayer();
     this.syncSectionCamera();
     this.runtime.start();
+    if (stage.id === "world-01-stage-boss") {
+      this.calicoSprite = this.add.sprite(700, 472, "world-01-calico-boss", 0).setDepth(10);
+      this.cutsceneDirector = new CutsceneDirector(
+        this, this.player, this.progress, CUTSCENE_SCRIPTS, this.eventBus, this.cameraDirector,
+      );
+      this.eventUnsubscribers.push(
+        this.eventBus.on("cutscene-skip-requested", () => this.cutsceneDirector?.skip()),
+        this.eventBus.on("cutscene-advance-requested", () => this.cutsceneDirector?.advance()),
+      );
+      this.runtime.setStatus("cutscene");
+      if (!this.progress.seenCutsceneIds.includes("world-01-boss-intro")) {
+        void this.cutsceneDirector.play("world-01-boss-intro").then(() => {
+          if (this.scene.isActive() && this.runtime?.getStatus() === "cutscene") {
+            this.runtime.setStatus("play");
+          }
+        });
+      } else {
+        const cue = this.add.text(640, 250, "삼색이와 다시 대결!", {
+          color: "#f7ce69", fontFamily: "Galmuri11Pixel, monospace", fontSize: "30px",
+        }).setOrigin(0.5).setScrollFactor(0).setDepth(100);
+        this.time.delayedCall(900, () => {
+          cue.destroy();
+          if (this.scene.isActive() && this.runtime?.getStatus() === "cutscene") {
+            this.runtime.setStatus("play");
+          }
+        });
+      }
+    }
     this.runtime.getEventBus().on("map-state-restored", () => {
       const snapshot = this.runtime?.getMapSnapshot() ?? null;
       this.mapInteraction?.reset(snapshot);
@@ -263,6 +295,8 @@ export class StageScene extends Phaser.Scene {
       this.unsubscribeKeybinds?.();
       this.eventUnsubscribers.splice(0).forEach((unsubscribe) => unsubscribe());
       this.debugOverlay?.destroy();
+      this.cutsceneDirector?.destroy();
+      this.calicoSprite?.destroy();
       this.mapInteraction?.destroy();
       this.gimmickSystem?.destroy();
       this.deathSystem?.destroy();

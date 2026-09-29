@@ -46,7 +46,12 @@ export class CutsceneDirector {
     this.canSkip = this.progress.seenCutsceneIds.includes(id);
     this.player.lockControl("cutscene");
     this.eventBus?.emit("cutscene-started", { cutsceneId: id, skipAllowed: this.canSkip });
-    return this.timeline.play(script.beats, (beat, index) => this.handleBeat(script, beat, index)).then(() => this.finish(id));
+    const manualAdvance = id === "world-01-boss-intro" || id === "world-01-boss-clear";
+    return this.timeline.play(script.beats, (beat, index) => this.handleBeat(script, beat, index), manualAdvance).then(() => this.finish(id));
+  }
+
+  public advance(): void {
+    if (this.playing) this.timeline.advance();
   }
 
   public skip(): void {
@@ -71,7 +76,11 @@ export class CutsceneDirector {
   }
 
   private handleBeat(script: CutsceneScript, beat: CutsceneBeat, index: number): void {
-    this.eventBus?.emit("cutscene-beat", { cutsceneId: script.id, beat, index, skipAllowed: this.canSkip && beat.skipAllowedAfterSeen });
+    this.eventBus?.emit("cutscene-beat", {
+      cutsceneId: script.id, beat, index, totalBeats: script.beats.length,
+      skipAllowed: this.canSkip && beat.skipAllowedAfterSeen,
+      manualAdvance: script.id === "world-01-boss-intro" || script.id === "world-01-boss-clear",
+    });
     beat.camera?.forEach((action) => this.applyCameraAction(action));
   }
 

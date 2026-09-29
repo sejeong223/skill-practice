@@ -14,6 +14,7 @@ export interface CutsceneOverlayProps {
 interface CutsceneOverlayState {
   readonly beat: CutsceneBeat;
   readonly index: number;
+  readonly totalBeats: number;
   readonly skipAllowed: boolean;
   readonly manualAdvance: boolean;
   readonly captionIndex: number;
@@ -31,6 +32,7 @@ export function CutsceneOverlay({ eventBus, onSkip }: CutsceneOverlayProps): Rea
       setState({
         beat: payload.beat,
         index: payload.index,
+        totalBeats: payload.totalBeats,
         skipAllowed: payload.skipAllowed,
         manualAdvance: payload.manualAdvance ?? false,
         captionIndex: payload.captionIndex ?? 0,
@@ -73,11 +75,11 @@ export function CutsceneOverlay({ eventBus, onSkip }: CutsceneOverlayProps): Rea
     return () => window.removeEventListener("keydown", handleKey);
   }, [handleAdvance, onSkip, state]);
   if (!state) return null;
-  const { beat, index, skipAllowed, manualAdvance, captionIndex, captionCount, textComplete, forceReveal } = state;
+  const { beat, index, totalBeats, skipAllowed, manualAdvance, captionIndex, captionCount, textComplete, forceReveal } = state;
   const hasText = Boolean(beat.narration || beat.dialogue?.length);
   const advanceLabel = hasText && !textComplete
     ? "문장 끝까지 보기"
-    : captionIndex + 1 < captionCount ? "다음 대사" : index === 10 ? "인트로 마치기" : "다음 장면";
+    : captionIndex + 1 < captionCount ? "다음 대사" : index + 1 === totalBeats ? "대화 마치기" : "다음 장면";
   return (
     <div className="cutscene-overlay">
       <div className="cutscene-vignette" />
@@ -106,7 +108,7 @@ export function CutsceneOverlay({ eventBus, onSkip }: CutsceneOverlayProps): Rea
       )}
       <div className="cutscene-footer">
         <span>
-          장면 {String(index + 1).padStart(2, "0")} / 11
+          장면 {String(index + 1).padStart(2, "0")} / {totalBeats}
           {captionCount > 1 && ` · 문장 ${captionIndex + 1} / ${captionCount}`}
         </span>
         {manualAdvance && (
