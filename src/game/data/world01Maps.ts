@@ -8,6 +8,12 @@ type Stage = 1 | 2 | 3 | 4;
 const SAFE_LENGTH = 192;
 const GAUNTLET_LENGTH = 1152;
 
+export function world01Checkpoint(stageNumber: Stage): { id: string; x: number; sectionIndex: 3 | 4 } | null {
+  if (stageNumber === 2) return { id: "world-01-stage-2-checkpoint", x: 1920, sectionIndex: 3 };
+  if (stageNumber === 4) return { id: "world-01-stage-4-checkpoint", x: 3488, sectionIndex: 4 };
+  return null;
+}
+
 function sectionIndex(x: number): 1 | 2 | 3 | 4 | 5 {
   if (x < SAFE_LENGTH) return 1;
   if (x < SAFE_LENGTH + GAUNTLET_LENGTH) return 2;
@@ -63,19 +69,18 @@ function createStageMap(stageNumber: Stage): StageMapDefinition {
   const theme = WORLD_MAP_THEMES.find((candidate) => candidate.worldId === "world-01");
   if (!theme) throw new Error("월드 1 테마를 찾을 수 없습니다.");
 
-  const checkpointX = SAFE_LENGTH + GAUNTLET_LENGTH * 2 + 8;
+  const checkpoint = world01Checkpoint(stageNumber);
   const exitX = NORMAL_MAP_WIDTH - SAFE_LENGTH + 48;
-  const checkpointId = stageId + "-checkpoint";
   const exitId = stageId + "-exit";
   const objectDefinitions: MapObjectDefinition[] = [
     ...gimmicks.map((gimmick) => createGimmickObject(stageId, gimmick)),
-    {
-      id: checkpointId, kind: "checkpoint", x: checkpointX,
-      y: getWorld01FloorY(stageNumber, checkpointX) - 128,
+    ...(checkpoint ? [{
+      id: checkpoint.id, kind: "checkpoint" as const, x: checkpoint.x,
+      y: getWorld01FloorY(stageNumber, checkpoint.x) - 128,
       width: 18, height: 128, visualKey: "checkpoint",
       layerId: "world-01-gameplay", collision: false,
       properties: { trueCheckpoint: true },
-    },
+    }] : []),
     {
       id: exitId, kind: "exit", x: exitX,
       y: getWorld01FloorY(stageNumber, exitX) - 128,
@@ -87,8 +92,8 @@ function createStageMap(stageNumber: Stage): StageMapDefinition {
   const sectionDefinitions: readonly MapSectionDefinition[] = [
     { id: stageId + "-section-1", index: 1, role: "safe-entry", x: 0, width: SAFE_LENGTH, safe: true, vertical: false, mapObjectIds: [] },
     { id: stageId + "-section-2", index: 2, role: "gauntlet", x: SAFE_LENGTH, width: GAUNTLET_LENGTH, safe: false, vertical: false, mapObjectIds: [] },
-    { id: stageId + "-section-3", index: 3, role: "gauntlet", x: SAFE_LENGTH + GAUNTLET_LENGTH, width: GAUNTLET_LENGTH, safe: false, vertical: stageNumber === 2 || stageNumber === 4, mapObjectIds: [] },
-    { id: stageId + "-section-4", index: 4, role: "checkpoint-gauntlet", x: SAFE_LENGTH + GAUNTLET_LENGTH * 2, width: GAUNTLET_LENGTH, safe: false, vertical: false, checkpointId, mapObjectIds: [] },
+    { id: stageId + "-section-3", index: 3, role: checkpoint?.sectionIndex === 3 ? "checkpoint-gauntlet" : "gauntlet", x: SAFE_LENGTH + GAUNTLET_LENGTH, width: GAUNTLET_LENGTH, safe: false, vertical: stageNumber === 2 || stageNumber === 4, ...(checkpoint?.sectionIndex === 3 ? { checkpointId: checkpoint.id } : {}), mapObjectIds: [] },
+    { id: stageId + "-section-4", index: 4, role: checkpoint?.sectionIndex === 4 ? "checkpoint-gauntlet" : "gauntlet", x: SAFE_LENGTH + GAUNTLET_LENGTH * 2, width: GAUNTLET_LENGTH, safe: false, vertical: false, ...(checkpoint?.sectionIndex === 4 ? { checkpointId: checkpoint.id } : {}), mapObjectIds: [] },
     { id: stageId + "-section-5", index: 5, role: "safe-exit", x: NORMAL_MAP_WIDTH - SAFE_LENGTH, width: SAFE_LENGTH, safe: true, vertical: false, mapObjectIds: [] },
   ];
   const sections = sectionDefinitions.map((part) => ({

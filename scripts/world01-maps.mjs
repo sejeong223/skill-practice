@@ -195,6 +195,20 @@ function verifyMap(stageNumber, definition, tiledMap) {
     errors.push("타일 레이어가 4개가 아님");
   }
   if (tiledMap.width * tileWidth !== 3840) errors.push("맵 너비가 3840px가 아님");
+  const expectedCheckpointX = stageNumber === 2 ? 1920 : stageNumber === 4 ? 3488 : null;
+  const checkpoints = mapObjects.filter((object) => object.type === "checkpoint");
+  if (checkpoints.length !== (expectedCheckpointX === null ? 0 : 1)) {
+    errors.push("진짜 체크포인트 개수가 맞지 않음");
+  }
+  if (expectedCheckpointX !== null && checkpoints[0]) {
+    if (checkpoints[0].x !== expectedCheckpointX ||
+      !checkpoints[0].properties.some((property) => property.name === "trueCheckpoint" && property.value === true)) {
+      errors.push("체크포인트 위치 또는 trueCheckpoint 속성이 맞지 않음");
+    }
+  }
+  if (mapObjects.some((object) => object.properties.some((property) => property.name === "fakeCheckpoint" && property.value === true))) {
+    errors.push("가짜 체크포인트가 남음");
+  }
 
   const dangerKinds = new Set(["ant-static", "white-spike-static", "seagull-static", "box-static", "open-manhole"]);
   const dangers = stageGimmicks.filter((gimmick) => dangerKinds.has(gimmick.kind)).sort((a, b) => a.x - b.x);

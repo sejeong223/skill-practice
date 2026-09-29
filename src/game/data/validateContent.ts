@@ -62,6 +62,8 @@ export function validateContentRegistry(registry: ContentRegistry): void {
     const isBossStage = stage.id.endsWith("-boss");
     const expectedCheckpointCount = isBossStage
       ? BOSS_STAGE_CHECKPOINT_COUNT
+      : stage.id === "world-01-stage-1" || stage.id === "world-01-stage-3"
+        ? 0
       : NORMAL_STAGE_CHECKPOINT_COUNT;
 
     if (stage.kind === "boss" !== isBossStage) {

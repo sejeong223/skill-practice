@@ -79,23 +79,29 @@ export function validateStageMap(
   const exits = objects.filter((object) => object.kind === "exit");
 
   if (stage.kind === "normal") {
-    if (checkpoints.length !== 1) {
-      errors.push("일반 스테이지는 checkpoint를 정확히 하나 가져야 합니다.");
+    if (checkpoints.length !== stage.checkpointIds.length) {
+      errors.push("checkpoint 오브젝트 수가 스테이지 정의와 일치하지 않습니다.");
     }
 
     const checkpointId = stage.checkpointIds[0];
     const checkpoint = checkpoints.find((object) => object.id === checkpointId);
     const checkpointSection = sections.find(
-      (section) => section.index === (stage.checkpointSectionIndex ?? 4),
+      (section) => section.index === stage.checkpointSectionIndex,
     );
 
-    if (!checkpoint) {
+    if (checkpointId && !checkpoint) {
       errors.push("스테이지 checkpoint ID가 맵 오브젝트와 일치하지 않습니다.");
-    } else if (
+    } else if (checkpoint &&
       checkpointSection &&
       !isObjectInsideSection(checkpoint, checkpointSection)
     ) {
       errors.push("checkpoint가 지정된 구간에 배치되지 않았습니다.");
+    }
+    if (checkpointId && !checkpointSection) {
+      errors.push("checkpoint 구간이 지정되지 않았습니다.");
+    }
+    if (!checkpointId && stage.checkpointSectionIndex !== undefined) {
+      errors.push("체크포인트가 없는 스테이지에 checkpointSectionIndex가 있습니다.");
     }
   } else if (checkpoints.length > 0) {
     errors.push("보스 맵에는 checkpoint를 배치할 수 없습니다.");
@@ -186,6 +192,12 @@ export function validateCampaignMaps(
   const world01Gimmicks = world01Stages.flatMap(
     (stage) => stage.map?.gimmicks ?? [],
   );
+  const world01Checkpoints = world01Stages.flatMap((stage) =>
+    stage.map?.objectDefinitions.filter((object) => object.kind === "checkpoint") ?? [],
+  );
+  if (world01Checkpoints.length !== 2) {
+    errors.push("world-01: 진짜 체크포인트는 정확히 2개여야 합니다.");
+  }
   if (world01Gimmicks.length !== 24) {
     errors.push("world-01: 기믹 카탈로그는 정확히 24개여야 합니다.");
   }
@@ -340,8 +352,8 @@ function validateNormalSections(
   const expectedRoles = [
     "safe-entry",
     "gauntlet",
-    "gauntlet",
-    "checkpoint-gauntlet",
+    stage.checkpointSectionIndex === 3 ? "checkpoint-gauntlet" : "gauntlet",
+    stage.checkpointSectionIndex === 4 ? "checkpoint-gauntlet" : "gauntlet",
     "safe-exit",
   ] as const;
   let cursor = 0;
@@ -358,6 +370,12 @@ function validateNormalSections(
     }
     if (section.role !== expectedRoles[position]) {
       errors.push("구간 역할이 올바르지 않습니다: " + section.id);
+    }
+    const expectedCheckpointId = section.index === stage.checkpointSectionIndex
+      ? stage.checkpointIds[0]
+      : undefined;
+    if (section.checkpointId !== expectedCheckpointId) {
+      errors.push("구간 checkpointId가 스테이지 정의와 일치하지 않습니다: " + section.id);
     }
     if (section.width <= 0 || section.x !== cursor) {
       errors.push("구간 사이에 겹침 또는 공백이 있습니다: " + section.id);

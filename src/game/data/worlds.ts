@@ -14,7 +14,7 @@ import type {
   WorldDefinition,
 } from "../core/contentTypes";
 import { createDefaultStageSections, WORLD_MAP_THEMES } from "./worldMaps";
-import { WORLD01_STAGE_MAPS } from "./world01Maps";
+import { WORLD01_STAGE_MAPS, world01Checkpoint } from "./world01Maps";
 import { getWorld01FloorY } from "./world01Gimmicks";
 import type {
   SkillId,
@@ -247,6 +247,7 @@ function createNormalStage(
   const map = blueprint.id === "world-01"
     ? WORLD01_STAGE_MAPS[stageNumber]
     : createStageMap(id, blueprint.id, false);
+  const world01Save = blueprint.id === "world-01" ? world01Checkpoint(stageNumber) : null;
 
   return {
     id,
@@ -258,7 +259,9 @@ function createNormalStage(
       x: 96,
       y: blueprint.id === "world-01" ? getWorld01FloorY(stageNumber, 96) : 440,
     },
-    checkpointIds: [id + "-checkpoint"],
+    checkpointIds: blueprint.id === "world-01"
+      ? world01Save ? [world01Save.id] : []
+      : [id + "-checkpoint"],
     mapWidth: NORMAL_MAP_WIDTH,
     mapHeight: map.mapHeight,
     segments: [192, 1152, 1152, 1152, 192].map((length, index) =>
@@ -269,7 +272,9 @@ function createNormalStage(
     themeId: blueprint.id + "-theme",
     mapKey: map.mapKey,
     map,
-    checkpointSectionIndex: 4,
+    ...(blueprint.id !== "world-01" || world01Save
+      ? { checkpointSectionIndex: world01Save?.sectionIndex ?? 4 }
+      : {}),
   };
 }
 

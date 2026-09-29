@@ -1,6 +1,6 @@
 # Task: T03 월드 1의 진짜 체크포인트를 두 곳으로 제한
 
-## Status: pending
+## Status: done
 
 ## Goal
 월드 1 일반 맵 네 개 전체에서 체크포인트를 2단계 x1920과 4단계 x3488의 진짜 체크포인트 두 개만 남긴다. 1·3단계 사망은 해당 맵 시작점, 2·4단계는 활성화된 체크포인트에서 다시 시작하게 한다.
@@ -87,6 +87,6 @@ Task: T03-two-real-checkpoints
 ```
 
 ## Progress
-- [ ] 구현 완료
-- [ ] 검증 통과
-- commit: pending
+- [x] 구현 완료
+- [x] 검증 통과 (`world01:maps`, `world01:maps:check`, `tsc --noEmit`, `lint`, `build`)
+- commit: T03 한국어 커밋

@@ -7,10 +7,10 @@
 [P01 월드 1 낮 경로와 삼색이 전투](./phases/2026-09-29-world01-daylight-calico/P01-route-and-boss/phase.md)
 
 ## Active Task
-[T03 월드 1 진짜 체크포인트 2곳과 맵 검증](./phases/2026-09-29-world01-daylight-calico/P01-route-and-boss/T03-two-real-checkpoints.md)
+[T04 삼색이 아레나와 첫 조우 대화](./phases/2026-09-29-world01-daylight-calico/P01-route-and-boss/T04-calico-intro.md)
 
 ## Status
-- T02 정적 장애물 16개, 열린 맨홀 2개, 가짜 간식 코인 6개로 4개 맵을 재생성하고 자동 검증 완료.
+- T03 2단계 x1920과 4단계 x3488에만 진짜 체크포인트를 남기고 맵·스테이지 메타데이터 및 자동 검증 완료.
 
 ## Next Step (IMPORTANT)
-T03 청사진에 따라 월드 1 진짜 체크포인트를 2곳으로 줄이고 검증 규칙을 갱신합니다.
+T04 청사진에 따라 삼색이 보스 아레나와 첫 조우 대화를 구현합니다.
