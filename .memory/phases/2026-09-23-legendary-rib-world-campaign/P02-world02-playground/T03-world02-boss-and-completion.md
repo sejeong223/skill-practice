@@ -6,6 +6,8 @@
 
 World 2 놀이터 관리실 보스 아레나와 월드 완료·다음 월드 진입을 연결한다.
 
+> [월드 1 최신 결정](../../../decisions/2026-09-29-world01-daylight-calico.md) D05·D09 적용: 삼색이의 승리 대사에 등장한 놀이터 수비 고양이 `치즈 태비`다. 주황 줄무늬와 월드 1 삼색이와 다른 실루엣의 PNG, 고유 공격 패턴을 이 Task에 포함한다. 월드 1 클리어 씬의 `NEXT STAGE ->`가 `world-02-stage-1`을 연다.
+
 ## Implementation
 
 - Related Files:

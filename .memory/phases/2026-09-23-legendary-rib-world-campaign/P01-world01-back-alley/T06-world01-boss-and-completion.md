@@ -1,6 +1,8 @@
 # Task: T06 World 1 보스와 완료 게이트
 
-## Status: pending
+## Status: superseded
+
+> 2026-09-29: [월드 1 낮 경로와 삼색이 보스 계획](../../../plans/2026-09-29-world01-daylight-calico.md)의 T04~T07로 교체됨. 아래 턱시도 보스 설계는 역사 기록이며, 새 삼색이 보스 청사진만 실행한다.
 
 ## Goal
 

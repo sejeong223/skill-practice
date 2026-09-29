@@ -1,6 +1,8 @@
 # Task: T05 World 1 검증과 수동 플레이테스트
 
-## Status: pending
+## Status: superseded
+
+> 2026-09-29: [월드 1 낮 경로와 삼색이 보스 계획](../../../plans/2026-09-29-world01-daylight-calico.md)의 T02·T03·T07로 교체됨. 아래 내용은 옛 66개 돌발 함정 설계 기록이다.
 
 ## Goal
 

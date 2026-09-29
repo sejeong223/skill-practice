@@ -1,5 +1,19 @@
 # Plan: 전설의 무한 육즙 왕갈비뼈 월드별 억까 캠페인
 
+> 2026-09-29 변경: 아래의 **World 1 54/66개 무힌트 돌발 함정 요구와 P01 잔여 T05·T06 계획은 역사 기록**이다. 최신 사용자 지시와 실행 청사진은 [월드 1 낮 경로와 삼색이 보스](./2026-09-29-world01-daylight-calico.md)를 따른다. 월드 1에는 보이는 정적 위험 16개, 열린 맨홀 2개, 가짜 간식 코인 6개, 진짜 체크포인트 2개, 삼색이 보스전이 적용된다. 월드 2부터의 난이도 상승과 사용자 검수 게이트는 유지한다.
+
+## 최신 보스 로스터
+
+| 월드 | 보스 고양이 | 새 아트와 전투 구현 위치 |
+| :--- | :--- | :--- |
+| 1 | 삼색이 쫄병, 주황·검정·흰 삼색 무늬 | [월드 1 새 계획 T04~T06](./2026-09-29-world01-daylight-calico.md) |
+| 2 | 놀이터를 지키는 주황 줄무늬 치즈 태비 | [월드 2 보스 Task](../phases/2026-09-23-legendary-rib-world-campaign/P02-world02-playground/T03-world02-boss-and-completion.md) |
+| 3 | 갈색·흰 반점의 공장장 고양이 | [월드 3 보스 Task](../phases/2026-09-23-legendary-rib-world-campaign/P03-world03-mountain/T03-world03-boss-and-completion.md) |
+| 4 | 검은 번개 고양이 | [월드 4 보스 Task](../phases/2026-09-23-legendary-rib-world-campaign/P04-world04-cat-hideout/T03-world04-boss-and-completion.md) |
+| 5 | 은회색 우두머리 고양이 | [월드 5 보스 Task](../phases/2026-09-23-legendary-rib-world-campaign/P05-world05-cat-tower-siege/T03-world05-final-boss-and-completion.md) |
+
+턱시도는 월드 1 보스가 아니라 왕갈비뼈를 본부로 가져간 행동대장으로 유지한다. 아래의 옛 턱시도 보스 언급은 역사 기록이다.
+
 ## Goal
 
 월드 하나를 설계·구현·수동 플레이테스트·완료 판정까지 끝낸 뒤 다음 월드로 넘어가는 순차 캠페인을 만든다. 각 월드는 일반 스테이지 4개와 보스 스테이지 1개로 구성하며, 일반 스테이지의 진입·탈출 안전 구간을 제외한 구간에는 학습보다 암기와 정밀 조작을 요구하는 즉사 기믹을 30개 이상 배치한다.
@@ -20,7 +34,7 @@
 
 | Phase | Status | Summary | Blueprint |
 | :--- | :--- | :--- | :--- |
-| P01 | `in_progress` | World 1 무법지대 뒷골목의 54개 이상 기믹, 4개 일반 맵, 턱시도 초소 보스 | [P01](../phases/2026-09-23-legendary-rib-world-campaign/P01-world01-back-alley/phase.md) |
+| P01 | `superseded` | World 1의 옛 54개 이상 돌발 기믹 계획; [새 낮 경로·삼색이 보스 계획](./2026-09-29-world01-daylight-calico.md)으로 교체 | [P01](../phases/2026-09-23-legendary-rib-world-campaign/P01-world01-back-alley/phase.md) |
 | P02 | `pending` | World 2 놀이터를 사용자 검토 후 30개 이상 기믹으로 완성 | [P02](../phases/2026-09-23-legendary-rib-world-campaign/P02-world02-playground/phase.md) |
 | P03 | `pending` | World 3 뒷산을 사용자 검토 후 30개 이상 기믹으로 완성 | [P03](../phases/2026-09-23-legendary-rib-world-campaign/P03-world03-mountain/phase.md) |
 | P04 | `pending` | World 4 냥아치 아지트를 사용자 검토 후 30개 이상 기믹으로 완성 | [P04](../phases/2026-09-23-legendary-rib-world-campaign/P04-world04-cat-hideout/phase.md) |

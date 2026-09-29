@@ -1,17 +1,16 @@
 # Current Context
 
 ## Active Plan
-[개미 위쪽 투명 판정 제거](./plans/2026-09-29-ant-overhead-trigger.md)
+[월드 1 낮 경로와 삼색이 보스](./plans/2026-09-29-world01-daylight-calico.md)
 
 ## Active Phase
-[P01 개미 감지 영역](./phases/2026-09-29-ant-overhead-trigger/P01-ant-trigger/phase.md) — 1/1 Task 완료
+[P01 월드 1 낮 경로와 삼색이 전투](./phases/2026-09-29-world01-daylight-calico/P01-route-and-boss/phase.md)
 
 ## Active Task
-없음 — 계획된 Task를 모두 완료했습니다.
+[T01 낮 지붕·빨랫줄과 보스 PNG 자산](./phases/2026-09-29-world01-daylight-calico/P01-route-and-boss/T01-daylight-and-boss-art.md)
 
 ## Status
-- T01 구현, ESLint, 타입 검사, 월드 1 맵 검증을 완료했습니다.
-- 구현 커밋: `3b048be`
+- 새 계획 T01 구현 시작 준비 완료. 구현 코드는 아직 수정하지 않았습니다.
 
 ## Next Step (IMPORTANT)
-계획된 Task가 모두 완료되었습니다.
+T01 청사진을 읽고 월드 1 낮 PNG·삼색이/생선 가시 에셋 및 로딩 경로 구현을 시작합니다. T01 검증·커밋 후 T02로 전진합니다.

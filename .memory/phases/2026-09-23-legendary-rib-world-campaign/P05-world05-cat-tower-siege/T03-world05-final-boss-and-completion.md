@@ -6,6 +6,8 @@
 
 캣타워 공성전의 최종 우두머리 보스 아레나, 왕갈비뼈 회수 연출, 주인 엔딩과 `TO BE CONTINUED...?` 크레딧을 연결한다.
 
+> [월드 1 최신 결정](../../../decisions/2026-09-29-world01-daylight-calico.md) D05 적용: 최종 보스는 키가 큰 은회색 `우두머리` 고양이다. 다른 네 보스와 구별되는 새 PNG와 고유 공격 패턴을 이 Task에 포함한다.
+
 ## Implementation
 
 - Related Files:

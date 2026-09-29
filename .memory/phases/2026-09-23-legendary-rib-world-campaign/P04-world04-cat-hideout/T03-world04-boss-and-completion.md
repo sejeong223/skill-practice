@@ -6,6 +6,8 @@
 
 냥아치 아지트 간부실 보스와 double-jump skill 해금, World 5 진입 조건을 연결한다.
 
+> [월드 1 최신 결정](../../../decisions/2026-09-29-world01-daylight-calico.md) D05 적용: 이 보스는 길쭉한 검은 고양이 `번개`다. 다른 월드와 구별되는 새 PNG와 고유 공격 패턴을 이 Task에 포함한다.
+
 ## Implementation
 
 - Related Files:

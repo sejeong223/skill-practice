@@ -6,6 +6,8 @@
 
 뒷산 정상 보스 아레나와 dash skill 해금, World 4 진입 조건을 연결한다.
 
+> [월드 1 최신 결정](../../../decisions/2026-09-29-world01-daylight-calico.md) D05 적용: 이 보스는 갈색·흰 반점의 몸집 넓은 `공장장` 고양이다. 월드 2 치즈 태비와 다른 무늬·실루엣, 앞치마가 읽히는 새 PNG와 고유 공격 패턴을 이 Task에 포함한다.
+
 ## Implementation
 
 - Related Files:
