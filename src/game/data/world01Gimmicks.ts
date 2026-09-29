@@ -10,13 +10,13 @@ type CoinKind = "fake-bone-green" | "fake-bone-reverse" | "fake-bone-fire";
 export const WORLD01_STATIC_KINDS: readonly StaticKind[] = ["ant-static", "white-spike-static", "seagull-static", "box-static"];
 const dangers: Readonly<Record<Stage, readonly [DangerKind, number][]>> = {
   1: [["ant-static", 416], ["white-spike-static", 1088], ["box-static", 2592], ["seagull-static", 3300]],
-  2: [["ant-static", 384], ["open-manhole", 1040], ["seagull-static", 1696], ["white-spike-static", 2352], ["box-static", 3008]],
+  2: [["ant-static", 384], ["open-manhole", 1040], ["seagull-static", 2048], ["white-spike-static", 2704], ["box-static", 3360]],
   3: [["ant-static", 416], ["box-static", 1168], ["white-spike-static", 2544], ["seagull-static", 3280]],
   4: [["seagull-static", 400], ["open-manhole", 1056], ["box-static", 1712], ["white-spike-static", 2368], ["ant-static", 3024]],
 };
 const coins: Readonly<Record<Stage, readonly [CoinKind, number][]>> = {
   1: [["fake-bone-green", 2192]],
-  2: [["fake-bone-reverse", 848], ["fake-bone-green", 2784]],
+  2: [["fake-bone-reverse", 848], ["fake-bone-green", 2432]],
   3: [["fake-bone-fire", 2176]],
   4: [["fake-bone-reverse", 2056], ["fake-bone-fire", 2704]],
 };

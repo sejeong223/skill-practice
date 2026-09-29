@@ -317,7 +317,14 @@ form { display: flex; gap: 6px; margin-top: 10px; } form input { min-width: 0; f
 .boss-heart { color: #db4053; font: 900 23px monospace; line-height: 1; text-shadow: 1px 2px #5f3942; }
 .boss-heart.is-empty { color: #a7a1a0; text-shadow: none; }
 @media (max-width: 720px) {
-  .boss-hearts { top: 56px; right: 16px; gap: 3px; padding: 1px 5px; }
+  .game-overlay.has-boss-hearts .game-hud { width: calc(100% - 218px); max-width: calc(100% - 218px); min-height: 32px; box-sizing: border-box; padding: 4px 5px; overflow: hidden; }
+  .game-overlay.has-boss-hearts .hud-stage { min-width: 0; overflow: hidden; }
+  .game-overlay.has-boss-hearts .hud-stage strong { overflow: hidden; text-overflow: ellipsis; }
+  .game-overlay.has-boss-hearts .hud-label,
+  .game-overlay.has-boss-hearts .hud-subtitle,
+  .game-overlay.has-boss-hearts .hud-stats { display: none; }
+  .game-overlay.has-boss-hearts .status-menu-button { position: absolute; top: 56px; left: 8px; }
+  .boss-hearts { top: 16px; right: 102px; gap: 3px; padding: 1px 5px; }
   .boss-hearts-face { width: 20px; height: 20px; flex-basis: 20px; }
   .boss-heart { font-size: 19px; }
 }

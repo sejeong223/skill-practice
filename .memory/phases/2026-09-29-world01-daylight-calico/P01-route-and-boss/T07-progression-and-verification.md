@@ -1,6 +1,6 @@
 # Task: T07 월드 1 연속 진행·승리 보상·최종 플레이테스트
 
-## Status: pending
+## Status: done
 
 ## Goal
 월드 1의 일반 4개 스테이지를 출구로 차례로 통과해 삼색이 보스로 진입시키고, 승리 대화와 클리어 씬에 이르도록 연결한다. 승리 후 짖기 해금과 클리어 저장을 완료하고, 낮 디자인·장애물·체크포인트·대사·보스 체력·다음 스테이지 버튼을 실제 플레이로 검증한다.
@@ -62,9 +62,9 @@
   3. Record actual outcomes, screenshots and any remaining limitation in test plan. A failed required case prevents completion; repair in this Task or a clearly scoped follow-up before updating `.memory/current.md` beyond T07.
 
 ## Acceptance Criteria
-- [ ] Stage1→2→3→4→boss works via normal exits, without F2 or manual URL changes. Boss exit cannot bypass victory dialogue.
-- [ ] Boss win unlocks bark once, stores all five clear IDs and saves; reload reopens clear scene. World 2 opens only after `NEXT STAGE ->` input.
-- [ ] All automated commands pass and each required playtest case has an actual result and evidence. No invisible wall or sudden hazard remains in World 1.
+- [x] Stage1→2→3→4→boss works via normal exits, without F2 or manual URL changes. Boss exit cannot bypass victory dialogue.
+- [x] Boss win unlocks bark once, stores all five clear IDs and saves; reload reopens clear scene. World 2 opens only after `NEXT STAGE ->` input.
+- [x] All automated commands pass and each required playtest case has an actual result and evidence. No invisible wall or sudden hazard remains in World 1.
 
 ## Validation
 - `npm.cmd run world01:maps:check` — map/catalogue and hole/checkpoint assertions pass.
@@ -86,6 +86,6 @@ Task: T07-progression-and-verification
 ```
 
 ## Progress
-- [ ] 구현 완료
-- [ ] 검증 통과
-- commit: pending
+- [x] 구현 완료
+- [x] 검증 통과 (`world01:maps:check`, `tsc --noEmit`, `lint`, `build`, 63.0초 일반 4개 연속 주행, 보스·저장·모바일 플레이테스트)
+- commit: T07 한국어 커밋

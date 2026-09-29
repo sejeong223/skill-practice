@@ -216,6 +216,10 @@ export class World01CalicoBoss {
     this.player.lockControl("bowl-stray-dog-blockade");
     this.player.setVelocityX(0);
     this.dogUntil = this.elapsed + 2200;
+    this.state = {
+      ...this.state,
+      nextThrowAt: Math.min(this.state.nextThrowAt, this.elapsed + 350),
+    };
     this.dogs.getActiveDogs().forEach((dog, index) => {
       const image = this.scene.add.image(dog.x, dog.y, "world-01-stray-dog")
         .setDisplaySize(48, 40).setDepth(11)

@@ -349,7 +349,10 @@ export class StageRuntime {
 
     this.status = "completed";
     if (this.progress) {
-      this.progress.bankedCoins += this.runtimeState.currentStageCoins;
+      if (!this.progress.clearedStages.includes(this.definition.id)) {
+        this.progress.clearedStages.push(this.definition.id);
+        this.progress.bankedCoins += this.runtimeState.currentStageCoins;
+      }
     }
     const nextIndex = STAGE_IDS.indexOf(this.definition.id) + 1;
     const nextStageId = STAGE_IDS[nextIndex] ?? null;

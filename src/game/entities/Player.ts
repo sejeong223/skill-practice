@@ -2,8 +2,8 @@ import * as Phaser from "phaser";
 import type { PlayerAnimationState } from "./playerTypes";
 
 const PLAYER_FRAME_HEIGHT = 128;
+const DEFAULT_PLAYER_BODY_WIDTH = 72;
 const PLAYER_BODY_HEIGHT = 40;
-const PLAYER_BODY_OFFSET_X = 20;
 
 export type PlayerControlOverrideKind = "run-left" | "drift-backward" | "launch-up";
 
@@ -20,6 +20,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   private readonly controlLocks = new Set<string>();
   private controlOverride?: PlayerControlOverride;
   private readonly escapePresses = new Map<string, number>();
+  private readonly bodyOffsetX: number;
   private footAnchorY = 99;
 
   public constructor(
@@ -27,8 +28,10 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     x: number,
     y: number,
     textureKey = "corgi-run",
+    bodyWidth = DEFAULT_PLAYER_BODY_WIDTH,
   ) {
     super(scene, x, y, textureKey);
+    this.bodyOffsetX = (this.width - bodyWidth) / 2;
     scene.add.existing(this);
     scene.physics.add.existing(this);
 
@@ -38,9 +41,9 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.body.setAllowGravity(true);
     this.body.setCollideWorldBounds(true);
     this.body.setMaxVelocity(520, 900);
-    this.body.setSize(72, PLAYER_BODY_HEIGHT, false);
+    this.body.setSize(bodyWidth, PLAYER_BODY_HEIGHT, false);
     this.body.setOffset(
-      PLAYER_BODY_OFFSET_X,
+      this.bodyOffsetX,
       this.footAnchorY - PLAYER_BODY_HEIGHT,
     );
   }
@@ -62,7 +65,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.footAnchorY = footAnchorY;
     this.setOrigin(0.5, footAnchorY / PLAYER_FRAME_HEIGHT);
     this.body.setOffset(
-      PLAYER_BODY_OFFSET_X,
+      this.bodyOffsetX,
       footAnchorY - PLAYER_BODY_HEIGHT,
     );
   }

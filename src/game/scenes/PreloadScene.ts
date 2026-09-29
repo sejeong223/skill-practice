@@ -2,6 +2,7 @@ import * as Phaser from "phaser";
 import { PIXEL_ASSETS } from "../assets/assetManifest";
 import type { PixelAssetDefinition } from "../assets/assetTypes";
 import type { ProgressState } from "../core/types";
+import { STAGE_IDS } from "../core/constants";
 
 export class PreloadScene extends Phaser.Scene {
   private loadError: string | null = null;
@@ -60,8 +61,18 @@ export class PreloadScene extends Phaser.Scene {
   public create(): void {
     const progress = this.registry.get("progressState") as ProgressState | undefined;
     if (!this.loadError && progress?.onboardingCompleted) {
+      const firstUncleared = STAGE_IDS.slice(0, 5).find(
+        (stageId) => !progress.clearedStages.includes(stageId),
+      );
+      if (!firstUncleared) {
+        this.scene.start("World01StageClearScene", {
+          stageId: "world-01-stage-boss",
+          nextStageId: "world-02-stage-1",
+        });
+        return;
+      }
       this.scene.start("StageScene", {
-        stageId: "world-01-stage-1",
+        stageId: firstUncleared,
         playerName: progress.playerName,
       });
       return;

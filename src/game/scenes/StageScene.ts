@@ -10,6 +10,7 @@ import { CameraDirector } from "../camera/CameraDirector";
 import { CutsceneDirector } from "../cutscenes/CutsceneDirector";
 import { CUTSCENE_SCRIPTS } from "../data/cutscenes";
 import { TOOL_DEFINITIONS } from "../data/tools";
+import { SKILL_DEFINITIONS } from "../data/skills";
 import { GameplayEventBus } from "../core/events";
 import { getStageDefinition, getWorldMapTheme } from "../data";
 import { getWorld01StageTheme } from "../data/worldMaps";
@@ -35,6 +36,7 @@ import { DefenseToolSystem } from "../systems/DefenseToolSystem";
 import { MapGimmickSystem } from "../systems/MapGimmickSystem";
 import { PlayerController } from "../systems/PlayerController";
 import { RestartController } from "../systems/RestartController";
+import { SkillSystem } from "../systems/SkillSystem";
 import { StrayDogEvent } from "../systems/StrayDogEvent";
 import { World01CalicoBoss } from "../systems/World01CalicoBoss";
 
@@ -44,6 +46,11 @@ export interface StageSceneData {
   readonly playerName?: string;
   readonly resumeCheckpointId?: string;
 }
+
+const WORLD01_SEQUENCE: readonly StageId[] = [
+  "world-01-stage-1", "world-01-stage-2", "world-01-stage-3",
+  "world-01-stage-4", "world-01-stage-boss",
+];
 
 export class StageScene extends Phaser.Scene {
   private player?: Player;
@@ -71,7 +78,9 @@ export class StageScene extends Phaser.Scene {
   private calicoSprite?: Phaser.GameObjects.Sprite;
   private calicoBoss?: World01CalicoBoss;
   private victorySequenceStarted = false;
+  private stageTransitionStarted = false;
   private combatSystem?: CombatSystem;
+  private skillSystem?: SkillSystem;
   private defenseToolSystem?: DefenseToolSystem;
   private strayDogEvent?: StrayDogEvent;
   private stageBackdrop?: Phaser.GameObjects.Rectangle;
@@ -89,6 +98,7 @@ export class StageScene extends Phaser.Scene {
   public create(data: StageSceneData = {}): void {
     this.stageId = data.stageId ?? "world-01-stage-1";
     this.victorySequenceStarted = false;
+    this.stageTransitionStarted = false;
     this.mapOverview = false;
     const stage = getStageDefinition(this.stageId);
     this.stageDefinition = stage;
@@ -113,7 +123,10 @@ export class StageScene extends Phaser.Scene {
     this.parallaxRenderer = new ParallaxRenderer(this);
     this.parallaxRenderer.render(theme, stage.mapWidth, stage.mapHeight);
 
-    this.player = new Player(this, stage.spawn.x, stage.spawn.y);
+    this.player = new Player(
+      this, stage.spawn.x, stage.spawn.y, "corgi-run",
+      stage.worldId === "world-01" ? 48 : 72,
+    );
     this.player.setDepth(10);
     this.playerAnimator = new PlayerAnimator(this.player);
     this.inputManager = new InputManager(this, toKeybindMap(this.progress.keybinds));
@@ -132,6 +145,10 @@ export class StageScene extends Phaser.Scene {
       this.loadedMap,
     );
     this.gameplayEventBus = new GameplayEventBus();
+    this.skillSystem = new SkillSystem(
+      this.player, SKILL_DEFINITIONS, this.gameplayEventBus,
+      this.persistenceEventBus, this.progress.unlockedSkills,
+    );
     this.unsubscribeKeybinds = this.persistenceEventBus?.on("keybinds-changed", (payload) => {
       this.inputManager?.setKeybinds(toKeybindMap(payload.keybinds));
     });
@@ -326,8 +343,24 @@ export class StageScene extends Phaser.Scene {
       this.mapInteraction?.reset(snapshot);
       this.gimmickSystem?.reset(snapshot);
     });
-    this.eventUnsubscribers.push(this.eventBus.on("stage-completed", () => {
+    this.eventUnsubscribers.push(this.eventBus.on("stage-completed", ({ stageId }) => {
+      if (stageId !== this.stageId || this.stageTransitionStarted) return;
       this.runtime?.setStatus("completed");
+      const currentIndex = WORLD01_SEQUENCE.indexOf(stageId);
+      if (currentIndex < 0 || currentIndex >= WORLD01_SEQUENCE.length - 1) return;
+      this.stageTransitionStarted = true;
+      this.add.text(this.cameras.main.centerX, 255, "STAGE CLEAR!", {
+        color: "#FFD34D", fontFamily: "Galmuri11Pixel, monospace", fontSize: "42px",
+        stroke: "#543b1d", strokeThickness: 6,
+      }).setOrigin(0.5).setScrollFactor(0).setDepth(100);
+      this.time.delayedCall(700, () => {
+        if (!this.scene.isActive()) return;
+        this.scene.start("StageScene", {
+          stageId: WORLD01_SEQUENCE[currentIndex + 1],
+          seed: this.runtime?.runtimeState.randomSeed ?? 1,
+          playerName: this.progress.playerName,
+        } satisfies StageSceneData);
+      });
     }));
     this.eventUnsubscribers.push(this.eventBus.on("pause-requested", ({ paused }) => {
       this.setPaused(paused);
@@ -355,6 +388,7 @@ export class StageScene extends Phaser.Scene {
       this.strayDogEvent = undefined;
       this.combatSystem?.resetForStage();
       this.combatSystem = undefined;
+      this.skillSystem = undefined;
       this.defenseToolSystem = undefined;
       this.cutsceneDirector?.destroy();
       this.cutsceneDirector = undefined;
@@ -383,6 +417,9 @@ export class StageScene extends Phaser.Scene {
     }
     this.playerController?.update(time, delta);
     this.playerAnimator?.update();
+    if (input?.barkPressed && this.progress.unlockedSkills.includes("bark")) {
+      this.skillSystem?.use("bark", time);
+    }
     if (this.calicoBoss && this.player && this.combatSystem) {
       this.calicoBoss.start(time);
       this.combatSystem.update(time);
@@ -406,6 +443,10 @@ export class StageScene extends Phaser.Scene {
     this.runtime?.setStatus("cutscene");
     await this.cutsceneDirector?.play("world-01-boss-clear");
     if (!this.scene.isActive() || !this.calicoBoss?.isDefeated()) return;
+    if (!this.progress.unlockedSkills.includes("bark")) {
+      this.progress.unlockedSkills.push("bark");
+      this.skillSystem?.unlockAfterBoss("world-01-boss");
+    }
     this.runtime?.complete();
     this.scene.start("World01StageClearScene", {
       stageId: "world-01-stage-boss",

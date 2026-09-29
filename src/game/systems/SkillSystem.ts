@@ -29,6 +29,7 @@ export class SkillSystem {
     definitions: readonly SkillDefinition[],
     eventBus?: GameplayEventBus,
     persistenceEventBus?: GameEventBus,
+    initialUnlocked: readonly SkillId[] = [],
   ) {
     this.player = player;
     this.definitions = new Map(
@@ -36,6 +37,7 @@ export class SkillSystem {
     );
     this.eventBus = eventBus;
     this.persistenceEventBus = persistenceEventBus;
+    initialUnlocked.forEach((skillId) => this.unlocked.add(skillId));
   }
 
   public unlockAfterBoss(bossId: string): SkillId | null {
