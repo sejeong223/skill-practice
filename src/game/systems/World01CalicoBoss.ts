@@ -4,6 +4,7 @@ import type { GameplayEventBus } from "../core/events";
 import type { SlipperAttackResult } from "./SlipperAttack";
 import { DefenseToolSystem } from "./DefenseToolSystem";
 import { StrayDogEvent } from "./StrayDogEvent";
+import { isCalicoInSlipperReach } from "./calicoMeleeHitbox";
 import {
   createFishboneTrajectory,
   fishbonePositionAt,
@@ -103,11 +104,12 @@ export class World01CalicoBoss {
 
   public acceptMeleeHit(result: SlipperAttackResult, player: Player): boolean {
     if (result.kind !== "slipper-hit" || !result.accepted || this.state.phase === "intro" || this.state.phase === "defeated") return false;
-    const attackOriginX = player.body.center.x + (player.flipX ? -30 : 30);
-    const facingBoss = player.flipX ? this.sprite.x < attackOriginX : this.sprite.x > attackOriginX;
-    const inRange = Math.abs(this.sprite.x - attackOriginX) <= 100;
-    const sameHeight = Math.abs(player.body.center.y - this.sprite.y) <= 64;
-    if (!facingBoss || !inRange || !sameHeight) return false;
+    if (!isCalicoInSlipperReach(
+      player.body.center.x,
+      player.body.center.y,
+      player.flipX ? -1 : 1,
+      this.sprite.getBounds(),
+    )) return false;
     const health = this.state.health - 1;
     this.state = { ...this.state, health };
     this.sprite.setTintFill(0xffffff);

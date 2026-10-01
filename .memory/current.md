@@ -12,6 +12,7 @@
 ## Status
 - T01 완료: 슬리퍼 공격 오버레이. 검증 `tsc`, `eslint`, `next build` 통과. 커밋 `4aa171b`.
 - T02 완료: 생선 가시 확대, 낮은 수평/중간/높은 포물선 순환, 궤적 예고. 테스트 2개, `tsc`, `eslint`, `next build` 통과.
+- T03 완료: 삼색이 중심점 검사 대신 슬리퍼 휘두름과 몸체 겹침 판정. 회귀 테스트 2개, `tsc`, `eslint`, `next build` 통과.
 
 ## Next Step
 현재 계획의 모든 Task가 완료되었습니다.
