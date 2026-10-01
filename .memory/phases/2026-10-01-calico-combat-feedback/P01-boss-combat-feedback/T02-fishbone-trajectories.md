@@ -1,6 +1,6 @@
 # Task: T02 생선 가시 크기와 세 궤적
 
-## Status: pending
+## Status: done
 
 ## Goal
 생선 가시를 알아볼 수 있게 키우고 낮은 수평·중간 포물선·높은 포물선을 반복한다.
@@ -47,10 +47,20 @@
   - `Fishbone`: `id: string`, `image: Phaser.GameObjects.Image`, `trajectory: FishboneTrajectory`, `elapsedSeconds: number`.
   - 표시 크기 48×24, 중심 판정 40×18.
 - **Execution Flow / Logic**:
-  1. 증가한 `serial`을 궤적 인덱스로 사용한다. 고정 y 대신 궤적 시작 y를 쓰고 48×24로 그린다.
+  1. 증가한 `serial`을 궤적 인덱스로 사용한다. 고정 y 대신 궤적 시작 y를 쓰고 48×24로 그린다. 코기가 발사 지점과 보스 사이에 있으면 목표 x를 발사 방향으로 최소 40px 떨어지게 제한한다.
   2. 프레임 `delta` 최대 50ms를 경과 시각에 더한다. 이전/현재 위치를 감싸는 40×18 충돌 사각형으로 통과를 검사한다.
   3. x가 0~1920 또는 y가 -40~560을 벗어나면 제거한다. 방패, 900ms 무적, 하트/사망 흐름은 유지한다.
   4. 700ms 예고 문구에 다음 낮은/중간/높은 궤적을 표시한다.
+
+### I03. 승리 장면의 공격 그림 정리
+- Related Files:
+  - `src/game/entities/PlayerAnimator.ts` :: `stopSlipperSwing(): void` — modify
+  - `src/game/scenes/StageScene.ts` :: `StageScene.update` — modify
+
+#### Details
+- **Execution Flow / Logic**:
+  1. 마지막 J키 타격으로 런타임이 `cutscene`으로 바뀌면 공격 오버레이를 즉시 숨긴다. 그렇지 않으면 `StageScene.update`가 중단되어 220ms 타이머가 갱신되지 않고 승리 대화 내내 슬리퍼가 떠 있는 문제가 생긴다.
+  2. 일시정지와 사망 상태로 넘어갈 때도 같은 정리 함수를 호출한다. 재채기 결과에서는 앞 타격 그림을 숨긴다.
 
 ## Acceptance Criteria
 - [ ] 가시가 48×24로 표시되고 판정이 40×18로 그림과 일치한다.
@@ -60,7 +70,7 @@
 ## Validation
 - `node --experimental-strip-types --test scripts/fishbone-trajectory.test.mjs` — 궤적 계산 통과.
 - `npx.cmd tsc --noEmit` — 타입 검사 통과.
-- `npm.cmd run lint -- src/game/systems/World01CalicoBoss.ts src/game/systems/fishboneTrajectory.ts` — 변경 파일 lint 통과.
+- `npm.cmd run lint -- src/game/systems/World01CalicoBoss.ts src/game/systems/fishboneTrajectory.ts src/game/entities/PlayerAnimator.ts src/game/scenes/StageScene.ts` — 변경 파일 lint 통과.
 - `npm.cmd run build` — 게임 빌드 통과.
 
 ## Commit Message
@@ -76,6 +86,6 @@ Task: T02-fishbone-trajectories
 ```
 
 ## Progress
-- [ ] 구현 완료
-- [ ] 검증 통과
-- commit: pending
+- [x] 구현 완료
+- [x] 검증 통과 (`node --test`, `tsc`, `eslint`, `next build`)
+- commit: `feat(world01): vary and enlarge calico fishbone throws`

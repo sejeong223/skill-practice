@@ -6,7 +6,7 @@ J키 근접 공격의 토끼 슬리퍼가 보이고 생선 가시가 더 커지�
 ## Phases
 | Phase | Status | Summary | Blueprint |
 | :--- | :--- | :--- | :--- |
-| P01 | `in_progress` | 공격 표시와 투사체 궤적 보정 | [P01](../phases/2026-10-01-calico-combat-feedback/P01-boss-combat-feedback/phase.md) |
+| P01 | `done ✅` | 공격 표시와 투사체 궤적 보정 | [P01](../phases/2026-10-01-calico-combat-feedback/P01-boss-combat-feedback/phase.md) |
 
 ## Constraints
 - [결정](../decisions/2026-10-01-calico-combat-feedback.md)을 따른다.

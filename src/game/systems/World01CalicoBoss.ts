@@ -4,6 +4,11 @@ import type { GameplayEventBus } from "../core/events";
 import type { SlipperAttackResult } from "./SlipperAttack";
 import { DefenseToolSystem } from "./DefenseToolSystem";
 import { StrayDogEvent } from "./StrayDogEvent";
+import {
+  createFishboneTrajectory,
+  fishbonePositionAt,
+  type FishboneTrajectory,
+} from "./fishboneTrajectory";
 
 export interface CalicoBossState {
   health: number;
@@ -17,7 +22,8 @@ export interface CalicoBossState {
 interface Fishbone {
   readonly id: string;
   readonly image: Phaser.GameObjects.Image;
-  readonly velocityX: number;
+  readonly trajectory: FishboneTrajectory;
+  elapsedSeconds: number;
 }
 
 export class World01CalicoBoss {
@@ -85,7 +91,8 @@ export class World01CalicoBoss {
     if (this.state.phase === "ready" && this.elapsed >= this.state.nextThrowAt) {
       this.state = { ...this.state, phase: "telegraph" };
       this.telegraphUntil = this.elapsed + 700;
-      this.warning.setVisible(true);
+      const throwHeight = ["낮게", "중간 높이로", "높게"][this.serial % 3];
+      this.warning.setText(`생선 가시 ${throwHeight} 투척!`).setVisible(true);
       this.sprite.setFrame(1);
     }
     if (this.state.phase === "telegraph" && this.elapsed >= this.telegraphUntil) {
@@ -161,10 +168,17 @@ export class World01CalicoBoss {
     this.warning.setVisible(false);
     this.sprite.setFrame(0);
     const direction = this.player.x < this.sprite.x ? -1 : 1;
-    const image = this.scene.add.image(this.sprite.x + direction * 56, 498, "world-01-fishbone")
-      .setDisplaySize(32, 16).setDepth(11).setFlipX(direction > 0);
     const id = `fishbone-${++this.serial}`;
-    this.fishbone = { id, image, velocityX: direction * 220 };
+    const startX = this.sprite.x + direction * 56;
+    const targetX = direction < 0
+      ? Math.min(this.player.x, startX - 40)
+      : Math.max(this.player.x, startX + 40);
+    const trajectory = createFishboneTrajectory(
+      startX, targetX, this.player.body.center.y, this.serial,
+    );
+    const image = this.scene.add.image(startX, trajectory.startY, "world-01-fishbone")
+      .setDisplaySize(48, 24).setDepth(11).setFlipX(direction > 0);
+    this.fishbone = { id, image, trajectory, elapsedSeconds: 0 };
     this.state = {
       ...this.state, phase: "projectile", projectileId: id,
       nextThrowAt: this.elapsed + 2600,
@@ -174,12 +188,20 @@ export class World01CalicoBoss {
   private updateFishbone(now: number, delta: number): void {
     const bone = this.fishbone;
     if (!bone) return;
-    bone.image.x += bone.velocityX * Math.min(delta, 50) / 1000;
-    if (bone.image.x < 0 || bone.image.x > 1920) {
+    const previous = fishbonePositionAt(bone.trajectory, bone.elapsedSeconds);
+    bone.elapsedSeconds += Math.min(delta, 50) / 1000;
+    const current = fishbonePositionAt(bone.trajectory, bone.elapsedSeconds);
+    bone.image.setPosition(current.x, current.y);
+    if (current.x < 0 || current.x > 1920 || current.y < -40 || current.y > 560) {
       this.clearFishbone();
       return;
     }
-    const hitbox = new Phaser.Geom.Rectangle(bone.image.x - 14, bone.image.y - 6, 28, 12);
+    const hitbox = new Phaser.Geom.Rectangle(
+      Math.min(previous.x, current.x) - 20,
+      Math.min(previous.y, current.y) - 9,
+      Math.abs(current.x - previous.x) + 40,
+      Math.abs(current.y - previous.y) + 18,
+    );
     const body = new Phaser.Geom.Rectangle(this.player.body.x, this.player.body.y, this.player.body.width, this.player.body.height);
     if (!Phaser.Geom.Rectangle.Overlaps(hitbox, body)) return;
     this.clearFishbone();

@@ -413,6 +413,7 @@ export class StageScene extends Phaser.Scene {
       this.setPaused(this.runtime?.getStatus() !== "paused");
     }
     if (this.runtime?.getStatus() !== "play") {
+      this.playerAnimator?.stopSlipperSwing();
       return;
     }
     this.playerController?.update(time, delta);
@@ -426,8 +427,13 @@ export class StageScene extends Phaser.Scene {
         const result = this.combatSystem.tryAttack(time);
         if (result.accepted && result.kind === "slipper-hit") {
           this.playerAnimator?.triggerSlipperSwing(time);
+        } else if (result.kind === "slipper-sneeze") {
+          this.playerAnimator?.stopSlipperSwing();
         }
         this.calicoBoss.acceptMeleeHit(result, this.player);
+        if (this.runtime.getStatus() !== "play") {
+          this.playerAnimator?.stopSlipperSwing();
+        }
       }
       this.calicoBoss.update(time, delta);
     }

@@ -54,6 +54,10 @@ export class PlayerAnimator {
     this.slipperImage = undefined;
   }
 
+  public stopSlipperSwing(): void {
+    this.slipperImage?.setVisible(false);
+  }
+
   private updateSlipperSwing(now: number): void {
     const image = this.slipperImage;
     if (!image || !image.visible) return;
