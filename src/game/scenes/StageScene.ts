@@ -374,6 +374,7 @@ export class StageScene extends Phaser.Scene {
 
     this.events.once("shutdown", () => {
       this.inputManager?.destroy();
+      this.playerAnimator?.destroy();
       this.stageReviewKey?.off("down", this.reviewNextWorld01Stage, this);
       if (this.stageReviewKey) this.input.keyboard?.removeKey(this.stageReviewKey, true);
       this.overviewKey?.off("down", this.toggleMapOverview, this);
@@ -415,7 +416,6 @@ export class StageScene extends Phaser.Scene {
       return;
     }
     this.playerController?.update(time, delta);
-    this.playerAnimator?.update();
     if (input?.barkPressed && this.progress.unlockedSkills.includes("bark")) {
       this.skillSystem?.use("bark", time);
     }
@@ -424,10 +424,14 @@ export class StageScene extends Phaser.Scene {
       this.combatSystem.update(time);
       if (input?.attackPressed) {
         const result = this.combatSystem.tryAttack(time);
+        if (result.accepted && result.kind === "slipper-hit") {
+          this.playerAnimator?.triggerSlipperSwing(time);
+        }
         this.calicoBoss.acceptMeleeHit(result, this.player);
       }
       this.calicoBoss.update(time, delta);
     }
+    this.playerAnimator?.update(time);
     this.gimmickSystem?.update(time, delta);
     this.mapInteraction?.update(time, delta);
     for (const enemy of this.mapEnemies.values()) enemy.updateMovement(time);

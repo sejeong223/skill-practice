@@ -1,18 +1,16 @@
 ﻿# Current Context
 
 ## Active Plan
-[월드 스테이지 진행과 비주얼 보정](./plans/2026-09-29-world-stage-visual-polish.md)
+[삼색이 전투 공격 표시와 생선 가시](./plans/2026-10-01-calico-combat-feedback.md)
 
 ## Active Phase
-[P01 진행과 월드 1 비주얼](./phases/2026-09-29-world-stage-visual-polish/P01-progression-and-visuals/phase.md) (완료)
+[P01 보스 전투 피드백](./phases/2026-10-01-calico-combat-feedback/P01-boss-combat-feedback/phase.md)
 
 ## Active Task
-없음 (계획의 모든 Task 완료)
+[T01 J키 슬리퍼 공격 그림 표시](./phases/2026-10-01-calico-combat-feedback/P01-boss-combat-feedback/T01-visible-slipper-swing.md)
 
 ## Status
-- T01 완료: STAGE_IDS 기반 캠페인 이동과 재접속 검증.
-- T02 완료: 낮 배경·열린 맨홀·비둘기 교체, 맵 생성 검증 및 스테이지 화면 캡처 완료.
-- T03 완료: 장신구 없는 삼색이, 흰 사모예드, 지정 코기 얼굴을 반영하고 데스크톱·모바일 브라우저 확인.
+- T01 구현 시작 준비 완료.
 
 ## Next Step
-현재 계획의 모든 Task가 완료되었습니다.
+T01 청사진을 읽고 `src/game/entities/PlayerAnimator.ts`와 `src/game/scenes/StageScene.ts` 구현 시작.
