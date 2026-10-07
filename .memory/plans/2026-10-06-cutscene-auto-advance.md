@@ -12,7 +12,7 @@
 
 | Phase | Status | Summary | Blueprint |
 | :--- | :--- | :--- | :--- |
-| P01 | `in_progress` | 공용 재생 시간과 타임라인, 오프닝 문장 타이머, 대화창 안내와 전체 검증 | [P01](../phases/2026-10-06-cutscene-auto-advance/P01-cutscene-playback/phase.md) |
+| P01 | `done` | 공용 재생 시간과 타임라인, 오프닝 문장 타이머, 대화창 안내와 전체 검증 | [P01](../phases/2026-10-06-cutscene-auto-advance/P01-cutscene-playback/phase.md) |
 
 ## Execution Order
 

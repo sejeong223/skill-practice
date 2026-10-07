@@ -56,6 +56,7 @@ export interface StageEventMap {
     index: number;
     totalBeats: number;
     skipAllowed: boolean;
+    // 자동 타이머와 별개로 선택적 빠른 넘김 입력을 허용한다.
     manualAdvance?: boolean;
     captionIndex?: number;
     captionCount?: number;

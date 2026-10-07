@@ -88,4 +88,4 @@ Task: T02-intro-caption-autoplay
 
 - [x] 구현 완료
 - [x] 검증 통과: 자동 테스트 5개, `tsc`, `lint`, `build`. 실제 Chrome에서 입력 없이 11개 장면과 분리된 대사, 약 85초 뒤 타이틀 화면 도달 확인. 빠른 넘김·건너뛰기의 화면 확인은 T03에서 진행.
-- commit: pending
+- commit: `1b2f230` (`feat(intro): 오프닝 문장별 자동 진행 적용`)

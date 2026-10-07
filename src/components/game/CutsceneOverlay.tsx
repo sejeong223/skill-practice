@@ -110,10 +110,11 @@ export function CutsceneOverlay({ eventBus, onSkip }: CutsceneOverlayProps): Rea
         <span>
           장면 {String(index + 1).padStart(2, "0")} / {totalBeats}
           {captionCount > 1 && ` · 문장 ${captionIndex + 1} / ${captionCount}`}
+          {manualAdvance && " · 자동으로 다음 문장으로 진행됩니다"}
         </span>
         {manualAdvance && (
           <button className="primary-button" type="button" onClick={handleAdvance}>
-            {advanceLabel} · 클릭 / Space / Enter
+            {advanceLabel} · 선택 · 클릭 / Space / Enter
           </button>
         )}
         {skipAllowed && <button className="primary-button" type="button" onClick={onSkip}>건너뛰기 · ESC</button>}

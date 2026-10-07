@@ -9,9 +9,9 @@
 | Task | Status | Summary | Blueprint |
 | :--- | :--- | :--- | :--- |
 | T01 | `done ✅` | 글자 수 기반 시간 계산과 공용 타임라인 자동 진행 | [T01](./T01-shared-cutscene-timing.md) |
-| T02 | `in_progress 🔵` | 오프닝 문장별 자동 진행과 타이머 정리 | [T02](./T02-intro-caption-autoplay.md) |
-| T03 | `pending` | 대화창 안내 변경과 전체 흐름 검증 | [T03](./T03-overlay-and-flow-validation.md) |
+| T02 | `done ✅` | 오프닝 문장별 자동 진행과 타이머 정리 | [T02](./T02-intro-caption-autoplay.md) |
+| T03 | `done ✅` | 대화창 안내 변경과 전체 흐름 검증 | [T03](./T03-overlay-and-flow-validation.md) |
 
 ## Progress
 
-- done: 1/3 (active: T02)
+- done: 3/3 (active: 없음)

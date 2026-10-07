@@ -6,16 +6,18 @@
 
 ## Active Phase
 
-[P01 컷신 자동 재생](./phases/2026-10-06-cutscene-auto-advance/P01-cutscene-playback/phase.md)
+[P01 컷신 자동 재생](./phases/2026-10-06-cutscene-auto-advance/P01-cutscene-playback/phase.md) (완료)
 
 ## Active Task
 
-[T02 오프닝 문장별 자동 진행](./phases/2026-10-06-cutscene-auto-advance/P01-cutscene-playback/T02-intro-caption-autoplay.md)
+없음 (계획의 모든 Task 완료)
 
 ## Status
 
-- T01 공용 시간 계산·보스 대사 자동 타이머 구현 및 검증 완료. 커밋 `b55e26c`.
-- T02 오프닝 문장별 자동 진행 구현 대기.
+- T01 공용 컷신 자동 진행 완료. 커밋 `b55e26c`.
+- T02 오프닝 11개 장면의 입력 없는 자동 진행과 타이틀 전환 확인. 커밋 `1b2f230`.
+- T03 대화창 안내 변경과 전체 흐름 검증 완료. 한국어 커밋 `feat(cutscene): 대사 자동 진행 안내와 전체 흐름 검증`.
+- 컷신 자동 진행 계획의 3개 Task가 모두 완료됐다.
 
 ## Previous Work Pointer
 
@@ -23,4 +25,4 @@
 
 ## Next Step
 
-T02 청사진을 읽고 `IntroScene`의 각 나레이션·대사에 읽기 시간 타이머를 연결한다.
+현재 계획은 완료됐다. 이전 월드 1 짧은 경로 작업을 재개할 때는 위의 이전 포인터 청사진을 참조한다.
