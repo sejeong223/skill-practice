@@ -3,6 +3,7 @@ import type { GameEventBus } from "../bridge/GameEventBus";
 import type { ProgressState } from "../core/types";
 import { AudioManager } from "../audio/AudioManager";
 import { IntroActorRig } from "../cutscenes/IntroActorRig";
+import { getCaptionPlaybackMs } from "../cutscenes/cutsceneTiming";
 import { INTRO_HOME_LAYOUT } from "../cutscenes/introLayout";
 import { INTRO_CUTSCENE } from "../data/cutscenes/intro";
 import type { CameraAction, CutsceneBeat, DialogueLine } from "../cutscenes/types";
@@ -19,6 +20,8 @@ export class IntroScene extends Phaser.Scene {
   private progress?: ProgressState;
   private currentBeat?: CutsceneBeat;
   private currentCaptions: Array<{ readonly narration?: string; readonly dialogue?: DialogueLine }> = [];
+  private captionTimer?: Phaser.Time.TimerEvent;
+  private lastCaptionAt = 0;
   private beatIndex = 0;
   private captionIndex = 0;
   private active = false;
@@ -85,6 +88,7 @@ export class IntroScene extends Phaser.Scene {
 
   private startCutscene(): void {
     if (this.active) return;
+    this.clearCaptionTimer();
     this.cameras.main.resetFX();
     this.cameras.main.setZoom(1);
     this.cameras.main.centerOn(640, 360);
@@ -128,14 +132,24 @@ export class IntroScene extends Phaser.Scene {
     const caption = this.currentCaptions[this.captionIndex];
     if (!beat || !caption) return;
 
+    this.clearCaptionTimer();
+    const captionText = [
+      caption.narration ?? caption.dialogue?.text,
+      ...(this.captionIndex === 0 && beat.itemCard
+        ? [beat.itemCard.title, beat.itemCard.description]
+        : []),
+    ].filter((text): text is string => Boolean(text)).join(" ");
+    const durationMs = getCaptionPlaybackMs(beat.durationMs, captionText);
     const visibleBeat: CutsceneBeat = {
       ...beat,
+      durationMs,
       narration: caption.narration,
       dialogue: caption.dialogue ? [caption.dialogue] : undefined,
       itemCard: this.captionIndex === 0 ? beat.itemCard : undefined,
       soundCue: this.captionIndex === 0 ? beat.soundCue : undefined,
       musicKey: this.captionIndex === 0 ? beat.musicKey : undefined,
     };
+    this.lastCaptionAt = Date.now();
     this.eventBus?.emit("cutscene-beat", {
       cutsceneId: INTRO_CUTSCENE.id,
       beat: visibleBeat,
@@ -146,10 +160,12 @@ export class IntroScene extends Phaser.Scene {
       captionIndex: this.captionIndex,
       captionCount: this.currentCaptions.length,
     });
+    this.captionTimer = this.time.delayedCall(durationMs, () => this.advance());
   }
 
   private advance(): void {
-    if (!this.active) return;
+    if (!this.active || Date.now() - this.lastCaptionAt < 120) return;
+    this.clearCaptionTimer();
     if (this.captionIndex + 1 < this.currentCaptions.length) {
       this.captionIndex += 1;
       this.emitCurrentCaption();
@@ -162,6 +178,7 @@ export class IntroScene extends Phaser.Scene {
 
   private skip(): void {
     if (!this.active || !this.skipAllowed) return;
+    this.clearCaptionTimer();
     this.skipped = true;
     this.actorRig?.stop();
     this.audioManager?.stopAllSounds();
@@ -195,6 +212,7 @@ export class IntroScene extends Phaser.Scene {
   private finishCutscene(): void {
     if (!this.active) return;
     this.active = false;
+    this.clearCaptionTimer();
     if (this.progress && !this.progress.seenCutsceneIds.includes(INTRO_CUTSCENE.id)) {
       this.progress.seenCutsceneIds.push(INTRO_CUTSCENE.id);
     }
@@ -236,6 +254,7 @@ export class IntroScene extends Phaser.Scene {
 
   private cleanup(): void {
     this.active = false;
+    this.clearCaptionTimer();
     this.currentBeat = undefined;
     this.currentCaptions = [];
     this.actorRig?.destroy();
@@ -243,5 +262,10 @@ export class IntroScene extends Phaser.Scene {
     this.unsubscribers.splice(0).forEach((unsubscribe) => unsubscribe());
     this.audioManager?.destroy();
     this.audioManager = undefined;
+  }
+
+  private clearCaptionTimer(): void {
+    this.captionTimer?.remove(false);
+    this.captionTimer = undefined;
   }
 }

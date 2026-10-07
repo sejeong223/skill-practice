@@ -101,4 +101,4 @@ Task: T01-shared-cutscene-timing
 
 - [x] 구현 완료
 - [x] 검증 통과: 자동 테스트 5개, `tsc`, `lint`, `build`
-- commit: pending
+- commit: `b55e26c` (`feat(cutscene): 컷신 대사 자동 진행과 읽기 시간 적용`)
