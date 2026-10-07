@@ -4,6 +4,7 @@ import type { ProgressState } from "../core/types";
 import { AudioManager } from "../audio/AudioManager";
 import { CameraDirector } from "../camera/CameraDirector";
 import { CutsceneTimeline } from "./CutsceneTimeline";
+import { getBeatPlaybackMs } from "./cutsceneTiming";
 import type { CameraAction, CutsceneBeat, CutsceneScript } from "./types";
 import { Player } from "../entities/Player";
 
@@ -46,8 +47,9 @@ export class CutsceneDirector {
     this.canSkip = this.progress.seenCutsceneIds.includes(id);
     this.player.lockControl("cutscene");
     this.eventBus?.emit("cutscene-started", { cutsceneId: id, skipAllowed: this.canSkip });
-    const manualAdvance = id === "world-01-boss-intro" || id === "world-01-boss-clear";
-    return this.timeline.play(script.beats, (beat, index) => this.handleBeat(script, beat, index), manualAdvance).then(() => this.finish(id));
+    const allowManualAdvance = id === "world-01-boss-intro" || id === "world-01-boss-clear";
+    const timedBeats = script.beats.map((beat) => ({ ...beat, durationMs: getBeatPlaybackMs(beat) }));
+    return this.timeline.play(timedBeats, (beat, index) => this.handleBeat(script, beat, index), allowManualAdvance).then(() => this.finish(id));
   }
 
   public advance(): void {

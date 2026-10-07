@@ -7,13 +7,13 @@ export class CutsceneTimeline {
   private resolve?: () => void;
   private token = 0;
   private nextBeat?: () => void;
-  private manualAdvance = false;
+  private allowManualAdvance = false;
   private lastBeatAt = 0;
 
-  public play(beats: readonly CutsceneBeat[], onBeat: CutsceneBeatHandler, manualAdvance = false): Promise<void> {
+  public play(beats: readonly CutsceneBeat[], onBeat: CutsceneBeatHandler, allowManualAdvance = false): Promise<void> {
     this.cancel();
     const token = ++this.token;
-    this.manualAdvance = manualAdvance;
+    this.allowManualAdvance = allowManualAdvance;
     return new Promise((resolve) => {
       this.resolve = resolve;
       let index = 0;
@@ -25,14 +25,14 @@ export class CutsceneTimeline {
         this.lastBeatAt = Date.now();
         index += 1;
         this.nextBeat = next;
-        if (!manualAdvance) this.timer = setTimeout(next, beat.durationMs);
+        this.timer = setTimeout(next, beat.durationMs);
       };
       next();
     });
   }
 
   public advance(): void {
-    if (!this.manualAdvance || !this.nextBeat || Date.now() - this.lastBeatAt < 120) return;
+    if (!this.allowManualAdvance || !this.nextBeat || Date.now() - this.lastBeatAt < 120) return;
     if (this.timer !== undefined) clearTimeout(this.timer);
     this.timer = undefined;
     this.nextBeat();
@@ -48,14 +48,15 @@ export class CutsceneTimeline {
     this.timer = undefined;
     this.resolve = undefined;
     this.nextBeat = undefined;
-    this.manualAdvance = false;
+    this.allowManualAdvance = false;
   }
 
   private finish(): void {
+    this.token += 1;
     if (this.timer !== undefined) clearTimeout(this.timer);
     this.timer = undefined;
     this.nextBeat = undefined;
-    this.manualAdvance = false;
+    this.allowManualAdvance = false;
     const resolve = this.resolve;
     this.resolve = undefined;
     resolve?.();
