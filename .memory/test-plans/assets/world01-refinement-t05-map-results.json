@@ -1,0 +1,273 @@
+{
+  "results": [
+    {
+      "stage": 1,
+      "camera": {
+        "starts": 0,
+        "points": [
+          {
+            "x": 192,
+            "before": 0,
+            "after": 0
+          },
+          {
+            "x": 912,
+            "before": 0,
+            "after": 0
+          },
+          {
+            "x": 1648,
+            "before": 0,
+            "after": 0
+          },
+          {
+            "x": 2368,
+            "before": 0,
+            "after": 0
+          }
+        ]
+      },
+      "coverage": [
+        {
+          "width": 2560,
+          "factor": 0.15,
+          "right": 2368,
+          "texture": "world-01-background-far",
+          "originalSize": [
+            [
+              2172,
+              724
+            ]
+          ]
+        },
+        {
+          "width": 2560,
+          "factor": 0.35,
+          "right": 2112,
+          "texture": "world-01-background-mid",
+          "originalSize": [
+            [
+              2172,
+              724
+            ]
+          ]
+        },
+        {
+          "width": 2624,
+          "factor": 1.05,
+          "right": 1280,
+          "texture": "world-01-background-foreground",
+          "originalSize": [
+            [
+              2172,
+              724
+            ]
+          ]
+        }
+      ],
+      "jumped": 7
+    },
+    {
+      "stage": 2,
+      "camera": {
+        "starts": 0,
+        "points": [
+          {
+            "x": 192,
+            "before": 0,
+            "after": 0
+          },
+          {
+            "x": 912,
+            "before": 0,
+            "after": 0
+          },
+          {
+            "x": 1648,
+            "before": 0,
+            "after": 0
+          },
+          {
+            "x": 2368,
+            "before": 0,
+            "after": 0
+          }
+        ]
+      },
+      "coverage": [
+        {
+          "width": 2560,
+          "factor": 0.15,
+          "right": 2368,
+          "texture": "world-01-background-far",
+          "originalSize": [
+            [
+              2172,
+              724
+            ]
+          ]
+        },
+        {
+          "width": 2560,
+          "factor": 0.35,
+          "right": 2112,
+          "texture": "world-01-roof-day-mid",
+          "originalSize": [
+            [
+              1920,
+              720
+            ]
+          ]
+        },
+        {
+          "width": 2624,
+          "factor": 1.05,
+          "right": 1280,
+          "texture": "world-01-background-foreground",
+          "originalSize": [
+            [
+              2172,
+              724
+            ]
+          ]
+        }
+      ],
+      "jumped": 9
+    },
+    {
+      "stage": 3,
+      "camera": {
+        "starts": 0,
+        "points": [
+          {
+            "x": 192,
+            "before": 0,
+            "after": 0
+          },
+          {
+            "x": 912,
+            "before": 0,
+            "after": 0
+          },
+          {
+            "x": 1648,
+            "before": 0,
+            "after": 0
+          },
+          {
+            "x": 2368,
+            "before": 0,
+            "after": 0
+          }
+        ]
+      },
+      "coverage": [
+        {
+          "width": 2560,
+          "factor": 0.15,
+          "right": 2368,
+          "texture": "world-01-background-far",
+          "originalSize": [
+            [
+              2172,
+              724
+            ]
+          ]
+        },
+        {
+          "width": 2560,
+          "factor": 0.35,
+          "right": 2112,
+          "texture": "world-01-background-mid",
+          "originalSize": [
+            [
+              2172,
+              724
+            ]
+          ]
+        },
+        {
+          "width": 2624,
+          "factor": 1.05,
+          "right": 1280,
+          "texture": "world-01-background-foreground",
+          "originalSize": [
+            [
+              2172,
+              724
+            ]
+          ]
+        }
+      ],
+      "jumped": 7
+    },
+    {
+      "stage": 4,
+      "camera": {
+        "starts": 0,
+        "points": [
+          {
+            "x": 192,
+            "before": 0,
+            "after": 0
+          },
+          {
+            "x": 912,
+            "before": 0,
+            "after": 0
+          },
+          {
+            "x": 1648,
+            "before": 0,
+            "after": 0
+          },
+          {
+            "x": 2368,
+            "before": 0,
+            "after": 0
+          }
+        ]
+      },
+      "coverage": [
+        {
+          "width": 2560,
+          "factor": 0.15,
+          "right": 2368,
+          "texture": "world-01-background-far",
+          "originalSize": [
+            [
+              2172,
+              724
+            ]
+          ]
+        },
+        {
+          "width": 2560,
+          "factor": 0.35,
+          "right": 2112,
+          "texture": "world-01-clothesline-day-mid",
+          "originalSize": [
+            [
+              1920,
+              720
+            ]
+          ]
+        },
+        {
+          "width": 2624,
+          "factor": 1.05,
+          "right": 1280,
+          "texture": "world-01-background-foreground",
+          "originalSize": [
+            [
+              2172,
+              724
+            ]
+          ]
+        }
+      ],
+      "jumped": 9
+    }
+  ],
+  "errors": []
+}

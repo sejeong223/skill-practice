@@ -15,7 +15,7 @@ export class BowlShieldVisual {
   private readonly unsubscribeClang: () => void;
 
   public constructor(
-    scene: Phaser.Scene,
+    private readonly scene: Phaser.Scene,
     private readonly player: Player,
     private readonly defense: DefenseToolSystem,
     eventBus: GameplayEventBus,
@@ -26,6 +26,7 @@ export class BowlShieldVisual {
     this.unsubscribeClang = eventBus.on("clang", ({ toolId }) => {
       if (toolId === "upside-down-bowl") this.flashUntil = this.elapsedMs + 140;
     });
+    scene.events.on("postupdate", this.syncPosition, this);
   }
 
   public update(delta: number, combatActive: boolean): void {
@@ -38,6 +39,12 @@ export class BowlShieldVisual {
     const visible = this.defense.getRemainingCharges() > 0 || flashing;
     this.image.setVisible(visible);
     if (!visible) return;
+    this.syncPosition();
+  }
+
+  private syncPosition(): void {
+    if (!this.image.visible) return;
+    const flashing = this.elapsedMs < this.flashUntil;
     const frame = this.player.getAnimationState() === "run" ? Number(this.player.frame.name) : 0;
     const anchor = HEAD_ANCHORS[frame] ?? HEAD_ANCHORS[0];
     this.image.setPosition(
@@ -55,6 +62,7 @@ export class BowlShieldVisual {
   }
 
   public destroy(): void {
+    this.scene.events.off("postupdate", this.syncPosition, this);
     this.unsubscribeClang();
     this.image.destroy();
   }

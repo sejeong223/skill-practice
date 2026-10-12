@@ -1,0 +1,27 @@
+{
+  "out": {
+    "death": {
+      "hearts": [
+        2,
+        1,
+        0
+      ],
+      "locked": false,
+      "dogs": 0,
+      "balance": 10
+    },
+    "respawn": {
+      "checkpoint": "world-01-stage-4-checkpoint",
+      "x": 2360,
+      "balance": 10
+    },
+    "retry": {
+      "health": 10,
+      "hearts": 3,
+      "charges": 3,
+      "dogs": 0,
+      "bowl": true
+    }
+  },
+  "errors": []
+}

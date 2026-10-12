@@ -1,0 +1,74 @@
+{
+  "out": [
+    {
+      "stage": 2,
+      "checkpoint": {
+        "id": "world-01-stage-2-checkpoint",
+        "x": 1560,
+        "y": 480,
+        "balance": 11
+      },
+      "restored": {
+        "id": "world-01-stage-2-checkpoint",
+        "x": 1560,
+        "y": 480,
+        "balance": 11,
+        "coins": 0,
+        "active": 5
+      }
+    },
+    {
+      "stage": 4,
+      "checkpoint": {
+        "id": "world-01-stage-4-checkpoint",
+        "x": 2360,
+        "y": 512,
+        "balance": 12
+      },
+      "restored": {
+        "id": "world-01-stage-4-checkpoint",
+        "x": 2360,
+        "y": 512,
+        "balance": 12,
+        "coins": 0,
+        "active": 5
+      }
+    },
+    {
+      "stage": 2,
+      "kind": "fake-bone-reverse",
+      "before": {
+        "balance": 12,
+        "deaths": 2,
+        "override": "drift-backward",
+        "tint": 16777215,
+        "frame": "bone-coin-reverse"
+      },
+      "after": {
+        "balance": 12,
+        "x": 96,
+        "frame": "bone-coin",
+        "status": "armed"
+      }
+    },
+    {
+      "stage": 3,
+      "kind": "fake-bone-fire",
+      "before": {
+        "balance": 12,
+        "deaths": 3,
+        "override": "launch-up",
+        "tint": 16777215,
+        "frame": "bone-coin-fire"
+      },
+      "after": {
+        "balance": 12,
+        "x": 96,
+        "frame": "bone-coin",
+        "status": "armed"
+      }
+    }
+  ],
+  "holeDeath": true,
+  "errors": []
+}

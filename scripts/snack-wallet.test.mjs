@@ -109,3 +109,14 @@ test("저장 실패는 획득 처리를 중단하지 않고 destroy는 구독을
   s.economy.collectCoin(s.runtime.stageId);
   assert.equal(warn.mock.callCount(), warnings);
 });
+
+test("과거 완료 스테이지를 재도전해도 새 획득만 적립한다", () => {
+  const s = setup();
+  s.progress.clearedStages.push(s.runtime.stageId);
+  assert.equal(s.economy.collectCoin(s.runtime.stageId), true);
+  assert.equal(s.store.load().bankedCoins, 11);
+  assert.equal(s.economy.commitStageClear(), 11);
+  assert.equal(s.economy.commitStageClear(), 11);
+  assert.deepEqual(s.progress.clearedStages, [s.runtime.stageId]);
+  s.save.destroy();
+});

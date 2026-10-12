@@ -636,6 +636,14 @@ export class MapGimmickSystem {
       if (entry.status !== "triggered") continue;
       const gimmick = this.map.gimmicks.find((candidate) => candidate.id === entry.gimmickId);
       if (!gimmick) continue;
+      // A floor-height snack may finish its motion before reaching a screen edge.
+      // Preserve the declared fatal outcome when its forced-motion duration expires.
+      if (gimmick.worldId === "world-01" && entry.startedAt !== null &&
+        (gimmick.outcome.kind === "forced-control-death" || gimmick.outcome.kind === "launch-death") &&
+        gimmick.outcome.durationMs && now >= entry.startedAt + gimmick.outcome.durationMs) {
+        this.requestDeath(gimmick, now);
+        return;
+      }
       if (
         gimmick.outcome.kind === "forced-control-death" &&
         gimmick.outcome.controlOverride === "drift-backward" &&

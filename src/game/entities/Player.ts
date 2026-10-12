@@ -146,8 +146,13 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
   public resetTo(position: Phaser.Math.Vector2): void {
     this.clearAllControlOverrides();
-    this.setPosition(position.x, position.y);
-    this.setVelocity(0, 0);
+    this.body.reset(position.x, position.y);
+    // Arcade reset starts at the sprite's top-left; our small body has a foot offset.
+    // Sync both coordinates and history so this frame cannot collide at the old spot
+    // or apply the teleport a second time during the physics post-update.
+    this.body.updateFromGameObject();
+    this.body.prev.copy(this.body.position);
+    this.body.prevFrame.copy(this.body.position);
     this.setAngularVelocity(0);
     this.setAnimationState("idle");
   }

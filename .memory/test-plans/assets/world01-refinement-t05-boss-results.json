@@ -1,0 +1,201 @@
+{
+  "out": {
+    "lockedAudio": {
+      "initial": "running",
+      "before": 0,
+      "after": 3
+    },
+    "intro": {
+      "beats": [
+        {
+          "id": "world-01-boss-intro",
+          "index": 0
+        },
+        {
+          "id": "world-01-boss-intro",
+          "index": 1
+        },
+        {
+          "id": "world-01-boss-intro",
+          "index": 2
+        },
+        {
+          "id": "world-01-boss-intro",
+          "index": 3
+        },
+        {
+          "id": "world-01-boss-intro",
+          "index": 4
+        },
+        {
+          "id": "world-01-boss-intro",
+          "index": 5
+        },
+        {
+          "id": "world-01-boss-intro",
+          "index": 6
+        },
+        {
+          "id": "world-01-boss-intro",
+          "index": 7
+        }
+      ],
+      "music": "boss",
+      "locked": false,
+      "health": 10
+    },
+    "head": {
+      "states": [
+        "run",
+        "jump",
+        "fall",
+        "idle"
+      ],
+      "frames": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "flips": [
+        false,
+        true
+      ],
+      "maxXError": 0
+    },
+    "surges": [
+      {
+        "left": 0,
+        "count": 5,
+        "outside": true,
+        "floorYs": [
+          512,
+          512,
+          512,
+          512,
+          512
+        ],
+        "locked": true,
+        "cleared": true
+      },
+      {
+        "left": 580,
+        "count": 5,
+        "outside": true,
+        "floorYs": [
+          512,
+          512,
+          512,
+          512,
+          512
+        ],
+        "locked": true,
+        "cleared": true
+      },
+      {
+        "left": 640,
+        "count": 5,
+        "outside": true,
+        "floorYs": [
+          512,
+          512,
+          512,
+          512,
+          512
+        ],
+        "locked": true,
+        "cleared": true
+      }
+    ],
+    "nine": 1,
+    "clear": {
+      "beats": [
+        {
+          "id": "world-01-boss-clear",
+          "index": 0
+        },
+        {
+          "id": "world-01-boss-clear",
+          "index": 1
+        },
+        {
+          "id": "world-01-boss-clear",
+          "index": 2
+        },
+        {
+          "id": "world-01-boss-clear",
+          "index": 3
+        },
+        {
+          "id": "world-01-boss-clear",
+          "index": 4
+        },
+        {
+          "id": "world-01-boss-clear",
+          "index": 5
+        },
+        {
+          "id": "world-01-boss-clear",
+          "index": 6
+        },
+        {
+          "id": "world-01-boss-clear",
+          "index": 7
+        }
+      ],
+      "completed": [
+        "world-01-stage-boss"
+      ],
+      "progress": {
+        "version": 2,
+        "onboardingCompleted": true,
+        "playerName": "검증 코기",
+        "clearedStages": [
+          "world-01-stage-boss"
+        ],
+        "unlockedSkills": [
+          "bark"
+        ],
+        "ownedToolIds": [
+          "rabbit-slipper",
+          "upside-down-bowl"
+        ],
+        "equippedAttackToolId": "rabbit-slipper",
+        "equippedDefenseToolId": "upside-down-bowl",
+        "bankedCoins": 10,
+        "collectedItems": [],
+        "deathsTotal": 0,
+        "deathsByStage": {},
+        "seenCutsceneIds": [
+          "intro-home",
+          "world-01-boss-intro",
+          "world-01-boss-clear"
+        ],
+        "discoveredDrawbackIds": [],
+        "keybinds": {
+          "left": "ArrowLeft",
+          "right": "ArrowRight",
+          "up": "ArrowUp",
+          "down": "ArrowDown",
+          "jump": "Space",
+          "attack": "KeyJ",
+          "dash": "KeyK",
+          "bark": "KeyL",
+          "pause": "Escape"
+        }
+      }
+    },
+    "world2": {
+      "width": 3840,
+      "bounds": 3840,
+      "loaded": false,
+      "entities": 33
+    },
+    "suspendedAudio": {
+      "state": "suspended",
+      "suspendedSources": 0,
+      "resumedSources": 0
+    }
+  },
+  "errors": []
+}
