@@ -1,0 +1,106 @@
+{
+  "source": "Pre-fix diagnostic recorded during the preceding analysis turn",
+  "setup": "Chromium; drawing skipped; gameplay/physics unchanged; stage 4 full-speed approach to the last fake snack",
+  "deathRequests": 20,
+  "intervalMs": 316.7000000000003,
+  "firstDeath": {
+    "type": "death-requested",
+    "payload": {
+      "stageId": "world-01-stage-4",
+      "cause": "scripted",
+      "checkpointId": "world-01-stage-4-checkpoint",
+      "gimmickId": "world01-stage-4-fake-bone-fire-2000",
+      "outcome": "launch-death",
+      "now": 3716.7
+    },
+    "sceneTime": 3716.7,
+    "x": 2384,
+    "y": 512,
+    "total": 0,
+    "checkpoint": {
+      "x": 2329,
+      "y": 512,
+      "fire": {
+        "gimmickId": "world01-stage-4-fake-bone-fire-2000",
+        "status": "triggered",
+        "startedAt": 2016.7,
+        "counterpresses": 0,
+        "snapshotSeed": 854399604
+      }
+    },
+    "liveFire": {
+      "gimmickId": "world01-stage-4-fake-bone-fire-2000",
+      "status": "dead",
+      "startedAt": 2016.7,
+      "counterpresses": 0,
+      "snapshotSeed": 854399604
+    }
+  },
+  "lastDeath": {
+    "type": "death-requested",
+    "payload": {
+      "stageId": "world-01-stage-4",
+      "cause": "scripted",
+      "checkpointId": "world-01-stage-4-checkpoint",
+      "gimmickId": "world01-stage-4-fake-bone-fire-2000",
+      "outcome": "launch-death",
+      "now": 4033.4
+    },
+    "sceneTime": 4033.4,
+    "x": 2329,
+    "y": 512,
+    "total": 19,
+    "checkpoint": {
+      "x": 2329,
+      "y": 512,
+      "fire": {
+        "gimmickId": "world01-stage-4-fake-bone-fire-2000",
+        "status": "triggered",
+        "startedAt": 2016.7,
+        "counterpresses": 0,
+        "snapshotSeed": 854399604
+      }
+    },
+    "liveFire": {
+      "gimmickId": "world01-stage-4-fake-bone-fire-2000",
+      "status": "dead",
+      "startedAt": 2016.7,
+      "counterpresses": 0,
+      "snapshotSeed": 854399604
+    }
+  },
+  "checkpoint": {
+    "type": "checkpoint-reached",
+    "payload": {
+      "stageId": "world-01-stage-4",
+      "checkpointId": "world-01-stage-4-checkpoint",
+      "x": 2329,
+      "y": 512,
+      "now": 3350
+    },
+    "sceneTime": 3350,
+    "x": 2296,
+    "y": 485.66666666666663,
+    "total": 0,
+    "checkpoint": {
+      "x": 2329,
+      "y": 512,
+      "fire": {
+        "gimmickId": "world01-stage-4-fake-bone-fire-2000",
+        "status": "triggered",
+        "startedAt": 2016.7,
+        "counterpresses": 0,
+        "snapshotSeed": 854399604
+      }
+    },
+    "liveFire": {
+      "gimmickId": "world01-stage-4-fake-bone-fire-2000",
+      "status": "triggered",
+      "startedAt": 2016.7,
+      "counterpresses": 0,
+      "snapshotSeed": 854399604
+    }
+  },
+  "finalStageId": "world-01-stage-4",
+  "finalDeaths": 20
+}

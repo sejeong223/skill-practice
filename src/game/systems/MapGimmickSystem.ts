@@ -14,6 +14,7 @@ import { Player } from "../entities/Player";
 import type { InputManager } from "../input/InputManager";
 import type { LoadedMap } from "../maps/mapTypes";
 import { MapInteractionSystem } from "../maps/MapInteractionSystem";
+import { toCheckpointGimmickState } from "./checkpointGimmickState";
 
 type RuntimeEntry = GimmickRuntimeState;
 
@@ -235,7 +236,7 @@ export class MapGimmickSystem {
     for (const gimmick of this.map.gimmicks) {
       const restored = snapshot?.gimmickStates[gimmick.id];
       const next: RuntimeEntry = restored
-        ? { ...restored }
+        ? toCheckpointGimmickState(gimmick.kind, restored)
         : {
             gimmickId: gimmick.id,
             status: "armed",
@@ -283,8 +284,11 @@ export class MapGimmickSystem {
 
   public getSnapshotStates(): Readonly<Record<string, GimmickRuntimeState>> {
     return Object.fromEntries(
-      [...this.entries.entries()].map(([id]) => [id, this.getState(id)]),
-    ) as Readonly<Record<string, GimmickRuntimeState>>;
+      this.map.gimmicks.flatMap(({ id, kind }) => {
+        const state = this.entries.get(id);
+        return state ? [[id, toCheckpointGimmickState(kind, state)]] : [];
+      }),
+    );
   }
 
   public getDebugState(): MapGimmickDebugState {

@@ -221,6 +221,7 @@ export class StageScene extends Phaser.Scene {
       this.restartController,
       this.gameplayEventBus,
       this.persistenceEventBus,
+      () => this.runtime?.getStatus() === "play",
     );
 
     if (process.env.NODE_ENV !== "production") {

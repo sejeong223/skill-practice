@@ -1,0 +1,369 @@
+{
+  "setup": "Chromium; gameplay and physics unchanged; drawing skipped during timing reproduction",
+  "errors": [],
+  "route": {
+    "events": [
+      {
+        "type": "checkpoint-reached",
+        "payload": {
+          "stageId": "world-01-stage-4",
+          "checkpointId": "world-01-stage-4-checkpoint",
+          "x": 2329,
+          "y": 512,
+          "now": 3542.5
+        },
+        "x": 2296,
+        "y": 485.66666666666663,
+        "snapshotFire": {
+          "gimmickId": "world01-stage-4-fake-bone-fire-2000",
+          "status": "escaped",
+          "startedAt": null,
+          "counterpresses": 0,
+          "snapshotSeed": 854399604
+        },
+        "liveFire": {
+          "gimmickId": "world01-stage-4-fake-bone-fire-2000",
+          "status": "triggered",
+          "startedAt": 2209.2,
+          "counterpresses": 0,
+          "snapshotSeed": 854399604
+        },
+        "deaths": 7
+      },
+      {
+        "type": "death-requested",
+        "payload": {
+          "stageId": "world-01-stage-4",
+          "cause": "scripted",
+          "checkpointId": "world-01-stage-4-checkpoint",
+          "gimmickId": "world01-stage-4-fake-bone-fire-2000",
+          "outcome": "launch-death",
+          "now": 3925.8
+        },
+        "x": 2388,
+        "y": 512,
+        "snapshotFire": {
+          "gimmickId": "world01-stage-4-fake-bone-fire-2000",
+          "status": "escaped",
+          "startedAt": null,
+          "counterpresses": 0,
+          "snapshotSeed": 854399604
+        },
+        "liveFire": {
+          "gimmickId": "world01-stage-4-fake-bone-fire-2000",
+          "status": "dead",
+          "startedAt": 2209.2,
+          "counterpresses": 0,
+          "snapshotSeed": 854399604
+        },
+        "deaths": 7
+      },
+      {
+        "type": "restart",
+        "payload": {
+          "stageId": "world-01-stage-4",
+          "checkpointId": "world-01-stage-4-checkpoint",
+          "attempt": 2,
+          "now": 3933.199999809265
+        },
+        "x": 2329,
+        "y": 512,
+        "snapshotFire": {
+          "gimmickId": "world01-stage-4-fake-bone-fire-2000",
+          "status": "escaped",
+          "startedAt": null,
+          "counterpresses": 0,
+          "snapshotSeed": 854399604
+        },
+        "liveFire": {
+          "gimmickId": "world01-stage-4-fake-bone-fire-2000",
+          "status": "escaped",
+          "startedAt": null,
+          "counterpresses": 0,
+          "snapshotSeed": 854399604
+        },
+        "deaths": 8
+      }
+    ],
+    "exitSamples": [
+      {
+        "x": 2482.9792,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "x": 2486.9792,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "x": 2490.9792,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "x": 2494.9792,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "x": 2498.9792,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "x": 2502.9792,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "x": 2506.9792,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "x": 2510.9792,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "x": 2514.9792,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "x": 2518.9792,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "x": 2522.9792,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "x": 2526.9792,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "x": 2530.9792,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "x": 2534.9792,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "x": 2538.9792,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "x": 2542.9792,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "x": 2546.9792,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "x": 2550.9792,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "x": 2554.9792,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "x": 2558.9792,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "x": 2562.9792,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "x": 2566.9792,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "x": 2570.9792,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "x": 2574.9792,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "x": 2578.9792,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "x": 2582.9792,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "x": 2586.9792,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "x": 2590.9792,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "x": 2594.9792,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "x": 2598.9792,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "x": 2602.9792,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "x": 2606.9792,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "x": 2610.9792,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "x": 2614.9792,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "x": 2618.9792,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "x": 2622.9792,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "x": 2622.9792,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "x": 2622.9792,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "x": 2622.9792,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "x": 2622.9792,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "x": 2622.9792,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "x": 2622.9792,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "x": 2622.9792,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "x": 2622.9792,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "x": 2622.9792,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "x": 2622.9792,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "x": 2622.9792,
+        "y": 512,
+        "bottom": 512
+      }
+    ],
+    "stageId": "world-01-stage-boss",
+    "deaths": 8,
+    "stageDeaths": 4,
+    "bankedCoins": 57
+  },
+  "bossDeathGuard": {
+    "deaths": 9,
+    "status": "dying"
+  },
+  "bossReturn": {
+    "x": 2329,
+    "y": 512,
+    "deaths": 9,
+    "checkpointId": "world-01-stage-4-checkpoint"
+  },
+  "legacyRestore": {
+    "stageId": "world-01-stage-4",
+    "x": 2329,
+    "y": 512,
+    "deaths": 10,
+    "bankedCoins": 57,
+    "liveFire": {
+      "gimmickId": "world01-stage-4-fake-bone-fire-2000",
+      "status": "escaped",
+      "startedAt": null,
+      "counterpresses": 0,
+      "snapshotSeed": 854399604
+    },
+    "originalSnapshotFire": {
+      "gimmickId": "world01-stage-4-fake-bone-fire-2000",
+      "status": "triggered",
+      "startedAt": -100000,
+      "counterpresses": 0,
+      "snapshotSeed": 854399604
+    },
+    "visible": false,
+    "pendingActions": 0,
+    "controlOverride": null
+  },
+  "reentry": {
+    "stageId": "world-01-stage-boss",
+    "deaths": 10,
+    "bankedCoins": 57
+  }
+}
