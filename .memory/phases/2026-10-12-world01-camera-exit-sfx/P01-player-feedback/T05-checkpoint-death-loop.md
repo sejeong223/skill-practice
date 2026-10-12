@@ -62,6 +62,7 @@ Task: T05-checkpoint-death-loop
 
 - [x] 구현 완료
 - [x] 검증 통과
+- commit: 735fdb0
 
 ## Execution Result
 

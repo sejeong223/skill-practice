@@ -10,7 +10,8 @@
 | T02 | `done` | 출구 숨김·끝 전환·깃발 부활 | [T02](./T02-exit-checkpoint.md) |
 | T03 | `done` | 신규 간식/체크포인트 효과음과 통합 검증 | [T03](./T03-new-feedback-audio.md) |
 | T04 | `done` | 맵 끝 전환 구간 낙하 방지 | [T04](./T04-exit-floor.md) |
+| T05 | `done` | 체크포인트 효과 복원으로 인한 사망 반복 방지 | [T05](./T05-checkpoint-death-loop.md) |
 
 ## Progress
 
-- done: 4/4 (active: 없음)
+- done: 5/5 (active: 없음)
