@@ -1,0 +1,1178 @@
+{
+  "baseline": false,
+  "stages": [
+    {
+      "stageId": "world-01-stage-1",
+      "mapWidth": 2560,
+      "cameraWidth": 2560,
+      "floor": {
+        "visible": false,
+        "x": 2559,
+        "y": 512,
+        "right": 2816
+      },
+      "samples": [
+        {
+          "x": 2460,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2404,
+          "status": "play"
+        },
+        {
+          "x": 2460,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2404,
+          "status": "play"
+        },
+        {
+          "x": 2460.5,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2404.5,
+          "status": "play"
+        },
+        {
+          "x": 2461.5,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2405.5,
+          "status": "play"
+        },
+        {
+          "x": 2463,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2407,
+          "status": "play"
+        },
+        {
+          "x": 2465,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2409,
+          "status": "play"
+        },
+        {
+          "x": 2467.5,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2411.5,
+          "status": "play"
+        },
+        {
+          "x": 2470.5,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2414.5,
+          "status": "play"
+        },
+        {
+          "x": 2474,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2418,
+          "status": "play"
+        },
+        {
+          "x": 2478,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2422,
+          "status": "play"
+        },
+        {
+          "x": 2482,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2426,
+          "status": "play"
+        },
+        {
+          "x": 2486,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2430,
+          "status": "play"
+        },
+        {
+          "x": 2490,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2434,
+          "status": "play"
+        },
+        {
+          "x": 2494,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2438,
+          "status": "play"
+        },
+        {
+          "x": 2498,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2442,
+          "status": "play"
+        },
+        {
+          "x": 2502,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2446,
+          "status": "play"
+        },
+        {
+          "x": 2506,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2450,
+          "status": "play"
+        },
+        {
+          "x": 2510,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2454,
+          "status": "play"
+        },
+        {
+          "x": 2514,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2458,
+          "status": "play"
+        },
+        {
+          "x": 2518,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2462,
+          "status": "play"
+        },
+        {
+          "x": 2522,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2466,
+          "status": "play"
+        },
+        {
+          "x": 2526,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2470,
+          "status": "play"
+        },
+        {
+          "x": 2530,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2474,
+          "status": "play"
+        },
+        {
+          "x": 2534,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2478,
+          "status": "play"
+        },
+        {
+          "x": 2538,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2482,
+          "status": "play"
+        },
+        {
+          "x": 2542,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2486,
+          "status": "play"
+        },
+        {
+          "x": 2546,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2490,
+          "status": "play"
+        },
+        {
+          "x": 2550,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2494,
+          "status": "play"
+        },
+        {
+          "x": 2554,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2498,
+          "status": "play"
+        },
+        {
+          "x": 2558,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2502,
+          "status": "play"
+        },
+        {
+          "x": 2562,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2506,
+          "status": "play"
+        },
+        {
+          "x": 2566,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2510,
+          "status": "play"
+        },
+        {
+          "x": 2570,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2514,
+          "status": "play"
+        },
+        {
+          "x": 2574,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2518,
+          "status": "play"
+        },
+        {
+          "x": 2578,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2522,
+          "status": "play"
+        },
+        {
+          "x": 2582,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2526,
+          "status": "play"
+        },
+        {
+          "x": 2586,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2530,
+          "status": "play"
+        },
+        {
+          "x": 2590,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2534,
+          "status": "play"
+        },
+        {
+          "x": 2594,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2538,
+          "status": "play"
+        },
+        {
+          "x": 2598,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2542,
+          "status": "play"
+        },
+        {
+          "x": 2602,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2546,
+          "status": "play"
+        },
+        {
+          "x": 2606,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2550,
+          "status": "play"
+        },
+        {
+          "x": 2610,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2554,
+          "status": "play"
+        },
+        {
+          "x": 2614,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2558,
+          "status": "play"
+        },
+        {
+          "x": 2618,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2562,
+          "status": "play"
+        },
+        {
+          "x": 2622,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2566,
+          "status": "completed"
+        },
+        {
+          "x": 2622,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2566,
+          "status": "completed"
+        },
+        {
+          "x": 2622,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2566,
+          "status": "completed"
+        },
+        {
+          "x": 2622,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2566,
+          "status": "completed"
+        },
+        {
+          "x": 2622,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2566,
+          "status": "completed"
+        },
+        {
+          "x": 2622,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2566,
+          "status": "completed"
+        },
+        {
+          "x": 2622,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2566,
+          "status": "completed"
+        },
+        {
+          "x": 2622,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2566,
+          "status": "completed"
+        },
+        {
+          "x": 2622,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2566,
+          "status": "completed"
+        },
+        {
+          "x": 2622,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2566,
+          "status": "completed"
+        },
+        {
+          "x": 2622,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2566,
+          "status": "completed"
+        },
+        {
+          "x": 2622,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2566,
+          "status": "completed"
+        }
+      ],
+      "completed": [
+        {
+          "x": 2618,
+          "y": 512,
+          "left": 2562
+        }
+      ],
+      "floorDestroyed": true,
+      "maxDrop": 0,
+      "maxDownwardVelocity": 0
+    },
+    {
+      "stageId": "world-01-stage-2",
+      "mapWidth": 2560,
+      "cameraWidth": 2560,
+      "floor": {
+        "visible": false,
+        "x": 2559,
+        "y": 512,
+        "right": 2816
+      },
+      "samples": [
+        {
+          "x": 2460,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2404,
+          "status": "play"
+        },
+        {
+          "x": 2460,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2404,
+          "status": "play"
+        },
+        {
+          "x": 2460.5,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2404.5,
+          "status": "play"
+        },
+        {
+          "x": 2461.5,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2405.5,
+          "status": "play"
+        },
+        {
+          "x": 2463,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2407,
+          "status": "play"
+        },
+        {
+          "x": 2465,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2409,
+          "status": "play"
+        },
+        {
+          "x": 2467.5,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2411.5,
+          "status": "play"
+        },
+        {
+          "x": 2470.5,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2414.5,
+          "status": "play"
+        },
+        {
+          "x": 2474,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2418,
+          "status": "play"
+        },
+        {
+          "x": 2478,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2422,
+          "status": "play"
+        },
+        {
+          "x": 2482,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2426,
+          "status": "play"
+        },
+        {
+          "x": 2486,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2430,
+          "status": "play"
+        },
+        {
+          "x": 2490,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2434,
+          "status": "play"
+        },
+        {
+          "x": 2494,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2438,
+          "status": "play"
+        },
+        {
+          "x": 2498,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2442,
+          "status": "play"
+        },
+        {
+          "x": 2502,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2446,
+          "status": "play"
+        },
+        {
+          "x": 2506,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2450,
+          "status": "play"
+        },
+        {
+          "x": 2510,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2454,
+          "status": "play"
+        },
+        {
+          "x": 2514,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2458,
+          "status": "play"
+        },
+        {
+          "x": 2518,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2462,
+          "status": "play"
+        },
+        {
+          "x": 2522,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2466,
+          "status": "play"
+        },
+        {
+          "x": 2526,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2470,
+          "status": "play"
+        },
+        {
+          "x": 2530,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2474,
+          "status": "play"
+        },
+        {
+          "x": 2534,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2478,
+          "status": "play"
+        },
+        {
+          "x": 2538,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2482,
+          "status": "play"
+        },
+        {
+          "x": 2542,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2486,
+          "status": "play"
+        },
+        {
+          "x": 2546,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2490,
+          "status": "play"
+        },
+        {
+          "x": 2550,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2494,
+          "status": "play"
+        },
+        {
+          "x": 2554,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2498,
+          "status": "play"
+        },
+        {
+          "x": 2558,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2502,
+          "status": "play"
+        },
+        {
+          "x": 2562,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2506,
+          "status": "play"
+        },
+        {
+          "x": 2566,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2510,
+          "status": "play"
+        },
+        {
+          "x": 2570,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2514,
+          "status": "play"
+        },
+        {
+          "x": 2574,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2518,
+          "status": "play"
+        },
+        {
+          "x": 2578,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2522,
+          "status": "play"
+        },
+        {
+          "x": 2582,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2526,
+          "status": "play"
+        },
+        {
+          "x": 2586,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2530,
+          "status": "play"
+        },
+        {
+          "x": 2590,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2534,
+          "status": "play"
+        },
+        {
+          "x": 2594,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2538,
+          "status": "play"
+        },
+        {
+          "x": 2598,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2542,
+          "status": "play"
+        },
+        {
+          "x": 2602,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2546,
+          "status": "play"
+        },
+        {
+          "x": 2606,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2550,
+          "status": "play"
+        },
+        {
+          "x": 2614,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2558,
+          "status": "play"
+        },
+        {
+          "x": 2622,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2566,
+          "status": "play"
+        },
+        {
+          "x": 2630,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2574,
+          "status": "completed"
+        },
+        {
+          "x": 2630,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2574,
+          "status": "completed"
+        },
+        {
+          "x": 2630,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2574,
+          "status": "completed"
+        },
+        {
+          "x": 2630,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2574,
+          "status": "completed"
+        },
+        {
+          "x": 2630,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2574,
+          "status": "completed"
+        }
+      ],
+      "completed": [
+        {
+          "x": 2622,
+          "y": 512,
+          "left": 2566
+        }
+      ],
+      "floorDestroyed": true,
+      "maxDrop": 0,
+      "maxDownwardVelocity": 0
+    },
+    {
+      "stageId": "world-01-stage-3",
+      "mapWidth": 2560,
+      "cameraWidth": 2560,
+      "floor": {
+        "visible": false,
+        "x": 2559,
+        "y": 512,
+        "right": 2816
+      },
+      "samples": [
+        {
+          "x": 2460,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2404,
+          "status": "play"
+        },
+        {
+          "x": 2460,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2404,
+          "status": "play"
+        },
+        {
+          "x": 2472.249999999999,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2416.249999999999,
+          "status": "play"
+        },
+        {
+          "x": 2492.249999999999,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2436.249999999999,
+          "status": "play"
+        },
+        {
+          "x": 2512.249999999999,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2456.249999999999,
+          "status": "play"
+        },
+        {
+          "x": 2536.249999999999,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2480.249999999999,
+          "status": "play"
+        },
+        {
+          "x": 2556.249999999999,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2500.249999999999,
+          "status": "play"
+        },
+        {
+          "x": 2580.249999999999,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2524.249999999999,
+          "status": "play"
+        },
+        {
+          "x": 2600.249999999999,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2544.249999999999,
+          "status": "play"
+        },
+        {
+          "x": 2620.249999999999,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2564.249999999999,
+          "status": "play"
+        },
+        {
+          "x": 2644.249999999999,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2588.249999999999,
+          "status": "completed"
+        },
+        {
+          "x": 2644.249999999999,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2588.249999999999,
+          "status": "completed"
+        },
+        {
+          "x": 2644.249999999999,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2588.249999999999,
+          "status": "completed"
+        }
+      ],
+      "completed": [
+        {
+          "x": 2620.249999999999,
+          "y": 512,
+          "left": 2564.249999999999
+        }
+      ],
+      "floorDestroyed": true,
+      "maxDrop": 0,
+      "maxDownwardVelocity": 0
+    },
+    {
+      "stageId": "world-01-stage-4",
+      "mapWidth": 2560,
+      "cameraWidth": 2560,
+      "floor": {
+        "visible": false,
+        "x": 2559,
+        "y": 512,
+        "right": 2816
+      },
+      "samples": [
+        {
+          "x": 2460,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2404,
+          "status": "play"
+        },
+        {
+          "x": 2460,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2404,
+          "status": "play"
+        },
+        {
+          "x": 2476.797599999999,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2420.797599999999,
+          "status": "play"
+        },
+        {
+          "x": 2496.797599999999,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2440.797599999999,
+          "status": "play"
+        },
+        {
+          "x": 2516.797599999999,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2460.797599999999,
+          "status": "play"
+        },
+        {
+          "x": 2536.797599999999,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2480.797599999999,
+          "status": "play"
+        },
+        {
+          "x": 2556.797599999999,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2500.797599999999,
+          "status": "play"
+        },
+        {
+          "x": 2572.797599999999,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2516.797599999999,
+          "status": "play"
+        },
+        {
+          "x": 2592.797599999999,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2536.797599999999,
+          "status": "play"
+        },
+        {
+          "x": 2612.797599999999,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2556.797599999999,
+          "status": "play"
+        },
+        {
+          "x": 2632.797599999999,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2576.797599999999,
+          "status": "play"
+        },
+        {
+          "x": 2652.797599999999,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2596.797599999999,
+          "status": "completed"
+        },
+        {
+          "x": 2652.797599999999,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2596.797599999999,
+          "status": "completed"
+        },
+        {
+          "x": 2652.797599999999,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2596.797599999999,
+          "status": "completed"
+        },
+        {
+          "x": 2652.797599999999,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2596.797599999999,
+          "status": "completed"
+        }
+      ],
+      "completed": [
+        {
+          "x": 2632.797599999999,
+          "y": 512,
+          "left": 2576.797599999999
+        }
+      ],
+      "floorDestroyed": true,
+      "maxDrop": 0,
+      "maxDownwardVelocity": 0
+    }
+  ],
+  "errors": [],
+  "bossHasExitFloor": false,
+  "returnAndPause": {
+    "stageId": "world-01-stage-1",
+    "status": "play",
+    "x": 2450.9017999999987,
+    "y": 512,
+    "velocityY": 0
+  }
+}

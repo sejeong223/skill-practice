@@ -44,6 +44,8 @@ import { SkillSystem } from "../systems/SkillSystem";
 import { StrayDogEvent } from "../systems/StrayDogEvent";
 import { World01CalicoBoss } from "../systems/World01CalicoBoss";
 
+const NORMAL_EXIT_RUNOUT = 256;
+
 export interface StageSceneData {
   readonly stageId?: StageId;
   readonly seed?: number;
@@ -60,6 +62,7 @@ export class StageScene extends Phaser.Scene {
   private runtime?: StageRuntime;
   private loadedMap?: LoadedMap | null;
   private bossGround?: Phaser.Tilemaps.Tilemap;
+  private exitFloor?: Phaser.GameObjects.Rectangle;
   private parallaxRenderer?: ParallaxRenderer;
   private eventBus?: GameEventBus;
   private gameplayEventBus?: GameplayEventBus;
@@ -120,7 +123,7 @@ export class StageScene extends Phaser.Scene {
       : undefined;
     this.eventBus = this.persistenceEventBus ?? new GameEventBus();
     // Keep camera bounds at the map edge, but allow the corgi to walk fully out.
-    this.physics.world.setBounds(0, 0, stage.mapWidth + (stage.kind === "normal" ? 256 : 0), stage.mapHeight);
+    this.physics.world.setBounds(0, 0, stage.mapWidth + (stage.kind === "normal" ? NORMAL_EXIT_RUNOUT : 0), stage.mapHeight);
     this.stageBackdrop = this.add
       .rectangle(stage.mapWidth / 2, GAME_HEIGHT / 2, stage.mapWidth, GAME_HEIGHT, 0xf5e7c7)
       .setDepth(-40);
@@ -250,6 +253,7 @@ export class StageScene extends Phaser.Scene {
       }
       this.physics.add.collider(this.player, record.entity as Phaser.GameObjects.GameObject);
     }
+    this.createExitFloor(stage, gameplayLayer);
     for (const record of this.runtime.getEntities("coin")) {
       this.physics.add.overlap(
         this.player,
@@ -417,10 +421,42 @@ export class StageScene extends Phaser.Scene {
       this.loadedMap?.destroy();
       this.bossGround?.destroy();
       this.bossGround = undefined;
+      this.exitFloor?.destroy();
+      this.exitFloor = undefined;
       this.parallaxRenderer?.destroy();
       this.gameplayEventBus?.clear();
       if (!this.persistenceEventBus) this.eventBus?.clear();
     });
+  }
+
+  private createExitFloor(stage: StageDefinition, gameplayLayer?: Phaser.Tilemaps.TilemapLayer): void {
+    if (stage.kind !== "normal" || !this.player) return;
+
+    let floorY: number | undefined;
+    if (gameplayLayer) {
+      const lastColumn = gameplayLayer.layer.width - 1;
+      const tile = gameplayLayer.getTilesWithin(
+        lastColumn, 0, 1, gameplayLayer.layer.height, { isColliding: true },
+      )[0];
+      floorY = tile?.getTop();
+    } else {
+      const platforms = this.runtime?.getEntities("platform") ?? [];
+      const lastPlatform = platforms
+        .map(({ entity }) => (entity as Phaser.GameObjects.Rectangle).getBounds())
+        .sort((a, b) => b.right - a.right)[0];
+      if (lastPlatform && lastPlatform.left <= stage.mapWidth && lastPlatform.right >= stage.mapWidth) {
+        floorY = lastPlatform.top;
+      }
+    }
+    if (floorY === undefined) return;
+
+    // The body leaves the map before the whole sprite does. Support that final
+    // walk offscreen (and the transition delay) at the existing ground height.
+    const left = stage.mapWidth - 1;
+    this.exitFloor = this.add.rectangle(left, floorY, this.physics.world.bounds.right - left, 32)
+      .setOrigin(0, 0).setVisible(false);
+    this.physics.add.existing(this.exitFloor, true);
+    this.physics.add.collider(this.player, this.exitFloor);
   }
 
   private createBossGround(stage: StageDefinition): Phaser.Tilemaps.TilemapLayer {

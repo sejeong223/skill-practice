@@ -1,0 +1,480 @@
+{
+  "baseline": true,
+  "stages": [
+    {
+      "stageId": "world-01-stage-1",
+      "mapWidth": 2560,
+      "cameraWidth": 2560,
+      "floor": null,
+      "samples": [
+        {
+          "x": 2460,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2404,
+          "status": "play"
+        },
+        {
+          "x": 2460,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2404,
+          "status": "play"
+        },
+        {
+          "x": 2460.5,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2404.5,
+          "status": "play"
+        },
+        {
+          "x": 2461.4998,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2405.4998,
+          "status": "play"
+        },
+        {
+          "x": 2462.9994,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2406.9994,
+          "status": "play"
+        },
+        {
+          "x": 2464.9988000000003,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2408.9988000000003,
+          "status": "play"
+        },
+        {
+          "x": 2467.4980000000005,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2411.4980000000005,
+          "status": "play"
+        },
+        {
+          "x": 2470.4970000000003,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2414.4970000000003,
+          "status": "play"
+        },
+        {
+          "x": 2473.9958,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2417.9958,
+          "status": "play"
+        },
+        {
+          "x": 2477.9944,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2421.9944,
+          "status": "play"
+        },
+        {
+          "x": 2481.9944,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2425.9944,
+          "status": "play"
+        },
+        {
+          "x": 2485.9944,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2429.9944,
+          "status": "play"
+        },
+        {
+          "x": 2489.9944,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2433.9944,
+          "status": "play"
+        },
+        {
+          "x": 2493.9944,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2437.9944,
+          "status": "play"
+        },
+        {
+          "x": 2497.9944,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2441.9944,
+          "status": "play"
+        },
+        {
+          "x": 2501.9944,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2445.9944,
+          "status": "play"
+        },
+        {
+          "x": 2505.9944,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2449.9944,
+          "status": "play"
+        },
+        {
+          "x": 2509.9944,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2453.9944,
+          "status": "play"
+        },
+        {
+          "x": 2513.9944,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2457.9944,
+          "status": "play"
+        },
+        {
+          "x": 2517.9944,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2461.9944,
+          "status": "play"
+        },
+        {
+          "x": 2521.9944,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2465.9944,
+          "status": "play"
+        },
+        {
+          "x": 2525.9944,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2469.9944,
+          "status": "play"
+        },
+        {
+          "x": 2529.9944,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2473.9944,
+          "status": "play"
+        },
+        {
+          "x": 2533.9944,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2477.9944,
+          "status": "play"
+        },
+        {
+          "x": 2537.9944,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2481.9944,
+          "status": "play"
+        },
+        {
+          "x": 2541.9944,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2485.9944,
+          "status": "play"
+        },
+        {
+          "x": 2545.9944,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2489.9944,
+          "status": "play"
+        },
+        {
+          "x": 2549.9944,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2493.9944,
+          "status": "play"
+        },
+        {
+          "x": 2553.9944,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2497.9944,
+          "status": "play"
+        },
+        {
+          "x": 2557.9944,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2501.9944,
+          "status": "play"
+        },
+        {
+          "x": 2561.9944,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2505.9944,
+          "status": "play"
+        },
+        {
+          "x": 2565.9944,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2509.9944,
+          "status": "play"
+        },
+        {
+          "x": 2569.9944,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2513.9944,
+          "status": "play"
+        },
+        {
+          "x": 2573.9944,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2517.9944,
+          "status": "play"
+        },
+        {
+          "x": 2577.9944,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2521.9944,
+          "status": "play"
+        },
+        {
+          "x": 2581.9944,
+          "y": 512,
+          "bodyBottom": 512,
+          "velocityY": 0,
+          "left": 2525.9944,
+          "status": "play"
+        },
+        {
+          "x": 2585.9944,
+          "y": 512.3333333333333,
+          "bodyBottom": 512.3333333333333,
+          "velocityY": 20,
+          "left": 2529.9944,
+          "status": "play"
+        },
+        {
+          "x": 2589.9944,
+          "y": 513,
+          "bodyBottom": 513,
+          "velocityY": 40,
+          "left": 2533.9944,
+          "status": "play"
+        },
+        {
+          "x": 2593.9944,
+          "y": 514,
+          "bodyBottom": 514,
+          "velocityY": 60,
+          "left": 2537.9944,
+          "status": "play"
+        },
+        {
+          "x": 2597.9944,
+          "y": 515.3333333333333,
+          "bodyBottom": 515.3333333333333,
+          "velocityY": 80,
+          "left": 2541.9944,
+          "status": "play"
+        },
+        {
+          "x": 2601.9944,
+          "y": 517,
+          "bodyBottom": 517,
+          "velocityY": 100,
+          "left": 2545.9944,
+          "status": "play"
+        },
+        {
+          "x": 2605.9944,
+          "y": 519,
+          "bodyBottom": 519,
+          "velocityY": 120,
+          "left": 2549.9944,
+          "status": "play"
+        },
+        {
+          "x": 2609.9944,
+          "y": 521.3333333333333,
+          "bodyBottom": 521.3333333333333,
+          "velocityY": 140,
+          "left": 2553.9944,
+          "status": "play"
+        },
+        {
+          "x": 2613.9944,
+          "y": 524,
+          "bodyBottom": 524,
+          "velocityY": 160,
+          "left": 2557.9944,
+          "status": "play"
+        },
+        {
+          "x": 2617.9944,
+          "y": 527,
+          "bodyBottom": 527,
+          "velocityY": 180,
+          "left": 2561.9944,
+          "status": "play"
+        },
+        {
+          "x": 2621.9944,
+          "y": 530.3333333333333,
+          "bodyBottom": 530.3333333333333,
+          "velocityY": 0,
+          "left": 2565.9944,
+          "status": "completed"
+        },
+        {
+          "x": 2621.9944,
+          "y": 530.6666666666665,
+          "bodyBottom": 530.6666666666665,
+          "velocityY": 20,
+          "left": 2565.9944,
+          "status": "completed"
+        },
+        {
+          "x": 2621.9944,
+          "y": 531.3333333333333,
+          "bodyBottom": 531.3333333333333,
+          "velocityY": 40,
+          "left": 2565.9944,
+          "status": "completed"
+        },
+        {
+          "x": 2621.9944,
+          "y": 532.3333333333333,
+          "bodyBottom": 532.3333333333333,
+          "velocityY": 60,
+          "left": 2565.9944,
+          "status": "completed"
+        },
+        {
+          "x": 2621.9944,
+          "y": 533.6666666666665,
+          "bodyBottom": 533.6666666666665,
+          "velocityY": 80,
+          "left": 2565.9944,
+          "status": "completed"
+        },
+        {
+          "x": 2621.9944,
+          "y": 535.3333333333333,
+          "bodyBottom": 535.3333333333333,
+          "velocityY": 100,
+          "left": 2565.9944,
+          "status": "completed"
+        },
+        {
+          "x": 2621.9944,
+          "y": 537.3333333333333,
+          "bodyBottom": 537.3333333333333,
+          "velocityY": 120,
+          "left": 2565.9944,
+          "status": "completed"
+        },
+        {
+          "x": 2621.9944,
+          "y": 539.6666666666665,
+          "bodyBottom": 539.6666666666665,
+          "velocityY": 140,
+          "left": 2565.9944,
+          "status": "completed"
+        },
+        {
+          "x": 2621.9944,
+          "y": 542.3333333333333,
+          "bodyBottom": 542.3333333333333,
+          "velocityY": 160,
+          "left": 2565.9944,
+          "status": "completed"
+        },
+        {
+          "x": 2621.9944,
+          "y": 545.3333333333333,
+          "bodyBottom": 545.3333333333333,
+          "velocityY": 180,
+          "left": 2565.9944,
+          "status": "completed"
+        },
+        {
+          "x": 2621.9944,
+          "y": 548.6666666666665,
+          "bodyBottom": 548.6666666666665,
+          "velocityY": 200,
+          "left": 2565.9944,
+          "status": "completed"
+        },
+        {
+          "x": 2621.9944,
+          "y": 552.3333333333331,
+          "bodyBottom": 552.3333333333331,
+          "velocityY": 220,
+          "left": 2565.9944,
+          "status": "completed"
+        }
+      ],
+      "completed": [
+        {
+          "x": 2617.9944,
+          "y": 527,
+          "left": 2561.9944
+        }
+      ],
+      "floorDestroyed": true,
+      "maxDrop": 40.333333333333144,
+      "maxDownwardVelocity": 220
+    }
+  ],
+  "errors": []
+}
