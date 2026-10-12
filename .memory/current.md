@@ -10,11 +10,11 @@
 
 ## Active Task
 
-[T03](./phases/2026-10-12-world01-gameplay-refinement/P01-gameplay-refinement/T03-boss-visuals-health.md)
+[T04](./phases/2026-10-12-world01-gameplay-refinement/P01-gameplay-refinement/T04-samoyed-audio.md)
 
 ## Status
 
-- T01~T02 완료. 최근 커밋: `3a435d1`. 검증 결과는 test-plans/2026-10-12-world01-gameplay-refinement.md 참조.
+- T01~T03 완료. 최근 커밋: `9eb4cf7`. 검증 결과는 test-plans/2026-10-12-world01-gameplay-refinement.md 참조.
 - 사용자 요청에 따라 다음 Task를 자동으로 이어서 실행한다.
 
 ## Previous Work Pointer
@@ -25,4 +25,4 @@
 
 ## Next Step (IMPORTANT)
 
-T03 청사진을 읽고 구현·검증·한국어 커밋 후 포인터를 전진한다.
+T04 청사진을 읽고 구현·검증·한국어 커밋 후 포인터를 전진한다.

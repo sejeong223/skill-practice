@@ -14,8 +14,6 @@ const SOUND_PATTERNS: Readonly<Partial<Record<SoundKey, readonly number[]>>> = {
   "escape-door": [392, 523, 659],
   "slipper-hit": [392, 262],
   sneeze: [494, 622, 330],
-  "bowl-clang": [880, 660],
-  "stray-dog-rush": [220, 330, 440],
   coin: [784, 988],
   checkpoint: [523, 659],
   "death-cartoon": [220, 147],
@@ -109,12 +107,18 @@ export class AudioManager {
   private readonly scene: Phaser.Scene;
   private readonly unsubscribers: Array<() => void> = [];
   private readonly activeSources = new Set<AudioScheduledSourceNode>();
+  private readonly sourceCleanups = new Map<AudioScheduledSourceNode, () => void>();
   private readonly toneMusicOwner = Symbol("audio-manager");
   private audioContext?: AudioContext;
+  private ownsAudioContext = false;
+  private destroyed = false;
   private musicKey: string | null = null;
 
   public constructor(scene: Phaser.Scene, gameplayBus?: GameplayEventBus, gameBus?: GameEventBus) {
     this.scene = scene;
+    if (scene.sound instanceof Phaser.Sound.WebAudioSoundManager) {
+      this.audioContext = scene.sound.context as AudioContext;
+    }
     this.bindUnlockGesture();
     if (gameplayBus) {
       this.unsubscribers.push(gameplayBus.on("slipper-hit", () => this.playSfx("slipper-hit")));
@@ -136,10 +140,15 @@ export class AudioManager {
   }
 
   public unlock(): void {
+    if (this.destroyed || typeof window === "undefined" || this.scene.sound instanceof Phaser.Sound.NoAudioSoundManager) return;
     const Context = window.AudioContext ?? (window as typeof window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-    if (!this.audioContext && Context) this.audioContext = new Context();
-    void this.audioContext?.resume();
+    if (!this.audioContext && Context) {
+      this.audioContext = new Context();
+      this.ownsAudioContext = true;
+    }
+    if (this.audioContext?.state !== "closed") void this.audioContext?.resume().catch(() => undefined);
     void Tone.start().then(() => {
+      if (this.destroyed) return;
       const key = this.musicKey;
       if (key && !this.scene.cache.audio.exists(key) && activeToneMusicOwner !== this.toneMusicOwner) {
         this.startToneMusic(key as MusicKey);
@@ -148,12 +157,22 @@ export class AudioManager {
   }
 
   public playSfx(key: string): void {
-    if (!SOUND_KEYS.includes(key as SoundKey) || this.scene.sound.locked) return;
+    if (this.destroyed || !SOUND_KEYS.includes(key as SoundKey)) return;
     if (this.scene.cache.audio.exists(key)) {
-      this.scene.sound.play(key);
+      if (!this.scene.sound.locked) this.scene.sound.play(key);
       return;
     }
     if (!this.isAudioReady()) return;
+    if (key === "bowl-clang") {
+      this.playBowlClang();
+      return;
+    }
+    if (key === "stray-dog-rush") {
+      [220, 330, 440].forEach((frequency, index) => {
+        this.playTone(frequency, 0.07, 0.009, "sine", 0.12 + index * 0.065);
+      });
+      return;
+    }
     if (key === "bag-rustle") {
       this.playRustle();
       return;
@@ -165,7 +184,7 @@ export class AudioManager {
   }
 
   public playMusic(key: string): void {
-    if (!MUSIC_KEYS.includes(key as MusicKey) || this.musicKey === key) return;
+    if (this.destroyed || !MUSIC_KEYS.includes(key as MusicKey) || this.musicKey === key) return;
     this.stopMusic();
     this.musicKey = key;
     if (this.scene.cache.audio.exists(key)) {
@@ -191,10 +210,11 @@ export class AudioManager {
   }
 
   public destroy(): void {
+    this.destroyed = true;
     this.unsubscribers.splice(0).forEach((unsubscribe) => unsubscribe());
     this.stopMusic();
     this.stopAllSounds();
-    if (this.audioContext && this.audioContext.state !== "closed") {
+    if (this.ownsAudioContext && this.audioContext && this.audioContext.state !== "closed") {
       void this.audioContext.close().catch(() => undefined);
     }
     this.audioContext = undefined;
@@ -213,7 +233,7 @@ export class AudioManager {
   }
 
   private startToneMusic(key: MusicKey): void {
-    if (Tone.getContext().state !== "running") return;
+    if (this.destroyed || Tone.getContext().state !== "running") return;
     const arrangement = MUSIC_ARRANGEMENTS[key];
     stopToneMusic();
 
@@ -289,7 +309,7 @@ export class AudioManager {
     gain.gain.setValueAtTime(volume, startsAt);
     gain.gain.exponentialRampToValueAtTime(0.0001, startsAt + durationSeconds);
     oscillator.connect(gain).connect(context.destination);
-    this.trackSource(oscillator);
+    this.trackSource(oscillator, [gain]);
     oscillator.start(startsAt);
     oscillator.stop(startsAt + durationSeconds);
   }
@@ -313,16 +333,54 @@ export class AudioManager {
     gain.gain.setValueAtTime(0.018, context.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.0001, context.currentTime + 0.16);
     source.connect(filter).connect(gain).connect(context.destination);
-    this.trackSource(source);
+    this.trackSource(source, [filter, gain]);
     source.start();
     source.stop(context.currentTime + 0.16);
   }
 
-  private trackSource(source: AudioScheduledSourceNode): void {
+  private playBowlClang(): void {
+    if (!this.isAudioReady()) return;
+    const context = this.audioContext!;
+    const startsAt = context.currentTime;
+    const filter = context.createBiquadFilter();
+    filter.type = "lowpass";
+    filter.frequency.setValueAtTime(2400, startsAt);
+    filter.connect(context.destination);
+    const partials = [
+      { frequency: 720, peak: 0.023, decay: 0.18 },
+      { frequency: 1190, peak: 0.009, decay: 0.13 },
+      { frequency: 1820, peak: 0.004, decay: 0.07 },
+    ];
+    let remaining = partials.length;
+    for (const { frequency, peak, decay } of partials) {
+      const oscillator = context.createOscillator();
+      const gain = context.createGain();
+      oscillator.type = "sine";
+      oscillator.frequency.setValueAtTime(frequency, startsAt);
+      gain.gain.setValueAtTime(0.0001, startsAt);
+      gain.gain.linearRampToValueAtTime(peak, startsAt + 0.003);
+      gain.gain.exponentialRampToValueAtTime(0.0001, startsAt + decay);
+      oscillator.connect(gain).connect(filter);
+      this.trackSource(oscillator, [gain], () => {
+        remaining -= 1;
+        if (remaining === 0) filter.disconnect();
+      });
+      oscillator.start(startsAt);
+      oscillator.stop(startsAt + 0.22);
+    }
+  }
+
+  private trackSource(source: AudioScheduledSourceNode, nodes: readonly AudioNode[] = [], afterCleanup?: () => void): void {
     this.activeSources.add(source);
-    source.addEventListener("ended", () => {
+    const cleanup = (): void => {
+      if (!this.sourceCleanups.delete(source)) return;
       this.activeSources.delete(source);
-    }, { once: true });
+      source.disconnect();
+      nodes.forEach((node) => node.disconnect());
+      afterCleanup?.();
+    };
+    this.sourceCleanups.set(source, cleanup);
+    source.addEventListener("ended", cleanup, { once: true });
   }
 
   private stopSources(sources: Set<AudioScheduledSourceNode>): void {
@@ -332,16 +390,17 @@ export class AudioManager {
       } catch {
         // A source that already ended cannot be stopped again.
       }
-      this.activeSources.delete(source);
+      this.sourceCleanups.get(source)?.();
     }
     sources.clear();
   }
 
   private isAudioReady(): boolean {
-    return Boolean(this.audioContext && this.audioContext.state === "running");
+    return !this.destroyed && Boolean(this.audioContext && this.audioContext.state === "running");
   }
 
   private musicForStage(stageId: string): MusicKey {
+    if (stageId.endsWith("-boss")) return "boss";
     if (stageId.startsWith("world-01")) return "world-01-alley";
     if (stageId.startsWith("world-02")) return "world-02-amusement";
     if (stageId.startsWith("world-03")) return "world-03-factory";

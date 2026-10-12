@@ -8,6 +8,7 @@ import {
 import type { ProgressState, StageId } from "../core/types";
 import { GameEventBus } from "../bridge/GameEventBus";
 import { CameraDirector } from "../camera/CameraDirector";
+import { AudioManager } from "../audio/AudioManager";
 import { CutsceneDirector } from "../cutscenes/CutsceneDirector";
 import { CUTSCENE_SCRIPTS } from "../data/cutscenes";
 import { TOOL_DEFINITIONS } from "../data/tools";
@@ -80,6 +81,7 @@ export class StageScene extends Phaser.Scene {
   private skillSystem?: SkillSystem;
   private defenseToolSystem?: DefenseToolSystem;
   private bowlShieldVisual?: BowlShieldVisual;
+  private audioManager?: AudioManager;
   private strayDogEvent?: StrayDogEvent;
   private stageBackdrop?: Phaser.GameObjects.Rectangle;
   private stageReviewKey?: Phaser.Input.Keyboard.Key;
@@ -144,6 +146,9 @@ export class StageScene extends Phaser.Scene {
       this.loadedMap,
     );
     this.gameplayEventBus = new GameplayEventBus();
+    if (stage.id === "world-01-stage-boss") {
+      this.audioManager = new AudioManager(this, this.gameplayEventBus, this.eventBus);
+    }
     this.skillSystem = new SkillSystem(
       this.player, SKILL_DEFINITIONS, this.gameplayEventBus,
       this.persistenceEventBus, this.progress.unlockedSkills,
@@ -300,7 +305,7 @@ export class StageScene extends Phaser.Scene {
       this.bowlShieldVisual = new BowlShieldVisual(this, this.player, this.defenseToolSystem, this.gameplayEventBus);
       this.strayDogEvent = new StrayDogEvent(this.gameplayEventBus, () => ({
         x: this.player!.x, y: this.player!.y - 20,
-      }));
+      }), { count: 5 });
       this.calicoBoss = new World01CalicoBoss(
         this, this.player, this.calicoSprite, this.defenseToolSystem,
         this.strayDogEvent, this.gameplayEventBus,
@@ -311,7 +316,7 @@ export class StageScene extends Phaser.Scene {
         (now) => this.handleCalicoThirdHit(now),
       );
       this.cutsceneDirector = new CutsceneDirector(
-        this, this.player, this.progress, CUTSCENE_SCRIPTS, this.eventBus, this.cameraDirector,
+        this, this.player, this.progress, CUTSCENE_SCRIPTS, this.eventBus, this.cameraDirector, this.audioManager,
       );
       this.eventUnsubscribers.push(
         this.eventBus.on("cutscene-skip-requested", () => this.cutsceneDirector?.skip()),
@@ -329,6 +334,7 @@ export class StageScene extends Phaser.Scene {
           this.cameras.main.setZoom(1);
           if (this.scene.isActive() && this.runtime?.getStatus() === "cutscene") {
             this.runtime.setStatus("play");
+            this.audioManager?.playMusic("boss");
           }
         });
       } else {
@@ -402,6 +408,8 @@ export class StageScene extends Phaser.Scene {
       this.bowlShieldVisual = undefined;
       this.cutsceneDirector?.destroy();
       this.cutsceneDirector = undefined;
+      this.audioManager?.destroy();
+      this.audioManager = undefined;
       this.calicoSprite?.destroy();
       this.calicoSprite = undefined;
       this.mapInteraction?.destroy();

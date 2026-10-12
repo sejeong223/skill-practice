@@ -5,6 +5,7 @@ import type { SlipperAttackResult } from "./SlipperAttack";
 import { DefenseToolSystem } from "./DefenseToolSystem";
 import { StrayDogEvent } from "./StrayDogEvent";
 import { isCalicoInSlipperReach } from "./calicoMeleeHitbox";
+import { createSamoyedSurge, sampleSamoyedDog, SAMOYED_RELEASE_MS, SAMOYED_DONE_MS, SAMOYED_SIZE, type SamoyedSurge, type SamoyedPath } from "./samoyedSurge";
 import {
   createFishboneTrajectory,
   fishbonePositionAt,
@@ -35,7 +36,8 @@ export class World01CalicoBoss {
   private readonly bar: Phaser.GameObjects.Graphics;
   private readonly name: Phaser.GameObjects.Text;
   private readonly warning: Phaser.GameObjects.Text;
-  private readonly dogSprites: Phaser.GameObjects.Image[] = [];
+  private readonly dogSprites: Array<{ image: Phaser.GameObjects.Image; path: SamoyedPath }> = [];
+  private surge?: SamoyedSurge;
   private readonly unsubscribeDogs: () => void;
   private state: CalicoBossState = {
     health: CALICO_MAX_HEALTH, phase: "intro", nextThrowAt: 1500,
@@ -91,7 +93,7 @@ export class World01CalicoBoss {
       this.player.clearTint();
       this.playerFlashUntil = 0;
     }
-    if (this.dogUntil && this.elapsed >= this.dogUntil) this.clearDogs();
+    this.updateDogs();
 
     if (this.state.phase === "ready" && this.elapsed >= this.state.nextThrowAt) {
       this.state = { ...this.state, phase: "telegraph" };
@@ -134,6 +136,7 @@ export class World01CalicoBoss {
     this.elapsed = 0;
     this.flashUntil = 0;
     this.playerFlashUntil = 0;
+    this.player.clearTint();
     this.state = {
       health: CALICO_MAX_HEALTH, phase: "intro", nextThrowAt: 1500,
       projectileId: null, corgiHearts: 3, damageLockedUntil: 0,
@@ -243,27 +246,47 @@ export class World01CalicoBoss {
   }
 
   private spawnDogSurround(): void {
-    if (this.dogUntil || this.state.phase === "defeated") return;
+    if (this.surge || this.state.phase === "defeated") return;
     this.player.lockControl("bowl-stray-dog-blockade");
     this.player.setVelocityX(0);
-    this.dogUntil = this.elapsed + 2200;
+    this.dogUntil = this.elapsed + SAMOYED_RELEASE_MS;
     this.state = {
       ...this.state,
       nextThrowAt: Math.min(this.state.nextThrowAt, this.elapsed + 350),
     };
-    this.dogs.getActiveDogs().forEach((dog, index) => {
-      const image = this.scene.add.image(dog.x, dog.y, "world-01-stray-dog")
-        .setDisplaySize(48, 40).setDepth(11)
-        .setFlipX(index === 2);
-      this.dogSprites.push(image);
+    this.surge = createSamoyedSurge(
+      { x: this.player.x, floorY: 512 }, this.scene.cameras.main.worldView,
+      this.elapsed, this.dogs.getActiveDogs().length,
+    );
+    this.surge.dogs.forEach((path) => {
+      const image = this.scene.add.image(path.fromX, path.floorY, "world-01-stray-dog")
+        .setOrigin(0.5, 1).setDisplaySize(SAMOYED_SIZE.width, SAMOYED_SIZE.height).setDepth(this.player.depth + 4);
+      this.dogSprites.push({ image, path });
     });
+  }
+
+  private updateDogs(): void {
+    if (!this.surge) return;
+    const elapsed = this.elapsed - this.surge.startedAtMs;
+    if (this.dogUntil && this.elapsed >= this.dogUntil) {
+      this.player.unlockControl("bowl-stray-dog-blockade");
+      this.dogUntil = 0;
+    }
+    if (elapsed >= SAMOYED_DONE_MS) {
+      this.clearDogs();
+      return;
+    }
+    for (const { image, path } of this.dogSprites) {
+      const position = sampleSamoyedDog(path, elapsed);
+      image.setPosition(position.x, position.y);
+    }
   }
 
   private clearDogs(): void {
     this.dogUntil = 0;
+    this.surge = undefined;
     this.player.unlockControl("bowl-stray-dog-blockade");
-    this.player.clearTint();
-    this.dogSprites.splice(0).forEach((dog) => dog.destroy());
+    this.dogSprites.splice(0).forEach(({ image }) => image.destroy());
     this.dogs.clear();
   }
 

@@ -36,7 +36,13 @@ Use case: stylized-concept. Asset type: a tiny transparent pixel-art equipment s
 
 ## T04 — 사모예드·효과음
 
-대기.
+- DefenseToolSystem/StrayDogEvent 실제 이벤트 연동2건, 시간 기반 경로2건 통과. weak3회 clang3/무리1/count5, 네 번째 무음, reset 반복/destroy 해제 확인. 타입·lint 통과.
+- Chromium 실제 게임에서 카메라 left530/right1810 시 출발 x452/376/300/224/148, 목표786/818/850/882/914 확인. 1·2회 무리0,3회5마리. 입장 중pause250ms 동안 위치·boss elapsed 동일, 재개 후 퇴장/잠금해제/개0 확인. 재진입 시 clang 구독2개(오디오1+방패그림1), 이전 예약source0, 공유context 미종료.
+- 112×96에서는 원본의 투명 여백 때문에 코기 귀가 남아 실제 표시를140×120으로 조정했다. 종횡비 유지,5마리/간격32 유지. 시작/끝 padding은 반폭70+8=78로 동기화. `assets/world01-refinement-t04-cover.png`에서 코기의 머리·몸 가림 확인. 기존 개 이미지 재사용, 추가 생성 없음.
+- `assets/world01-refinement-t04-surge.webm`에 입장/가림/정지/재개/퇴장 기록. `world01-refinement-t04-enter.png` 및 cover.png도 저장.
+- 실제 WebAudio 출력 두 스트림(BGM/SFX)을 녹음해 `assets/world01-refinement-t04-audio-mix.wav`로 합쳤다. 길이5.94초, SFX peak0.0350, 합성 peak0.2362, clipping 없음. 정상 unlock 후 성공 방어3회에 전용 clang 호출3,4번째 추가0. 음악key=boss, Phaser context 공유 확인. 합성3개sine/attack3ms/lowpass2400Hz/220ms 상한, rush120ms 후 시작.
+- **검증 한계**: 이 실행 환경은 오디오 입력 청취를 지원하지 않는다. 파형·이벤트·녹음 검증은 완료했으나 실제 스피커/이어폰/모바일 기기의 음량·음색 청취는 미검증이다. 녹음 파일을 제공하며 주관적인 청취 완료로 주장하지 않는다.
+- 범위 밖 발견 사항 없음.
 
 ## T05 — 통합 회귀
 

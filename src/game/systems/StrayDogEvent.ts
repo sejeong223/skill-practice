@@ -16,7 +16,11 @@ export class StrayDogEvent {
   private surgeNumber = 0;
   private readonly getOrigin: () => { x: number; y: number };
 
-  public constructor(eventBus: GameplayEventBus, getOrigin: () => { x: number; y: number } = () => ({ x: 520, y: 500 })) {
+  public constructor(
+    eventBus: GameplayEventBus,
+    getOrigin: () => { x: number; y: number } = () => ({ x: 520, y: 500 }),
+    private readonly options: { count?: number } = {},
+  ) {
     this.eventBus = eventBus;
     this.getOrigin = getOrigin;
     this.unsubscribe = eventBus.on("bowl-broken", (payload) => {
@@ -40,11 +44,12 @@ export class StrayDogEvent {
   private spawnSurge(now: number): void {
     if (this.dogs.length > 0) return;
     this.surgeNumber += 1;
-    const count = 3;
+    const requested = this.options.count ?? 3;
+    const count = Number.isFinite(requested) ? Math.max(1, Math.floor(requested)) : 1;
     const origin = this.getOrigin();
     const dogs = Array.from({ length: count }, (_, index) => ({
       id: "stray-dog-" + this.surgeNumber + "-" + (index + 1),
-      x: origin.x + (index - 1) * 48,
+      x: origin.x + (index - (count - 1) / 2) * 48,
       y: origin.y,
       attacksEnemies: false,
       blocksPlayerRoute: true,
