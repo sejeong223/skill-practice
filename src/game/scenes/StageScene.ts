@@ -327,7 +327,12 @@ export class StageScene extends Phaser.Scene {
       this.eventUnsubscribers.push(
         this.eventBus.on("cutscene-skip-requested", () => this.cutsceneDirector?.skip()),
         this.eventBus.on("cutscene-advance-requested", () => this.cutsceneDirector?.advance()),
-        this.eventBus.on("cutscene-beat", ({ cutsceneId, index }) => {
+        this.eventBus.on("cutscene-beat", ({ cutsceneId, beat, index }) => {
+          if (cutsceneId === "world-01-boss-intro" || cutsceneId === "world-01-boss-clear") {
+            const speaker = beat.dialogue?.[0]?.speaker;
+            const actor = speaker === "calico" ? this.calicoSprite : speaker === "corgi" ? this.player : undefined;
+            if (actor) this.cameraDirector?.focusDialogue(actor.x, stage.mapHeight / 2, index === 0);
+          }
           if (cutsceneId === "world-01-boss-clear" && index === 7) {
             this.calicoBoss?.showCollapseFrame();
           }
@@ -335,9 +340,7 @@ export class StageScene extends Phaser.Scene {
       );
       this.runtime.setStatus("cutscene");
       if (!this.progress.seenCutsceneIds.includes("world-01-boss-intro")) {
-        this.cameras.main.setZoom(0.8);
         void this.cutsceneDirector.play("world-01-boss-intro").then(() => {
-          this.cameras.main.setZoom(1);
           if (this.scene.isActive() && this.runtime?.getStatus() === "cutscene") {
             this.runtime.setStatus("play");
             this.audioManager?.playMusic(getStageMusicKey(stage.id));

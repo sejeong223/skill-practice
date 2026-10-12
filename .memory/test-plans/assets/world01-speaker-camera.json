@@ -1,0 +1,70 @@
+{
+  "samples": [
+    {
+      "id": "world-01-boss-intro",
+      "index": 0,
+      "speaker": "calico",
+      "zoom": 1,
+      "scrollX": 640,
+      "view": {
+        "x": 640,
+        "y": 0,
+        "w": 1280,
+        "h": 720
+      },
+      "actorX": 1280,
+      "status": "cutscene"
+    },
+    {
+      "id": "world-01-boss-intro",
+      "index": 1,
+      "speaker": "corgi",
+      "zoom": 1,
+      "scrollX": 114,
+      "view": {
+        "x": 114,
+        "y": 0,
+        "w": 1280,
+        "h": 720
+      },
+      "actorX": 160,
+      "status": "cutscene"
+    },
+    {
+      "id": "world-01-boss-clear",
+      "index": 0,
+      "speaker": "calico",
+      "zoom": 1,
+      "scrollX": 640,
+      "view": {
+        "x": 640,
+        "y": 0,
+        "w": 1280,
+        "h": 720
+      },
+      "actorX": 1280,
+      "status": "cutscene"
+    },
+    {
+      "id": "world-01-boss-clear",
+      "index": 1,
+      "speaker": "corgi",
+      "zoom": 1,
+      "scrollX": 0,
+      "view": {
+        "x": 0,
+        "y": 0,
+        "w": 1280,
+        "h": 720
+      },
+      "actorX": 160,
+      "status": "cutscene"
+    }
+  ],
+  "restored": {
+    "zoom": 1,
+    "scroll": 0,
+    "locked": false
+  },
+  "errors": []
+}

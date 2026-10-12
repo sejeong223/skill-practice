@@ -55,8 +55,20 @@ export class CameraDirector {
   }
 
   public endCutscene(): void {
-    this.camera.zoomTo(1, 350, "Sine.easeInOut");
+    this.camera.panEffect.reset();
+    this.camera.zoomEffect.reset();
+    this.camera.setZoom(1);
     this.followPlayer();
+  }
+
+  public focusDialogue(x: number, y: number, immediate = false): void {
+    this.pauseFollow();
+    this.camera.panEffect.reset();
+    this.camera.zoomEffect.reset();
+    this.camera.setZoom(1);
+    this.camera.setBounds(0, 0, this.stage.mapWidth, this.stage.mapHeight);
+    if (immediate) this.camera.centerOn(x, y);
+    else this.camera.pan(x, y, 300, "Sine.easeInOut", true);
   }
 
   public fadeToBlack(durationMs = 250): void {

@@ -2,24 +2,23 @@
 
 ## Active Plan
 
-[월드 1 보스전 원·일시정지·음악·체크포인트](./plans/2026-10-12-world01-pause-music-checkpoints.md)
+[2026-10-12-world01-camera-exit-sfx](./plans/2026-10-12-world01-camera-exit-sfx.md)
 
 ## Active Phase
 
-없음 — [P01](./phases/2026-10-12-world01-pause-music-checkpoints/P01-feedback-and-audio/phase.md) 완료.
+[P01](./phases/2026-10-12-world01-camera-exit-sfx/P01-player-feedback/phase.md)
 
 ## Active Task
 
-없음 — T01~T05 완료.
+[T01-speaker-camera](./phases/2026-10-12-world01-camera-exit-sfx/P01-player-feedback/T01-speaker-camera.md)
 
 ## Status
 
-- T05 완료: 093d458. 진행률 5/5.
-- 전 Task 구현·검증 및 한국어 커밋 완료. 검증 한계는 통합 기록을 참고한다.
+- in_progress: 0/3
 
 ## Next Step (IMPORTANT)
 
-이번 계획의 다음 Task는 없다. 이전 compact 계획과 상점 후속 작업은 자동 재개하지 않는다.
+T01 -> T02 -> T03
 
 ## Existing Worktree Baseline
 
