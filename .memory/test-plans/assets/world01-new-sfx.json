@@ -1,0 +1,55 @@
+{
+  "results": [
+    {
+      "kind": "coin",
+      "peak": 0.233371764421463,
+      "sources": [
+        {
+          "duration": 0.4,
+          "context": "running"
+        }
+      ],
+      "duck": 0.38,
+      "active": 0,
+      "gain": 1,
+      "balance": 11,
+      "checkpoint": null,
+      "phaserContext": "running"
+    },
+    {
+      "kind": "checkpoint",
+      "peak": 0.27295368909835815,
+      "sources": [
+        {
+          "duration": 1.05,
+          "context": "running"
+        }
+      ],
+      "duck": 0.38,
+      "active": 0,
+      "gain": 1,
+      "balance": 11,
+      "checkpoint": "world-01-stage-2-checkpoint",
+      "phaserContext": "running"
+    },
+    {
+      "kind": "recontact",
+      "peak": 0,
+      "sources": [],
+      "duck": 1,
+      "active": 0,
+      "gain": 1,
+      "balance": 11,
+      "checkpoint": "world-01-stage-2-checkpoint",
+      "phaserContext": "running"
+    }
+  ],
+  "paused": {
+    "active": 0,
+    "gain": 0,
+    "status": "paused"
+  },
+  "errors": [],
+  "consoleErrors": [],
+  "physicalListening": false
+}

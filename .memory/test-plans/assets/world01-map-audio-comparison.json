@@ -1,0 +1,30 @@
+{
+  "ground13Identical": true,
+  "ground24Identical": false,
+  "backgrounds": [
+    {
+      "name": "world-01-mid.png",
+      "sha256": "d35ced3d4bc07125c90692ba4d8656a7795da40cd97562602bcdaca67c341480"
+    },
+    {
+      "name": "world-01-roof-day-mid.png",
+      "sha256": "d205fd28d501de622365c9a4391be38418927b31dbdfb0110e735e4572883775"
+    },
+    {
+      "name": "world-01-clothesline-day-mid.png",
+      "sha256": "e689b1704b379b6700faf70e50e8016021563da0d484d84fedf2060fe66fc4b9"
+    }
+  ],
+  "audio": [
+    {
+      "name": "coin-pickup.wav",
+      "bytes": 35324,
+      "sha256": "2b8bbc2f2fca15efd079c218a0579d14c819733cab2b96e88a8cc900952f1041"
+    },
+    {
+      "name": "checkpoint-chime.wav",
+      "bytes": 92654,
+      "sha256": "52cd4ba8b553de90a086963b6a680674172e39a4d2dec6aaea0063a31bb001c4"
+    }
+  ]
+}

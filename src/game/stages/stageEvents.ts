@@ -11,6 +11,10 @@ export interface StageEventMap {
     currentStageCoins: number;
     bankedCoins: number;
   };
+  "coin-collected": {
+    stageId: StageId;
+    coinId: string;
+  };
   death: {
     stageId: StageId;
     cause: "enemy" | "trap" | "fall" | "tool-drawback" | "scripted";

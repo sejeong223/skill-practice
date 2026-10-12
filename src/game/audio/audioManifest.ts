@@ -9,3 +9,11 @@ export const MUSIC_KEYS = [
 
 export type SoundKey = (typeof SOUND_KEYS)[number];
 export type MusicKey = (typeof MUSIC_KEYS)[number];
+
+export type FeedbackSoundKey = "coin" | "checkpoint";
+export const FEEDBACK_AUDIO: Readonly<Record<FeedbackSoundKey, {
+  cacheKey: string; url: string; gain: number;
+}>> = {
+  coin: { cacheKey: "feedback-coin", url: "/assets/audio/coin-pickup.wav", gain: 0.36 },
+  checkpoint: { cacheKey: "feedback-checkpoint", url: "/assets/audio/checkpoint-chime.wav", gain: 0.42 },
+};

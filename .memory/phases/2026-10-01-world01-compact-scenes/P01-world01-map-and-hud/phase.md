@@ -10,12 +10,12 @@
 | :--- | :--- | :--- | :--- |
 | T01 | `superseded` | 2026-10-12 새 계획 T01/T02로 대체, 완료 처리 아님 | [T01](./T01-compact-normal-maps.md) |
 | T02 | `pending` | 1280×720 보스 맵, 연속 타일 지형, 단일 배경 | [T02](./T02-boss-arena-and-background.md) |
-| T03 | `pending` | 깃발은 최신 계획 T03에서 완료, 출구 숨김은 별도 미완료 | [T03](./T03-day-flag-and-invisible-exit.md) |
+| T03 | `superseded` | 깃발/출구는 최신 피드백 및 camera-exit-sfx 계획으로 대체 완료 | [T03](./T03-day-flag-and-invisible-exit.md) |
 | T04 | `pending` | 외곽 상자 없는 작은 픽셀 하트와 통합 확인 | [T04](./T04-pixel-hearts-and-review.md) |
 
 ## Progress
 
-- done: 0/4; superseded: 1; pending: 3
+- done: 0/4; superseded: 2; pending: 2
 - active: 없음 — [이동·간식·전투 개선](../../../plans/2026-10-12-world01-gameplay-refinement.md)과 [화면·음악·체크포인트 계획](../../../plans/2026-10-12-world01-pause-music-checkpoints.md)은 모두 완료됐다. 이 compact 계획은 자동 재개하지 않는다.
 - 이 계획 재개 지점: T02. 이후 검증에서 옛 기믹24개/HP12 기준을 복원하지 않는다.
 

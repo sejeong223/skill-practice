@@ -3,6 +3,7 @@ import { PIXEL_ASSETS } from "../assets/assetManifest";
 import type { PixelAssetDefinition } from "../assets/assetTypes";
 import type { ProgressState } from "../core/types";
 import { STAGE_IDS } from "../core/constants";
+import { FEEDBACK_AUDIO } from "../audio/audioManifest";
 
 export class PreloadScene extends Phaser.Scene {
   private loadError: string | null = null;
@@ -39,7 +40,10 @@ export class PreloadScene extends Phaser.Scene {
       (file: Phaser.Loader.File) => {
         const asset = PIXEL_ASSETS.find((candidate) => candidate.key === file.key);
 
-        if (asset?.required) {
+        const feedback = Object.values(FEEDBACK_AUDIO).find(sound => sound.cacheKey === file.key);
+        if (feedback) {
+          this.loadError = "필수 효과음을 불러오지 못했습니다: " + feedback.url;
+        } else if (asset?.required) {
           this.loadError =
             "필수 에셋을 불러오지 못했습니다: " + asset.key + " (" + asset.url + ")";
         }
@@ -55,6 +59,10 @@ export class PreloadScene extends Phaser.Scene {
       if (asset.required) {
         this.loadAsset(asset);
       }
+    }
+    for (const sound of Object.values(FEEDBACK_AUDIO)) {
+      // Decode through Tone's context, not Phaser's separately suspended context.
+      this.load.binary(sound.cacheKey, sound.url);
     }
   }
 

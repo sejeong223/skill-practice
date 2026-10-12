@@ -417,6 +417,7 @@ export class StageRuntime {
       this.runtimeState.currentStageCoins += 1;
       this.emitCoins();
     }
+    this.eventBus.emit("coin-collected", { stageId: this.definition.id, coinId });
     return true;
   }
 

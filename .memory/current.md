@@ -10,15 +10,15 @@
 
 ## Active Task
 
-[T02-exit-checkpoint](./phases/2026-10-12-world01-camera-exit-sfx/P01-player-feedback/T02-exit-checkpoint.md)
+[T03-new-feedback-audio](./phases/2026-10-12-world01-camera-exit-sfx/P01-player-feedback/T03-new-feedback-audio.md)
 
 ## Status
 
-- T01: dc60625; 1/3
+- T02: 974eb99; 2/3
 
 ## Next Step (IMPORTANT)
 
-T02-exit-checkpoint
+T03-new-feedback-audio
 
 ## Existing Worktree Baseline
 
@@ -35,8 +35,8 @@ T02-exit-checkpoint
 
 ## Previous Work Pointer
 
-- [예전 compact Phase](./phases/2026-10-01-world01-compact-scenes/P01-world01-map-and-hud/phase.md): T01은 앞선 개선 계획으로 대체됐다. T02 보스 arena/배경, T03 출구, T04 하트는 별도 미완료다.
-- 예전 T03의 체크포인트 깃발 부분은 **이번 T03(`5f1a388`)에서 완료**했다. 기존 픽셀 깃발을 재사용했으며 출구 숨김은 별도 미완료라서 옛 Task 전체를 done으로 만들지 않는다.
+- [예전 compact Phase](./phases/2026-10-01-world01-compact-scenes/P01-world01-map-and-hud/phase.md): T01/T03은 최신 계획으로 대체됐다. T02 보스 arena 크기/배경, T04 하트는 별도 미완료다.
+- 깃발은 `5f1a388`, 출구 표시 제거·끝 이탈 전환·깃발 부활은 `974eb99`에서 완료했다. 옛 T03은 요구가 바뀌어 superseded이며 재실행하지 않는다.
 - 새 계획 완료 뒤 옛 계획을 자동 재개하지 않는다. 재개 요청이 오면 T02부터 검토하되 기믹32개·보스HP10·새 간식 외형·최근 바닥/방어음 수정을 옛 기준으로 되돌리지 않는다.
 
 ## Deferred Shop and Replay Policy

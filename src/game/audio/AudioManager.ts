@@ -4,7 +4,7 @@ import type { GameEventBus } from "../bridge/GameEventBus";
 import type { GameplayEventBus } from "../core/events";
 import { CHORD_VOICINGS, MUSIC_ARRANGEMENTS } from "./musicArrangements";
 import { getStageMusicKey } from "./stageMusic";
-import { MUSIC_KEYS, SOUND_KEYS, type MusicKey, type SoundKey } from "./audioManifest";
+import { FEEDBACK_AUDIO, MUSIC_KEYS, SOUND_KEYS, type FeedbackSoundKey, type MusicKey, type SoundKey } from "./audioManifest";
 
 const SOUND_PATTERNS: Readonly<Partial<Record<SoundKey, readonly number[]>>> = {
   "rib-reveal": [523, 659, 784],
@@ -16,7 +16,6 @@ const SOUND_PATTERNS: Readonly<Partial<Record<SoundKey, readonly number[]>>> = {
   "escape-door": [392, 523, 659],
   "slipper-hit": [392, 262],
   sneeze: [494, 622, 330],
-  coin: [784, 988],
   "death-cartoon": [220, 147],
   "stage-clear": [523, 659, 784],
 };
@@ -54,6 +53,9 @@ export class AudioManager {
   private musicSound?: Phaser.Sound.BaseSound;
   private musicStartedAt = 0;
   private toneMusicPaused = false;
+  private readonly feedbackBuffers = new Map<FeedbackSoundKey, Promise<AudioBuffer | null>>();
+  private effectsGeneration = 0;
+  private feedbackVoices = 0;
 
   public constructor(scene: Phaser.Scene, gameplayBus?: GameplayEventBus, gameBus?: GameEventBus) {
     this.scene = scene;
@@ -61,6 +63,8 @@ export class AudioManager {
       // Synthesized effects must share the music context: Phaser can be suspended
       // independently while Tone's background music is still playing.
       this.audioContext = Tone.getContext().rawContext as AudioContext;
+      this.prepareFeedbackSound("coin");
+      this.prepareFeedbackSound("checkpoint");
     }
     this.bindUnlockGesture();
     if (gameplayBus) {
@@ -73,6 +77,7 @@ export class AudioManager {
       this.unsubscribers.push(gameplayBus.on("checkpoint-reached", () => this.playSfx("checkpoint")));
     }
     if (gameBus) {
+      this.unsubscribers.push(gameBus.on("coin-collected", () => this.playSfx("coin")));
       this.unsubscribers.push(gameBus.on("stage-started", (payload) => this.playMusic(getStageMusicKey(payload.stageId))));
       this.unsubscribers.push(gameBus.on("stage-completed", () => this.playSfx("stage-clear")));
       this.unsubscribers.push(gameBus.on("cutscene-beat", (payload) => {
@@ -91,6 +96,10 @@ export class AudioManager {
 
   public playSfx(key: string): void {
     if (this.destroyed || this.paused || !SOUND_KEYS.includes(key as SoundKey)) return;
+    if (key === "coin" || key === "checkpoint") {
+      void this.playFeedbackSound(key);
+      return;
+    }
     if (this.scene.cache.audio.exists(key)) {
       if (!this.scene.sound.locked) {
         const sound = this.scene.sound.add(key);
@@ -106,10 +115,6 @@ export class AudioManager {
     if (!this.isAudioReady()) return;
     if (key === "bowl-clang") {
       this.playBowlClang();
-      return;
-    }
-    if (key === "checkpoint") {
-      this.playCheckpointChime();
       return;
     }
     if (key === "stray-dog-rush") {
@@ -169,6 +174,7 @@ export class AudioManager {
   }
 
   private stopEffects(): void {
+    this.effectsGeneration += 1;
     this.cachedEffects.forEach(sound => {
       sound.stop();
       sound.destroy();
@@ -368,37 +374,47 @@ export class AudioManager {
     source.stop(context.currentTime + 0.16);
   }
 
-  private playCheckpointChime(): void {
-    if (!this.isAudioReady()) return;
-    const context = this.audioContext!;
-    const startsAt = context.currentTime;
-    const filter = context.createBiquadFilter();
-    filter.type = "lowpass";
-    filter.frequency.setValueAtTime(3800, startsAt);
-    filter.connect(context.destination);
-    const notes = [
-      { frequency: 659.25, delay: 0, peak: 0.024, decay: 0.14 },
-      { frequency: 783.99, delay: 0.095, peak: 0.022, decay: 0.17 },
-      { frequency: 1046.5, delay: 0.19, peak: 0.028, decay: 0.30 },
-    ];
-    let remaining = notes.length;
-    for (const { frequency, delay, peak, decay } of notes) {
-      const oscillator = context.createOscillator();
-      const gain = context.createGain();
-      const noteTime = startsAt + delay;
-      oscillator.type = "sine";
-      oscillator.frequency.setValueAtTime(frequency, noteTime);
-      gain.gain.setValueAtTime(0.0001, noteTime);
-      gain.gain.linearRampToValueAtTime(peak, noteTime + 0.005);
-      gain.gain.exponentialRampToValueAtTime(0.0001, noteTime + decay);
-      oscillator.connect(gain).connect(filter);
-      this.trackSource(oscillator, [gain], () => {
-        remaining -= 1;
-        if (remaining === 0) filter.disconnect();
-      });
-      oscillator.start(noteTime);
-      oscillator.stop(noteTime + decay + 0.02);
+  private prepareFeedbackSound(key: FeedbackSoundKey): Promise<AudioBuffer | null> {
+    const cached = this.feedbackBuffers.get(key);
+    if (cached) return cached;
+    const bytes = this.scene.cache.binary?.get(FEEDBACK_AUDIO[key].cacheKey) as ArrayBuffer | undefined;
+    if (!this.audioContext || !bytes) return Promise.resolve(null);
+    const decoded = this.audioContext.decodeAudioData(bytes.slice(0)).catch((error: unknown) => {
+      console.error("효과음 해독 실패: " + FEEDBACK_AUDIO[key].url, error);
+      return null;
+    });
+    this.feedbackBuffers.set(key, decoded);
+    return decoded;
+  }
+
+  private async playFeedbackSound(key: FeedbackSoundKey): Promise<void> {
+    const generation = this.effectsGeneration;
+    const requestedAt = performance.now();
+    const buffer = await this.prepareFeedbackSound(key);
+    const isCurrent = (): boolean => !this.destroyed && !this.paused &&
+      generation === this.effectsGeneration && performance.now() - requestedAt < 1000;
+    if (!buffer || !isCurrent()) return;
+    if (!this.isAudioReady()) {
+      try {
+        await Tone.start();
+        if (!isCurrent()) return;
+        this.resumeMusic();
+      } catch { return; }
     }
+    if (!isCurrent() || !this.isAudioReady()) return;
+    const context = this.audioContext!;
+    const source = context.createBufferSource();
+    const gain = context.createGain();
+    source.buffer = buffer;
+    gain.gain.setValueAtTime(FEEDBACK_AUDIO[key].gain, context.currentTime);
+    source.connect(gain).connect(context.destination);
+    this.feedbackVoices += 1;
+    this.setMusicGain(0.38);
+    this.trackSource(source, [gain], () => {
+      this.feedbackVoices = Math.max(0, this.feedbackVoices - 1);
+      if (!this.paused && !this.destroyed) this.setMusicGain(this.feedbackVoices ? 0.38 : 1);
+    });
+    source.start();
   }
 
   private playBowlClang(): void {

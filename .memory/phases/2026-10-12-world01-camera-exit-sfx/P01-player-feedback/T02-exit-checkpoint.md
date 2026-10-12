@@ -54,7 +54,7 @@ Task: T02-exit-checkpoint
 
 - [x] 구현 완료
 - [x] 검증 통과
-- commit: pending
+- commit: 974eb99
 
 ## Execution Result
 

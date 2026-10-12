@@ -16,7 +16,21 @@ globalThis.window = { addEventListener() {}, removeEventListener() {} };
 function harness({ locked = false, cached = [] } = {}) {
   const nodes = [];
   const unlocks = [];
-  const rawContext = { state: locked ? "suspended" : "running" };
+  const decodes = [];
+  const sources = [];
+  const rawContext = {
+    state: locked ? "suspended" : "running", currentTime: 100, destination: {},
+    decodeAudioData: () => new Promise(resolve => decodes.push(resolve)),
+    createGain: () => ({ gain: { setValueAtTime() {} }, connect() { return this; }, disconnect() {} }),
+    createBufferSource() {
+      const source = { buffer: null, started: false, stopped: false,
+        connect() { return this; }, disconnect() {},
+        addEventListener(_event, callback) { this.ended = callback; },
+        start() { this.started = true; }, stop() { this.stopped = true; },
+      };
+      sources.push(source); return source;
+    },
+  };
   const context = { get state() { return rawContext.state; }, rawContext };
   const transport = {
     ticks: 0, state: "stopped", starts: 0, pauses: 0, stops: 0, resets: 0, bpm: { value: 100 },
@@ -63,7 +77,10 @@ function harness({ locked = false, cached = [] } = {}) {
     : actualRequire(id);
   loaded._compile(compile(filename), filename);
   const sounds = [];
-  const scene = { cache: { audio: { exists: key => cached.includes(key) } }, sound: {
+  const scene = { cache: {
+    audio: { exists: key => cached.includes(key) },
+    binary: { get: () => new ArrayBuffer(4) },
+  }, sound: {
     locked: false,
     add(key) {
       const sound = Object.assign(new EventEmitter(), {
@@ -79,9 +96,10 @@ function harness({ locked = false, cached = [] } = {}) {
     },
   } };
   return {
-    create: () => new loaded.exports.AudioManager(scene),
+    create: (gameplayBus, gameBus) => new loaded.exports.AudioManager(scene, gameplayBus, gameBus),
     createNoAudio: () => new loaded.exports.AudioManager({ ...scene, sound: new NoAudioSoundManager() }),
-    transport, nodes, sounds, Sequence, Gain,
+    transport, nodes, sounds, sources, Sequence, Gain,
+    async decode() { decodes.splice(0).forEach(resolve => resolve({ duration: 0.4 })); await Promise.resolve(); await Promise.resolve(); },
     async unlock() { unlocks.splice(0).forEach(resolve => resolve()); await Promise.resolve(); await Promise.resolve(); },
   };
 }
@@ -143,11 +161,11 @@ test("이전 관리자의 정지·재개·폐기가 새 곡을 건드리지 않�
 });
 
 test("캐시 음악도 자신의 인스턴스만 pause/resume하고 효과음은 누적하지 않는다", () => {
-  const h = harness({ cached: ["world-01-peaceful", "world-01-calico", "checkpoint"] });
+  const h = harness({ cached: ["world-01-peaceful", "world-01-calico", "bark"] });
   const old = h.create(); const next = h.create();
-  old.playMusic("world-01-peaceful"); old.playSfx("checkpoint"); old.setPaused(true);
+  old.playMusic("world-01-peaceful"); old.playSfx("bark"); old.setPaused(true);
   assert.equal(h.sounds[0].isPaused, true); assert.equal(h.sounds[1].destroyed, true);
-  old.playSfx("checkpoint"); assert.equal(h.sounds.length, 2);
+  old.playSfx("bark"); assert.equal(h.sounds.length, 2);
   old.setPaused(false); assert.equal(h.sounds[0].plays, 1); assert.equal(h.sounds[0].resumes, 1);
   next.playMusic("world-01-calico"); old.destroy();
   assert.equal(h.sounds[2].isPlaying, true); assert.equal(h.sounds[2].destroyed, false);
@@ -175,4 +193,35 @@ test("NoAudio 환경과 폐기 후 정지 요청은 재생을 만들지 않는�
   audio.playMusic("world-01-peaceful"); audio.setPaused(true); audio.setPaused(false); audio.destroy();
   audio.setPaused(true); audio.playMusic("world-01-calico");
   assert.equal(h.nodes.length, 0);
+});
+
+test("새 효과음은 획득 이벤트에서 재생하고 종료·정지 때 음악 음량을 복원한다", async () => {
+  const { GameEventBus } = require("../src/game/bridge/GameEventBus.ts");
+  const { GameplayEventBus } = require("../src/game/core/events.ts");
+  const gameBus = new GameEventBus(), gameplayBus = new GameplayEventBus();
+  const h = harness(), audio = h.create(gameplayBus, gameBus);
+  audio.playMusic("world-01-peaceful"); await h.decode();
+  gameBus.emit("coin-changed", {}); await Promise.resolve(); assert.equal(h.sources.length, 0);
+  gameBus.emit("coin-collected", {}); await Promise.resolve();
+  assert.equal(h.sources.length, 1); assert.equal(h.sources[0].started, true);
+  const gain = h.nodes.find(node => node instanceof h.Gain).gain;
+  assert.equal(gain.value, 0.38);
+  h.sources[0].ended(); assert.equal(gain.value, 1); assert.equal(audio.activeSources.size, 0);
+  gameplayBus.emit("checkpoint-reached", {}); await Promise.resolve();
+  assert.equal(h.sources.length, 2); assert.equal(gain.value, 0.38);
+  audio.setPaused(true); assert.equal(h.sources[1].stopped, true); assert.equal(gain.value, 0);
+  h.sources[1].ended(); assert.equal(gain.value, 0);
+  audio.setPaused(false); assert.equal(gain.value, 1); audio.destroy();
+  gameBus.emit("coin-collected", {}); await Promise.resolve(); assert.equal(h.sources.length, 2);
+});
+
+test("해독·잠금 해제가 늦은 효과음은 정지나 폐기 뒤 재생하지 않는다", async () => {
+  const h = harness(), audio = h.create();
+  audio.playSfx("coin"); audio.setPaused(true); audio.setPaused(false); await h.decode();
+  assert.equal(h.sources.length, 0); audio.destroy();
+  const locked = harness({ locked: true }), late = locked.create(); await locked.decode();
+  late.playSfx("checkpoint"); await Promise.resolve(); late.setPaused(true); await locked.unlock();
+  assert.equal(locked.sources.length, 0); late.destroy();
+  const destroyed = harness(), gone = destroyed.create(); gone.playSfx("coin"); gone.destroy();
+  await destroyed.decode(); assert.equal(destroyed.sources.length, 0);
 });
