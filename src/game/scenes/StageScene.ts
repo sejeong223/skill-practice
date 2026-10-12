@@ -9,6 +9,7 @@ import type { ProgressState, StageId } from "../core/types";
 import { GameEventBus } from "../bridge/GameEventBus";
 import { CameraDirector } from "../camera/CameraDirector";
 import { AudioManager } from "../audio/AudioManager";
+import { getStageMusicKey } from "../audio/stageMusic";
 import { CutsceneDirector } from "../cutscenes/CutsceneDirector";
 import { CUTSCENE_SCRIPTS } from "../data/cutscenes";
 import { TOOL_DEFINITIONS } from "../data/tools";
@@ -58,6 +59,7 @@ export class StageScene extends Phaser.Scene {
   private cameraDirector?: CameraDirector;
   private runtime?: StageRuntime;
   private loadedMap?: LoadedMap | null;
+  private bossGround?: Phaser.Tilemaps.Tilemap;
   private parallaxRenderer?: ParallaxRenderer;
   private eventBus?: GameEventBus;
   private gameplayEventBus?: GameplayEventBus;
@@ -146,9 +148,7 @@ export class StageScene extends Phaser.Scene {
       this.loadedMap,
     );
     this.gameplayEventBus = new GameplayEventBus();
-    if (stage.id === "world-01-stage-boss") {
-      this.audioManager = new AudioManager(this, this.gameplayEventBus, this.eventBus);
-    }
+    this.audioManager = new AudioManager(this, this.gameplayEventBus, this.eventBus);
     this.skillSystem = new SkillSystem(
       this.player, SKILL_DEFINITIONS, this.gameplayEventBus,
       this.persistenceEventBus, this.progress.unlockedSkills,
@@ -236,12 +236,17 @@ export class StageScene extends Phaser.Scene {
       );
     }
 
-    const gameplayLayer = this.loadedMap?.layers.gameplay;
+    const gameplayLayer = this.loadedMap?.layers.gameplay
+      ?? (stage.id === "world-01-stage-boss" ? this.createBossGround(stage) : undefined);
     if (gameplayLayer) {
       this.physics.add.collider(this.player, gameplayLayer);
     }
 
     for (const record of this.runtime.getEntities("platform")) {
+      if (this.bossGround) {
+        record.entity.setVisible(false);
+        continue;
+      }
       this.physics.add.collider(this.player, record.entity as Phaser.GameObjects.GameObject);
     }
     for (const record of this.runtime.getEntities("coin")) {
@@ -334,7 +339,7 @@ export class StageScene extends Phaser.Scene {
           this.cameras.main.setZoom(1);
           if (this.scene.isActive() && this.runtime?.getStatus() === "cutscene") {
             this.runtime.setStatus("play");
-            this.audioManager?.playMusic("boss");
+            this.audioManager?.playMusic(getStageMusicKey(stage.id));
           }
         });
       } else {
@@ -419,10 +424,36 @@ export class StageScene extends Phaser.Scene {
       this.clearMapEnemies();
       this.runtime?.destroy();
       this.loadedMap?.destroy();
+      this.bossGround?.destroy();
+      this.bossGround = undefined;
       this.parallaxRenderer?.destroy();
       this.gameplayEventBus?.clear();
       if (!this.persistenceEventBus) this.eventBus?.clear();
     });
+  }
+
+  private createBossGround(stage: StageDefinition): Phaser.Tilemaps.TilemapLayer {
+    const platform = stage.segments[0].platforms[0];
+    const floorY = platform.y - platform.height / 2;
+    const tileSize = stage.map!.tileWidth;
+    const map = this.make.tilemap({
+      tileWidth: tileSize,
+      tileHeight: tileSize,
+      width: Math.ceil(stage.mapWidth / tileSize),
+      height: Math.ceil((stage.mapHeight - floorY) / tileSize),
+    });
+    const tileset = map.addTilesetImage("world-01-tileset", "world-01-tileset", tileSize, tileSize, 0, 0, 1);
+    const layer = tileset ? map.createBlankLayer("world-01-boss-ground", tileset, 0, floorY) : null;
+    if (!layer) {
+      map.destroy();
+      throw new Error("삼색이 보스전의 기존 땅 타일을 생성하지 못했습니다.");
+    }
+    // Match the normal maps' surface (1) and paving (13), at the existing arena floor.
+    layer.fill(13);
+    layer.fill(1, 0, 0, map.width, 1);
+    layer.setDepth(0).setCollisionByExclusion([-1]);
+    this.bossGround = map;
+    return layer;
   }
 
   public update(time: number, delta: number): void {

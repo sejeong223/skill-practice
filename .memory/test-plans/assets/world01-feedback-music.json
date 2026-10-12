@@ -1,0 +1,16 @@
+{
+  "recordings": [
+    {
+      "key": "world-01-calico",
+      "expected": "world-01-calico",
+      "state": "running",
+      "peak": 0.19003842771053314,
+      "activeWindows": 519,
+      "seconds": 36,
+      "runtime": "play"
+    }
+  ],
+  "reentry": "calico",
+  "return": "peaceful",
+  "errors": []
+}

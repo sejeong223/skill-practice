@@ -1,6 +1,6 @@
 # Phase: P01 월드 1 화면과 소리 피드백
 
-## Status: pending
+## Status: in_progress
 
 ## Goal
 
@@ -10,16 +10,16 @@
 
 | Task | Status | Summary | Blueprint |
 | :--- | :--- | :--- | :--- |
-| T01 | `pending` | 월드 1 보스 기본 코인 생성 제거 | [T01](./T01-boss-coin-cleanup.md) |
-| T02 | `pending` | 일반 구간/삼색이 BGM 제작과 장면별 라우팅 | [T02](./T02-stage-music.md) |
+| T01 | `done` | 월드 1 보스 기본 코인 생성 제거 | [T01](./T01-boss-coin-cleanup.md) |
+| T02 | `in_progress` | 일반 구간/삼색이 BGM 제작과 장면별 라우팅 | [T02](./T02-stage-music.md) |
 | T03 | `pending` | 실제 체크포인트 픽셀 깃발과 최초 활성화 차임 | [T03](./T03-checkpoint-flag-chime.md) |
 | T04 | `pending` | BGM 정지/재개 및 중앙 일시정지 오버레이 | [T04](./T04-pause-overlay-audio.md) |
 | T05 | `pending` | 장면 전환·음악·일시정지·체크포인트 통합 검증 | [T05](./T05-integration-review.md) |
 
 ## Progress
 
-- done: 0/5 (active: T01)
-- 구현 시작 전. T02→T03→T04는 같은 AudioManager를 순차 수정한다.
+- done: 1/5 (active: T02)
+- 순차 실행 중. T02→T03→T04는 같은 AudioManager를 순차 수정한다.
 
 ## Guardrails
 

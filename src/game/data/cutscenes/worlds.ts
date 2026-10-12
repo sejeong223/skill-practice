@@ -23,7 +23,7 @@ const WORLD01_BOSS_CLEAR_LINES = [
 ] as const;
 
 export const WORLD_CUTSCENES: readonly CutsceneScript[] = [
-  { id: "world-01-intro", stageId: "world-01-stage-1", beats: [{ id: "alley", durationMs: 3200, narration: "무법지대 뒷골목. 왕갈비뼈를 훔쳐간 냥아치 연합의 흔적이 골목 끝으로 이어진다.", musicKey: "world-01-alley", skipAllowedAfterSeen: true }] },
+  { id: "world-01-intro", stageId: "world-01-stage-1", beats: [{ id: "alley", durationMs: 3200, narration: "무법지대 뒷골목. 왕갈비뼈를 훔쳐간 냥아치 연합의 흔적이 골목 끝으로 이어진다.", musicKey: "world-01-peaceful", skipAllowedAfterSeen: true }] },
   { id: "world-02-intro", stageId: "world-02-stage-1", beats: [{ id: "playground", durationMs: 3200, narration: "삐걱거리는 놀이터. 미끄럼틀 아래에서 고양이들의 수상한 웃음소리가 들린다.", musicKey: "world-02-amusement", skipAllowedAfterSeen: true }] },
   { id: "world-03-intro", stageId: "world-03-stage-1", beats: [{ id: "junkyard", durationMs: 3200, narration: "냥아치 연합 아지트, 버려진 고물상. 여기서부터 함정은 노골적으로 억까를 시작한다.", musicKey: "world-03-factory", skipAllowedAfterSeen: true }] },
   { id: "world-04-intro", stageId: "world-04-stage-1", beats: [{ id: "rooftop", durationMs: 3200, narration: "바람이 몰아치는 옥상 지대. 꼬리 모터가 돌기 시작하면 발밑의 상식도 함께 날아간다.", musicKey: "world-04-rooftop", skipAllowedAfterSeen: true }] },

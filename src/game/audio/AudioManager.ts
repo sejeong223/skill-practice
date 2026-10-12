@@ -2,6 +2,8 @@ import * as Phaser from "phaser";
 import * as Tone from "tone";
 import type { GameEventBus } from "../bridge/GameEventBus";
 import type { GameplayEventBus } from "../core/events";
+import { CHORD_VOICINGS, MUSIC_ARRANGEMENTS } from "./musicArrangements";
+import { getStageMusicKey } from "./stageMusic";
 import { MUSIC_KEYS, SOUND_KEYS, type MusicKey, type SoundKey } from "./audioManifest";
 
 const SOUND_PATTERNS: Readonly<Partial<Record<SoundKey, readonly number[]>>> = {
@@ -18,71 +20,6 @@ const SOUND_PATTERNS: Readonly<Partial<Record<SoundKey, readonly number[]>>> = {
   checkpoint: [523, 659],
   "death-cartoon": [220, 147],
   "stage-clear": [523, 659, 784],
-};
-
-interface MusicArrangement {
-  readonly bpm: number;
-  readonly melody: readonly (string | null)[];
-  readonly chords: readonly string[];
-  readonly bass: readonly string[];
-}
-
-const CHORD_VOICINGS: Readonly<Record<string, readonly string[]>> = {
-  C: ["C4", "E4", "G4"], G: ["G3", "B3", "D4"], Am: ["A3", "C4", "E4"], F: ["F3", "A3", "C4"],
-  D: ["D4", "F#4", "A4"], Em: ["E3", "G3", "B3"], Bm: ["B3", "D4", "F#4"], A: ["A3", "C#4", "E4"],
-  Fsm: ["F#3", "A3", "C#4"], E: ["E3", "G#3", "B3"], B: ["B3", "D#4", "F#4"], Csm: ["C#4", "E4", "G#4"],
-  Dm: ["D4", "F4", "A4"], Bb: ["Bb3", "D4", "F4"],
-};
-
-const MUSIC_ARRANGEMENTS: Readonly<Record<MusicKey, MusicArrangement>> = {
-  "birthday-warm": {
-    bpm: 108,
-    melody: ["E5", "G5", "C6", "G5", "E5", "D5", "C5", null, "E5", "G5", "A5", "G5", "F5", "E5", "D5", "C5"],
-    chords: ["C", "G", "Am", "F"],
-    bass: ["C2", "G2", "A2", "E2", "F2", "C2", "G2", "G2"],
-  },
-  "world-01-alley": {
-    bpm: 116,
-    melody: ["D5", "G5", "B5", "A5", "G5", "D5", "E5", null, "D5", "B4", "A4", "B4", "D5", "E5", "D5", "G4"],
-    chords: ["G", "D", "Em", "C"],
-    bass: ["G2", "D3", "E2", "B2", "C3", "G2", "D3", "D3"],
-  },
-  "world-02-amusement": {
-    bpm: 120,
-    melody: ["A5", "C6", "A5", "G5", "F5", "G5", "A5", null, "C6", "A5", "G5", "F5", "A5", "C6", "D6", "C6"],
-    chords: ["F", "C", "Dm", "Bb"],
-    bass: ["F2", "C3", "D2", "A2", "Bb2", "F2", "C3", "C3"],
-  },
-  "world-03-factory": {
-    bpm: 112,
-    melody: ["F#5", "A5", "D6", "A5", "F#5", "E5", "D5", null, "A4", "D5", "F#5", "A5", "B5", "A5", "F#5", "E5"],
-    chords: ["D", "A", "Bm", "G"],
-    bass: ["D2", "A2", "B2", "F#2", "G2", "D2", "A2", "A2"],
-  },
-  "world-04-rooftop": {
-    bpm: 118,
-    melody: ["C#5", "E5", "A5", "E5", "C#5", "B4", "A4", null, "E5", "A5", "B5", "C#6", "B5", "A5", "E5", "D5"],
-    chords: ["A", "E", "Fsm", "D"],
-    bass: ["A2", "E2", "F#2", "C#3", "D2", "A2", "E2", "E2"],
-  },
-  "world-05-kingdom": {
-    bpm: 124,
-    melody: ["G#5", "B5", "E6", "B5", "G#5", "F#5", "E5", null, "B4", "E5", "G#5", "B5", "C#6", "B5", "G#5", "F#5"],
-    chords: ["E", "B", "Csm", "A"],
-    bass: ["E2", "B2", "C#3", "G#2", "A2", "E2", "B2", "B2"],
-  },
-  boss: {
-    bpm: 132,
-    melody: ["G5", "B5", "D6", "B5", "A5", "G5", "D5", null, "B5", "D6", "G6", "D6", "C6", "B5", "A5", "G5"],
-    chords: ["G", "D", "C", "D"],
-    bass: ["G2", "D2", "G3", "D2", "C3", "G2", "D3", "D3"],
-  },
-  "ending-credits": {
-    bpm: 96,
-    melody: ["A5", "C6", "F6", "C6", "A5", "G5", "F5", null, "G5", "A5", "C6", "A5", "F5", "E5", "F5", "C5"],
-    chords: ["F", "C", "Dm", "Bb"],
-    bass: ["F2", "C3", "D2", "A2", "Bb2", "F2", "C3", "F2"],
-  },
 };
 
 interface DisposableToneNode {
@@ -110,14 +47,15 @@ export class AudioManager {
   private readonly sourceCleanups = new Map<AudioScheduledSourceNode, () => void>();
   private readonly toneMusicOwner = Symbol("audio-manager");
   private audioContext?: AudioContext;
-  private ownsAudioContext = false;
   private destroyed = false;
   private musicKey: string | null = null;
 
   public constructor(scene: Phaser.Scene, gameplayBus?: GameplayEventBus, gameBus?: GameEventBus) {
     this.scene = scene;
-    if (scene.sound instanceof Phaser.Sound.WebAudioSoundManager) {
-      this.audioContext = scene.sound.context as AudioContext;
+    if (!(scene.sound instanceof Phaser.Sound.NoAudioSoundManager)) {
+      // Synthesized effects must share the music context: Phaser can be suspended
+      // independently while Tone's background music is still playing.
+      this.audioContext = Tone.getContext().rawContext as AudioContext;
     }
     this.bindUnlockGesture();
     if (gameplayBus) {
@@ -130,7 +68,7 @@ export class AudioManager {
       this.unsubscribers.push(gameplayBus.on("checkpoint-reached", () => this.playSfx("checkpoint")));
     }
     if (gameBus) {
-      this.unsubscribers.push(gameBus.on("stage-started", (payload) => this.playMusic(this.musicForStage(payload.stageId))));
+      this.unsubscribers.push(gameBus.on("stage-started", (payload) => this.playMusic(getStageMusicKey(payload.stageId))));
       this.unsubscribers.push(gameBus.on("stage-completed", () => this.playSfx("stage-clear")));
       this.unsubscribers.push(gameBus.on("cutscene-beat", (payload) => {
         if (payload.beat.soundCue) this.playSfx(payload.beat.soundCue);
@@ -141,12 +79,6 @@ export class AudioManager {
 
   public unlock(): void {
     if (this.destroyed || typeof window === "undefined" || this.scene.sound instanceof Phaser.Sound.NoAudioSoundManager) return;
-    const Context = window.AudioContext ?? (window as typeof window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-    if (!this.audioContext && Context) {
-      this.audioContext = new Context();
-      this.ownsAudioContext = true;
-    }
-    if (this.audioContext?.state !== "closed") void this.audioContext?.resume().catch(() => undefined);
     void Tone.start().then(() => {
       if (this.destroyed) return;
       const key = this.musicKey;
@@ -214,18 +146,21 @@ export class AudioManager {
     this.unsubscribers.splice(0).forEach((unsubscribe) => unsubscribe());
     this.stopMusic();
     this.stopAllSounds();
-    if (this.ownsAudioContext && this.audioContext && this.audioContext.state !== "closed") {
-      void this.audioContext.close().catch(() => undefined);
-    }
+    // Tone's context belongs to the game and is reused by the next scene.
     this.audioContext = undefined;
   }
 
   private bindUnlockGesture(): void {
     if (typeof window === "undefined") return;
 
-    const unlock = (): void => this.unlock();
-    window.addEventListener("pointerdown", unlock, { once: true, capture: true });
-    window.addEventListener("keydown", unlock, { once: true, capture: true });
+    const unlock = (): void => {
+      if (!this.isAudioReady() || (this.musicKey && activeToneMusicOwner !== this.toneMusicOwner)) {
+        this.unlock();
+      }
+    };
+    // Keep gestures available after a tab/device suspends audio again.
+    window.addEventListener("pointerdown", unlock, true);
+    window.addEventListener("keydown", unlock, true);
     this.unsubscribers.push(
       () => window.removeEventListener("pointerdown", unlock, true),
       () => window.removeEventListener("keydown", unlock, true),
@@ -238,9 +173,9 @@ export class AudioManager {
     stopToneMusic();
 
     const melody = new Tone.Synth({
-      oscillator: { type: "triangle" },
+      oscillator: { type: arrangement.leadWave ?? "triangle" },
       envelope: { attack: 0.015, decay: 0.12, sustain: 0.08, release: 0.18 },
-      volume: -10,
+      volume: arrangement.leadVolumeDb ?? -10,
     }).toDestination();
     const harmony = new Tone.PolySynth({
       maxPolyphony: 4,
@@ -249,17 +184,17 @@ export class AudioManager {
         oscillator: { type: "sine" },
         envelope: { attack: 0.04, decay: 0.18, sustain: 0.16, release: 0.28 },
       },
-      volume: -17,
+      volume: arrangement.harmonyVolumeDb ?? -17,
     }).toDestination();
     const bass = new Tone.MonoSynth({
       oscillator: { type: "triangle" },
       envelope: { attack: 0.015, decay: 0.16, sustain: 0.1, release: 0.12 },
-      volume: -19,
+      volume: arrangement.bassVolumeDb ?? -19,
     }).toDestination();
 
     const melodySequence = new Tone.Sequence<string | null>(
       (time, note) => {
-        if (note) melody.triggerAttackRelease(note, "8n", time, 0.55);
+        if (note) melody.triggerAttackRelease(note, arrangement.leadGate ?? "8n", time, 0.55);
       },
       [...arrangement.melody],
       "8n",
@@ -347,9 +282,9 @@ export class AudioManager {
     filter.frequency.setValueAtTime(2400, startsAt);
     filter.connect(context.destination);
     const partials = [
-      { frequency: 720, peak: 0.023, decay: 0.18 },
-      { frequency: 1190, peak: 0.009, decay: 0.13 },
-      { frequency: 1820, peak: 0.004, decay: 0.07 },
+      { frequency: 720, peak: 0.075, decay: 0.24 },
+      { frequency: 1190, peak: 0.026, decay: 0.16 },
+      { frequency: 1820, peak: 0.010, decay: 0.09 },
     ];
     let remaining = partials.length;
     for (const { frequency, peak, decay } of partials) {
@@ -366,7 +301,7 @@ export class AudioManager {
         if (remaining === 0) filter.disconnect();
       });
       oscillator.start(startsAt);
-      oscillator.stop(startsAt + 0.22);
+      oscillator.stop(startsAt + 0.28);
     }
   }
 
@@ -399,12 +334,4 @@ export class AudioManager {
     return !this.destroyed && Boolean(this.audioContext && this.audioContext.state === "running");
   }
 
-  private musicForStage(stageId: string): MusicKey {
-    if (stageId.endsWith("-boss")) return "boss";
-    if (stageId.startsWith("world-01")) return "world-01-alley";
-    if (stageId.startsWith("world-02")) return "world-02-amusement";
-    if (stageId.startsWith("world-03")) return "world-03-factory";
-    if (stageId.startsWith("world-04")) return "world-04-rooftop";
-    return stageId.startsWith("world-05") ? "world-05-kingdom" : "boss";
-  }
 }

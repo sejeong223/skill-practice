@@ -3,6 +3,7 @@ export const SOUND_KEYS = [
 ] as const;
 
 export const MUSIC_KEYS = [
+  "world-01-peaceful", "world-01-calico",
   "birthday-warm", "world-01-alley", "world-02-amusement", "world-03-factory", "world-04-rooftop", "world-05-kingdom", "boss", "ending-credits",
 ] as const;
 

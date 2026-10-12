@@ -10,17 +10,16 @@
 
 ## Active Task
 
-[T01 월드 1 보스전의 노란 기본 코인 제거](./phases/2026-10-12-world01-pause-music-checkpoints/P01-feedback-and-audio/T01-boss-coin-cleanup.md)
+[T02-stage-music](./phases/2026-10-12-world01-pause-music-checkpoints/P01-feedback-and-audio/T02-stage-music.md)
 
 ## Status
 
-- 계획 및 상세 청사진 생성 완료. 구현 시작 전, P01 pending, 0/5 done, Active Task=P01-T01.
-- 순서: T01 보스 코인 → T02 일반/보스 BGM → T03 깃발/차임 → T04 일시정지 → T05 통합 검증.
-- 최신 요청의 4항목을 모두 반영했다. 이번 memory-plan에서는 구현 코드/자산을 변경하거나 음악을 생성하지 않았다.
+- T01 완료: ec7e532. 진행률 1/5.
+- 사용자 요청에 따라 다음 Task를 즉시 이어서 실행한다.
 
 ## Next Step (IMPORTANT)
 
-`/memory-execute` 또는 ‘current 보고 이어서 해줘’ 요청에서 T01 청사진을 읽고 `src/game/data/worlds.ts::createSegment`부터 순차 구현한다. Task별 한국어 커밋을 남기고 타입/빌드/테스트 오류는 수정 후 진행한다. 계획 수립만으로 자동 실행하지 않는다.
+T02-stage-music 청사진을 읽고 순차 구현·검증·한국어 커밋을 진행한다.
 
 ## Existing Worktree Baseline
 

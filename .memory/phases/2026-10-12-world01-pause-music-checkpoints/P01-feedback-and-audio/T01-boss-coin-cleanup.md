@@ -78,7 +78,7 @@ Task: T01-boss-coin-cleanup
 
 - [x] 구현 완료
 - [x] 검증 통과
-- commit: pending
+- commit: ec7e532
 
 ## Execution Result
 
