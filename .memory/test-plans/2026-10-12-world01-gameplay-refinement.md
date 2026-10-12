@@ -23,7 +23,16 @@
 
 ## T03 — 보스 시각 요소·HP
 
-대기.
+- 생선 뼈 low/mid/high 세 궤적의 표시72×36 확인. 실제 보스 updateFishbone을 양쪽 방향에서 구동해 방어 잔여2→1→0→0, 네 번째 충돌에서 하트3→2 확인. 투사체 이동은 기존 궤적 함수를 유지한다.
+- 실제 acceptMeleeHit에서 초기10, 재채기/거리 밖 감소0, 유효9회 후1, 10회 후0/defeated, 추가 공격false. resetAttempt 초기10/방어3 확인.
+- 밥그릇 좌/우×run4프레임8가지 anchor 좌표 확인. 최종 x±22, y=-75/-75/-76/-76. 투명 여백 포함64×40 표시(실제 bowl 약43×20), depth12. 플레이어 몸체 크기/원본 시트 변경 없음. 방어 반응140ms, 셋째 반응 후 숨김 확인.
+- `assets/world01-refinement-t03-bowl.png`, `world01-refinement-t03-fish-0.png`~`fish-2.png` 참조. 필수 에셋 검사53개/필수31개, 타입·lint, 궤적·근접 회귀4건 통과. 브라우저 pageerror 없음.
+- 제작 도구: 내장 image_gen. 참조: 기존 core-items-reference-v1.png의 파란 밥그릇 및 corgi-run.png의 픽셀 스타일. 생성 원본은 사용자 .codex/generated_images/01a12d77-fcc8-74a3-91d6-db988b95d23d/exec-757dbc77-bed2-4b3d-937f-d7ecaa2410c7.png 보존. 게임용은 alpha를 유지해 nearest 방식64×40으로 축소한 `public/assets/pixel/props/world-01/corgi-bowl-shield.png`. 코기 합성 시트/배경 크롭 없음.
+- 실제 전투 도중 점프·정지/재개·재진입은 T05에서 추가 확인한다. 범위 밖 발견 사항 없음.
+
+### 밥그릇 생성 프롬프트
+
+Use case: stylized-concept. Asset type: a tiny transparent pixel-art equipment sprite for a 2D side-scrolling corgi game. Generate ONE isolated upside-down blue dog food bowl worn like a small helmet. Reference image 1 supplies the blue bowl's colors and shape only (ignore the meat and rabbit slipper). Reference image 2 supplies the crisp pixel-art sprite style only; do not draw the corgi. Bowl has a shallow domed blue top, flared dark navy bottom rim, light blue highlight at upper left, visible outer blue side, a very narrow dark underside. Orthographic side view, no text, no character, no ground or shadow. Entire bowl centered, approximately 58 pixels wide by 30 pixels tall within a logical 64x40 transparent sprite canvas, chunky clean pixel edges and limited palette. Enlarge this pixel grid cleanly if the output canvas is larger. Keep transparent margins small, preserve actual alpha transparency. It must read clearly when displayed at 44x24 game pixels.
 
 ## T04 — 사모예드·효과음
 

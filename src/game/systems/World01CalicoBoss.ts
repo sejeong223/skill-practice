@@ -27,6 +27,10 @@ interface Fishbone {
   elapsedSeconds: number;
 }
 
+export const CALICO_MAX_HEALTH = 10;
+const FISHBONE_DISPLAY = { width: 72, height: 36 } as const;
+const FISHBONE_HITBOX = { width: 54, height: 24 } as const;
+
 export class World01CalicoBoss {
   private readonly bar: Phaser.GameObjects.Graphics;
   private readonly name: Phaser.GameObjects.Text;
@@ -34,7 +38,7 @@ export class World01CalicoBoss {
   private readonly dogSprites: Phaser.GameObjects.Image[] = [];
   private readonly unsubscribeDogs: () => void;
   private state: CalicoBossState = {
-    health: 12, phase: "intro", nextThrowAt: 1500,
+    health: CALICO_MAX_HEALTH, phase: "intro", nextThrowAt: 1500,
     projectileId: null, corgiHearts: 3, damageLockedUntil: 0,
   };
   private elapsed = 0;
@@ -57,7 +61,7 @@ export class World01CalicoBoss {
     private readonly onThirdHit: (now: number) => void,
   ) {
     this.bar = scene.add.graphics().setDepth(12);
-    this.name = scene.add.text(sprite.x, sprite.y - 112, "삼색이  12 / 12", {
+    this.name = scene.add.text(sprite.x, sprite.y - 112, "", {
       color: "#fff5d8", fontFamily: "Galmuri11Pixel, monospace", fontSize: "17px",
       stroke: "#423039", strokeThickness: 4,
     }).setOrigin(0.5).setDepth(12);
@@ -131,7 +135,7 @@ export class World01CalicoBoss {
     this.flashUntil = 0;
     this.playerFlashUntil = 0;
     this.state = {
-      health: 12, phase: "intro", nextThrowAt: 1500,
+      health: CALICO_MAX_HEALTH, phase: "intro", nextThrowAt: 1500,
       projectileId: null, corgiHearts: 3, damageLockedUntil: 0,
     };
     this.defense.resetForStage("upside-down-bowl");
@@ -179,7 +183,7 @@ export class World01CalicoBoss {
       startX, targetX, this.player.body.center.y, this.serial,
     );
     const image = this.scene.add.image(startX, trajectory.startY, "world-01-fishbone")
-      .setDisplaySize(48, 24).setDepth(11).setFlipX(direction > 0);
+      .setDisplaySize(FISHBONE_DISPLAY.width, FISHBONE_DISPLAY.height).setDepth(11).setFlipX(direction > 0);
     this.fishbone = { id, image, trajectory, elapsedSeconds: 0 };
     this.state = {
       ...this.state, phase: "projectile", projectileId: id,
@@ -194,15 +198,18 @@ export class World01CalicoBoss {
     bone.elapsedSeconds += Math.min(delta, 50) / 1000;
     const current = fishbonePositionAt(bone.trajectory, bone.elapsedSeconds);
     bone.image.setPosition(current.x, current.y);
-    if (current.x < 0 || current.x > 1920 || current.y < -40 || current.y > 560) {
+    const bounds = this.scene.physics.world.bounds;
+    if (current.x + FISHBONE_DISPLAY.width / 2 < bounds.left ||
+      current.x - FISHBONE_DISPLAY.width / 2 > bounds.right ||
+      current.y + FISHBONE_DISPLAY.height / 2 < bounds.top - 40 || current.y > 560) {
       this.clearFishbone();
       return;
     }
     const hitbox = new Phaser.Geom.Rectangle(
-      Math.min(previous.x, current.x) - 20,
-      Math.min(previous.y, current.y) - 9,
-      Math.abs(current.x - previous.x) + 40,
-      Math.abs(current.y - previous.y) + 18,
+      Math.min(previous.x, current.x) - FISHBONE_HITBOX.width / 2,
+      Math.min(previous.y, current.y) - FISHBONE_HITBOX.height / 2,
+      Math.abs(current.x - previous.x) + FISHBONE_HITBOX.width,
+      Math.abs(current.y - previous.y) + FISHBONE_HITBOX.height,
     );
     const body = new Phaser.Geom.Rectangle(this.player.body.x, this.player.body.y, this.player.body.width, this.player.body.height);
     if (!Phaser.Geom.Rectangle.Overlaps(hitbox, body)) return;
@@ -262,14 +269,14 @@ export class World01CalicoBoss {
 
   private drawHealth(): void {
     this.bar.clear();
-    const left = this.sprite.x - 120;
+    const left = this.sprite.x - CALICO_MAX_HEALTH * 20 / 2;
     const top = this.sprite.y - 88;
-    for (let index = 0; index < 12; index += 1) {
+    for (let index = 0; index < CALICO_MAX_HEALTH; index += 1) {
       this.bar.fillStyle(index < this.state.health ? 0xf0b95f : 0x4a3b42, 1);
       this.bar.fillRect(left + index * 20, top, 17, 14);
       this.bar.lineStyle(2, 0x2d2630, 1);
       this.bar.strokeRect(left + index * 20, top, 17, 14);
     }
-    this.name.setText(`삼색이  ${this.state.health} / 12`);
+    this.name.setText(`삼색이  ${this.state.health} / ${CALICO_MAX_HEALTH}`);
   }
 }

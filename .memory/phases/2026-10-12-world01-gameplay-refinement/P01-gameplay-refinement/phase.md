@@ -9,14 +9,14 @@
 | Task | Status | Summary | Blueprint |
 | :--- | :--- | :--- | :--- |
 | T01 | `done` | 일반 맵 정합화, 구간 카메라와 걸음걸이, 배경 원본 유지 | [T01](./T01-compact-motion.md) |
-| T02 | `in_progress` | 진짜 간식·위장, 영구 적립·오른쪽 상단 잔액, 장애물 밀도 | [T02](./T02-snacks-obstacles.md) |
-| T03 | `pending` | 생선 뼈 확대, 머리 밥그릇, 보스 HP 10 | [T03](./T03-boss-visuals-health.md) |
+| T02 | `done` | 진짜 간식·위장, 영구 적립·오른쪽 상단 잔액, 장애물 밀도 | [T02](./T02-snacks-obstacles.md) |
+| T03 | `in_progress` | 생선 뼈 확대, 머리 밥그릇, 보스 HP 10 | [T03](./T03-boss-visuals-health.md) |
 | T04 | `pending` | 왼쪽 사모예드 무리와 방어 효과음 | [T04](./T04-samoyed-audio.md) |
 | T05 | `pending` | 요구사항별 회귀·화면·청취·잔액 저장 검증 | [T05](./T05-integration-playtest.md) |
 
 ## Progress
 
-- done: 1/5 (active: T02)
+- done: 2/5 (active: T03)
 - implementation: in progress
 
 ## Why These Tasks

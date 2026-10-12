@@ -14,7 +14,7 @@ const manifestPath = path.join(
 const manifest = JSON.parse(readFileSync(manifestPath, "utf8"));
 const errors = [];
 const seenKeys = new Set();
-const allowedKinds = new Set(["image", "spritesheet", "atlas", "audio"]);
+const allowedKinds = new Set(["image", "spritesheet", "atlas", "audio", "tilemap"]);
 
 if (!Array.isArray(manifest)) {
   errors.push("Asset manifest must be an array.");

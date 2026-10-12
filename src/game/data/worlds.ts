@@ -322,7 +322,7 @@ export const BOSS_DEFINITIONS: readonly BossDefinition[] =
     phases: blueprint.id === "world-01" ? [{
       id: "world-01-phase-1",
       healthThreshold: 1,
-      pattern: "telegraphed-single-fishbone-throw-and-twelve-slipper-hits",
+      pattern: "telegraphed-single-fishbone-throw-and-ten-slipper-hits",
       telegraph: "삼색이가 생선 가시를 들어 올린 뒤 한 번 던진다",
     }] : [
       {

@@ -199,6 +199,13 @@
     "required": true
   },
   {
+    "key": "corgi-bowl-shield",
+    "kind": "image",
+    "url": "/assets/pixel/props/world-01/corgi-bowl-shield.png",
+    "worldId": "world-01",
+    "required": true
+  },
+  {
     "key": "world-01-manhole-open",
     "kind": "image",
     "url": "/assets/pixel/props/world-01/manhole-open.png",

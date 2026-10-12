@@ -21,6 +21,7 @@ import { MapDebugOverlay } from "../debug/MapDebugOverlay";
 import { Enemy } from "../entities/Enemy";
 import { Player } from "../entities/Player";
 import { PlayerAnimator } from "../entities/PlayerAnimator";
+import { BowlShieldVisual } from "../entities/BowlShieldVisual";
 import { DEFAULT_PLAYER_TUNING } from "../entities/playerTypes";
 import { InputManager, toKeybindMap } from "../input/InputManager";
 import { ParallaxRenderer } from "../maps/ParallaxRenderer";
@@ -78,6 +79,7 @@ export class StageScene extends Phaser.Scene {
   private combatSystem?: CombatSystem;
   private skillSystem?: SkillSystem;
   private defenseToolSystem?: DefenseToolSystem;
+  private bowlShieldVisual?: BowlShieldVisual;
   private strayDogEvent?: StrayDogEvent;
   private stageBackdrop?: Phaser.GameObjects.Rectangle;
   private stageReviewKey?: Phaser.Input.Keyboard.Key;
@@ -295,6 +297,7 @@ export class StageScene extends Phaser.Scene {
       this.combatSystem = new CombatSystem(this.player, this.gameplayEventBus, TOOL_DEFINITIONS);
       this.combatSystem.setAttackTool("rabbit-slipper");
       this.defenseToolSystem = new DefenseToolSystem(this.gameplayEventBus, TOOL_DEFINITIONS);
+      this.bowlShieldVisual = new BowlShieldVisual(this, this.player, this.defenseToolSystem, this.gameplayEventBus);
       this.strayDogEvent = new StrayDogEvent(this.gameplayEventBus, () => ({
         x: this.player!.x, y: this.player!.y - 20,
       }));
@@ -395,6 +398,8 @@ export class StageScene extends Phaser.Scene {
       this.combatSystem = undefined;
       this.skillSystem = undefined;
       this.defenseToolSystem = undefined;
+      this.bowlShieldVisual?.destroy();
+      this.bowlShieldVisual = undefined;
       this.cutsceneDirector?.destroy();
       this.cutsceneDirector = undefined;
       this.calicoSprite?.destroy();
@@ -419,6 +424,7 @@ export class StageScene extends Phaser.Scene {
     }
     if (this.runtime?.getStatus() !== "play") {
       this.playerAnimator?.stopSlipperSwing();
+      this.bowlShieldVisual?.update(0, false);
       return;
     }
     this.playerController?.update(time, delta);
@@ -443,6 +449,7 @@ export class StageScene extends Phaser.Scene {
       this.calicoBoss.update(time, delta);
     }
     this.playerAnimator?.update(time);
+    this.bowlShieldVisual?.update(delta, this.runtime?.getStatus() === "play" && !this.calicoBoss?.isDefeated());
     this.gimmickSystem?.update(time, delta);
     this.mapInteraction?.update(time, delta);
     for (const enemy of this.mapEnemies.values()) enemy.updateMovement(time);
