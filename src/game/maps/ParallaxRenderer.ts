@@ -38,8 +38,14 @@ export class ParallaxRenderer {
         layer.depth,
         layer.scrollFactorX,
         layer.scrollFactorY,
-        mapWidth,
-        mapHeight,
+        theme.worldId === "world-01"
+          ? Math.max(mapWidth, this.scene.cameras.main.width +
+            Math.max(0, mapWidth - this.scene.cameras.main.width) * layer.scrollFactorX)
+          : mapWidth,
+        theme.worldId === "world-01"
+          ? Math.max(mapHeight, this.scene.cameras.main.height +
+            Math.max(0, mapHeight - this.scene.cameras.main.height) * layer.scrollFactorY)
+          : mapHeight,
         this.colorForLayer(theme, layer.kind),
       );
       this.layers.push({

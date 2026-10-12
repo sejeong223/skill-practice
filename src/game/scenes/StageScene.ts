@@ -96,6 +96,7 @@ export class StageScene extends Phaser.Scene {
     this.victorySequenceStarted = false;
     this.stageTransitionStarted = false;
     this.mapOverview = false;
+    this.activeSectionId = undefined;
     const stage = getStageDefinition(this.stageId);
     this.stageDefinition = stage;
     const registeredProgress = this.registry.get("progressState") as ProgressState | undefined;

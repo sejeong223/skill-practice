@@ -25,8 +25,7 @@ export class CameraDirector {
       this.stage.mapWidth,
       this.stage.mapHeight,
     );
-    this.camera.setFollowOffset(-320, 0);
-    this.camera.startFollow(this.player, true, 0.08, 0);
+    this.camera.startFollow(this.player, true, 0.08, 0, -320, 0);
   }
 
   public setSectionMode(section?: MapSectionDefinition): void {
@@ -35,12 +34,9 @@ export class CameraDirector {
     );
 
     this.camera.setFollowOffset(-320, 0);
-    this.camera.startFollow(
-      this.player,
-      true,
-      0.08,
-      followsVertical ? 0.08 : 0,
-    );
+    // startFollow snaps scroll immediately; changing sections must keep the
+    // current camera position and the existing follow target.
+    this.camera.setLerp(0.08, followsVertical ? 0.08 : 0);
   }
 
   public pauseFollow(): void {

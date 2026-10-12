@@ -262,9 +262,9 @@ function createNormalStage(
     checkpointIds: blueprint.id === "world-01"
       ? world01Save ? [world01Save.id] : []
       : [id + "-checkpoint"],
-    mapWidth: NORMAL_MAP_WIDTH,
+    mapWidth: map.mapWidth,
     mapHeight: map.mapHeight,
-    segments: [192, 1152, 1152, 1152, 192].map((length, index) =>
+    segments: map.sections.map(({ width: length }, index) =>
       createSegment(id, index + 1, false, length),
     ),
     collectibleIds: [id + "-memory"],

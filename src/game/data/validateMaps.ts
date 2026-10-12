@@ -227,8 +227,9 @@ export function validateCampaignMaps(
       errors.push(stage.id + ": 정적 장애물은 정확히 4개여야 합니다.");
     }
     for (let index = 1; index < dangers.length; index += 1) {
-      if (dangers[index].x - dangers[index - 1].x < 656) {
-        errors.push(stage.id + ": 물리 위험 간격은 656px 이상이어야 합니다.");
+      const gap = dangers[index].x - dangers[index - 1].x;
+      if (gap < 448 || gap > 640) {
+        errors.push(stage.id + ": 물리 위험 간격은 448~640px이어야 합니다.");
       }
     }
     if (map.gimmicks.some((gimmick) => ["fake-checkpoint", "forward-jump-wall"].includes(gimmick.kind))) {

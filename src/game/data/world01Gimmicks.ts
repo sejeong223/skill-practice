@@ -9,16 +9,16 @@ type CoinKind = "fake-bone-green" | "fake-bone-reverse" | "fake-bone-fire";
 
 export const WORLD01_STATIC_KINDS: readonly StaticKind[] = ["ant-static", "white-spike-static", "pigeon-static", "box-static"];
 const dangers: Readonly<Record<Stage, readonly [DangerKind, number][]>> = {
-  1: [["ant-static", 416], ["white-spike-static", 1088], ["box-static", 2592], ["pigeon-static", 3300]],
-  2: [["ant-static", 384], ["open-manhole", 1040], ["pigeon-static", 2048], ["white-spike-static", 2704], ["box-static", 3360]],
-  3: [["ant-static", 416], ["box-static", 1168], ["white-spike-static", 2544], ["pigeon-static", 3280]],
-  4: [["pigeon-static", 400], ["open-manhole", 1056], ["box-static", 1712], ["white-spike-static", 2368], ["ant-static", 3024]],
+  1: [["ant-static", 336], ["white-spike-static", 944], ["box-static", 1552], ["pigeon-static", 2160]],
+  2: [["ant-static", 320], ["open-manhole", 800], ["pigeon-static", 1280], ["white-spike-static", 1760], ["box-static", 2240]],
+  3: [["ant-static", 352], ["box-static", 960], ["white-spike-static", 1568], ["pigeon-static", 2176]],
+  4: [["pigeon-static", 288], ["open-manhole", 736], ["box-static", 1184], ["white-spike-static", 1664], ["ant-static", 2112]],
 };
 const coins: Readonly<Record<Stage, readonly [CoinKind, number][]>> = {
-  1: [["fake-bone-green", 2192]],
-  2: [["fake-bone-reverse", 848], ["fake-bone-green", 2432]],
-  3: [["fake-bone-fire", 2176]],
-  4: [["fake-bone-reverse", 2056], ["fake-bone-fire", 2704]],
+  1: [["fake-bone-green", 1360]],
+  2: [["fake-bone-reverse", 600], ["fake-bone-green", 2016]],
+  3: [["fake-bone-fire", 1344]],
+  4: [["fake-bone-reverse", 1056], ["fake-bone-fire", 1952]],
 };
 const visuals: Readonly<Record<DangerKind, { width: number; height: number; key: string }>> = {
   "ant-static": { width: 32, height: 20, key: "ant" },
@@ -30,16 +30,16 @@ const visuals: Readonly<Record<DangerKind, { width: number; height: number; key:
 
 export function getWorld01FloorY(stage: Stage, x: number): number {
   if (stage === 2) {
-    if (x < 1536) return 512;
-    if (x < 1792) return 496;
-    if (x < 2304) return 480;
-    if (x < 2816) return 496;
+    if (x < 1024) return 512;
+    if (x < 1280) return 496;
+    if (x < 1792) return 480;
+    if (x < 2048) return 496;
   }
   if (stage === 4) {
-    if (x < 1152) return 512;
-    if (x < 1792) return 496;
-    if (x < 2432) return 480;
-    if (x < 3072) return 496;
+    if (x < 896) return 512;
+    if (x < 1152) return 496;
+    if (x < 1664) return 480;
+    if (x < 1920) return 496;
   }
   return 512;
 }
@@ -49,7 +49,7 @@ export function getWorld01OpenManholes(stage: Stage): readonly { x: number; widt
 }
 
 function section(x: number): 2 | 3 | 4 {
-  return x < 1344 ? 2 : x < 2496 ? 3 : 4;
+  return x < 912 ? 2 : x < 1648 ? 3 : 4;
 }
 
 function makeDanger(stage: Stage, kind: DangerKind, x: number): WorldGimmickDefinition {

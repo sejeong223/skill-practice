@@ -68,6 +68,7 @@ export const NORMAL_STAGE_CHECKPOINT_COUNT = 1;
 export const BOSS_STAGE_CHECKPOINT_COUNT = 0;
 export const MAP_TILE_SIZE = 16;
 export const NORMAL_MAP_WIDTH = 3840;
+export const WORLD01_NORMAL_MAP_WIDTH = 2560;
 export const NORMAL_MAP_SAFE_LENGTH = 192;
 export const NORMAL_MAP_GAUNTLET_LENGTH = 1152;
 export const BOSS_MAP_WIDTH = 1920;

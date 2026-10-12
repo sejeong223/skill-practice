@@ -3,6 +3,7 @@ import path from "node:path";
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
 import ts from "typescript";
+import { isDeepStrictEqual } from "node:util";
 
 const require = createRequire(import.meta.url);
 
@@ -194,8 +195,8 @@ function verifyMap(stageNumber, definition, tiledMap) {
   if (tiledMap.layers.filter((layer) => layer.type === "tilelayer").length !== 4) {
     errors.push("타일 레이어가 4개가 아님");
   }
-  if (tiledMap.width * tileWidth !== 3840) errors.push("맵 너비가 3840px가 아님");
-  const expectedCheckpointX = stageNumber === 2 ? 1920 : stageNumber === 4 ? 3488 : null;
+  if (tiledMap.width * tileWidth !== 2560) errors.push("맵 너비가 2560px가 아님");
+  const expectedCheckpointX = stageNumber === 2 ? 1520 : stageNumber === 4 ? 2320 : null;
   const checkpoints = mapObjects.filter((object) => object.type === "checkpoint");
   if (checkpoints.length !== (expectedCheckpointX === null ? 0 : 1)) {
     errors.push("진짜 체크포인트 개수가 맞지 않음");
@@ -217,7 +218,8 @@ function verifyMap(stageNumber, definition, tiledMap) {
     errors.push("정적 장애물 또는 열린 맨홀 개수가 맞지 않음");
   }
   for (let index = 1; index < dangers.length; index += 1) {
-    if (dangers[index].x - dangers[index - 1].x < 656) errors.push("물리 위험 간격이 656px 미만");
+    const gap = dangers[index].x - dangers[index - 1].x;
+    if (gap < 448 || gap > 640) errors.push("물리 위험 간격이 448~640px 범위 밖");
   }
   const coins = stageGimmicks.filter((gimmick) => gimmick.kind.startsWith("fake-bone-"));
   if (coins.some((coin) => coin.y + coin.height > getWorld01FloorY(stageNumber, coin.x) - 80)) {
@@ -263,6 +265,9 @@ function run() {
         continue;
       }
       const existing = JSON.parse(fs.readFileSync(file, "utf8"));
+      if (!isDeepStrictEqual(existing, tiledMap)) {
+        problems.push(`stage ${stageNumber}: 생성 정의와 JSON 타일·오브젝트·속성이 다름`);
+      }
       problems.push(...verifyMap(stageNumber, definition, existing).map((problem) => `stage ${stageNumber}: ${problem}`));
       if (existing.width !== tiledMap.width || existing.height !== tiledMap.height) {
         problems.push(`stage ${stageNumber}: 메타데이터와 JSON 맵 크기가 다름`);

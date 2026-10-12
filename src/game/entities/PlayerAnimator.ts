@@ -1,5 +1,6 @@
 import type * as Phaser from "phaser";
 import { Player } from "./Player";
+import { DEFAULT_PLAYER_TUNING } from "./playerTypes";
 
 const RUN_ANIMATION_KEY = "corgi-run";
 const RUN_FRAME_RATE = 10;
@@ -17,6 +18,7 @@ export class PlayerAnimator {
 
   public constructor(player: Player) {
     this.player = player;
+    this.player.on("animationupdate", this.syncRunFootAnchor, this);
   }
 
   public triggerSlipperSwing(now: number): void {
@@ -33,15 +35,16 @@ export class PlayerAnimator {
     this.updateSlipperSwing(now);
     if (this.player.getAnimationState() === "run") {
       this.playRunAnimation();
-      const frameIndex = Number(this.player.frame.name);
-      const footAnchor =
-        RUN_FRAME_FOOT_ANCHORS[frameIndex] ?? RUN_FRAME_FOOT_ANCHORS[0];
-      this.player.alignFeetToFrame(footAnchor);
+      this.player.anims.timeScale = Math.min(1.25, Math.max(
+        0.15, Math.abs(this.player.body.velocity.x) / DEFAULT_PLAYER_TUNING.runSpeed,
+      ));
+      this.syncRunFootAnchor();
       return;
     }
 
     if (this.activeAnimationKey !== null) {
       this.player.anims.stop();
+      this.player.anims.timeScale = 1;
       this.activeAnimationKey = null;
       this.player.setTexture(RUN_ANIMATION_KEY, 0);
     }
@@ -50,12 +53,19 @@ export class PlayerAnimator {
   }
 
   public destroy(): void {
+    this.player.off("animationupdate", this.syncRunFootAnchor, this);
     this.slipperImage?.destroy();
     this.slipperImage = undefined;
   }
 
   public stopSlipperSwing(): void {
     this.slipperImage?.setVisible(false);
+  }
+
+  private syncRunFootAnchor(): void {
+    if (this.player.texture.key !== RUN_ANIMATION_KEY) return;
+    const frameIndex = Number(this.player.frame.name);
+    this.player.alignFeetToFrame(RUN_FRAME_FOOT_ANCHORS[frameIndex] ?? RUN_FRAME_FOOT_ANCHORS[0]);
   }
 
   private updateSlipperSwing(now: number): void {
