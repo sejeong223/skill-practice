@@ -101,7 +101,7 @@ Task: T05-integration-review
 
 - [x] 구현 완료
 - [x] 검증 통과
-- commit: pending
+- commit: 093d458
 
 ## Execution Result
 

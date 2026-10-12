@@ -16,7 +16,7 @@
 ## Progress
 
 - done: 0/4; superseded: 1; pending: 3
-- active: 없음 — [이동·간식·전투 개선](../../../plans/2026-10-12-world01-gameplay-refinement.md)은 완료됐다. 현재 실행 포인터는 [화면·음악·체크포인트 계획](../../../plans/2026-10-12-world01-pause-music-checkpoints.md)의 T01이며 구현 시작 전이다.
+- active: 없음 — [이동·간식·전투 개선](../../../plans/2026-10-12-world01-gameplay-refinement.md)과 [화면·음악·체크포인트 계획](../../../plans/2026-10-12-world01-pause-music-checkpoints.md)은 모두 완료됐다. 이 compact 계획은 자동 재개하지 않는다.
 - 이 계획 재개 지점: T02. 이후 검증에서 옛 기믹24개/HP12 기준을 복원하지 않는다.
 
 ## Why These Tasks

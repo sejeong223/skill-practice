@@ -12,7 +12,7 @@
 
 | Phase | Status | Summary | Blueprint |
 | :--- | :--- | :--- | :--- |
-| P01 | `in_progress` | 보스 잔여 코인 제거, 장면별 BGM, 깃발/차임, 일시정지, 통합 검증 | [P01](../phases/2026-10-12-world01-pause-music-checkpoints/P01-feedback-and-audio/phase.md) |
+| P01 | `done` | 보스 잔여 코인 제거, 장면별 BGM, 깃발/차임, 일시정지, 통합 검증 | [P01](../phases/2026-10-12-world01-pause-music-checkpoints/P01-feedback-and-audio/phase.md) |
 
 ## Confirmed Findings
 

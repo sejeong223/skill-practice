@@ -1,6 +1,6 @@
 # Phase: P01 월드 1 화면과 소리 피드백
 
-## Status: in_progress
+## Status: done
 
 ## Goal
 
@@ -14,12 +14,12 @@
 | T02 | `done` | 일반 구간/삼색이 BGM 제작과 장면별 라우팅 | [T02](./T02-stage-music.md) |
 | T03 | `done` | 실제 체크포인트 픽셀 깃발과 최초 활성화 차임 | [T03](./T03-checkpoint-flag-chime.md) |
 | T04 | `done` | BGM 정지/재개 및 중앙 일시정지 오버레이 | [T04](./T04-pause-overlay-audio.md) |
-| T05 | `in_progress` | 장면 전환·음악·일시정지·체크포인트 통합 검증 | [T05](./T05-integration-review.md) |
+| T05 | `done` | 장면 전환·음악·일시정지·체크포인트 통합 검증 | [T05](./T05-integration-review.md) |
 
 ## Progress
 
-- done: 4/5 (active: T05)
-- 순차 실행 중. T02→T03→T04는 같은 AudioManager를 순차 수정한다.
+- done: 5/5 (active: 없음)
+- 전체 Task 완료. T02→T03→T04는 같은 AudioManager를 순차 수정한다.
 
 ## Guardrails
 
