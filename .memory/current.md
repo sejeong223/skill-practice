@@ -10,15 +10,15 @@
 
 ## Active Task
 
-[T01-speaker-camera](./phases/2026-10-12-world01-camera-exit-sfx/P01-player-feedback/T01-speaker-camera.md)
+[T02-exit-checkpoint](./phases/2026-10-12-world01-camera-exit-sfx/P01-player-feedback/T02-exit-checkpoint.md)
 
 ## Status
 
-- in_progress: 0/3
+- T01: dc60625; 1/3
 
 ## Next Step (IMPORTANT)
 
-T01 -> T02 -> T03
+T02-exit-checkpoint
 
 ## Existing Worktree Baseline
 

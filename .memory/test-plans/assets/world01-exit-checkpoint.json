@@ -1,0 +1,94 @@
+{
+  "exits": [
+    {
+      "before": {
+        "stage": "world-01-stage-1",
+        "status": "play",
+        "visible": false,
+        "completed": 0
+      },
+      "after": {
+        "stage": "world-01-stage-2",
+        "completed": 1
+      }
+    },
+    {
+      "before": {
+        "stage": "world-01-stage-2",
+        "status": "play",
+        "visible": false,
+        "completed": 0
+      },
+      "after": {
+        "stage": "world-01-stage-3",
+        "completed": 1
+      }
+    },
+    {
+      "before": {
+        "stage": "world-01-stage-3",
+        "status": "play",
+        "visible": false,
+        "completed": 0
+      },
+      "after": {
+        "stage": "world-01-stage-4",
+        "completed": 1
+      }
+    },
+    {
+      "before": {
+        "stage": "world-01-stage-4",
+        "status": "play",
+        "visible": false,
+        "completed": 0
+      },
+      "after": {
+        "stage": "world-01-stage-boss",
+        "completed": 1
+      }
+    }
+  ],
+  "unsaved": {
+    "x": 96,
+    "y": 512,
+    "checkpoint": null
+  },
+  "saved": {
+    "respawns": [
+      {
+        "x": 96,
+        "y": 512,
+        "checkpoint": null
+      },
+      {
+        "x": 1529,
+        "y": 480,
+        "checkpoint": "world-01-stage-2-checkpoint"
+      },
+      {
+        "x": 1529,
+        "y": 480,
+        "checkpoint": "world-01-stage-2-checkpoint"
+      }
+    ],
+    "chimes": 1,
+    "snapshot": {
+      "x": 1529,
+      "y": 480,
+      "id": "world-01-stage-2-checkpoint"
+    },
+    "visible": false,
+    "flags": 1
+  },
+  "bossReturn": {
+    "x": 2329,
+    "y": 512,
+    "id": "world-01-stage-4-checkpoint"
+  },
+  "laterWorld": {
+    "visible": false,
+    "flags": 1
+  },
+  "errors": []
+}

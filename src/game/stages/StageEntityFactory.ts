@@ -22,7 +22,7 @@ export type StageEntityRequest =
   | { kind: "enemy"; definition: EnemyDefinition }
   | { kind: "coin"; id: string; x: number; y: number; appearance?: CoinAppearance }
   | { kind: "collectible"; id: string; x: number; y: number }
-  | { kind: "checkpoint"; id: string; x: number; y: number }
+  | { kind: "checkpoint"; id: string; x: number; y: number; height?: number }
   | { kind: "exit"; id: string; x: number; y: number };
 
 export type StageEntity = Phaser.GameObjects.GameObject & {
@@ -43,7 +43,7 @@ export class StageEntityFactory {
       case "collectible":
         return this.createCollectible(scene, request.id, request.x, request.y);
       case "checkpoint":
-        return this.createCheckpoint(scene, request.id, request.x, request.y);
+        return this.createCheckpoint(scene, request.id, request.x, request.y, request.height);
       case "exit":
         return this.createExit(scene, request.id, request.x, request.y);
       default: {
@@ -104,21 +104,21 @@ export class StageEntityFactory {
     id: string,
     x: number,
     y: number,
+    height = 120,
   ): Phaser.GameObjects.Rectangle {
-    const checkpoint = scene.add.rectangle(x, y, 18, 120, 0x8f283d, 0.6);
+    const checkpoint = scene.add.rectangle(x, y, 18, height).setVisible(false);
     scene.physics.add.existing(checkpoint, true);
     checkpoint.setData("stageEntityKind", "checkpoint");
     checkpoint.setData("entityId", id);
-    if (id === "world-01-stage-2-checkpoint" || id === "world-01-stage-4-checkpoint") {
-      checkpoint.setVisible(false);
-      const key = "world-01-checkpoint-flag";
-      const flag = scene.add.image(x, y + 64, getAssetDefinition(key).key, getAssetFrameKey(key))
-        .setOrigin(0.5, 1).setDisplaySize(76, 128).setDepth(1);
-      flag.setData("checkpointId", id);
-      checkpoint.once(Phaser.GameObjects.Events.DESTROY, () => {
-        if (flag.scene) flag.destroy();
-      });
-    }
+    const floorY = y + height / 2;
+    checkpoint.setData("respawnPosition", { x, y: floorY });
+    const key = "world-01-checkpoint-flag";
+    const flag = scene.add.image(x, floorY, getAssetDefinition(key).key, getAssetFrameKey(key))
+      .setOrigin(0.5, 1).setDisplaySize(76, 128).setDepth(1);
+    flag.setData("checkpointId", id);
+    checkpoint.once(Phaser.GameObjects.Events.DESTROY, () => {
+      if (flag.scene) flag.destroy();
+    });
     return checkpoint;
   }
 
@@ -128,8 +128,7 @@ export class StageEntityFactory {
     x: number,
     y: number,
   ): Phaser.GameObjects.Rectangle {
-    const exit = scene.add.rectangle(x, y, 32, 160, 0xf18a72, 0.7);
-    scene.physics.add.existing(exit, true);
+    const exit = scene.add.rectangle(x, y, 32, 160).setVisible(false);
     exit.setData("stageEntityKind", "exit");
     exit.setData("entityId", id);
     return exit;

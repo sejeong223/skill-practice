@@ -119,7 +119,8 @@ export class StageScene extends Phaser.Scene {
       ? sharedEventBus
       : undefined;
     this.eventBus = this.persistenceEventBus ?? new GameEventBus();
-    this.physics.world.setBounds(0, 0, stage.mapWidth, stage.mapHeight);
+    // Keep camera bounds at the map edge, but allow the corgi to walk fully out.
+    this.physics.world.setBounds(0, 0, stage.mapWidth + (stage.kind === "normal" ? 256 : 0), stage.mapHeight);
     this.stageBackdrop = this.add
       .rectangle(stage.mapWidth / 2, GAME_HEIGHT / 2, stage.mapWidth, GAME_HEIGHT, 0xf5e7c7)
       .setDepth(-40);
@@ -265,17 +266,6 @@ export class StageScene extends Phaser.Scene {
         () => this.activateCheckpoint(record.id),
       );
     }
-    for (const record of this.runtime.getEntities("exit")) {
-      this.physics.add.overlap(
-        this.player,
-        record.entity as Phaser.GameObjects.GameObject,
-        () => {
-          if (stage.id === "world-01-stage-boss") return;
-          this.runtime?.complete();
-        },
-      );
-    }
-
     this.gameplayEventBus.on("map-object-state-changed", (payload) => {
       const object = this.loadedMap?.objects.find((candidate) => candidate.id === payload.objectId);
       if (object?.kind !== "enemy-spawn") return;
@@ -288,9 +278,9 @@ export class StageScene extends Phaser.Scene {
     this.syncSectionCamera();
     if (data.resumeCheckpointId) {
       if (stage.id !== "world-01-stage-4") throw new Error("보스 재시작 체크포인트는 4단계에서만 사용합니다.");
-      const save = map?.objectDefinitions.find((object) => object.id === data.resumeCheckpointId && object.kind === "checkpoint");
+      const save = this.getCheckpointSpawn(data.resumeCheckpointId);
       if (!save) throw new Error("4단계 마지막 체크포인트를 찾을 수 없습니다: " + data.resumeCheckpointId);
-      this.player.setPosition(save.x + 40, save.y + save.height);
+      this.player.resetTo(new Phaser.Math.Vector2(save.x, save.y));
       this.checkpointSystem.activate(data.resumeCheckpointId, this.player.x, this.player.y, 1, this.time.now, { silent: true });
     }
     this.runtime.start();
@@ -371,11 +361,7 @@ export class StageScene extends Phaser.Scene {
       const nextStageId = getNextStageId(stageId);
       if (!nextStageId) return;
       this.stageTransitionStarted = true;
-      this.add.text(this.cameras.main.centerX, 255, "STAGE CLEAR!", {
-        color: "#FFD34D", fontFamily: "Galmuri11Pixel, monospace", fontSize: "42px",
-        stroke: "#543b1d", strokeThickness: 6,
-      }).setOrigin(0.5).setScrollFactor(0).setDepth(100);
-      this.time.delayedCall(700, () => {
+      this.time.delayedCall(180, () => {
         if (!this.scene.isActive()) return;
         this.scene.start("StageScene", {
           stageId: nextStageId,
@@ -472,6 +458,13 @@ export class StageScene extends Phaser.Scene {
       return;
     }
     this.playerController?.update(time, delta);
+    if (this.stageDefinition?.kind === "normal" && this.player &&
+        !this.player.isControlLocked() && this.player.getBounds().left >= this.stageDefinition.mapWidth &&
+        this.player.body.bottom < this.stageDefinition.mapHeight - 1) {
+      this.player.setVelocity(0, 0);
+      this.runtime.complete();
+      return;
+    }
     if (input?.barkPressed && this.progress.unlockedSkills.includes("bark")) {
       this.skillSystem?.use("bark", time);
     }
@@ -564,19 +557,26 @@ export class StageScene extends Phaser.Scene {
     ) {
       return;
     }
-    this.mapInteraction?.triggerObject(checkpointId, "checkpoint-reached");
+    const spawn = this.getCheckpointSpawn(checkpointId);
+    if (!spawn) return;
     const activated = this.checkpointSystem.activate(
       checkpointId,
-      this.player.x,
-      this.player.y,
-      this.player.flipX ? -1 : 1,
+      spawn.x,
+      spawn.y,
+      1,
       this.time.now,
     );
     if (!activated) return;
+    this.mapInteraction?.triggerObject(checkpointId, "checkpoint-reached");
     this.eventBus?.emit("checkpoint-activated", {
       stageId: this.stageId,
       checkpointId,
     });
+  }
+
+  private getCheckpointSpawn(checkpointId: string): { x: number; y: number } | undefined {
+    return this.runtime?.getEntities("checkpoint")
+      .find((record) => record.id === checkpointId)?.entity.getData("respawnPosition");
   }
 
   private spawnMapEnemy(
