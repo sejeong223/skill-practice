@@ -48,6 +48,7 @@ Task: T04-exit-floor
 
 - [x] 구현 완료
 - [x] 검증 통과
+- commit: f8c0866
 
 ## Execution Result
 
