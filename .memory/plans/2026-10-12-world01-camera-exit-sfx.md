@@ -11,8 +11,14 @@
 
 | Phase | Status | Summary | Blueprint |
 | :--- | :--- | :--- | :--- |
-| P01 | `in_progress` | 화자 카메라, 맵 전환/부활, 새 효과음과 통합 확인 | [P01](../phases/2026-10-12-world01-camera-exit-sfx/P01-player-feedback/phase.md) |
+| P01 | `done` | 화자 카메라, 맵 전환/부활, 새 효과음과 통합 확인 | [P01](../phases/2026-10-12-world01-camera-exit-sfx/P01-player-feedback/phase.md) |
 
 ## Scope
 
 T01은 카메라만, T02는 출구/체크포인트 동작, T03은 효과음과 최종 회귀를 맡는다. 같은 StageScene을 순차 수정한다. 맵 유사성은 데이터 조사 결과를 보고하며 지형이나 이미지를 새로 교체하지 않는다. 기존 무관한 메모리 변경은 보존한다.
+
+## Execution Result
+
+- 전체3/3 완료: T01 `dc60625`, T02 `974eb99`, T03 `7691fdf`.
+- 자동38건, 타입/lint/빌드/맵/음원 재현 검사와 실제 브라우저 동작 검증 통과. [결과와 원음·녹음·화면](../test-plans/2026-10-12-world01-camera-exit-sfx.md).
+- 실제 스피커 청음·실기기 터치는 미실시로 남겼다. 맵 재설계와 나머지 compact/상점 후속 작업은 포함하지 않았다.

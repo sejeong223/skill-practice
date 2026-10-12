@@ -6,19 +6,19 @@
 
 ## Active Phase
 
-[P01](./phases/2026-10-12-world01-camera-exit-sfx/P01-player-feedback/phase.md)
+없음 — [P01](./phases/2026-10-12-world01-camera-exit-sfx/P01-player-feedback/phase.md) 완료.
 
 ## Active Task
 
-[T03-new-feedback-audio](./phases/2026-10-12-world01-camera-exit-sfx/P01-player-feedback/T03-new-feedback-audio.md)
+없음 — T01~T03 완료.
 
 ## Status
 
-- T02: 974eb99; 2/3
+- T03 완료: 7691fdf. 전체3/3 구현·검증·한국어 커밋 완료.
 
 ## Next Step (IMPORTANT)
 
-T03-new-feedback-audio
+다음 Task 없음. 예전 compact의 다른 항목이나 상점 작업은 자동 재개하지 않는다.
 
 ## Existing Worktree Baseline
 
@@ -28,6 +28,7 @@ T03-new-feedback-audio
 
 ## Completed Work
 
+- [대사 카메라·출구·깃발 부활·새 효과음](./plans/2026-10-12-world01-camera-exit-sfx.md): T01 `dc60625`, T02 `974eb99`, T03 `7691fdf`, 전체3/3 완료. 새 WAV2개, 자동38건·타입·lint·빌드·맵 검사와 브라우저 통합 검증 통과. 맵 유사성 원인 및 청음/실기기 한계는 [검증 기록](./test-plans/2026-10-12-world01-camera-exit-sfx.md) 참조.
 - [월드 1 화면·음악·체크포인트](./plans/2026-10-12-world01-pause-music-checkpoints.md): T01 `ec7e532`, T02 `e3fd858`, T03 `5f1a388`, T04 `d464ce9`, T05 `093d458`. 전체5/5 완료, 다음 Task 없음. 자동35건·맵·타입·lint·빌드 및 브라우저 통합 결과는 [검증 기록](./test-plans/2026-10-12-world01-pause-music-checkpoints.md)에 있다. 실제 청음/실기기는 미실시다.
 - [월드 1 이동 흐름·간식·삼색이 전투 개선](./plans/2026-10-12-world01-gameplay-refinement.md): T01 `c253d57`, T02 `3a435d1`, T03 `9eb4cf7`, T04 `eb06803`, T05 `4e6e312`, 완료 정리 `f1329e7`. 완료 상태를 유지한다.
 - 당시 자동21건·타입·lint·빌드·브라우저 통합 검증은 [해당 기록](./test-plans/2026-10-12-world01-gameplay-refinement.md)에 있다. 이 결과를 새 작업의 검증 결과로 대신 쓰지 않는다. 실제 스피커/이어폰 청음과 실제 모바일 터치 검증은 당시 미실시였다.

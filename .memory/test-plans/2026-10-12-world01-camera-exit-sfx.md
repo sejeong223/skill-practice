@@ -41,5 +41,5 @@
 
 - 전체 테스트38/38 통과: `rg --files scripts -g '*.test.mjs'`로 모아 `node --experimental-strip-types --test` 실행.
 - `node scripts/generate-feedback-audio.mjs --check`, `npm.cmd run world01:maps:check`, `npx.cmd tsc --noEmit`, `npm.cmd run lint`, `npm.cmd run build` 통과. 일반맵4개/기믹32개/객체58개 보존.
-- T01 `dc60625`: 화자별 카메라. T02 `974eb99`: 출구/깃발 부활. T03 커밋은 청사진과 current에 기록한다.
+- T01 `dc60625`: 화자별 카메라. T02 `974eb99`: 출구/깃발 부활. T03 `7691fdf`: 신규 효과음 제작·연결·통합 검증.
 - 기존 밥그릇·HP10·사모예드5마리·지갑 재획득 정책은 유지했다. 추가로 임의 실행할 작업은 없다.
