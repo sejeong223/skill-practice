@@ -1,0 +1,16 @@
+{
+  "result": {
+    "viewport": [
+      390,
+      844
+    ],
+    "touchPoints": 1,
+    "runtime": "play",
+    "paused": false,
+    "music": "world-01-peaceful",
+    "context": "running"
+  },
+  "taps": 4,
+  "physicalDevice": false,
+  "errors": []
+}

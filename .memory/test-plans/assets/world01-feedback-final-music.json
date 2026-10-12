@@ -1,0 +1,25 @@
+{
+  "results": [
+    {
+      "key": "world-01-peaceful",
+      "seconds": 40,
+      "before": 315,
+      "after": 13153,
+      "ticksAdvanced": 12838,
+      "peak": 0.1413843184709549,
+      "activeWindows": 275,
+      "errors": []
+    },
+    {
+      "key": "world-01-calico",
+      "seconds": 36,
+      "before": 897,
+      "after": 14045,
+      "ticksAdvanced": 13148,
+      "peak": 0.14098791778087616,
+      "activeWindows": 567,
+      "errors": []
+    }
+  ],
+  "physicalListening": false
+}

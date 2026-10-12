@@ -10,20 +10,20 @@
 
 ## Active Task
 
-[T04-pause-overlay-audio](./phases/2026-10-12-world01-pause-music-checkpoints/P01-feedback-and-audio/T04-pause-overlay-audio.md)
+[T05-integration-review](./phases/2026-10-12-world01-pause-music-checkpoints/P01-feedback-and-audio/T05-integration-review.md)
 
 ## Status
 
-- T03 완료: 5f1a388. 진행률 3/5.
+- T04 완료: d464ce9. 진행률 4/5.
 - 사용자 요청에 따라 다음 Task를 즉시 이어서 실행한다.
 
 ## Next Step (IMPORTANT)
 
-T04-pause-overlay-audio 청사진을 읽고 순차 구현·검증·한국어 커밋을 진행한다.
+T05-integration-review 청사진을 읽고 순차 구현·검증·한국어 커밋을 진행한다.
 
 ## Existing Worktree Baseline
 
-- 시작 전에 이미 `src/game/scenes/StageScene.ts`의 보스 타일 바닥과 `src/game/audio/AudioManager.ts`의 공용 Tone 컨텍스트/방어음/gesture unlock 수정이 미커밋 상태였다. 이 변경을 실행 기준으로 삼고 되돌리지 않는다.
+- 시작 전에 이미 `src/game/scenes/StageScene.ts`의 보스 타일 바닥과 `src/game/audio/AudioManager.ts`의 공용 Tone 컨텍스트/방어음/gesture unlock 수정이 미커밋 상태였다. 실행 기준으로 보존했으며 이번 T02(`e3fd858`)에 포함했다.
 - [보스 바닥 및 방어음 검증](./test-plans/2026-10-12-boss-ground-and-audio.md)과 `.memory/test-plans/assets/world01-boss-ground.png`, `world01-bowl-clang-fixed.json`, `world01-bowl-clang-fixed.webm`을 보존한다.
 - 이전 메모리 문서의 미커밋 상점/재도전 정책 보완도 보존한다. 새 Task와 무관한 변경을 임의 정리하거나 전체 파일을 HEAD로 복원하지 않는다.
 
@@ -36,7 +36,7 @@ T04-pause-overlay-audio 청사진을 읽고 순차 구현·검증·한국어 커
 ## Previous Work Pointer
 
 - [예전 compact Phase](./phases/2026-10-01-world01-compact-scenes/P01-world01-map-and-hud/phase.md): T01은 앞선 개선 계획으로 대체됐다. T02 보스 arena/배경, T03 출구, T04 하트는 별도 미완료다.
-- 예전 T03의 체크포인트 깃발 부분은 **이번 T03**으로 위임한다. 기존 픽셀 깃발 재사용으로 구체화했으며 출구 숨김을 같이 실행하거나 옛 Task 전체를 done으로 만들지 않는다.
+- 예전 T03의 체크포인트 깃발 부분은 **이번 T03(`5f1a388`)에서 완료**했다. 기존 픽셀 깃발을 재사용했으며 출구 숨김은 별도 미완료라서 옛 Task 전체를 done으로 만들지 않는다.
 - 새 계획 완료 뒤 옛 계획을 자동 재개하지 않는다. 재개 요청이 오면 T02부터 검토하되 기믹32개·보스HP10·새 간식 외형·최근 바닥/방어음 수정을 옛 기준으로 되돌리지 않는다.
 
 ## Deferred Shop and Replay Policy

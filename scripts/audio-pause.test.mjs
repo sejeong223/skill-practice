@@ -29,10 +29,11 @@ function harness({ locked = false, cached = [] } = {}) {
   };
   class Node {
     disposed = false;
+    attacks = [];
     constructor() { nodes.push(this); }
     connect() { return this; }
     toDestination() { return this; }
-    triggerAttackRelease() {}
+    triggerAttackRelease(...args) { this.attacks.push(args); }
     dispose() { this.disposed = true; }
   }
   class Gain extends Node {
@@ -151,6 +152,22 @@ test("캐시 음악도 자신의 인스턴스만 pause/resume하고 효과음은
   next.playMusic("world-01-calico"); old.destroy();
   assert.equal(h.sounds[2].isPlaying, true); assert.equal(h.sounds[2].destroyed, false);
   next.destroy();
+});
+
+test("처리가 지연된 음표와 중복 예약을 건너뛰고 다음 음표부터 재생한다", () => {
+  const h = harness(); const audio = h.create();
+  audio.playMusic("world-01-peaceful");
+  const sequences = h.nodes.filter(node => node instanceof h.Sequence);
+  const voices = h.nodes.filter(node => !(node instanceof h.Sequence) && !(node instanceof h.Gain));
+  sequences.forEach((sequence, index) => {
+    const note = index === 1 ? "C" : "C4";
+    [99.5, 99.9, 100, 100.001, 100.2, 100.2, 100.1, 100.4].forEach(time => sequence.callback(time, note));
+    assert.deepEqual(voices[index].attacks.map(attack => attack[2]), [100.2, 100.4]);
+  });
+  audio.setPaused(true);
+  sequences.forEach(sequence => sequence.callback(100.6, "C"));
+  assert.ok(voices.every(voice => voice.attacks.length === 2));
+  audio.destroy();
 });
 
 test("NoAudio 환경과 폐기 후 정지 요청은 재생을 만들지 않는다", () => {

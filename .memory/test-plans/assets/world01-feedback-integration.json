@@ -1,0 +1,56 @@
+{
+  "out": {
+    "wallet": {
+      "balance": 12,
+      "ordinaryFrame": "bone-coin",
+      "fakeFrame": "bone-coin",
+      "earlySafe": 4
+    },
+    "clear": {
+      "beats": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "completed": 1,
+      "balance": 12,
+      "audioDestroyed": true,
+      "sources": 0,
+      "music": null
+    },
+    "world2": "world-02-amusement",
+    "death": {
+      "hearts": [
+        3,
+        3,
+        3,
+        2,
+        1,
+        0
+      ],
+      "dogs": 0,
+      "locked": false
+    },
+    "return": {
+      "key": "world-01-peaceful",
+      "checkpoint": "world-01-stage-4-checkpoint",
+      "balance": 12,
+      "chimes": 0
+    },
+    "retry": {
+      "key": "world-01-calico",
+      "hp": 10,
+      "hearts": 3,
+      "charges": 3,
+      "dogs": 0,
+      "coins": 0,
+      "bowl": true
+    }
+  },
+  "errors": []
+}

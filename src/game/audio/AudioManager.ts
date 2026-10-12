@@ -265,14 +265,19 @@ export class AudioManager {
       volume: arrangement.bassVolumeDb ?? -19,
     }).connect(musicGain);
 
-    const canPlay = (): boolean => !this.destroyed && !this.paused && activeToneMusicOwner === this.toneMusicOwner;
+    const canPlayAt = (time: number, previousTime: number): boolean => {
+      // After a busy frame, Tone can deliver several overdue notes together.
+      // Skip them rather than clamp multiple oscillator starts to the same time.
+      return !this.destroyed && !this.paused && activeToneMusicOwner === this.toneMusicOwner
+        && time > previousTime && time >= Tone.immediate() + 0.005;
+    };
     let lastMelodyAt = -Infinity;
     let lastChordAt = -Infinity;
     let lastBassAt = -Infinity;
 
     const melodySequence = new Tone.Sequence<string | null>(
       (time, note) => {
-        if (note && canPlay() && time > lastMelodyAt) {
+        if (note && canPlayAt(time, lastMelodyAt)) {
           lastMelodyAt = time;
           melody.triggerAttackRelease(note, arrangement.leadGate ?? "8n", time, 0.55);
         }
@@ -283,7 +288,7 @@ export class AudioManager {
     const chordSequence = new Tone.Sequence<string | null>(
       (time, chord) => {
         const notes = chord ? CHORD_VOICINGS[chord] : undefined;
-        if (notes && canPlay() && time > lastChordAt) {
+        if (notes && canPlayAt(time, lastChordAt)) {
           lastChordAt = time;
           harmony.triggerAttackRelease([...notes], "2n", time, 0.28);
         }
@@ -293,7 +298,7 @@ export class AudioManager {
     );
     const bassSequence = new Tone.Sequence<string>(
       (time, note) => {
-        if (canPlay() && time > lastBassAt) {
+        if (canPlayAt(time, lastBassAt)) {
           lastBassAt = time;
           bass.triggerAttackRelease(note, "4n", time, 0.48);
         }

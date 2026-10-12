@@ -1,0 +1,50 @@
+{
+  "results": [
+    {
+      "number": 2,
+      "before": {
+        "id": "world-01-stage-2-checkpoint",
+        "chimes": 0,
+        "visible": false,
+        "body": true,
+        "flagCount": 1,
+        "texture": "world-01-props",
+        "frame": "fake-checkpoint",
+        "bottom": 480,
+        "floor": 480
+      },
+      "after": {
+        "chimes": 1,
+        "peak": 0.029734289273619652,
+        "snapshot": "world-01-stage-2-checkpoint",
+        "sources": 0
+      }
+    },
+    {
+      "number": 4,
+      "before": {
+        "id": "world-01-stage-4-checkpoint",
+        "chimes": 1,
+        "visible": false,
+        "body": true,
+        "flagCount": 1,
+        "texture": "world-01-props",
+        "frame": "fake-checkpoint",
+        "bottom": 512,
+        "floor": 512
+      },
+      "after": {
+        "chimes": 2,
+        "peak": 0.027565155178308487,
+        "snapshot": "world-01-stage-4-checkpoint",
+        "sources": 0
+      }
+    }
+  ],
+  "restored": {
+    "chimes": 2,
+    "snapshot": "world-01-stage-4-checkpoint",
+    "flags": 1
+  },
+  "errors": []
+}

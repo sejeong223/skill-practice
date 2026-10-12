@@ -1,0 +1,49 @@
+{
+  "hits": [
+    {
+      "charges": 2,
+      "hearts": 3,
+      "filters": 1,
+      "dogs": 0,
+      "outside": true
+    },
+    {
+      "charges": 1,
+      "hearts": 3,
+      "filters": 2,
+      "dogs": 0,
+      "outside": true
+    },
+    {
+      "charges": 0,
+      "hearts": 3,
+      "filters": 3,
+      "dogs": 5,
+      "outside": true
+    },
+    {
+      "charges": 0,
+      "hearts": 2,
+      "filters": 3,
+      "dogs": 5,
+      "outside": false
+    }
+  ],
+  "events": [
+    2,
+    1,
+    0
+  ],
+  "peaks": [
+    0.08779634535312653,
+    0.10801194608211517,
+    0.10801193863153458
+  ],
+  "reentry": {
+    "sameContext": true,
+    "state": "running",
+    "oldSources": 0,
+    "listeners": 2
+  },
+  "errors": []
+}
