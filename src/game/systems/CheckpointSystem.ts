@@ -1,7 +1,11 @@
 import { GameplayEventBus } from "../core/events";
 import type { CheckpointSnapshot, MapRuntimeSnapshot } from "../core/runtimeTypes";
 import type { RuntimeStageState, StageId } from "../core/types";
-import { Player } from "../entities/Player";
+import type { Player } from "../entities/Player";
+
+export interface CheckpointActivationOptions {
+  readonly silent?: boolean;
+}
 
 export class CheckpointSystem {
   private readonly player: Player;
@@ -34,6 +38,7 @@ export class CheckpointSystem {
     y: number,
     facing: 1 | -1,
     now: number,
+    options?: CheckpointActivationOptions,
   ): boolean {
     if (this.snapshot || this.isFakeCheckpoint?.(checkpointId)) {
       return false;
@@ -52,13 +57,15 @@ export class CheckpointSystem {
     this.runtime.checkpointId = checkpointId;
     this.runtime.checkpointUsed = true;
     this.runtime.checkpointSeed = this.runtime.randomSeed;
-    this.eventBus.emit("checkpoint-reached", {
-      stageId: this.stageId,
-      checkpointId,
-      x,
-      y,
-      now,
-    });
+    if (!options?.silent) {
+      this.eventBus.emit("checkpoint-reached", {
+        stageId: this.stageId,
+        checkpointId,
+        x,
+        y,
+        now,
+      });
+    }
     return true;
   }
 

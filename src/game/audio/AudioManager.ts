@@ -17,7 +17,6 @@ const SOUND_PATTERNS: Readonly<Partial<Record<SoundKey, readonly number[]>>> = {
   "slipper-hit": [392, 262],
   sneeze: [494, 622, 330],
   coin: [784, 988],
-  checkpoint: [523, 659],
   "death-cartoon": [220, 147],
   "stage-clear": [523, 659, 784],
 };
@@ -97,6 +96,10 @@ export class AudioManager {
     if (!this.isAudioReady()) return;
     if (key === "bowl-clang") {
       this.playBowlClang();
+      return;
+    }
+    if (key === "checkpoint") {
+      this.playCheckpointChime();
       return;
     }
     if (key === "stray-dog-rush") {
@@ -271,6 +274,39 @@ export class AudioManager {
     this.trackSource(source, [filter, gain]);
     source.start();
     source.stop(context.currentTime + 0.16);
+  }
+
+  private playCheckpointChime(): void {
+    if (!this.isAudioReady()) return;
+    const context = this.audioContext!;
+    const startsAt = context.currentTime;
+    const filter = context.createBiquadFilter();
+    filter.type = "lowpass";
+    filter.frequency.setValueAtTime(3800, startsAt);
+    filter.connect(context.destination);
+    const notes = [
+      { frequency: 659.25, delay: 0, peak: 0.024, decay: 0.14 },
+      { frequency: 783.99, delay: 0.095, peak: 0.022, decay: 0.17 },
+      { frequency: 1046.5, delay: 0.19, peak: 0.028, decay: 0.30 },
+    ];
+    let remaining = notes.length;
+    for (const { frequency, delay, peak, decay } of notes) {
+      const oscillator = context.createOscillator();
+      const gain = context.createGain();
+      const noteTime = startsAt + delay;
+      oscillator.type = "sine";
+      oscillator.frequency.setValueAtTime(frequency, noteTime);
+      gain.gain.setValueAtTime(0.0001, noteTime);
+      gain.gain.linearRampToValueAtTime(peak, noteTime + 0.005);
+      gain.gain.exponentialRampToValueAtTime(0.0001, noteTime + decay);
+      oscillator.connect(gain).connect(filter);
+      this.trackSource(oscillator, [gain], () => {
+        remaining -= 1;
+        if (remaining === 0) filter.disconnect();
+      });
+      oscillator.start(noteTime);
+      oscillator.stop(noteTime + decay + 0.02);
+    }
   }
 
   private playBowlClang(): void {

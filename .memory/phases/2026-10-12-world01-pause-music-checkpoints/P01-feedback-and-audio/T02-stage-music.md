@@ -131,7 +131,7 @@ Task: T02-stage-music
 
 - [x] 구현 완료
 - [x] 검증 통과
-- commit: pending
+- commit: e3fd858
 
 ## Execution Result
 

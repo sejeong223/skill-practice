@@ -14,6 +14,7 @@ const WORLD01_PROP_FRAMES: Readonly<Record<string, string>> = {
   "world-01-prop-white-spike": "white-spike",
   "world-01-prop-pigeon": "pigeon",
   "world-01-prop-fake-checkpoint": "fake-checkpoint",
+  "world-01-checkpoint-flag": "fake-checkpoint",
   "world-01-prop-bone-coin": "bone-coin",
   "world-01-prop-bone-coin-green": "bone-coin-green",
   "world-01-prop-bone-coin-fire": "bone-coin-fire",

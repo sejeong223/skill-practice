@@ -291,7 +291,7 @@ export class StageScene extends Phaser.Scene {
       const save = map?.objectDefinitions.find((object) => object.id === data.resumeCheckpointId && object.kind === "checkpoint");
       if (!save) throw new Error("4단계 마지막 체크포인트를 찾을 수 없습니다: " + data.resumeCheckpointId);
       this.player.setPosition(save.x + 40, save.y + save.height);
-      this.checkpointSystem.activate(data.resumeCheckpointId, this.player.x, this.player.y, 1, this.time.now);
+      this.checkpointSystem.activate(data.resumeCheckpointId, this.player.x, this.player.y, 1, this.time.now, { silent: true });
     }
     this.runtime.start();
     if (data.resumeCheckpointId) {

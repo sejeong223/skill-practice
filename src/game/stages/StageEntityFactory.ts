@@ -3,6 +3,7 @@ import type { EnemyDefinition, PlatformDefinition, TrapDefinition } from "../cor
 import { Enemy } from "../entities/Enemy";
 import { Trap } from "../entities/Trap";
 import { SNACK_PRESENTATION } from "../data/snackPresentation";
+import { getAssetDefinition, getAssetFrameKey } from "../assets/assetManifest";
 
 type CoinAppearance = "legacy" | "bone";
 
@@ -108,6 +109,16 @@ export class StageEntityFactory {
     scene.physics.add.existing(checkpoint, true);
     checkpoint.setData("stageEntityKind", "checkpoint");
     checkpoint.setData("entityId", id);
+    if (id === "world-01-stage-2-checkpoint" || id === "world-01-stage-4-checkpoint") {
+      checkpoint.setVisible(false);
+      const key = "world-01-checkpoint-flag";
+      const flag = scene.add.image(x, y + 64, getAssetDefinition(key).key, getAssetFrameKey(key))
+        .setOrigin(0.5, 1).setDisplaySize(76, 128).setDepth(1);
+      flag.setData("checkpointId", id);
+      checkpoint.once(Phaser.GameObjects.Events.DESTROY, () => {
+        if (flag.scene) flag.destroy();
+      });
+    }
     return checkpoint;
   }
 

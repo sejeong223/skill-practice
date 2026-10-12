@@ -10,16 +10,16 @@
 
 ## Active Task
 
-[T02-stage-music](./phases/2026-10-12-world01-pause-music-checkpoints/P01-feedback-and-audio/T02-stage-music.md)
+[T03-checkpoint-flag-chime](./phases/2026-10-12-world01-pause-music-checkpoints/P01-feedback-and-audio/T03-checkpoint-flag-chime.md)
 
 ## Status
 
-- T01 완료: ec7e532. 진행률 1/5.
+- T02 완료: e3fd858. 진행률 2/5.
 - 사용자 요청에 따라 다음 Task를 즉시 이어서 실행한다.
 
 ## Next Step (IMPORTANT)
 
-T02-stage-music 청사진을 읽고 순차 구현·검증·한국어 커밋을 진행한다.
+T03-checkpoint-flag-chime 청사진을 읽고 순차 구현·검증·한국어 커밋을 진행한다.
 
 ## Existing Worktree Baseline
 

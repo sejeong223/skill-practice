@@ -10,13 +10,13 @@
 | :--- | :--- | :--- | :--- |
 | T01 | `superseded` | 2026-10-12 새 계획 T01/T02로 대체, 완료 처리 아님 | [T01](./T01-compact-normal-maps.md) |
 | T02 | `pending` | 1280×720 보스 맵, 연속 타일 지형, 단일 배경 | [T02](./T02-boss-arena-and-background.md) |
-| T03 | `pending` | 낮 색상의 체크포인트 깃발과 보이지 않는 출구 | [T03](./T03-day-flag-and-invisible-exit.md) |
+| T03 | `pending` | 깃발은 최신 계획 T03에서 완료, 출구 숨김은 별도 미완료 | [T03](./T03-day-flag-and-invisible-exit.md) |
 | T04 | `pending` | 외곽 상자 없는 작은 픽셀 하트와 통합 확인 | [T04](./T04-pixel-hearts-and-review.md) |
 
 ## Progress
 
 - done: 0/4; superseded: 1; pending: 3
-- active: 없음 — 현재 실행은 [2026-10-12 새 계획](../../../plans/2026-10-12-world01-gameplay-refinement.md)의 T01이다.
+- active: 없음 — [이동·간식·전투 개선](../../../plans/2026-10-12-world01-gameplay-refinement.md)은 완료됐다. 현재 실행 포인터는 [화면·음악·체크포인트 계획](../../../plans/2026-10-12-world01-pause-music-checkpoints.md)의 T01이며 구현 시작 전이다.
 - 이 계획 재개 지점: T02. 이후 검증에서 옛 기믹24개/HP12 기준을 복원하지 않는다.
 
 ## Why These Tasks
