@@ -110,6 +110,9 @@ textarea {
 .hud-stage .hud-subtitle { margin-top: 0; }
 .hud-stats { display: flex; flex-wrap: nowrap; justify-content: flex-start; gap: 5px 12px; max-width: none; }
 .hud-stats span { white-space: nowrap; }
+.snack-coin-counter { position: absolute; top: 56px; right: 16px; z-index: 4; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 4px 10px; max-width: min(220px, calc(100% - 128px)); padding: 7px 9px; border: 2px solid #5f3942; color: #5f3942; background: rgb(245 231 199 / 95%); font: 12px "Galmuri11Pixel"; pointer-events: none; }
+.snack-coin-counter strong { font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+@media (max-width: 768px) { .snack-coin-counter { right: 8px; } }
 .overlay-columns { display: grid; grid-template-columns: minmax(220px, 1fr) minmax(300px, 1.35fr); gap: 12px; margin-top: 12px; }
 .overlay-stack { display: grid; align-content: start; gap: 12px; }
 .overlay-panel { padding: 14px; border: 2px solid #5f3942; background: rgb(255 248 229 / 95%); box-shadow: 4px 4px 0 rgb(95 57 66 / 30%); }

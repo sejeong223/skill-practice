@@ -22,16 +22,12 @@ export class EconomySystem {
       return false;
     }
     this.runtime.currentStageCoins += amount;
+    this.progress.bankedCoins += amount;
     this.emitCoins(stageId);
     return true;
   }
 
   public commitStageClear(): number {
-    const collected = this.runtime.currentStageCoins;
-    if (collected === 0) {
-      return this.progress.bankedCoins;
-    }
-    this.progress.bankedCoins += collected;
     this.runtime.currentStageCoins = 0;
     if (!this.progress.clearedStages.includes(this.runtime.stageId)) {
       this.progress.clearedStages.push(this.runtime.stageId);

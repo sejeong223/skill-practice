@@ -12,6 +12,7 @@ import type { StageDefinition, StageId } from "../core/types";
 import {
   WORLD01_GIMMICK_MINIMUMS,
   WORLD01_STATIC_KINDS,
+  getWorld01FloorY,
 } from "./world01Gimmicks";
 
 export interface MapValidationReport {
@@ -198,8 +199,8 @@ export function validateCampaignMaps(
   if (world01Checkpoints.length !== 2) {
     errors.push("world-01: 진짜 체크포인트는 정확히 2개여야 합니다.");
   }
-  if (world01Gimmicks.length !== 24) {
-    errors.push("world-01: 기믹 카탈로그는 정확히 24개여야 합니다.");
+  if (world01Gimmicks.length !== 32) {
+    errors.push("world-01: 기믹 카탈로그는 정확히 32개여야 합니다.");
   }
 
   const counts = new Map<GimmickKind, number>();
@@ -223,18 +224,20 @@ export function validateCampaignMaps(
     const dangers = map.gimmicks
       .filter((gimmick) => WORLD01_STATIC_KINDS.includes(gimmick.kind as typeof WORLD01_STATIC_KINDS[number]) || gimmick.kind === "open-manhole")
       .sort((left, right) => left.x - right.x);
-    if (dangers.filter((gimmick) => gimmick.kind !== "open-manhole").length !== 4) {
-      errors.push(stage.id + ": 정적 장애물은 정확히 4개여야 합니다.");
+    if (dangers.filter((gimmick) => gimmick.kind !== "open-manhole").length !== 6) {
+      errors.push(stage.id + ": 정적 장애물은 정확히 6개여야 합니다.");
     }
     for (let index = 1; index < dangers.length; index += 1) {
       const gap = dangers[index].x - dangers[index - 1].x;
-      if (gap < 448 || gap > 640) {
-        errors.push(stage.id + ": 물리 위험 간격은 448~640px이어야 합니다.");
+      if (gap - dangers[index - 1].width < 144 || gap > 448) {
+        errors.push(stage.id + ": 위험 끝 간격은 최소144px, 시작 간격은 최대448px이어야 합니다.");
       }
     }
     if (map.gimmicks.some((gimmick) => ["fake-checkpoint", "forward-jump-wall"].includes(gimmick.kind))) {
       errors.push(stage.id + ": 가짜 체크포인트 또는 투명 벽이 남아 있습니다.");
     }
+    errors.push(...validateWorld01SnackLayout(Number(stage.id.at(-1)) as 1 | 2 | 3 | 4, map)
+      .map((error) => `${stage.id}: ${error}`));
   }
 
   const gimmicksByWorld = new Map<string, number>();
@@ -254,6 +257,44 @@ export function validateCampaignMaps(
     warnings,
     valid: errors.length === 0,
   };
+}
+
+export function validateWorld01SnackLayout(stage: 1 | 2 | 3 | 4, map: StageMapDefinition): string[] {
+  const errors: string[] = [];
+  const real = map.objectDefinitions.filter((object) => object.properties.collectibleType === "snack-coin");
+  const fake = map.gimmicks.filter((gimmick) => gimmick.kind.startsWith("fake-bone-"));
+  const dangers = map.gimmicks.filter((gimmick) => !gimmick.kind.startsWith("fake-bone-"));
+  if (real.length !== 5) errors.push("진짜 간식은 맵마다5개여야 합니다.");
+  if (fake.length !== (stage === 2 || stage === 4 ? 2 : 1)) errors.push("가짜 간식 개수 불일치");
+  if (map.mapWidth !== 2560) errors.push("일반 맵은2560px이어야 합니다.");
+  const snacks = [...real, ...fake].sort((a, b) => a.x - b.x);
+  if (snacks.slice(0, 3).some((snack) => !real.includes(snack as MapObjectDefinition)) || snacks.length < 3) {
+    errors.push("첫 세 간식은 진짜여야 합니다.");
+  }
+  for (const snack of snacks) {
+    if (snack.width !== 34 || snack.height !== 26 || snack.y !== getWorld01FloorY(stage, snack.x) - 40 || snack.visualKey !== "bone-coin") {
+      errors.push("정상/가짜 간식의 크기·높이·그림 불일치: " + snack.id);
+    }
+    if (snack.x < 192 || snack.x + snack.width > 2368) errors.push("간식이 안전구간 침범: " + snack.id);
+  }
+  for (const snack of real) {
+    if (snack.kind !== "collectible" || snack.properties.coinValue !== 1 || snack.chainId || snack.properties.gimmickId) {
+      errors.push("진짜 간식의 획득 속성이 잘못됨: " + snack.id);
+    }
+  }
+  for (const green of fake.filter((gimmick) => gimmick.kind === "fake-bone-green")) {
+    const next = [...dangers].sort((a, b) => a.x - b.x).find((danger) => danger.x > green.x);
+    if (next && next.x - green.x < 128) errors.push("초록 변신 직후 위험과 너무 가까움");
+  }
+  for (const danger of dangers) {
+    if (danger.kind === "pigeon-static" && (danger.width !== 60 || danger.height !== 40)) errors.push("비둘기 크기 불일치");
+    if (danger.x < 192 || danger.x + danger.width > 2368) errors.push("위험이 안전구간 침범");
+  }
+  for (const checkpoint of map.objectDefinitions.filter((object) => object.kind === "checkpoint")) {
+    const spawn = checkpoint.x + 40;
+    if (dangers.some((danger) => spawn + 24 > danger.x && spawn - 24 < danger.x + danger.width)) errors.push("체크포인트 복귀 몸체가 위험과 겹침");
+  }
+  return errors;
 }
 
 function validateGimmicks(

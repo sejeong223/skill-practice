@@ -17,6 +17,7 @@ import { PhaserGame } from "./PhaserGame";
 import { IntroTitleOverlay } from "./IntroTitleOverlay";
 import { DeathCounterOverlay } from "./DeathCounterOverlay";
 import { ResetProgressDialog } from "./ResetProgressDialog";
+import { SnackCoinCounter } from "./SnackCoinCounter";
 
 export interface GameShellProps {
   readonly initialStageId: StageId;
@@ -74,9 +75,11 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
       runtimeRef.current.checkpointId = checkpointId;
       setRuntime({ ...runtimeRef.current });
     });
-    const removeCoins = eventBus.on("coin-changed", ({ currentStageCoins }) => {
+    const removeCoins = eventBus.on("coin-changed", ({ currentStageCoins, bankedCoins }) => {
       runtimeRef.current.currentStageCoins = currentStageCoins;
+      progressRef.current.bankedCoins = bankedCoins;
       setRuntime({ ...runtimeRef.current });
+      setProgress(cloneProgress(progressRef.current));
     });
     return () => { removeStage(); removeHearts(); removeCheckpoint(); removeCoins(); };
   }, [eventBus]);
@@ -136,7 +139,6 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
 
   const handleEvent = useCallback((type: GameEventType): void => {
     const messages: Partial<Record<GameEventType, string>> = {
-      "coin-changed": "코인 상태가 저장되었습니다.",
       "tool-purchased": "새 도구를 금고에 넣었습니다.",
       "collectible-found": "수집품 기록을 갱신했습니다.",
       "death-count-updated": "사망 통계를 저장했습니다.",
@@ -214,6 +216,7 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
   return (
     <div className="game-shell">
       <div className="game-content-frame">
+        {progressLoaded && introGateStep === "ready" && <SnackCoinCounter balance={progress.bankedCoins} />}
         {progressLoaded && <PhaserGame className="phaser-viewport" gameEventBus={eventBus} progressState={sharedProgressState} />}
         <GameEventBridge eventBus={eventBus} onEvent={handleEvent} />
         <CutsceneOverlay eventBus={eventBus} onSkip={() => eventBus.emit("cutscene-skip-requested", {})} />

@@ -1,6 +1,7 @@
 import { stageIdFor } from "../core/constants";
 import type { GimmickKind, GimmickOutcome, WorldGimmickDefinition } from "../core/contentTypes";
 import type { StageId } from "../core/types";
+import { SNACK_PRESENTATION } from "./snackPresentation";
 
 type Stage = 1 | 2 | 3 | 4;
 type StaticKind = "ant-static" | "white-spike-static" | "pigeon-static" | "box-static";
@@ -9,21 +10,21 @@ type CoinKind = "fake-bone-green" | "fake-bone-reverse" | "fake-bone-fire";
 
 export const WORLD01_STATIC_KINDS: readonly StaticKind[] = ["ant-static", "white-spike-static", "pigeon-static", "box-static"];
 const dangers: Readonly<Record<Stage, readonly [DangerKind, number][]>> = {
-  1: [["ant-static", 336], ["white-spike-static", 944], ["box-static", 1552], ["pigeon-static", 2160]],
-  2: [["ant-static", 320], ["open-manhole", 800], ["pigeon-static", 1280], ["white-spike-static", 1760], ["box-static", 2240]],
-  3: [["ant-static", 352], ["box-static", 960], ["white-spike-static", 1568], ["pigeon-static", 2176]],
-  4: [["pigeon-static", 288], ["open-manhole", 736], ["box-static", 1184], ["white-spike-static", 1664], ["ant-static", 2112]],
+  1: [["ant-static", 544], ["white-spike-static", 848], ["box-static", 1152], ["pigeon-static", 1520], ["ant-static", 1872], ["box-static", 2208]],
+  2: [["ant-static", 544], ["open-manhole", 832], ["pigeon-static", 1088], ["white-spike-static", 1312], ["box-static", 1760], ["ant-static", 2016], ["pigeon-static", 2256]],
+  3: [["ant-static", 544], ["box-static", 848], ["white-spike-static", 1152], ["pigeon-static", 1520], ["ant-static", 1872], ["box-static", 2208]],
+  4: [["pigeon-static", 544], ["open-manhole", 832], ["box-static", 1088], ["white-spike-static", 1344], ["ant-static", 1632], ["pigeon-static", 1888], ["box-static", 2112]],
 };
 const coins: Readonly<Record<Stage, readonly [CoinKind, number][]>> = {
-  1: [["fake-bone-green", 1360]],
-  2: [["fake-bone-reverse", 600], ["fake-bone-green", 2016]],
-  3: [["fake-bone-fire", 1344]],
-  4: [["fake-bone-reverse", 1056], ["fake-bone-fire", 1952]],
+  1: [["fake-bone-green", 1328]],
+  2: [["fake-bone-reverse", 704], ["fake-bone-green", 1632]],
+  3: [["fake-bone-fire", 1328]],
+  4: [["fake-bone-reverse", 1216], ["fake-bone-fire", 2000]],
 };
 const visuals: Readonly<Record<DangerKind, { width: number; height: number; key: string }>> = {
   "ant-static": { width: 32, height: 20, key: "ant" },
   "white-spike-static": { width: 38, height: 28, key: "white-spike" },
-  "pigeon-static": { width: 48, height: 32, key: "world-01-pigeon-static" },
+  "pigeon-static": { width: 60, height: 40, key: "world-01-pigeon-static" },
   "box-static": { width: 44, height: 36, key: "cat-box" },
   "open-manhole": { width: 80, height: 16, key: "world-01-manhole-open" },
 };
@@ -81,11 +82,11 @@ function makeCoin(stage: Stage, kind: CoinKind, x: number): WorldGimmickDefiniti
   return {
     id, worldId: "world-01", stageId: stageIdFor("world-01", stage),
     sectionIndex: section(x + 17), objectId: `${id}-object`,
-    kind, trigger: "collect", x, y: getWorld01FloorY(stage, x) - 122,
-    width: 34, height: 26, visualKey: "bone-coin",
+    kind, trigger: "collect", x, y: getWorld01FloorY(stage, x) - SNACK_PRESENTATION.topOffsetFromFloor,
+    width: SNACK_PRESENTATION.width, height: SNACK_PRESENTATION.height, visualKey: SNACK_PRESENTATION.frameKey,
     variantKey: kind === "fake-bone-green" ? "green-body" : kind === "fake-bone-reverse" ? "reverse-control" : "fire-launch",
     hintPolicy: "none", lethal: true,
-    counterplay: { action: "do-not-collect", notes: "색이 다른 가짜 간식 코인을 피한다." },
+    counterplay: { action: "do-not-collect", notes: "획득 전에는 구별되지 않는 간식을 접촉하지 않고 지나간다." },
     outcome: outcome(kind), seedGroup: id, chainIds: [`${id}-chain`],
   };
 }
@@ -97,7 +98,7 @@ export const WORLD01_GIMMICKS: readonly WorldGimmickDefinition[] = ([1, 2, 3, 4]
   ]);
 export const WORLD01_GIMMICK_COUNT = WORLD01_GIMMICKS.length;
 export const WORLD01_GIMMICK_MINIMUMS: Readonly<Partial<Record<GimmickKind, number>>> = {
-  "ant-static": 4, "white-spike-static": 4, "pigeon-static": 4, "box-static": 4,
+  "ant-static": 7, "white-spike-static": 4, "pigeon-static": 6, "box-static": 7,
   "open-manhole": 2, "fake-bone-green": 2, "fake-bone-reverse": 2, "fake-bone-fire": 2,
 };
 export function getWorld01GimmicksForStage(stageId: StageId): readonly WorldGimmickDefinition[] {

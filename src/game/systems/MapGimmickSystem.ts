@@ -9,6 +9,7 @@ import type { GimmickRuntimeState, MapRuntimeSnapshot } from "../core/runtimeTyp
 import type { StageDefinition } from "../core/types";
 import type { GameplayEventBus } from "../core/events";
 import { getAssetFrameKey } from "../assets/assetManifest";
+import { SNACK_PRESENTATION } from "../data/snackPresentation";
 import { Player } from "../entities/Player";
 import type { InputManager } from "../input/InputManager";
 import type { LoadedMap } from "../maps/mapTypes";
@@ -246,7 +247,8 @@ export class MapGimmickSystem {
       this.visuals.get(gimmick.id)?.setVisible(this.isDefaultVisible(gimmick));
       if (["fake-bone-green", "fake-bone-reverse", "fake-bone-fire"].includes(gimmick.kind)) {
         const baseFrame = this.getVisualFrame(gimmick, false);
-        if (baseFrame) this.visuals.get(gimmick.id)?.setFrame(baseFrame);
+        if (baseFrame) this.visuals.get(gimmick.id)?.setFrame(baseFrame)
+          .clearTint().setAlpha(1).setVisible(next.status === "armed");
       }
       this.setPhysicalActive(this.wallBodies.get(gimmick.id), false);
       this.setPhysicalActive(this.riseBodies.get(gimmick.id), false);
@@ -769,7 +771,7 @@ export class MapGimmickSystem {
     let zone: Phaser.Geom.Rectangle;
     switch (gimmick.kind) {
       case "pigeon-static":
-        zone = new Phaser.Geom.Rectangle(gimmick.x + 8, floorY - 31, 32, 30);
+        zone = new Phaser.Geom.Rectangle(gimmick.x + 10, floorY - 38, 40, 37);
         break;
       case "ant-trip": {
         const [visualWidth, visualHeight] = this.getVisualSize(gimmick);
@@ -816,7 +818,9 @@ export class MapGimmickSystem {
     gimmick: WorldGimmickDefinition,
     revealed: boolean,
   ): string | undefined {
-    void revealed;
+    if (!revealed && gimmick.kind.startsWith("fake-bone-")) {
+      return SNACK_PRESENTATION.frameKey;
+    }
     if (gimmick.kind === "fake-bone-green") {
       return getAssetFrameKey("world-01-prop-bone-coin-green");
     }
@@ -870,7 +874,7 @@ export class MapGimmickSystem {
       case "ant-trip": return [30, 20];
       case "fake-bone-green":
       case "fake-bone-reverse":
-      case "fake-bone-fire": return [34, 26];
+      case "fake-bone-fire": return [SNACK_PRESENTATION.width, SNACK_PRESENTATION.height];
       case "fake-checkpoint": return [30, 56];
       case "box-cat-arm": return [42, 36];
       case "cloud-rain": return [56, 38];

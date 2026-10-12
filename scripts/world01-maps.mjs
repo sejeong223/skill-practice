@@ -31,6 +31,9 @@ const {
   getWorld01OpenManholes,
 } = require(path.join(root, "src/game/data/world01Gimmicks.ts"));
 const outputDirectory = path.join(root, "public/assets/pixel/maps/world-01");
+const { validateWorld01SnackLayout } = require(path.join(root, "src/game/data/validateMaps.ts"));
+const { getAssetDefinition, getAssetFrameKey } = require(path.join(root, "src/game/assets/assetManifest.ts"));
+const atlas = JSON.parse(fs.readFileSync(path.join(root, "public/assets/pixel/props/world-01/world-01-props.json"), "utf8"));
 const tileWidth = 16;
 const tileHeight = 16;
 
@@ -169,7 +172,18 @@ function makeMap(stageNumber, definition) {
 }
 
 function verifyMap(stageNumber, definition, tiledMap) {
-  const errors = [];
+  const errors = validateWorld01SnackLayout(stageNumber, definition);
+  for (const object of definition.objectDefinitions.filter(object => object.kind === "interactive" || object.kind === "collectible")) {
+    const frame = getAssetFrameKey("world-01-prop-" + object.visualKey);
+    if (frame) {
+      if (!atlas.frames[frame]) errors.push("atlas 프레임 없음: " + frame);
+    } else if (!fs.existsSync(path.join(root, "public", getAssetDefinition(object.visualKey).url))) {
+      errors.push("독립 이미지 없음: " + object.visualKey);
+    }
+  }
+  for (const frame of ["bone-coin", "bone-coin-green", "bone-coin-reverse", "bone-coin-fire"]) {
+    if (!atlas.frames[frame]) errors.push("간식 atlas 프레임 없음: " + frame);
+  }
   const stageGimmicks = definition.gimmicks;
   const mapObjects = tiledMap.layers
     .filter((layer) => layer.type === "objectgroup")
@@ -214,16 +228,12 @@ function verifyMap(stageNumber, definition, tiledMap) {
   const dangerKinds = new Set(["ant-static", "white-spike-static", "pigeon-static", "box-static", "open-manhole"]);
   const dangers = stageGimmicks.filter((gimmick) => dangerKinds.has(gimmick.kind)).sort((a, b) => a.x - b.x);
   const staticDangers = dangers.filter((gimmick) => gimmick.kind !== "open-manhole");
-  if (staticDangers.length !== 4 || dangers.length !== (stageNumber === 2 || stageNumber === 4 ? 5 : 4)) {
+  if (staticDangers.length !== 6 || dangers.length !== (stageNumber === 2 || stageNumber === 4 ? 7 : 6)) {
     errors.push("정적 장애물 또는 열린 맨홀 개수가 맞지 않음");
   }
   for (let index = 1; index < dangers.length; index += 1) {
     const gap = dangers[index].x - dangers[index - 1].x;
-    if (gap < 448 || gap > 640) errors.push("물리 위험 간격이 448~640px 범위 밖");
-  }
-  const coins = stageGimmicks.filter((gimmick) => gimmick.kind.startsWith("fake-bone-"));
-  if (coins.some((coin) => coin.y + coin.height > getWorld01FloorY(stageNumber, coin.x) - 80)) {
-    errors.push("가짜 코인이 바닥에서 너무 낮음");
+    if (gap - dangers[index - 1].width < 144 || gap > 448) errors.push("위험 끝 간격144px 미만 또는 시작 간격448px 초과");
   }
   if (stageGimmicks.some((gimmick) => ["fake-checkpoint", "forward-jump-wall", "ground-collapse", "ground-rise"].includes(gimmick.kind))) {
     errors.push("돌발 기믹 또는 가짜 체크포인트가 남음");
@@ -286,7 +296,8 @@ function run() {
     }
   }
 
-  if (WORLD01_GIMMICKS.length !== 24) problems.push("전체 기믹 카탈로그가 24개가 아님");
+  if (WORLD01_GIMMICKS.length !== 32) problems.push("전체 기믹 카탈로그가 32개가 아님");
+  if (totalObjects !== 58) problems.push("Tiled 전체 객체가58개가 아님");
   for (const [kind, minimum] of Object.entries(WORLD01_GIMMICK_MINIMUMS)) {
     if ((totalCounts.get(kind) ?? 0) < minimum) {
       problems.push(`${kind}: ${totalCounts.get(kind) ?? 0}/${minimum}개`);

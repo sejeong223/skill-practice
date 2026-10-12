@@ -10,14 +10,12 @@
 
 ## Active Task
 
-[T01 짧은 맵과 자연스러운 카메라·보행](./phases/2026-10-12-world01-gameplay-refinement/P01-gameplay-refinement/T01-compact-motion.md)
+[T02](./phases/2026-10-12-world01-gameplay-refinement/P01-gameplay-refinement/T02-snacks-obstacles.md)
 
 ## Status
 
-- 2026-10-12 사용자의 7개 수정사항과 후속 간식 코인 잔액·상점 대비 영구 적립을 계획에 반영했다. P01의 T01~T05 모두 pending, 구현은 시작하지 않았다.
-- 현재 소스/Tiled 일반 맵은3840px. T01에서2560px 정합화와 카메라·보행 개선, T02에서최종32개 기믹/20개 진짜 간식을 적용한다.
-- 맵 이미지 자르기는 카메라·보행·배경 표시 개선을 먼저 검증한 뒤에도 원본 이미지 문제가 남을 때만 사용하는 최후 수단이다.
-- T02에 진짜 간식 획득 즉시 `bankedCoins` 적립·저장과 오른쪽 상단 보유 잔액 표시를 포함한다. 사망/새로고침에 잔액을 잃지 않으며, 기존 클리어 시 중복 합산 규칙은 대체한다. T05에서 저장과 모바일 표시를 검증한다.
+- T01~T01 완료. 최근 커밋: `c253d57`. 검증 결과는 test-plans/2026-10-12-world01-gameplay-refinement.md 참조.
+- 사용자 요청에 따라 다음 Task를 자동으로 이어서 실행한다.
 
 ## Previous Work Pointer
 
@@ -27,4 +25,4 @@
 
 ## Next Step (IMPORTANT)
 
-`/memory-execute` 또는 `current 보고 이어서 해줘` 요청 시 T01 청사진부터 순서대로 구현한다. `src/game/data/world01Maps.ts`의 맵 폭과 `src/game/camera/CameraDirector.ts`의 추적 재시작을 우선 다룬다. 검증을 통과한 Task만 done/커밋/phase 진행률/다음 포인터로 갱신한다.
+T02 청사진을 읽고 구현·검증·한국어 커밋 후 포인터를 전진한다.

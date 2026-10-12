@@ -31,6 +31,7 @@ export class AutoSaveCoordinator {
     this.store = store;
     this.progress = progress;
     this.eventBus = eventBus;
+    this.unsubscribe.push(eventBus.on("coin-changed", this.flush));
     for (const event of SAVE_EVENTS) {
       this.unsubscribe.push(eventBus.on(event, () => this.schedule(debounceMs)));
     }

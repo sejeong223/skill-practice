@@ -21,7 +21,6 @@ export interface HudProps {
 export function Hud({
   stageTitle,
   runtime,
-  progress,
   attackTool,
   defenseTool,
   cooldowns,
@@ -44,8 +43,6 @@ export function Hud({
         <span className="hud-subtitle">{runtime.checkpointId ? "CHECKPOINT" : "SPAWN"}</span>
       </div>
       <div className="hud-stats">
-        <span><b>금고</b> {progress.bankedCoins}</span>
-        <span><b>이번 스테이지</b> {runtime.currentStageCoins}</span>
         <span>
           <b>장비</b> {attackTool ? getToolPresentation(attackTool.id).nameKo : "없음"} / {defenseTool ? getToolPresentation(defenseTool.id).nameKo : "없음"}
         </span>

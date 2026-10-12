@@ -2,6 +2,9 @@ import * as Phaser from "phaser";
 import type { EnemyDefinition, PlatformDefinition, TrapDefinition } from "../core/contentTypes";
 import { Enemy } from "../entities/Enemy";
 import { Trap } from "../entities/Trap";
+import { SNACK_PRESENTATION } from "../data/snackPresentation";
+
+type CoinAppearance = "legacy" | "bone";
 
 export type StageEntityKind =
   | "platform"
@@ -16,7 +19,7 @@ export type StageEntityRequest =
   | { kind: "platform"; definition: PlatformDefinition }
   | { kind: "trap"; definition: TrapDefinition }
   | { kind: "enemy"; definition: EnemyDefinition }
-  | { kind: "coin"; id: string; x: number; y: number }
+  | { kind: "coin"; id: string; x: number; y: number; appearance?: CoinAppearance }
   | { kind: "collectible"; id: string; x: number; y: number }
   | { kind: "checkpoint"; id: string; x: number; y: number }
   | { kind: "exit"; id: string; x: number; y: number };
@@ -35,7 +38,7 @@ export class StageEntityFactory {
       case "enemy":
         return new Enemy(scene, request.definition);
       case "coin":
-        return this.createCoin(scene, request.id, request.x, request.y);
+        return this.createCoin(scene, request.id, request.x, request.y, request.appearance);
       case "collectible":
         return this.createCollectible(scene, request.id, request.x, request.y);
       case "checkpoint":
@@ -70,8 +73,12 @@ export class StageEntityFactory {
     id: string,
     x: number,
     y: number,
-  ): Phaser.GameObjects.Ellipse {
-    const coin = scene.add.ellipse(x, y, 18, 18, 0xf0b95f);
+    appearance: CoinAppearance = "legacy",
+  ): Phaser.GameObjects.Ellipse | Phaser.GameObjects.Image {
+    const coin = appearance === "bone"
+      ? scene.add.image(x, y, SNACK_PRESENTATION.textureKey, SNACK_PRESENTATION.frameKey)
+        .setDisplaySize(SNACK_PRESENTATION.width, SNACK_PRESENTATION.height).setDepth(1)
+      : scene.add.ellipse(x, y, 18, 18, 0xf0b95f);
     scene.physics.add.existing(coin, true);
     coin.setData("stageEntityKind", "coin");
     coin.setData("entityId", id);

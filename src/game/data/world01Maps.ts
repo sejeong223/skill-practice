@@ -3,11 +3,28 @@ import { MAP_TILE_SIZE, WORLD01_NORMAL_MAP_WIDTH, stageIdFor } from "../core/con
 import type { StageId } from "../core/types";
 import { WORLD_MAP_THEMES } from "./worldMaps";
 import { getWorld01FloorY, getWorld01GimmicksForStage } from "./world01Gimmicks";
+import { SNACK_PRESENTATION } from "./snackPresentation";
 
 type Stage = 1 | 2 | 3 | 4;
 const SAFE_LENGTH = 192;
 const SECTION_STARTS = [0, 192, 912, 1648, 2368] as const;
 const SECTION_LENGTHS = [192, 720, 736, 720, 192] as const;
+const realSnackXs: Readonly<Record<Stage, readonly number[]>> = {
+  1: [224, 304, 384, 1008, 1776],
+  2: [224, 304, 384, 1584, 1904],
+  3: [224, 304, 384, 1008, 1776],
+  4: [224, 304, 384, 1472, 1776],
+};
+
+function createRealSnackObject(stage: Stage, index: number, x: number): MapObjectDefinition {
+  return {
+    id: `world-01-stage-${stage}-snack-${index + 1}`, kind: "collectible", x,
+    y: getWorld01FloorY(stage, x) - SNACK_PRESENTATION.topOffsetFromFloor,
+    width: SNACK_PRESENTATION.width, height: SNACK_PRESENTATION.height,
+    visualKey: SNACK_PRESENTATION.frameKey, layerId: "world-01-gameplay", collision: false,
+    properties: { collectibleType: "snack-coin", coinValue: 1 },
+  };
+}
 
 export function world01Checkpoint(stageNumber: Stage): { id: string; x: number; sectionIndex: 3 | 4 } | null {
   if (stageNumber === 2) return { id: "world-01-stage-2-checkpoint", x: 1520, sectionIndex: 3 };
@@ -75,6 +92,7 @@ function createStageMap(stageNumber: Stage): StageMapDefinition {
   const exitId = stageId + "-exit";
   const objectDefinitions: MapObjectDefinition[] = [
     ...gimmicks.map((gimmick) => createGimmickObject(stageId, gimmick)),
+    ...realSnackXs[stageNumber].map((x, index) => createRealSnackObject(stageNumber, index, x)),
     ...(checkpoint ? [{
       id: checkpoint.id, kind: "checkpoint" as const, x: checkpoint.x,
       y: getWorld01FloorY(stageNumber, checkpoint.x) - 128,

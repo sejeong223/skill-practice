@@ -201,6 +201,7 @@ export class StageScene extends Phaser.Scene {
       (snapshot) => {
         this.mapInteraction?.reset(snapshot?.mapSnapshot ?? null);
         this.gimmickSystem?.reset(snapshot?.mapSnapshot ?? null);
+        this.runtime?.resetCoins();
       },
     );
     this.deathSystem = new DeathSystem(
@@ -240,7 +241,9 @@ export class StageScene extends Phaser.Scene {
       this.physics.add.overlap(
         this.player,
         record.entity as Phaser.GameObjects.GameObject,
-        () => this.runtime?.collectCoin(record.id),
+        () => {
+          if (this.runtime?.getStatus() === "play") this.runtime.collectCoin(record.id);
+        },
       );
     }
     for (const record of this.runtime.getEntities("checkpoint")) {
@@ -341,6 +344,7 @@ export class StageScene extends Phaser.Scene {
       const snapshot = this.runtime?.getMapSnapshot() ?? null;
       this.mapInteraction?.reset(snapshot);
       this.gimmickSystem?.reset(snapshot);
+      this.runtime?.resetCoins();
     });
     this.eventUnsubscribers.push(this.eventBus.on("stage-completed", ({ stageId }) => {
       if (stageId !== this.stageId || this.stageTransitionStarted) return;

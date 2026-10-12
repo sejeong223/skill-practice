@@ -12,6 +12,7 @@ import { GameEventBus } from "../bridge/GameEventBus";
 import { StageRandom } from "../random/StageRandom";
 import { StageEntityFactory, type StageEntity, type StageEntityKind } from "./StageEntityFactory";
 import type { LoadedMap } from "../maps/mapTypes";
+import { EconomySystem } from "../systems/EconomySystem";
 
 interface RuntimeEntityRecord {
   readonly kind: StageEntityKind;
@@ -35,6 +36,7 @@ export class StageRuntime {
   private readonly ownsEventBus: boolean;
   private readonly factory: StageEntityFactory;
   private readonly progress?: ProgressState;
+  private readonly economy?: EconomySystem;
   private readonly loadedMap: LoadedMap | null;
   private mapSnapshot: MapRuntimeSnapshot | null = null;
   private records: RuntimeEntityRecord[] = [];
@@ -56,6 +58,7 @@ export class StageRuntime {
     this.ownsEventBus = eventBus === undefined;
     this.factory = factory;
     this.progress = progress;
+    if (progress) this.economy = new EconomySystem(progress, runtimeState, this.eventBus);
     this.loadedMap = loadedMap;
   }
 
@@ -144,6 +147,13 @@ export class StageRuntime {
           }));
           break;
         case "collectible":
+          if (object.properties.collectibleType === "snack-coin") {
+            this.add("coin", object.id, this.factory.create(this.scene, {
+              kind: "coin", id: object.id, appearance: "bone",
+              x: object.x + object.width / 2, y: object.y + object.height / 2,
+            }));
+            break;
+          }
           this.add("collectible", object.id, this.factory.create(this.scene, {
             kind: "collectible",
             id: object.id,
@@ -348,12 +358,8 @@ export class StageRuntime {
     }
 
     this.status = "completed";
-    if (this.progress) {
-      if (!this.progress.clearedStages.includes(this.definition.id)) {
-        this.progress.clearedStages.push(this.definition.id);
-        this.progress.bankedCoins += this.runtimeState.currentStageCoins;
-      }
-    }
+    if (this.economy) this.economy.commitStageClear();
+    else this.runtimeState.currentStageCoins = 0;
     const nextIndex = STAGE_IDS.indexOf(this.definition.id) + 1;
     const nextStageId = STAGE_IDS[nextIndex] ?? null;
     this.eventBus.emit("stage-completed", {
@@ -403,13 +409,32 @@ export class StageRuntime {
 
     record.entity.setActive(false);
     record.entity.setVisible(false);
-    this.runtimeState.currentStageCoins += 1;
+    const body = (record.entity as Phaser.GameObjects.Image).body as Phaser.Physics.Arcade.StaticBody | null;
+    if (body) body.enable = false;
+    if (this.economy) this.economy.collectCoin(this.definition.id);
+    else {
+      this.runtimeState.currentStageCoins += 1;
+      this.emitCoins();
+    }
+    return true;
+  }
+
+  public resetCoins(): void {
+    for (const { entity } of this.getEntities("coin")) {
+      entity.setActive(true).setVisible(true);
+      const body = (entity as Phaser.GameObjects.Image).body as Phaser.Physics.Arcade.StaticBody | null;
+      if (body) body.enable = true;
+    }
+    this.runtimeState.currentStageCoins = 0;
+    this.emitCoins();
+  }
+
+  private emitCoins(): void {
     this.eventBus.emit("coin-changed", {
       stageId: this.definition.id,
       currentStageCoins: this.runtimeState.currentStageCoins,
       bankedCoins: this.progress?.bankedCoins ?? 0,
     });
-    return true;
   }
 
   public destroy(): void {
