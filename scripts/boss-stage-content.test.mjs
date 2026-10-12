@@ -1,0 +1,26 @@
+import fs from "node:fs";
+import { createRequire } from "node:module";
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import ts from "typescript";
+
+const require = createRequire(import.meta.url);
+require.extensions[".ts"] = (module, filename) => module._compile(ts.transpileModule(fs.readFileSync(filename, "utf8"), {
+  compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 }, fileName: filename,
+}).outputText, filename);
+const { STAGE_DEFINITIONS } = require("../src/game/data/worlds.ts");
+
+test("월드 1 보스에는 화면과 판정에 남는 기본 코인이 없다", () => {
+  const stage = STAGE_DEFINITIONS.find(stage => stage.id === "world-01-stage-boss");
+  assert.ok(stage);
+  assert.equal(stage.segments.flatMap(segment => segment.coins).length, 0);
+  assert.ok(stage.segments.every(segment => segment.platforms.length > 0));
+});
+
+test("다른 월드 보스의 기존 코인 데이터는 유지한다", () => {
+  const stages = STAGE_DEFINITIONS.filter(stage => stage.id.endsWith("-boss") && stage.id !== "world-01-stage-boss");
+  assert.equal(stages.length, 4);
+  for (const stage of stages) {
+    assert.equal(stage.segments.flatMap(segment => segment.coins).length, 3);
+  }
+});

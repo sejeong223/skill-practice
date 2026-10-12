@@ -158,7 +158,7 @@ function createSegment(
             loot: [segmentId + "-coin-drop"],
           },
         ],
-    coins: [
+    coins: isBoss && stageId === "world-01-stage-boss" ? [] : [
       segmentId + "-coin-1",
       segmentId + "-coin-2",
       segmentId + "-coin-3",
