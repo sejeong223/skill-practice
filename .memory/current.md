@@ -6,16 +6,17 @@
 
 ## Active Phase
 
-[P01 월드 1 플레이 흐름과 전투 피드백](./phases/2026-10-12-world01-gameplay-refinement/P01-gameplay-refinement/phase.md)
+없음 — [P01 월드 1 플레이 흐름과 전투 피드백](./phases/2026-10-12-world01-gameplay-refinement/P01-gameplay-refinement/phase.md) 완료.
 
 ## Active Task
 
-[T05](./phases/2026-10-12-world01-gameplay-refinement/P01-gameplay-refinement/T05-integration-playtest.md)
+없음 — T01~T05 완료.
 
 ## Status
 
-- T01~T04 완료. 최근 커밋: `eb06803`. 검증 결과는 test-plans/2026-10-12-world01-gameplay-refinement.md 참조.
-- 사용자 요청에 따라 다음 Task를 자동으로 이어서 실행한다.
+- T01 `c253d57`, T02 `3a435d1`, T03 `9eb4cf7`, T04 `eb06803`, T05 `4e6e312`로 각각 한국어 커밋 완료.
+- 자동21건·타입·lint·빌드·브라우저 통합 검증 통과. [검증 기록](./test-plans/2026-10-12-world01-gameplay-refinement.md)에 R01~R16 및 증거를 보존한다.
+- 실제 스피커/이어폰 청음과 실제 모바일 터치 기기 검증은 미실시. R08의 주관적 청취 항목은 not-run으로 남긴다.
 
 ## Previous Work Pointer
 
@@ -25,4 +26,4 @@
 
 ## Next Step (IMPORTANT)
 
-T05 청사진을 읽고 구현·검증·한국어 커밋 후 포인터를 전진한다.
+이번 계획의 다음 Task는 없다. 이전 짧은 경로 계획의 T02~T04는 별도 미완료이며 자동으로 이어서 실행하거나 완료 처리하지 않는다. 해당 계획 재개 요청이 오면 아래 Previous Work Pointer의 T02부터 검토한다.

@@ -12,12 +12,14 @@
 | T02 | `done` | 진짜 간식·위장, 영구 적립·오른쪽 상단 잔액, 장애물 밀도 | [T02](./T02-snacks-obstacles.md) |
 | T03 | `done` | 생선 뼈 확대, 머리 밥그릇, 보스 HP 10 | [T03](./T03-boss-visuals-health.md) |
 | T04 | `done` | 왼쪽 사모예드 무리와 방어 효과음 | [T04](./T04-samoyed-audio.md) |
-| T05 | `in_progress` | 요구사항별 회귀·화면·청취·잔액 저장 검증 | [T05](./T05-integration-playtest.md) |
+| T05 | `done` | 요구사항별 회귀·화면·오디오 측정·잔액 저장 검증, 실기기 청취 미실시 명시 | [T05](./T05-integration-playtest.md) |
 
 ## Progress
 
-- done: 4/5 (active: T05)
-- implementation: in progress
+- done: 5/5 (active: 없음)
+- implementation: complete
+- commits: T01 `c253d57`, T02 `3a435d1`, T03 `9eb4cf7`, T04 `eb06803`, T05 `4e6e312`.
+- 자동21건·타입·lint·빌드·브라우저 화면/입력/저장/컷신/재도전 검증 통과. 실기기 청취 및 실제 터치 입력은 미실시이며 [검증 기록](../../../test-plans/2026-10-12-world01-gameplay-refinement.md)에 한계를 명시했다.
 
 ## Why These Tasks
 
