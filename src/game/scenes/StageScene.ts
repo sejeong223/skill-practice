@@ -294,6 +294,7 @@ export class StageScene extends Phaser.Scene {
       this.checkpointSystem.activate(data.resumeCheckpointId, this.player.x, this.player.y, 1, this.time.now, { silent: true });
     }
     this.runtime.start();
+    this.eventBus.emit("pause-state-changed", { paused: false });
     if (data.resumeCheckpointId) {
       this.eventBus.emit("checkpoint-activated", {
         stageId: stage.id,
@@ -392,6 +393,7 @@ export class StageScene extends Phaser.Scene {
     }
 
     this.events.once("shutdown", () => {
+      this.eventBus?.emit("pause-state-changed", { paused: false });
       this.inputManager?.destroy();
       this.playerAnimator?.destroy();
       this.stageReviewKey?.off("down", this.reviewNextWorld01Stage, this);
@@ -539,9 +541,11 @@ export class StageScene extends Phaser.Scene {
     if (paused && runtime.getStatus() === "play") {
       runtime.pause();
       this.physics.world.pause();
+      this.audioManager?.setPaused(true);
     } else if (!paused && runtime.getStatus() === "paused") {
       runtime.resume();
       this.physics.world.resume();
+      this.audioManager?.setPaused(false);
     }
 
     this.eventBus?.emit("pause-state-changed", {

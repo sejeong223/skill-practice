@@ -120,7 +120,7 @@ Task: T03-checkpoint-flag-chime
 
 - [x] 구현 완료
 - [x] 검증 통과
-- commit: pending
+- commit: 5f1a388
 
 ## Execution Result
 

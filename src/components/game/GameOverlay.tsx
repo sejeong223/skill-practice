@@ -30,7 +30,7 @@ export function GameOverlay({ stageTitle, runtime, progress, skills, tools, cool
   const attackTool = tools.find((tool) => tool.id === progress.equippedAttackToolId);
   const defenseTool = tools.find((tool) => tool.id === progress.equippedDefenseToolId);
   return (
-    <div className={`game-overlay${bossHearts !== undefined ? " has-boss-hearts" : ""}`}>
+    <div className={`game-overlay${bossHearts !== undefined ? " has-boss-hearts" : ""}`} inert={paused}>
       <Hud
         stageTitle={stageTitle}
         runtime={runtime}

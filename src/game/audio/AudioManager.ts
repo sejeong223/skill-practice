@@ -44,10 +44,16 @@ export class AudioManager {
   private readonly unsubscribers: Array<() => void> = [];
   private readonly activeSources = new Set<AudioScheduledSourceNode>();
   private readonly sourceCleanups = new Map<AudioScheduledSourceNode, () => void>();
+  private readonly cachedEffects = new Set<Phaser.Sound.BaseSound>();
   private readonly toneMusicOwner = Symbol("audio-manager");
   private audioContext?: AudioContext;
   private destroyed = false;
   private musicKey: string | null = null;
+  private paused = false;
+  private musicGain?: Tone.Gain;
+  private musicSound?: Phaser.Sound.BaseSound;
+  private musicStartedAt = 0;
+  private toneMusicPaused = false;
 
   public constructor(scene: Phaser.Scene, gameplayBus?: GameplayEventBus, gameBus?: GameEventBus) {
     this.scene = scene;
@@ -79,18 +85,22 @@ export class AudioManager {
   public unlock(): void {
     if (this.destroyed || typeof window === "undefined" || this.scene.sound instanceof Phaser.Sound.NoAudioSoundManager) return;
     void Tone.start().then(() => {
-      if (this.destroyed) return;
-      const key = this.musicKey;
-      if (key && !this.scene.cache.audio.exists(key) && activeToneMusicOwner !== this.toneMusicOwner) {
-        this.startToneMusic(key as MusicKey);
-      }
+      this.resumeMusic();
     }).catch(() => undefined);
   }
 
   public playSfx(key: string): void {
-    if (this.destroyed || !SOUND_KEYS.includes(key as SoundKey)) return;
+    if (this.destroyed || this.paused || !SOUND_KEYS.includes(key as SoundKey)) return;
     if (this.scene.cache.audio.exists(key)) {
-      if (!this.scene.sound.locked) this.scene.sound.play(key);
+      if (!this.scene.sound.locked) {
+        const sound = this.scene.sound.add(key);
+        this.cachedEffects.add(sound);
+        sound.once(Phaser.Sound.Events.COMPLETE, () => {
+          this.cachedEffects.delete(sound);
+          sound.destroy();
+        });
+        sound.play();
+      }
       return;
     }
     if (!this.isAudioReady()) return;
@@ -122,32 +132,88 @@ export class AudioManager {
     if (this.destroyed || !MUSIC_KEYS.includes(key as MusicKey) || this.musicKey === key) return;
     this.stopMusic();
     this.musicKey = key;
-    if (this.scene.cache.audio.exists(key)) {
-      if (!this.scene.sound.locked) this.scene.sound.play(key, { loop: true, volume: 0.22 });
-      return;
-    }
-
-    if (Tone.getContext().state === "running") this.startToneMusic(key as MusicKey);
+    this.resumeMusic();
   }
 
   public stopMusic(): void {
-    if (this.musicKey && this.scene.cache.audio.exists(this.musicKey)) {
-      this.scene.sound.stopByKey(this.musicKey);
-    }
+    this.musicSound?.stop();
+    this.musicSound?.destroy();
+    this.musicSound = undefined;
     stopToneMusic(this.toneMusicOwner);
+    this.musicGain = undefined;
+    this.toneMusicPaused = false;
     this.musicKey = null;
   }
 
   public stopAllSounds(): void {
-    this.scene.sound.stopAll();
-    this.stopSources(this.activeSources);
+    this.stopEffects();
     this.stopMusic();
+  }
+
+  public setPaused(paused: boolean): void {
+    if (this.destroyed || this.paused === paused) return;
+    this.paused = paused;
+    if (paused) {
+      this.stopEffects();
+      this.musicSound?.pause();
+      if (activeToneMusicOwner === this.toneMusicOwner) {
+        // A newly scheduled start can still be inside Tone's look-ahead window.
+        Tone.getTransport().pause(Math.max(Tone.immediate(), this.musicStartedAt));
+        this.toneMusicPaused = true;
+        this.setMusicGain(0);
+      }
+    } else {
+      this.resumeMusic();
+      if (!this.isAudioReady()) this.unlock();
+    }
+  }
+
+  private stopEffects(): void {
+    this.cachedEffects.forEach(sound => {
+      sound.stop();
+      sound.destroy();
+    });
+    this.cachedEffects.clear();
+    this.stopSources(this.activeSources);
+  }
+
+  private setMusicGain(value: number): void {
+    if (!this.musicGain || this.musicGain.disposed) return;
+    const now = Tone.immediate();
+    this.musicGain.gain.cancelAndHoldAtTime(now);
+    this.musicGain.gain.linearRampToValueAtTime(value, now + 0.01);
+  }
+
+  private resumeMusic(): void {
+    if (this.destroyed || this.paused || !this.musicKey || !this.audioContext) return;
+    if (this.scene.cache.audio.exists(this.musicKey)) {
+      if (this.scene.sound.locked) return;
+      if (!this.musicSound) {
+        this.musicSound = this.scene.sound.add(this.musicKey, { loop: true, volume: 0.22 });
+        this.musicSound.play();
+      } else if (this.musicSound.isPaused) {
+        this.musicSound.resume();
+      }
+      return;
+    }
+    if (Tone.getContext().state !== "running") return;
+    // A newer scene may already have replaced and disposed this manager's song.
+    if (this.musicGain && activeToneMusicOwner !== this.toneMusicOwner) return;
+    if (activeToneMusicOwner === this.toneMusicOwner) {
+      if (this.toneMusicPaused) {
+        this.toneMusicPaused = false;
+        this.musicStartedAt = Tone.now();
+        this.setMusicGain(1);
+        Tone.getTransport().start(this.musicStartedAt);
+      }
+    } else {
+      this.startToneMusic(this.musicKey as MusicKey);
+    }
   }
 
   public destroy(): void {
     this.destroyed = true;
     this.unsubscribers.splice(0).forEach((unsubscribe) => unsubscribe());
-    this.stopMusic();
     this.stopAllSounds();
     // Tone's context belongs to the game and is reused by the next scene.
     this.audioContext = undefined;
@@ -157,6 +223,7 @@ export class AudioManager {
     if (typeof window === "undefined") return;
 
     const unlock = (): void => {
+      if (this.paused) return;
       if (!this.isAudioReady() || (this.musicKey && activeToneMusicOwner !== this.toneMusicOwner)) {
         this.unlock();
       }
@@ -171,15 +238,18 @@ export class AudioManager {
   }
 
   private startToneMusic(key: MusicKey): void {
-    if (this.destroyed || Tone.getContext().state !== "running") return;
+    if (this.destroyed || this.paused || !this.audioContext || Tone.getContext().state !== "running") return;
     const arrangement = MUSIC_ARRANGEMENTS[key];
     stopToneMusic();
+    const musicGain = new Tone.Gain(1).toDestination();
+    this.musicGain = musicGain;
+    this.toneMusicPaused = false;
 
     const melody = new Tone.Synth({
       oscillator: { type: arrangement.leadWave ?? "triangle" },
       envelope: { attack: 0.015, decay: 0.12, sustain: 0.08, release: 0.18 },
       volume: arrangement.leadVolumeDb ?? -10,
-    }).toDestination();
+    }).connect(musicGain);
     const harmony = new Tone.PolySynth({
       maxPolyphony: 4,
       voice: Tone.Synth,
@@ -188,16 +258,24 @@ export class AudioManager {
         envelope: { attack: 0.04, decay: 0.18, sustain: 0.16, release: 0.28 },
       },
       volume: arrangement.harmonyVolumeDb ?? -17,
-    }).toDestination();
+    }).connect(musicGain);
     const bass = new Tone.MonoSynth({
       oscillator: { type: "triangle" },
       envelope: { attack: 0.015, decay: 0.16, sustain: 0.1, release: 0.12 },
       volume: arrangement.bassVolumeDb ?? -19,
-    }).toDestination();
+    }).connect(musicGain);
+
+    const canPlay = (): boolean => !this.destroyed && !this.paused && activeToneMusicOwner === this.toneMusicOwner;
+    let lastMelodyAt = -Infinity;
+    let lastChordAt = -Infinity;
+    let lastBassAt = -Infinity;
 
     const melodySequence = new Tone.Sequence<string | null>(
       (time, note) => {
-        if (note) melody.triggerAttackRelease(note, arrangement.leadGate ?? "8n", time, 0.55);
+        if (note && canPlay() && time > lastMelodyAt) {
+          lastMelodyAt = time;
+          melody.triggerAttackRelease(note, arrangement.leadGate ?? "8n", time, 0.55);
+        }
       },
       [...arrangement.melody],
       "8n",
@@ -205,13 +283,21 @@ export class AudioManager {
     const chordSequence = new Tone.Sequence<string | null>(
       (time, chord) => {
         const notes = chord ? CHORD_VOICINGS[chord] : undefined;
-        if (notes) harmony.triggerAttackRelease([...notes], "2n", time, 0.28);
+        if (notes && canPlay() && time > lastChordAt) {
+          lastChordAt = time;
+          harmony.triggerAttackRelease([...notes], "2n", time, 0.28);
+        }
       },
       [...arrangement.chords],
       "2n",
     );
     const bassSequence = new Tone.Sequence<string>(
-      (time, note) => bass.triggerAttackRelease(note, "4n", time, 0.48),
+      (time, note) => {
+        if (canPlay() && time > lastBassAt) {
+          lastBassAt = time;
+          bass.triggerAttackRelease(note, "4n", time, 0.48);
+        }
+      },
       [...arrangement.bass],
       "4n",
     );
@@ -223,11 +309,12 @@ export class AudioManager {
     transport.bpm.value = arrangement.bpm;
     transport.position = 0;
     activeToneMusicOwner = this.toneMusicOwner;
-    activeToneMusicNodes = [melody, harmony, bass, melodySequence, chordSequence, bassSequence];
+    activeToneMusicNodes = [melody, harmony, bass, melodySequence, chordSequence, bassSequence, musicGain];
     melodySequence.start(0);
     chordSequence.start(0);
     bassSequence.start(0);
-    transport.start("+0.05");
+    this.musicStartedAt = Tone.now();
+    transport.start(this.musicStartedAt);
   }
 
   private playTone(

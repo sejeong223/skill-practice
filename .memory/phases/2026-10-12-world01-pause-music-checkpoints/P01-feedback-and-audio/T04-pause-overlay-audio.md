@@ -1,6 +1,6 @@
 # Task: T04 일시정지 화면과 BGM 정지·재개 동기화
 
-## Status: pending
+## Status: done
 
 ## Goal
 
@@ -61,7 +61,8 @@
   - `src/components/game/PauseOverlay.tsx` :: `PauseOverlay`; new
   - `src/components/game/GameShell.tsx` :: paused state, stage-started, 게임 프레임 JSX; modify
   - `src/app/globals.css` :: `.pause-overlay`, `.pause-overlay-content`, `.pause-overlay-title`, `.pause-resume-button`; modify
-  - `src/components/game/GameOverlay.tsx` 및 `src/components/game/Hud.tsx` :: 기존 정지 버튼; read-only
+  - `src/components/game/GameOverlay.tsx` :: 정지 중 배경 HUD에 inert 적용; modify
+  - `src/components/game/Hud.tsx` :: 기존 정지 버튼; read-only
 
 #### Details
 
@@ -74,6 +75,7 @@
   4. 제목 아래 ‘계속하기’ 버튼을 두어 가려진 기존 pause 버튼 대신 클릭/터치로 재개할 수 있게 한다. 버튼은 최소44px 높이, 기존 픽셀 버튼 스타일과 focus-visible 테두리를 사용한다. onResume은 `eventBus.emit("pause-requested", { paused: false })`만 요청한다.
   5. 제목에 `role="status"`/`aria-live="polite"`를 사용한다. mount 시 재개 버튼에 focus하고 unmount 시 연결된 기존 focus 대상으로 복구한다. 입력/효과 부작용을 React render 중 실행하지 않는다. Escape는 기존 게임 입력을 통해 재개한다.
   6. 게임 HUD는 z3, 코인 카운터4, 컷신8, 사망10, 초기화 대화상자20이므로 오버레이15는 일반 게임 표시보다 위, 초기화 확인창보다 아래다. 모바일에서 감춰지는 `.hud-stats` 안에 넣지 않는다. 반투명 배경이 underlying UI 클릭을 가로막고 재개 버튼은 동작한다.
+  7. GameOverlay 루트에 `inert={paused}`를 적용해 가려진 HUD가 Tab/Enter로 조작되지 않게 한다. 재개 시 자동 해제한다. 이는 중앙 오버레이의 입력 차단을 완성하는 구현 보완이다.
 - **Error & State**: 브리지의 실제 응답 없이 클릭만으로 React paused를 먼저 해제하지 않는다. 반복 클릭/빠른 Escape에도 runtime/audio/overlay 상태가 일치해야 한다. game component unmount 시 listener/focus 처리를 해제한다.
 
 ### I04. 음악 위치/출력과 UI 행동 검증
@@ -91,11 +93,11 @@
 
 ## Acceptance Criteria
 
-- [ ] 게임과 BGM이 함께 정지하고 소리/transport 위치가 멈춘다. 재개는 같은 지점에서 이어진다.
-- [ ] 중앙의 ‘일시정지’와 검은 반투명 배경이 게임/HUD 위에 선명하다.
-- [ ] Escape 및 계속하기 버튼으로 재개할 수 있고 모바일에서도 보인다.
-- [ ] unlock/반복 토글/장면 종료 때문에 음악만 켜지거나 다음 장면까지 오버레이가 남지 않는다.
-- [ ] 공용 Tone context와 기존 clang/체크포인트 효과음의 정상 재생이 유지된다.
+- [x] 게임과 BGM이 함께 정지하고 소리/transport 위치가 멈춘다. 재개는 같은 지점에서 이어진다.
+- [x] 중앙의 ‘일시정지’와 검은 반투명 배경이 게임/HUD 위에 선명하다.
+- [x] Escape 및 계속하기 버튼으로 재개할 수 있고 모바일에서도 보인다.
+- [x] unlock/반복 토글/장면 종료 때문에 음악만 켜지거나 다음 장면까지 오버레이가 남지 않는다.
+- [x] 공용 Tone context와 기존 clang/체크포인트 효과음의 정상 재생이 유지된다.
 
 ## Validation
 
@@ -119,6 +121,10 @@ Task: T04-pause-overlay-audio
 
 ## Progress
 
-- [ ] 구현 완료
-- [ ] 검증 통과
+- [x] 구현 완료
+- [x] 검증 통과
 - commit: pending
+
+## Execution Result
+
+관련 자동13건, 타입·lint·프로덕션 빌드 통과. 실제 브라우저 일반/보스 각각5초 정지 ticks580/1032 유지 및 peak0, 재개 ticks840/1320과 출력복귀 확인. 각10회 Escape 토글, 클릭 재개, 정지중 unlock, 초기화창 z20, 장면변경 초기화, 모바일390×844 프레임/이미지 확인. GameOverlay inert로 가려진 HUD의 키보드 조작도 차단.

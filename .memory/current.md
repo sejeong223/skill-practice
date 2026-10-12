@@ -10,16 +10,16 @@
 
 ## Active Task
 
-[T03-checkpoint-flag-chime](./phases/2026-10-12-world01-pause-music-checkpoints/P01-feedback-and-audio/T03-checkpoint-flag-chime.md)
+[T04-pause-overlay-audio](./phases/2026-10-12-world01-pause-music-checkpoints/P01-feedback-and-audio/T04-pause-overlay-audio.md)
 
 ## Status
 
-- T02 완료: e3fd858. 진행률 2/5.
+- T03 완료: 5f1a388. 진행률 3/5.
 - 사용자 요청에 따라 다음 Task를 즉시 이어서 실행한다.
 
 ## Next Step (IMPORTANT)
 
-T03-checkpoint-flag-chime 청사진을 읽고 순차 구현·검증·한국어 커밋을 진행한다.
+T04-pause-overlay-audio 청사진을 읽고 순차 구현·검증·한국어 커밋을 진행한다.
 
 ## Existing Worktree Baseline
 

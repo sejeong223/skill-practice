@@ -341,6 +341,35 @@ form { display: flex; gap: 6px; margin-top: 10px; } form input { min-width: 0; f
   image-rendering: pixelated;
 }
 
+.pause-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 15;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgb(0 0 0 / 60%);
+  pointer-events: auto;
+}
+.pause-overlay-content { position: relative; z-index: 1; text-align: center; }
+.pause-overlay-title {
+  margin: 0 0 24px;
+  color: #fff8e5;
+  font: 700 clamp(28px, 5vw, 56px) / 1.4 "Galmuri11Pixel", monospace;
+  text-shadow: 3px 3px #272331;
+}
+.pause-resume-button {
+  min-height: 44px;
+  padding: 10px 22px;
+  border: 3px solid #5f3942;
+  background: #e8cda0;
+  color: #5f3942;
+  box-shadow: 4px 4px 0 rgb(0 0 0 / 35%);
+  font: 700 14px "Galmuri11Pixel", monospace;
+  cursor: pointer;
+}
+.pause-resume-button:focus-visible { outline: 3px solid #fff8e5; outline-offset: 5px; }
+
 .reset-progress-overlay {
   position: absolute;
   inset: 0;

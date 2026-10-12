@@ -1,0 +1,76 @@
+{
+  "results": [
+    {
+      "stageId": "world-01-stage-1",
+      "before": 0.1261337399482727,
+      "paused": {
+        "status": "paused",
+        "audio": true,
+        "context": "running",
+        "position": "0:3:0.08",
+        "ticks": 580,
+        "peak": 0,
+        "x": 96,
+        "y": 512,
+        "z": "15",
+        "background": "rgba(0, 0, 0, 0.6)"
+      },
+      "frozen": {
+        "ticks": 580,
+        "peak": 0,
+        "status": "paused"
+      },
+      "resumed": {
+        "ticks": 840,
+        "peak": 0.1379367709159851,
+        "status": "play"
+      }
+    },
+    {
+      "stageId": "world-01-stage-boss",
+      "before": 0.1257583200931549,
+      "paused": {
+        "status": "paused",
+        "audio": true,
+        "context": "running",
+        "position": "1:1:1.493",
+        "ticks": 1032,
+        "peak": 0,
+        "x": 160,
+        "y": 504,
+        "z": "15",
+        "background": "rgba(0, 0, 0, 0.6)"
+      },
+      "frozen": {
+        "ticks": 1032,
+        "peak": 0,
+        "status": "paused"
+      },
+      "resumed": {
+        "ticks": 1320,
+        "peak": 0.13439278304576874,
+        "status": "play"
+      }
+    }
+  ],
+  "mobile": {
+    "frame": {
+      "x": 0,
+      "y": 312.3125,
+      "w": 390,
+      "h": 219.375
+    },
+    "overlay": {
+      "x": 0,
+      "y": 312.3125,
+      "w": 390,
+      "h": 219.375
+    },
+    "titleInside": true,
+    "scrollWidth": 390
+  },
+  "rapidToggles": 20,
+  "resetDialog": "above overlay",
+  "sceneChange": "overlay cleared",
+  "errors": []
+}

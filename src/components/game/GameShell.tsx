@@ -18,6 +18,7 @@ import { IntroTitleOverlay } from "./IntroTitleOverlay";
 import { DeathCounterOverlay } from "./DeathCounterOverlay";
 import { ResetProgressDialog } from "./ResetProgressDialog";
 import { SnackCoinCounter } from "./SnackCoinCounter";
+import { PauseOverlay } from "./PauseOverlay";
 
 export interface GameShellProps {
   readonly initialStageId: StageId;
@@ -64,6 +65,7 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
 
   useEffect(() => {
     const removeStage = eventBus.on("stage-started", ({ stageId }) => {
+      setPaused(false);
       setActiveStageId(stageId);
       setBossHearts(stageId === "world-01-stage-boss" ? 3 : undefined);
       Object.assign(runtimeRef.current, createRuntimeStageState(stageId));
@@ -222,6 +224,7 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
         <CutsceneOverlay eventBus={eventBus} onSkip={() => eventBus.emit("cutscene-skip-requested", {})} />
         {introGateStep === "title" && <IntroTitleOverlay initialName={progress.playerName} onConfirm={handleNameConfirm} />}
         {introGateStep === "ready" && mode !== "stage-clear" && <GameOverlay stageTitle={stage.title} runtime={runtime} progress={progress} skills={SKILL_DEFINITIONS} tools={TOOL_DEFINITIONS} cooldowns={{}} bossHearts={activeStageId === "world-01-stage-boss" ? bossHearts : undefined} alive={mode !== "dead" && mode !== "cutscene"} safeZone={mode === "safe"} statusOpen={statusOpen} onEquip={handleEquip} onPurchase={handlePurchase} onKeybindChange={handleKeybindChange} onToggleStatus={() => setStatusOpen((open) => !open)} paused={paused} onTogglePause={() => eventBus.emit("pause-requested", { paused: !paused })} onResetProgress={() => setResetProgressDialogOpen(true)} />}
+        {paused && introGateStep === "ready" && <PauseOverlay onResume={() => eventBus.emit("pause-requested", { paused: false })} />}
         {resetProgressDialogOpen && (
           <ResetProgressDialog
             onCancel={() => setResetProgressDialogOpen(false)}
