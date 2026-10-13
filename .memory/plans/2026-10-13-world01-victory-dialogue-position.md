@@ -6,13 +6,13 @@
 
 - [결정](../decisions/2026-10-13-world01-victory-dialogue-position.md)
 - [이전 완료 계획](./2026-10-12-world01-camera-exit-sfx.md)의 후속 계획이다. 이전 T01~T05를 다시 실행하지 않는다.
-- 이번에는 계획 문서만 작성한다. `/memory-execute` 요청 시 아래 Task를 구현한다.
+- 계획 작성 후 사용자의 `/memory-execute` 요청에 따라 아래 Task를 모두 구현·검증했다.
 
 ## Phases
 
 | Phase | Status | Summary | Blueprint |
 | :--- | :--- | :--- | :--- |
-| P01 | `in_progress` | 코기 정지·삼색이 방향과 기절 이미지·보스 전용 클리어 표시 | [P01](../phases/2026-10-13-world01-victory-dialogue-position/P01-victory-dialogue/phase.md) |
+| P01 | `done` | 코기 정지·삼색이 방향과 기절 이미지·보스 전용 클리어 표시 | [P01](../phases/2026-10-13-world01-victory-dialogue-position/P01-victory-dialogue/phase.md) |
 
 ## Scope
 
@@ -26,6 +26,9 @@ T01은 `StageScene.ts`에서 코기의 물리 이동/달리기/공격 잔여 연
 
 ## Progress
 
-- done: 2/3
-- 사용자 실행 요청에 따라 Task별 구현·검증·한국어 커밋을 진행한다.
+- done: 3/3
+- T01~T03 구현·검증·한국어 커밋 완료. 다음 Active Task 없음.
+- T01 `bcf8229`: 코기 물리/연출 정지와 마지막 타격 프레임 종료. [좌표 검증](../test-plans/2026-10-13-world01-victory-dialogue-position.md).
+- T02 `1e4ef5a`: 보스 방향 추적과 첫 대사 전 기절 이미지. [방향/기절 검증](../test-plans/2026-10-13-calico-facing-collapse.md).
+- T03 `5aba8f6`: 일반 맵 완료 알림 제거. [최종 통합 검증](../test-plans/2026-10-13-boss-only-clear-message.md). 자동47건·타입·lint·빌드·브라우저 검증 통과. 실제 모바일 터치는 미실시.
 - 요청 범위 밖에서 새로 발견한 문제: 특이사항 없음.

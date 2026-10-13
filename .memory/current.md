@@ -6,20 +6,20 @@
 
 ## Active Phase
 
-[P01 보스 방향·승리 대화·클리어 표시](./phases/2026-10-13-world01-victory-dialogue-position/P01-victory-dialogue/phase.md)
+없음 — [P01](./phases/2026-10-13-world01-victory-dialogue-position/P01-victory-dialogue/phase.md) 완료.
 
 ## Active Task
 
-[T03-boss-only-clear-message](./phases/2026-10-13-world01-victory-dialogue-position/P01-victory-dialogue/T03-boss-only-clear-message.md)
+없음 — T01~T03 완료.
 
 ## Status
 
-- T02 완료: 1e4ef5a. 진행률 2/3.
-- 사용자 요청에 따라 다음 Task를 즉시 순차 실행한다.
+- T03 완료: 5aba8f6. 진행률 3/3.
+- 전 Task 구현·검증 및 한국어 커밋 완료. 검증 기록은 각 Task에 연결했다.
 
 ## Next Step (IMPORTANT)
 
-T03-boss-only-clear-message 청사진에 따라 구현·검증·한국어 커밋을 진행한다.
+이번 계획의 다음 Task는 없다. 이전 compact 계획과 상점 후속 작업은 자동 재개하지 않는다.
 
 ## Existing Worktree Baseline
 
@@ -29,6 +29,7 @@ T03-boss-only-clear-message 청사진에 따라 구현·검증·한국어 커밋
 
 ## Completed Work
 
+- [삼색이 방향·승리 대화·클리어 표시](./plans/2026-10-13-world01-victory-dialogue-position.md): T01 `bcf8229`, T02 `1e4ef5a`, T03 `5aba8f6`, 전체3/3 완료. 대화 중 코기 좌표 변화0px, 삼색이 좌우 방향/첫 대사 기절, 일반 맵 문구0개·보스 승리 후1개, 진행 저장/패배 복귀/월드2 전환 검증 통과. 최종 자동47건·타입·lint·빌드·브라우저 pageerror0건. [통합 기록](./test-plans/2026-10-13-boss-only-clear-message.md). 실제 모바일 터치 미실시.
 - [대사 카메라·출구·깃발 부활·새 효과음](./plans/2026-10-12-world01-camera-exit-sfx.md): T01 `dc60625`, T02 `974eb99`, T03 `7691fdf`, T04 `f8c0866`, T05 `735fdb0`, 전체5/5 완료. T01~T03 새 WAV2개, 자동38건·타입·lint·빌드·맵 검사와 브라우저 통합 검증 통과. 맵 유사성 원인 및 청음/실기기 한계는 [검증 기록](./test-plans/2026-10-12-world01-camera-exit-sfx.md) 참조. T04 후속 맵 끝 낙하 수정은 관련 자동6건·타입·lint·빌드·맵·브라우저 검증 통과: [낙하 수정 검증](./test-plans/2026-10-12-world01-exit-floor.md). T05 사망 반복 수정은 자동47건·타입·lint·빌드·맵·브라우저 검증 통과: [반복 사망 수정 검증](./test-plans/2026-10-12-checkpoint-death-loop.md).
 - [월드 1 화면·음악·체크포인트](./plans/2026-10-12-world01-pause-music-checkpoints.md): T01 `ec7e532`, T02 `e3fd858`, T03 `5f1a388`, T04 `d464ce9`, T05 `093d458`. 전체5/5 완료, 다음 Task 없음. 자동35건·맵·타입·lint·빌드 및 브라우저 통합 결과는 [검증 기록](./test-plans/2026-10-12-world01-pause-music-checkpoints.md)에 있다. 실제 청음/실기기는 미실시다.
 - [월드 1 이동 흐름·간식·삼색이 전투 개선](./plans/2026-10-12-world01-gameplay-refinement.md): T01 `c253d57`, T02 `3a435d1`, T03 `9eb4cf7`, T04 `eb06803`, T05 `4e6e312`, 완료 정리 `f1329e7`. 완료 상태를 유지한다.
