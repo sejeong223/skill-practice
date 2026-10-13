@@ -124,7 +124,7 @@ Task: T02-calico-facing-collapse
 
 - [x] 구현 완료
 - [x] 검증 통과
-- commit: pending
+- commit: 1e4ef5a
 
 ## Execution Result
 

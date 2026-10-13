@@ -1,0 +1,25 @@
+{
+  "initial": {
+    "enabled": true,
+    "locked": true,
+    "status": "cutscene",
+    "frame": 0,
+    "flip": true
+  },
+  "final": {
+    "enabled": true,
+    "locked": false,
+    "health": 10,
+    "beats": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ]
+  },
+  "errors": []
+}

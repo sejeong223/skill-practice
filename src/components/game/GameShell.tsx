@@ -145,7 +145,6 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
       "collectible-found": "수집품 기록을 갱신했습니다.",
       "death-count-updated": "사망 통계를 저장했습니다.",
       "keybinds-changed": "키 설정을 저장했습니다.",
-      "stage-completed": "스테이지 클리어를 저장했습니다.",
     };
     if (messages[type]) setToast(messages[type]);
     if (type === "death-count-updated") {

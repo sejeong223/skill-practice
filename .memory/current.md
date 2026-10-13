@@ -10,16 +10,16 @@
 
 ## Active Task
 
-[T02-calico-facing-collapse](./phases/2026-10-13-world01-victory-dialogue-position/P01-victory-dialogue/T02-calico-facing-collapse.md)
+[T03-boss-only-clear-message](./phases/2026-10-13-world01-victory-dialogue-position/P01-victory-dialogue/T03-boss-only-clear-message.md)
 
 ## Status
 
-- T01 완료: bcf8229. 진행률 1/3.
+- T02 완료: 1e4ef5a. 진행률 2/3.
 - 사용자 요청에 따라 다음 Task를 즉시 순차 실행한다.
 
 ## Next Step (IMPORTANT)
 
-T02-calico-facing-collapse 청사진에 따라 구현·검증·한국어 커밋을 진행한다.
+T03-boss-only-clear-message 청사진에 따라 구현·검증·한국어 커밋을 진행한다.
 
 ## Existing Worktree Baseline
 
