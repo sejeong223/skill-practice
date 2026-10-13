@@ -3,6 +3,7 @@ import { SKILL_DEFINITIONS } from "../data/skills";
 import { STAGE_IDS } from "../core/constants";
 import { TOOL_DEFINITIONS } from "../data/tools";
 import type { InputAction, ProgressState, SkillId, StageId, ToolId } from "../core/types";
+import { isWorld01CheckpointStageId } from "../systems/world01Respawn";
 
 const validSkillIds = new Set<string>(SKILL_DEFINITIONS.map((definition) => definition.id));
 const validToolIds = new Set<string>(TOOL_DEFINITIONS.map((definition) => definition.id));
@@ -116,6 +117,8 @@ export function migrateSave(input: unknown): ProgressState {
       onboardingCompleted,
       playerName: rawProgress.playerName.trim() || fallback.playerName,
       clearedStages,
+      world01CheckpointStageId: isWorld01CheckpointStageId(rawProgress.world01CheckpointStageId)
+        ? rawProgress.world01CheckpointStageId : null,
       unlockedSkills: [...new Set(unlockedSkills.filter((id): id is SkillId => validSkillIds.has(id)))],
       ownedToolIds: safeOwnedTools,
       equippedAttackToolId: attackToolId,

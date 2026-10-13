@@ -1,0 +1,1811 @@
+{
+  "noFlag": {
+    "before": {
+      "stage": "world-01-stage-2",
+      "x": 96,
+      "y": 512,
+      "bottom": 512,
+      "enabled": true,
+      "checkpoint": null,
+      "global": null,
+      "bank": 10,
+      "deaths": 0,
+      "byStage": {},
+      "cleared": [
+        "world-01-stage-1"
+      ],
+      "saved": null,
+      "chimes": 0,
+      "status": "play"
+    },
+    "after": {
+      "stage": "world-01-stage-1",
+      "x": 96,
+      "y": 512,
+      "bottom": 512,
+      "enabled": true,
+      "checkpoint": null,
+      "global": null,
+      "bank": 10,
+      "deaths": 1,
+      "byStage": {
+        "world-01-stage-2": 1
+      },
+      "cleared": [
+        "world-01-stage-1"
+      ],
+      "saved": null,
+      "chimes": 0,
+      "status": "play"
+    }
+  },
+  "noFlagReload": {
+    "before": {
+      "stage": "world-01-stage-1",
+      "x": 96,
+      "y": 512,
+      "bottom": 512,
+      "enabled": true,
+      "checkpoint": null,
+      "global": null,
+      "bank": 10,
+      "deaths": 1,
+      "byStage": {
+        "world-01-stage-2": 1
+      },
+      "cleared": [
+        "world-01-stage-1"
+      ],
+      "saved": null,
+      "chimes": 0,
+      "status": "play"
+    },
+    "after": {
+      "stage": "world-01-stage-1",
+      "x": 96,
+      "y": 512,
+      "bottom": 512,
+      "enabled": true,
+      "checkpoint": null,
+      "global": null,
+      "bank": 10,
+      "deaths": 1,
+      "byStage": {
+        "world-01-stage-2": 1
+      },
+      "cleared": [
+        "world-01-stage-1"
+      ],
+      "saved": null,
+      "chimes": 0,
+      "status": "play"
+    }
+  },
+  "flag2": {
+    "stage": "world-01-stage-2",
+    "x": 1501.9988,
+    "y": 480,
+    "bottom": 480,
+    "enabled": true,
+    "checkpoint": "world-01-stage-2-checkpoint",
+    "global": "world-01-stage-2",
+    "bank": 10,
+    "deaths": 1,
+    "byStage": {
+      "world-01-stage-2": 1
+    },
+    "cleared": [
+      "world-01-stage-1"
+    ],
+    "saved": "world-01-stage-2",
+    "chimes": 1,
+    "status": "play"
+  },
+  "stage3Death": {
+    "before": {
+      "stage": "world-01-stage-3",
+      "x": 96,
+      "y": 512,
+      "bottom": 512,
+      "enabled": true,
+      "checkpoint": null,
+      "global": "world-01-stage-2",
+      "bank": 10,
+      "deaths": 1,
+      "byStage": {
+        "world-01-stage-2": 1
+      },
+      "cleared": [
+        "world-01-stage-1",
+        "world-01-stage-2"
+      ],
+      "saved": "world-01-stage-2",
+      "chimes": 1,
+      "status": "play"
+    },
+    "after": {
+      "stage": "world-01-stage-2",
+      "x": 1529,
+      "y": 480,
+      "bottom": 480,
+      "enabled": true,
+      "checkpoint": "world-01-stage-2-checkpoint",
+      "global": "world-01-stage-2",
+      "bank": 10,
+      "deaths": 2,
+      "byStage": {
+        "world-01-stage-2": 1,
+        "world-01-stage-3": 1
+      },
+      "cleared": [
+        "world-01-stage-1",
+        "world-01-stage-2"
+      ],
+      "saved": "world-01-stage-2",
+      "chimes": 1,
+      "status": "play"
+    }
+  },
+  "snapshotPreserved": true,
+  "repeat": {
+    "before": {
+      "stage": "world-01-stage-2",
+      "x": 1529,
+      "y": 480,
+      "bottom": 480,
+      "enabled": true,
+      "checkpoint": "world-01-stage-2-checkpoint",
+      "global": "world-01-stage-2",
+      "bank": 10,
+      "deaths": 2,
+      "byStage": {
+        "world-01-stage-2": 1,
+        "world-01-stage-3": 1
+      },
+      "cleared": [
+        "world-01-stage-1",
+        "world-01-stage-2"
+      ],
+      "saved": "world-01-stage-2",
+      "chimes": 1,
+      "status": "play"
+    },
+    "after": {
+      "stage": "world-01-stage-2",
+      "x": 1529,
+      "y": 480,
+      "bottom": 480,
+      "enabled": true,
+      "checkpoint": "world-01-stage-2-checkpoint",
+      "global": "world-01-stage-2",
+      "bank": 10,
+      "deaths": 3,
+      "byStage": {
+        "world-01-stage-2": 2,
+        "world-01-stage-3": 1
+      },
+      "cleared": [
+        "world-01-stage-1",
+        "world-01-stage-2"
+      ],
+      "saved": "world-01-stage-2",
+      "chimes": 1,
+      "status": "play"
+    }
+  },
+  "flag2Reload": {
+    "before": {
+      "stage": "world-01-stage-3",
+      "x": 96,
+      "y": 512,
+      "bottom": 512,
+      "enabled": true,
+      "checkpoint": null,
+      "global": "world-01-stage-2",
+      "bank": 10,
+      "deaths": 3,
+      "byStage": {
+        "world-01-stage-2": 2,
+        "world-01-stage-3": 1
+      },
+      "cleared": [
+        "world-01-stage-1",
+        "world-01-stage-2"
+      ],
+      "saved": "world-01-stage-2",
+      "chimes": 1,
+      "status": "play"
+    },
+    "after": {
+      "stage": "world-01-stage-2",
+      "x": 1529,
+      "y": 480,
+      "bottom": 480,
+      "enabled": true,
+      "checkpoint": "world-01-stage-2-checkpoint",
+      "global": "world-01-stage-2",
+      "bank": 10,
+      "deaths": 3,
+      "byStage": {
+        "world-01-stage-2": 2,
+        "world-01-stage-3": 1
+      },
+      "cleared": [
+        "world-01-stage-1",
+        "world-01-stage-2"
+      ],
+      "saved": "world-01-stage-2",
+      "chimes": 0,
+      "status": "play"
+    }
+  },
+  "stage4BeforeFlag": {
+    "before": {
+      "stage": "world-01-stage-4",
+      "x": 96,
+      "y": 512,
+      "bottom": 512,
+      "enabled": true,
+      "checkpoint": null,
+      "global": "world-01-stage-2",
+      "bank": 10,
+      "deaths": 3,
+      "byStage": {
+        "world-01-stage-2": 2,
+        "world-01-stage-3": 1
+      },
+      "cleared": [
+        "world-01-stage-1",
+        "world-01-stage-2",
+        "world-01-stage-3"
+      ],
+      "saved": "world-01-stage-2",
+      "chimes": 0,
+      "status": "play"
+    },
+    "after": {
+      "stage": "world-01-stage-2",
+      "x": 1529,
+      "y": 480,
+      "bottom": 480,
+      "enabled": true,
+      "checkpoint": "world-01-stage-2-checkpoint",
+      "global": "world-01-stage-2",
+      "bank": 10,
+      "deaths": 4,
+      "byStage": {
+        "world-01-stage-2": 2,
+        "world-01-stage-3": 1,
+        "world-01-stage-4": 1
+      },
+      "cleared": [
+        "world-01-stage-1",
+        "world-01-stage-2",
+        "world-01-stage-3"
+      ],
+      "saved": "world-01-stage-2",
+      "chimes": 0,
+      "status": "play"
+    }
+  },
+  "flag4": {
+    "stage": "world-01-stage-4",
+    "x": 2323.7502999999992,
+    "y": 512,
+    "bottom": 512,
+    "enabled": true,
+    "checkpoint": "world-01-stage-4-checkpoint",
+    "global": "world-01-stage-4",
+    "bank": 10,
+    "deaths": 4,
+    "byStage": {
+      "world-01-stage-2": 2,
+      "world-01-stage-3": 1,
+      "world-01-stage-4": 1
+    },
+    "cleared": [
+      "world-01-stage-1",
+      "world-01-stage-2",
+      "world-01-stage-3"
+    ],
+    "saved": "world-01-stage-4",
+    "chimes": 1,
+    "status": "play"
+  },
+  "bossDeath": {
+    "before": {
+      "stage": "world-01-stage-boss",
+      "x": 160,
+      "y": 504,
+      "bottom": 504,
+      "enabled": true,
+      "checkpoint": null,
+      "global": "world-01-stage-4",
+      "bank": 10,
+      "deaths": 4,
+      "byStage": {
+        "world-01-stage-2": 2,
+        "world-01-stage-3": 1,
+        "world-01-stage-4": 1
+      },
+      "cleared": [
+        "world-01-stage-1",
+        "world-01-stage-2",
+        "world-01-stage-3",
+        "world-01-stage-4"
+      ],
+      "saved": "world-01-stage-4",
+      "chimes": 1,
+      "status": "play"
+    },
+    "after": {
+      "stage": "world-01-stage-4",
+      "x": 2329,
+      "y": 512,
+      "bottom": 512,
+      "enabled": true,
+      "checkpoint": "world-01-stage-4-checkpoint",
+      "global": "world-01-stage-4",
+      "bank": 10,
+      "deaths": 5,
+      "byStage": {
+        "world-01-stage-2": 2,
+        "world-01-stage-3": 1,
+        "world-01-stage-4": 1,
+        "world-01-stage-boss": 1
+      },
+      "cleared": [
+        "world-01-stage-1",
+        "world-01-stage-2",
+        "world-01-stage-3",
+        "world-01-stage-4"
+      ],
+      "saved": "world-01-stage-4",
+      "chimes": 1,
+      "status": "play"
+    }
+  },
+  "fireRestore": {
+    "state": {
+      "gimmickId": "world01-stage-4-fake-bone-fire-2000",
+      "status": "escaped",
+      "startedAt": null,
+      "counterpresses": 0,
+      "snapshotSeed": 854399604
+    },
+    "deaths": 5
+  },
+  "traceBeforeReload": {
+    "chimes": [
+      {
+        "stageId": "world-01-stage-4",
+        "checkpointId": "world-01-stage-4-checkpoint",
+        "x": 2329,
+        "y": 512,
+        "now": 8187.9
+      }
+    ],
+    "deaths": [
+      {
+        "stageId": "world-01-stage-4",
+        "deathsTotal": 4
+      },
+      {
+        "stageId": "world-01-stage-boss",
+        "deathsTotal": 5
+      }
+    ],
+    "starts": [
+      {
+        "stageId": "world-01-stage-3",
+        "attempt": 1
+      },
+      {
+        "stageId": "world-01-stage-4",
+        "attempt": 1
+      },
+      {
+        "stageId": "world-01-stage-2",
+        "attempt": 1
+      },
+      {
+        "stageId": "world-01-stage-3",
+        "attempt": 1
+      },
+      {
+        "stageId": "world-01-stage-4",
+        "attempt": 1
+      },
+      {
+        "stageId": "world-01-stage-boss",
+        "attempt": 1
+      },
+      {
+        "stageId": "world-01-stage-4",
+        "attempt": 1
+      }
+    ],
+    "completed": [
+      {
+        "stageId": "world-01-stage-2",
+        "nextStageId": "world-01-stage-3",
+        "bankedCoins": 10
+      },
+      {
+        "stageId": "world-01-stage-3",
+        "nextStageId": "world-01-stage-4",
+        "bankedCoins": 10
+      },
+      {
+        "stageId": "world-01-stage-2",
+        "nextStageId": "world-01-stage-3",
+        "bankedCoins": 10
+      },
+      {
+        "stageId": "world-01-stage-3",
+        "nextStageId": "world-01-stage-4",
+        "bankedCoins": 10
+      },
+      {
+        "stageId": "world-01-stage-4",
+        "nextStageId": "world-01-stage-boss",
+        "bankedCoins": 10
+      }
+    ],
+    "exitSamples": [
+      {
+        "stage": "world-01-stage-2",
+        "x": 2481.9970000000008,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2485.9970000000008,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2489.9970000000008,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2493.9970000000008,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2497.9970000000008,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2501.9970000000008,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2505.9970000000008,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2509.9970000000008,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2513.9970000000008,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2517.9970000000008,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2521.9970000000008,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2525.9970000000008,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2529.9970000000008,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2533.9970000000008,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2537.9970000000008,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2541.9970000000008,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2545.9970000000008,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2549.9970000000008,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2553.9970000000008,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2557.9970000000008,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2561.9970000000008,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2565.9970000000008,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2569.9970000000008,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2573.9970000000008,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2577.9970000000008,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2581.9970000000008,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2585.9970000000008,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2589.9970000000008,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2593.9970000000008,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2597.9970000000008,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2601.9970000000008,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2605.9970000000008,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2609.9970000000008,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2613.9970000000008,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2617.9970000000008,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2621.9970000000008,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2621.9970000000008,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2621.9970000000008,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2621.9970000000008,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2621.9970000000008,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2621.9970000000008,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2621.9970000000008,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2621.9970000000008,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2621.9970000000008,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2621.9970000000008,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2621.9970000000008,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2621.9970000000008,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2481.9898,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2485.9898,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2489.9898,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2493.9898,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2497.9898,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2501.9898,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2505.9898,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2509.9898,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2513.9898,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2517.9898,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2521.9898,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2525.9898,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2529.9898,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2533.9898,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2537.9898,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2541.9898,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2545.9898,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2549.9898,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2553.9898,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2557.9898,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2561.9898,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2565.9898,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2569.9898,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2573.9898,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2577.9898,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2581.9898,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2585.9898,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2589.9898,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2593.9898,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2597.9898,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2601.9898,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2605.9898,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2609.9898,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2613.9898,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2617.9898,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2621.9898,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2621.9898,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2621.9898,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2621.9898,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2621.9898,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2621.9898,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2621.9898,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2621.9898,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2621.9898,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2621.9898,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2482.1510000000003,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2490.1510000000003,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2498.1510000000003,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2506.1510000000003,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2510.1510000000003,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2518.1510000000003,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2526.1510000000003,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2534.1510000000003,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2542.1510000000003,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2550.1510000000003,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2558.1510000000003,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2566.1510000000003,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2574.1510000000003,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2582.1510000000003,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2590.1510000000003,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2598.1510000000003,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2602.1510000000003,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2610.1510000000003,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2618.1510000000003,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2626.1510000000003,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2626.1510000000003,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2626.1510000000003,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2626.1510000000003,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2626.1510000000003,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2626.1510000000003,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2626.1510000000003,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-2",
+        "x": 2626.1510000000003,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2485.5,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2497.5,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2509.5,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2521.5,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2529.5,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2537.5,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2545.5,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2553.5,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2561.5,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2569.5,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2577.5,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2585.5,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2593.5,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2597.5,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2605.5,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2613.5,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2621.5,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2629.5,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2629.5,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2629.5,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2629.5,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2629.5,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2629.5,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-3",
+        "x": 2629.5,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-4",
+        "x": 2480.3502999999996,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-4",
+        "x": 2488.3502999999996,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-4",
+        "x": 2496.3502999999996,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-4",
+        "x": 2504.3502999999996,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-4",
+        "x": 2512.3502999999996,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-4",
+        "x": 2520.3502999999996,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-4",
+        "x": 2528.3502999999996,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-4",
+        "x": 2536.3502999999996,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-4",
+        "x": 2544.3502999999996,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-4",
+        "x": 2552.3502999999996,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-4",
+        "x": 2560.3502999999996,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-4",
+        "x": 2568.3502999999996,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-4",
+        "x": 2576.3502999999996,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-4",
+        "x": 2584.3502999999996,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-4",
+        "x": 2592.3502999999996,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-4",
+        "x": 2600.3502999999996,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-4",
+        "x": 2608.3502999999996,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-4",
+        "x": 2616.3502999999996,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-4",
+        "x": 2624.3502999999996,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-4",
+        "x": 2624.3502999999996,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-4",
+        "x": 2624.3502999999996,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-4",
+        "x": 2624.3502999999996,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-4",
+        "x": 2624.3502999999996,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-4",
+        "x": 2624.3502999999996,
+        "y": 512,
+        "bottom": 512
+      },
+      {
+        "stage": "world-01-stage-4",
+        "x": 2624.3502999999996,
+        "y": 512,
+        "bottom": 512
+      }
+    ],
+    "badBanners": []
+  },
+  "flag4Reload": {
+    "before": {
+      "stage": "world-01-stage-4",
+      "x": 2329,
+      "y": 512,
+      "bottom": 512,
+      "enabled": true,
+      "checkpoint": "world-01-stage-4-checkpoint",
+      "global": "world-01-stage-4",
+      "bank": 10,
+      "deaths": 5,
+      "byStage": {
+        "world-01-stage-2": 2,
+        "world-01-stage-3": 1,
+        "world-01-stage-4": 1,
+        "world-01-stage-boss": 1
+      },
+      "cleared": [
+        "world-01-stage-1",
+        "world-01-stage-2",
+        "world-01-stage-3",
+        "world-01-stage-4"
+      ],
+      "saved": "world-01-stage-4",
+      "chimes": 1,
+      "status": "play"
+    },
+    "after": {
+      "stage": "world-01-stage-4",
+      "x": 2329,
+      "y": 512,
+      "bottom": 512,
+      "enabled": true,
+      "checkpoint": "world-01-stage-4-checkpoint",
+      "global": "world-01-stage-4",
+      "bank": 10,
+      "deaths": 5,
+      "byStage": {
+        "world-01-stage-2": 2,
+        "world-01-stage-3": 1,
+        "world-01-stage-4": 1,
+        "world-01-stage-boss": 1
+      },
+      "cleared": [
+        "world-01-stage-1",
+        "world-01-stage-2",
+        "world-01-stage-3",
+        "world-01-stage-4"
+      ],
+      "saved": "world-01-stage-4",
+      "chimes": 0,
+      "status": "play"
+    }
+  },
+  "victory": {
+    "before": {
+      "x": 1360,
+      "y": 504,
+      "flip": true,
+      "enabled": true,
+      "vx": -120.00599999999997,
+      "vy": 0,
+      "active": true,
+      "visible": true,
+      "animation": "attack-slipper",
+      "running": true,
+      "slipper": true,
+      "bowl": true,
+      "bossFrame": 0,
+      "bossFlip": false,
+      "bossTint": false,
+      "scrollX": 640,
+      "zoom": 1
+    },
+    "start": {
+      "x": 1360,
+      "y": 504,
+      "flip": true,
+      "enabled": false,
+      "vx": 0,
+      "vy": 0,
+      "active": true,
+      "visible": true,
+      "animation": "idle",
+      "running": false,
+      "slipper": false,
+      "bowl": false,
+      "bossFrame": 2,
+      "bossFlip": false,
+      "bossTint": false,
+      "scrollX": 640,
+      "zoom": 1
+    },
+    "samples": 246,
+    "maxDx": 0,
+    "maxDy": 0,
+    "beats": [
+      {
+        "index": 0,
+        "x": 1360,
+        "y": 504,
+        "flip": true,
+        "enabled": false,
+        "vx": 0,
+        "vy": 0,
+        "active": true,
+        "visible": true,
+        "animation": "idle",
+        "running": false,
+        "slipper": false,
+        "bowl": false,
+        "bossFrame": 2,
+        "bossFlip": false,
+        "bossTint": false,
+        "scrollX": 640,
+        "zoom": 1
+      },
+      {
+        "index": 1,
+        "x": 1360,
+        "y": 504,
+        "flip": true,
+        "enabled": false,
+        "vx": 0,
+        "vy": 0,
+        "active": true,
+        "visible": true,
+        "animation": "idle",
+        "running": false,
+        "slipper": false,
+        "bowl": false,
+        "bossFrame": 2,
+        "bossFlip": false,
+        "bossTint": false,
+        "scrollX": 640,
+        "zoom": 1
+      },
+      {
+        "index": 2,
+        "x": 1360,
+        "y": 504,
+        "flip": true,
+        "enabled": false,
+        "vx": 0,
+        "vy": 0,
+        "active": true,
+        "visible": true,
+        "animation": "idle",
+        "running": false,
+        "slipper": false,
+        "bowl": false,
+        "bossFrame": 2,
+        "bossFlip": false,
+        "bossTint": false,
+        "scrollX": 640,
+        "zoom": 1
+      },
+      {
+        "index": 3,
+        "x": 1360,
+        "y": 504,
+        "flip": true,
+        "enabled": false,
+        "vx": 0,
+        "vy": 0,
+        "active": true,
+        "visible": true,
+        "animation": "idle",
+        "running": false,
+        "slipper": false,
+        "bowl": false,
+        "bossFrame": 2,
+        "bossFlip": false,
+        "bossTint": false,
+        "scrollX": 640,
+        "zoom": 1
+      },
+      {
+        "index": 4,
+        "x": 1360,
+        "y": 504,
+        "flip": true,
+        "enabled": false,
+        "vx": 0,
+        "vy": 0,
+        "active": true,
+        "visible": true,
+        "animation": "idle",
+        "running": false,
+        "slipper": false,
+        "bowl": false,
+        "bossFrame": 2,
+        "bossFlip": false,
+        "bossTint": false,
+        "scrollX": 640,
+        "zoom": 1
+      },
+      {
+        "index": 5,
+        "x": 1360,
+        "y": 504,
+        "flip": true,
+        "enabled": false,
+        "vx": 0,
+        "vy": 0,
+        "active": true,
+        "visible": true,
+        "animation": "idle",
+        "running": false,
+        "slipper": false,
+        "bowl": false,
+        "bossFrame": 2,
+        "bossFlip": false,
+        "bossTint": false,
+        "scrollX": 640,
+        "zoom": 1
+      },
+      {
+        "index": 6,
+        "x": 1360,
+        "y": 504,
+        "flip": true,
+        "enabled": false,
+        "vx": 0,
+        "vy": 0,
+        "active": true,
+        "visible": true,
+        "animation": "idle",
+        "running": false,
+        "slipper": false,
+        "bowl": false,
+        "bossFrame": 2,
+        "bossFlip": false,
+        "bossTint": false,
+        "scrollX": 640,
+        "zoom": 1
+      },
+      {
+        "index": 7,
+        "x": 1360,
+        "y": 504,
+        "flip": true,
+        "enabled": false,
+        "vx": 0,
+        "vy": 0,
+        "active": true,
+        "visible": true,
+        "animation": "idle",
+        "running": false,
+        "slipper": false,
+        "bowl": false,
+        "bossFrame": 2,
+        "bossFlip": false,
+        "bossTint": false,
+        "scrollX": 640,
+        "zoom": 1
+      }
+    ],
+    "completed": 1,
+    "clearOpened": 1,
+    "finished": [
+      {
+        "cutsceneId": "world-01-boss-clear",
+        "skipped": false,
+        "x": 1360,
+        "y": 504,
+        "flip": true,
+        "enabled": false,
+        "vx": 0,
+        "vy": 0,
+        "active": true,
+        "visible": true,
+        "animation": "idle",
+        "running": false,
+        "slipper": false,
+        "bowl": false,
+        "bossFrame": 2,
+        "bossFlip": false,
+        "bossTint": false,
+        "scrollX": 640,
+        "zoom": 1
+      }
+    ],
+    "deathsDelta": 0,
+    "barkCount": 1
+  },
+  "world2Death": {
+    "before": {
+      "stage": "world-02-stage-1",
+      "x": 96,
+      "y": 449.3333333333333,
+      "bottom": 449.3333333333333,
+      "enabled": true,
+      "checkpoint": null,
+      "global": "world-01-stage-4",
+      "bank": 10,
+      "deaths": 5,
+      "byStage": {
+        "world-01-stage-2": 2,
+        "world-01-stage-3": 1,
+        "world-01-stage-4": 1,
+        "world-01-stage-boss": 1
+      },
+      "cleared": [
+        "world-01-stage-1",
+        "world-01-stage-2",
+        "world-01-stage-3",
+        "world-01-stage-4",
+        "world-01-stage-boss"
+      ],
+      "saved": "world-01-stage-4",
+      "chimes": 0,
+      "status": "play"
+    },
+    "after": {
+      "stage": "world-02-stage-1",
+      "x": 96,
+      "y": 504,
+      "bottom": 504,
+      "enabled": true,
+      "checkpoint": null,
+      "global": "world-01-stage-4",
+      "bank": 10,
+      "deaths": 6,
+      "byStage": {
+        "world-01-stage-2": 2,
+        "world-01-stage-3": 1,
+        "world-01-stage-4": 1,
+        "world-01-stage-boss": 1,
+        "world-02-stage-1": 1
+      },
+      "cleared": [
+        "world-01-stage-1",
+        "world-01-stage-2",
+        "world-01-stage-3",
+        "world-01-stage-4",
+        "world-01-stage-boss"
+      ],
+      "saved": "world-01-stage-4",
+      "chimes": 0,
+      "status": "play"
+    }
+  },
+  "errors": []
+}

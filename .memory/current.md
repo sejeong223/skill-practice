@@ -2,24 +2,24 @@
 
 ## Active Plan
 
-[2026-10-13-world01-victory-dialogue-position](./plans/2026-10-13-world01-victory-dialogue-position.md)
+[2026-10-13-world01-cross-map-checkpoint](./plans/2026-10-13-world01-cross-map-checkpoint.md)
 
 ## Active Phase
 
-없음 — [P01](./phases/2026-10-13-world01-victory-dialogue-position/P01-victory-dialogue/phase.md) 완료.
+[P01 월드1 맵 간 체크포인트](./phases/2026-10-13-world01-cross-map-checkpoint/P01-checkpoint/phase.md)
 
 ## Active Task
 
-없음 — T01~T03 완료.
+[T01 월드1 마지막 깃발에서 맵 간 부활](./phases/2026-10-13-world01-cross-map-checkpoint/P01-checkpoint/T01-world-checkpoint.md)
 
 ## Status
 
-- T03 완료: 5aba8f6. 진행률 3/3.
-- 전 Task 구현·검증 및 한국어 커밋 완료. 검증 기록은 각 Task에 연결했다.
+- 맵을 넘은 뒤 마지막 깃발 복귀 누락에 대한 사용자 구현 요청. 새 T01 실행 중(0/1).
+- 이전 보스 방향·승리 대화 계획3/3 완료 상태는 유지한다.
 
 ## Next Step (IMPORTANT)
 
-이번 계획의 다음 Task는 없다. 이전 compact 계획과 상점 후속 작업은 자동 재개하지 않는다.
+T01 청사진대로 저장·사망 복귀·씬 간 체크포인트 복원을 함께 구현하고 실제 맵 경계 이후 사망을 검증한 뒤 한국어 커밋한다. 사용자 구현 승인이 있으므로 계획 완료 후 멈추지 않는다.
 
 ## Existing Worktree Baseline
 

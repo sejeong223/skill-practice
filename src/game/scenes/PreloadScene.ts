@@ -4,6 +4,7 @@ import type { PixelAssetDefinition } from "../assets/assetTypes";
 import type { ProgressState } from "../core/types";
 import { STAGE_IDS } from "../core/constants";
 import { FEEDBACK_AUDIO } from "../audio/audioManifest";
+import { getWorld01Respawn } from "../systems/world01Respawn";
 
 export class PreloadScene extends Phaser.Scene {
   private loadError: string | null = null;
@@ -83,7 +84,8 @@ export class PreloadScene extends Phaser.Scene {
         return;
       }
       this.scene.start("StageScene", {
-        stageId: firstUncleared,
+        ...(firstUncleared.startsWith("world-01-")
+          ? getWorld01Respawn(progress) : { stageId: firstUncleared }),
         playerName: progress.playerName,
       });
       return;

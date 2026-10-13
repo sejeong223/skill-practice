@@ -24,6 +24,7 @@ export class RestartController {
     eventBus: GameplayEventBus,
     onRestart?: () => void,
     onMapRestore?: (snapshot: CheckpointSnapshot | null) => void,
+    private readonly onRestartElsewhere?: () => boolean,
   ) {
     this.player = player;
     this.checkpointSystem = checkpointSystem;
@@ -36,6 +37,7 @@ export class RestartController {
   }
 
   public restartAtCheckpointOrSpawn(): void {
+    if (this.onRestartElsewhere?.()) return;
     const target = this.checkpointSystem.getRespawnPosition() ?? this.spawn;
 
     this.player.clearAllControlOverrides();

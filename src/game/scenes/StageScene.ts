@@ -6,6 +6,7 @@ import {
   getNextStageId,
 } from "../core/constants";
 import type { ProgressState, StageId } from "../core/types";
+import type { CheckpointSnapshot } from "../core/runtimeTypes";
 import { GameEventBus } from "../bridge/GameEventBus";
 import { CameraDirector } from "../camera/CameraDirector";
 import { AudioManager } from "../audio/AudioManager";
@@ -43,8 +44,10 @@ import { RestartController } from "../systems/RestartController";
 import { SkillSystem } from "../systems/SkillSystem";
 import { StrayDogEvent } from "../systems/StrayDogEvent";
 import { World01CalicoBoss } from "../systems/World01CalicoBoss";
+import { getWorld01Respawn, isWorld01CheckpointStageId } from "../systems/world01Respawn";
 
 const NORMAL_EXIT_RUNOUT = 256;
+const WORLD01_CHECKPOINT_SNAPSHOT_KEY = "world01CheckpointSnapshot";
 
 export interface StageSceneData {
   readonly stageId?: StageId;
@@ -116,7 +119,9 @@ export class StageScene extends Phaser.Scene {
       this.progress.equippedDefenseToolId = "upside-down-bowl";
     }
     const theme = getWorld01StageTheme(stage.id, getWorldMapTheme(stage.worldId));
-    const seed = data.seed ?? 1;
+    const savedCheckpoint = this.registry.get(WORLD01_CHECKPOINT_SNAPSHOT_KEY) as CheckpointSnapshot | undefined;
+    const seed = data.seed ?? (savedCheckpoint?.stageId === stage.id &&
+      savedCheckpoint.checkpointId === data.resumeCheckpointId ? savedCheckpoint.randomSeed : undefined) ?? 1;
     const sharedEventBus = this.registry.get("gameEventBus");
     this.persistenceEventBus = sharedEventBus instanceof GameEventBus
       ? sharedEventBus
@@ -214,6 +219,7 @@ export class StageScene extends Phaser.Scene {
         this.gimmickSystem?.reset(snapshot?.mapSnapshot ?? null);
         this.runtime?.resetCoins();
       },
+      () => this.restartAtWorldCheckpoint(),
     );
     this.deathSystem = new DeathSystem(
       this.progress,
@@ -282,11 +288,7 @@ export class StageScene extends Phaser.Scene {
     this.cameraDirector.followPlayer();
     this.syncSectionCamera();
     if (data.resumeCheckpointId) {
-      if (stage.id !== "world-01-stage-4") throw new Error("보스 재시작 체크포인트는 4단계에서만 사용합니다.");
-      const save = this.getCheckpointSpawn(data.resumeCheckpointId);
-      if (!save) throw new Error("4단계 마지막 체크포인트를 찾을 수 없습니다: " + data.resumeCheckpointId);
-      this.player.resetTo(new Phaser.Math.Vector2(save.x, save.y));
-      this.checkpointSystem.activate(data.resumeCheckpointId, this.player.x, this.player.y, 1, this.time.now, { silent: true });
+      this.restoreCheckpoint(data.resumeCheckpointId);
     }
     this.runtime.start();
     this.eventBus.emit("pause-state-changed", { paused: false });
@@ -562,18 +564,51 @@ export class StageScene extends Phaser.Scene {
     this.gameplayEventBus?.emit("death-requested", {
       stageId: "world-01-stage-boss",
       cause: "enemy",
-      checkpointId: null,
+      checkpointId: getWorld01Respawn(this.progress).resumeCheckpointId ?? null,
       now,
     });
+  }
+
+  private restartAtWorldCheckpoint(): boolean {
+    if (this.stageDefinition?.worldId !== "world-01") return false;
+    const target = getWorld01Respawn(this.progress);
+    if (target.stageId === this.stageId) return false;
+    if (this.stageTransitionStarted) return true;
+    this.stageTransitionStarted = true;
     this.runtime?.setStatus("dying");
-    this.time.delayedCall(900, () => {
+    this.player?.disableBody(false, false);
+    this.playerAnimator?.stopSlipperSwing();
+    this.time.delayedCall(this.stageId === "world-01-stage-boss" ? 900 : 0, () => {
       if (!this.scene.isActive()) return;
       this.scene.start("StageScene", {
-        stageId: "world-01-stage-4",
-        resumeCheckpointId: "world-01-stage-4-checkpoint",
+        ...target,
         playerName: this.progress.playerName,
       } satisfies StageSceneData);
     });
+    return true;
+  }
+
+  private restoreCheckpoint(checkpointId: string): void {
+    if (!this.player || !this.checkpointSystem) return;
+    const spawn = this.getCheckpointSpawn(checkpointId);
+    if (!spawn) throw new Error("복원할 체크포인트를 찾을 수 없습니다: " + checkpointId);
+    const saved = this.registry.get(WORLD01_CHECKPOINT_SNAPSHOT_KEY) as CheckpointSnapshot | undefined;
+    const restored = saved?.stageId === this.stageId && saved.checkpointId === checkpointId &&
+      this.checkpointSystem.restore({ ...saved, x: spawn.x, y: spawn.y });
+    if (!restored) {
+      this.checkpointSystem.activate(checkpointId, spawn.x, spawn.y, 1, this.time.now, { silent: true });
+    }
+    const snapshot = this.checkpointSystem.getSnapshot();
+    const mapSnapshot = snapshot?.mapSnapshot ?? null;
+    this.runtime?.setMapSnapshot(mapSnapshot);
+    this.mapInteraction?.reset(mapSnapshot);
+    this.gimmickSystem?.reset(mapSnapshot);
+    this.player.resetTo(new Phaser.Math.Vector2(spawn.x, spawn.y));
+    this.player.setFlipX((snapshot?.facing ?? 1) < 0);
+    this.cameraDirector?.followPlayer();
+    if (snapshot && isWorld01CheckpointStageId(this.stageId)) {
+      this.registry.set(WORLD01_CHECKPOINT_SNAPSHOT_KEY, structuredClone(snapshot));
+    }
   }
 
   private setPaused(paused: boolean): void {
@@ -613,6 +648,10 @@ export class StageScene extends Phaser.Scene {
       this.time.now,
     );
     if (!activated) return;
+    if (isWorld01CheckpointStageId(this.stageId)) {
+      this.progress.world01CheckpointStageId = this.stageId;
+      this.registry.set(WORLD01_CHECKPOINT_SNAPSHOT_KEY, structuredClone(this.checkpointSystem.getSnapshot()));
+    }
     this.mapInteraction?.triggerObject(checkpointId, "checkpoint-reached");
     this.eventBus?.emit("checkpoint-activated", {
       stageId: this.stageId,

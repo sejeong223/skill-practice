@@ -1,0 +1,33 @@
+{
+  "collision": {
+    "requests": [
+      {
+        "stageId": "world-01-stage-3",
+        "cause": "trap",
+        "checkpointId": null,
+        "gimmickId": "world01-stage-3-white-spike-static-1152",
+        "outcome": "instant-death",
+        "now": 10417.3
+      }
+    ],
+    "stage": "world-01-stage-2",
+    "x": 1529,
+    "y": 480,
+    "deaths": 1,
+    "bank": 10,
+    "checkpoint": "world-01-stage-2-checkpoint"
+  },
+  "unvisitedFlag4": {
+    "stage": "world-01-stage-2",
+    "x": 1529,
+    "checkpoint": "world-01-stage-2",
+    "deaths": 2
+  },
+  "noFlagBoss": {
+    "stage": "world-01-stage-1",
+    "x": 96,
+    "checkpoint": null,
+    "deaths": 3
+  },
+  "errors": []
+}

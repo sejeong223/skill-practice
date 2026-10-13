@@ -73,6 +73,17 @@ export class CheckpointSystem {
     return this.snapshot;
   }
 
+  public restore(snapshot: CheckpointSnapshot): boolean {
+    if (snapshot.stageId !== this.stageId || this.isFakeCheckpoint?.(snapshot.checkpointId)) return false;
+    this.snapshot = structuredClone(snapshot);
+    this.runtime.checkpointId = snapshot.checkpointId;
+    this.runtime.checkpointUsed = true;
+    this.runtime.randomSeed = snapshot.randomSeed ?? this.runtime.randomSeed;
+    this.runtime.checkpointSeed = this.runtime.randomSeed;
+    this.runtime.mapSnapshotVersion = snapshot.mapSnapshotVersion ?? 0;
+    return true;
+  }
+
   public getRespawnPosition(): CheckpointSnapshot | null {
     return this.snapshot;
   }

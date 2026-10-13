@@ -9,6 +9,7 @@ export type WorldId =
 
 export type StageNumber = 1 | 2 | 3 | 4 | "boss";
 export type StageId = `${WorldId}-stage-${StageNumber}`;
+export type World01CheckpointStageId = "world-01-stage-2" | "world-01-stage-4";
 export type SkillId =
   | "bark"
   | "bite"
@@ -34,6 +35,7 @@ export interface ProgressState {
   onboardingCompleted: boolean;
   playerName: string;
   clearedStages: StageId[];
+  world01CheckpointStageId: World01CheckpointStageId | null;
   unlockedSkills: SkillId[];
   ownedToolIds: ToolId[];
   equippedAttackToolId: ToolId;
