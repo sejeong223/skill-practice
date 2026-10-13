@@ -2,23 +2,24 @@
 
 ## Active Plan
 
-[2026-10-12-world01-camera-exit-sfx](./plans/2026-10-12-world01-camera-exit-sfx.md)
+[2026-10-13-world01-victory-dialogue-position](./plans/2026-10-13-world01-victory-dialogue-position.md)
 
 ## Active Phase
 
-없음 — [P01](./phases/2026-10-12-world01-camera-exit-sfx/P01-player-feedback/phase.md) 완료.
+[P01 보스 방향·승리 대화·클리어 표시](./phases/2026-10-13-world01-victory-dialogue-position/P01-victory-dialogue/phase.md)
 
 ## Active Task
 
-없음 — T01~T05 완료.
+[T01 전투 종료 위치에서 승리 대화 진행](./phases/2026-10-13-world01-victory-dialogue-position/P01-victory-dialogue/T01-hold-victory-position.md)
 
 ## Status
 
-- T05 완료: 735fdb0. 전체5/5 구현·검증·한국어 커밋 완료.
+- 2026-10-13 계획 보완 완료. T01~T03 pending, 구현 시작 준비 완료(0/3). T01 코기 정지, T02 삼색이 방향/첫 대사 기절, T03 일반 맵 완료 문구 제거. 이번 요청에서는 코드를 변경하지 않았다.
+- 이전 계획 T01~T05는 완료 상태를 유지한다(마지막 구현735fdb0, 메모리 동기화ae89e99).
 
 ## Next Step (IMPORTANT)
 
-다음 Task 없음. 예전 compact의 다른 항목이나 상점 작업은 자동 재개하지 않는다.
+사용자가 `/memory-execute` 또는 "current 보고 이어서 해줘"라고 요청하면 T01 코기 위치 고정부터 시작해 T02 삼색이 방향/기절 이미지, T03 일반 맵 완료 문구 제거를 순차 구현한다. Task별 한국어 커밋과 검증을 수행한다. 지금은 계획 단계이므로 실행하지 않는다. 예전 compact의 다른 항목이나 상점 작업은 자동 재개하지 않는다.
 
 ## Existing Worktree Baseline
 

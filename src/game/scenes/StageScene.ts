@@ -518,6 +518,7 @@ export class StageScene extends Phaser.Scene {
         this.calicoBoss.acceptMeleeHit(result, this.player);
         if (this.runtime.getStatus() !== "play") {
           this.playerAnimator?.stopSlipperSwing();
+          return;
         }
       }
       this.calicoBoss.update(time, delta);
@@ -536,6 +537,7 @@ export class StageScene extends Phaser.Scene {
     this.victorySequenceStarted = true;
     this.calicoBoss.stopAttacks();
     this.runtime?.setStatus("cutscene");
+    this.holdPlayerForVictoryDialogue();
     await this.cutsceneDirector?.play("world-01-boss-clear");
     if (!this.scene.isActive() || !this.calicoBoss?.isDefeated()) return;
     if (!this.progress.unlockedSkills.includes("bark")) {
@@ -547,6 +549,16 @@ export class StageScene extends Phaser.Scene {
       stageId: "world-01-stage-boss",
       nextStageId: "world-02-stage-1",
     });
+  }
+
+  private holdPlayerForVictoryDialogue(): void {
+    if (!this.player) return;
+    // Keep the visible actor at the final hit position while dialogue continues.
+    this.player.disableBody(false, false);
+    this.player.setAnimationState("idle");
+    this.playerAnimator?.stopSlipperSwing();
+    this.playerAnimator?.update(this.time.now);
+    this.bowlShieldVisual?.update(0, false);
   }
 
   private handleCalicoThirdHit(now: number): void {
