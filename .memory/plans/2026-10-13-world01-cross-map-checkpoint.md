@@ -11,7 +11,7 @@
 
 | Phase | Status | Summary | Blueprint |
 | :--- | :--- | :--- | :--- |
-| P01 | `in_progress` | 월드 단위 복귀 정보·씬 간 사망/복원·재접속 검증 | [P01](../phases/2026-10-13-world01-cross-map-checkpoint/P01-checkpoint/phase.md) |
+| P01 | `done` | 월드 단위 복귀 정보·씬 간 사망/복원·재접속 검증 | [P01](../phases/2026-10-13-world01-cross-map-checkpoint/P01-checkpoint/phase.md) |
 
 ## Task Granularity
 
@@ -19,5 +19,6 @@ T01 하나로 묶는다. 저장 정보만 추가하거나 씬 이동만 수정�
 
 ## Progress
 
-- done: 0/1
+- done: 1/1, T01 `9020e12` 완료.
+- [검증 기록](../test-plans/2026-10-13-world01-cross-map-checkpoint.md): 자동53건·타입·lint·빌드·맵·실제 브라우저 통과. 맵 간 복귀/재접속/코인·클리어 보존, 실제3단계 가시 사망→2단계 깃발, 보스/월드2 회귀, pageerror0건. 다음 Task 없음.
 - 기존 무관한 메모리 수정6개는 보존한다. 이전 완료 계획은 다시 실행하지 않는다.

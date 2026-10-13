@@ -1,13 +1,13 @@
 # Phase: P01 월드1 맵 간 체크포인트
 
-## Status: in_progress
+## Status: done
 
 ## Tasks
 
 | Task | Status | Summary | Blueprint |
 | :--- | :--- | :--- | :--- |
-| T01 | `in_progress` | 마지막 깃발 유지·다른 맵 사망 복귀·저장 복원 | [T01](./T01-world-checkpoint.md) |
+| T01 | `done` | 마지막 깃발 유지·다른 맵 사망 복귀·저장 복원 | [T01](./T01-world-checkpoint.md) |
 
 ## Progress
 
-- done: 0/1 (active: T01)
+- done: 1/1 (active: 없음)

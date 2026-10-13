@@ -6,20 +6,20 @@
 
 ## Active Phase
 
-[P01 월드1 맵 간 체크포인트](./phases/2026-10-13-world01-cross-map-checkpoint/P01-checkpoint/phase.md)
+없음 — [P01 월드1 맵 간 체크포인트](./phases/2026-10-13-world01-cross-map-checkpoint/P01-checkpoint/phase.md) 완료.
 
 ## Active Task
 
-[T01 월드1 마지막 깃발에서 맵 간 부활](./phases/2026-10-13-world01-cross-map-checkpoint/P01-checkpoint/T01-world-checkpoint.md)
+없음 — T01 완료.
 
 ## Status
 
-- 맵을 넘은 뒤 마지막 깃발 복귀 누락에 대한 사용자 구현 요청. 새 T01 실행 중(0/1).
+- 맵을 넘은 뒤 마지막 깃발 복귀 누락 수정 T01 `9020e12` 완료(1/1). 자동53건·타입·lint·빌드·맵·브라우저 검증 통과.
 - 이전 보스 방향·승리 대화 계획3/3 완료 상태는 유지한다.
 
 ## Next Step (IMPORTANT)
 
-T01 청사진대로 저장·사망 복귀·씬 간 체크포인트 복원을 함께 구현하고 실제 맵 경계 이후 사망을 검증한 뒤 한국어 커밋한다. 사용자 구현 승인이 있으므로 계획 완료 후 멈추지 않는다.
+이번 계획의 다음 Task는 없다. 기존 compact/상점 후속 작업은 자동 재개하지 않는다. 월드1 미완료의 복귀는 이제 맵 시작점이 아니라 마지막 실제 깃발 또는 월드 시작점이다. 옛 저장의 미기록 깃발은 추정하지 않는다.
 
 ## Existing Worktree Baseline
 
@@ -29,6 +29,7 @@ T01 청사진대로 저장·사망 복귀·씬 간 체크포인트 복원을 함
 
 ## Completed Work
 
+- [월드1 맵 간 체크포인트](./plans/2026-10-13-world01-cross-map-checkpoint.md): T01 `9020e12`, 전체1/1 완료. 실제3단계 가시 충돌→2단계 깃발, 깃발 전 사망→월드 시작, 새4단계 깃발/보스 복귀, 재접속, 사망1회/코인 보존/무음 복원 확인. 자동53건·타입·lint·빌드·맵·브라우저 통과. [검증 기록](./test-plans/2026-10-13-world01-cross-map-checkpoint.md). 예전1·3단계 해당 맵 시작점 정책은 대체됐다. 실제 모바일 터치 미실시.
 - [삼색이 방향·승리 대화·클리어 표시](./plans/2026-10-13-world01-victory-dialogue-position.md): T01 `bcf8229`, T02 `1e4ef5a`, T03 `5aba8f6`, 전체3/3 완료. 대화 중 코기 좌표 변화0px, 삼색이 좌우 방향/첫 대사 기절, 일반 맵 문구0개·보스 승리 후1개, 진행 저장/패배 복귀/월드2 전환 검증 통과. 최종 자동47건·타입·lint·빌드·브라우저 pageerror0건. [통합 기록](./test-plans/2026-10-13-boss-only-clear-message.md). 실제 모바일 터치 미실시.
 - [대사 카메라·출구·깃발 부활·새 효과음](./plans/2026-10-12-world01-camera-exit-sfx.md): T01 `dc60625`, T02 `974eb99`, T03 `7691fdf`, T04 `f8c0866`, T05 `735fdb0`, 전체5/5 완료. T01~T03 새 WAV2개, 자동38건·타입·lint·빌드·맵 검사와 브라우저 통합 검증 통과. 맵 유사성 원인 및 청음/실기기 한계는 [검증 기록](./test-plans/2026-10-12-world01-camera-exit-sfx.md) 참조. T04 후속 맵 끝 낙하 수정은 관련 자동6건·타입·lint·빌드·맵·브라우저 검증 통과: [낙하 수정 검증](./test-plans/2026-10-12-world01-exit-floor.md). T05 사망 반복 수정은 자동47건·타입·lint·빌드·맵·브라우저 검증 통과: [반복 사망 수정 검증](./test-plans/2026-10-12-checkpoint-death-loop.md).
 - [월드 1 화면·음악·체크포인트](./plans/2026-10-12-world01-pause-music-checkpoints.md): T01 `ec7e532`, T02 `e3fd858`, T03 `5f1a388`, T04 `d464ce9`, T05 `093d458`. 전체5/5 완료, 다음 Task 없음. 자동35건·맵·타입·lint·빌드 및 브라우저 통합 결과는 [검증 기록](./test-plans/2026-10-12-world01-pause-music-checkpoints.md)에 있다. 실제 청음/실기기는 미실시다.
