@@ -12,7 +12,7 @@
 
 | Phase | Status | Summary | Blueprint |
 | :--- | :--- | :--- | :--- |
-| P01 | `pending` | 코기 정지·삼색이 방향과 기절 이미지·보스 전용 클리어 표시 | [P01](../phases/2026-10-13-world01-victory-dialogue-position/P01-victory-dialogue/phase.md) |
+| P01 | `in_progress` | 코기 정지·삼색이 방향과 기절 이미지·보스 전용 클리어 표시 | [P01](../phases/2026-10-13-world01-victory-dialogue-position/P01-victory-dialogue/phase.md) |
 
 ## Scope
 
@@ -26,6 +26,6 @@ T01은 `StageScene.ts`에서 코기의 물리 이동/달리기/공격 잔여 연
 
 ## Progress
 
-- done: 0/3
-- 구현·검증·커밋은 아직 수행하지 않았다.
+- done: 1/3
+- 사용자 실행 요청에 따라 Task별 구현·검증·한국어 커밋을 진행한다.
 - 요청 범위 밖에서 새로 발견한 문제: 특이사항 없음.

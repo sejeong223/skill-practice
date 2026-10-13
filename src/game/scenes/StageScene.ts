@@ -298,8 +298,7 @@ export class StageScene extends Phaser.Scene {
     }
     if (stage.id === "world-01-stage-boss") {
       this.calicoSprite = this.add.sprite(1280, 472, "world-01-calico-boss", 0)
-        .setDepth(10)
-        .setFlipX(true);
+        .setDepth(10);
       this.combatSystem = new CombatSystem(this.player, this.gameplayEventBus, TOOL_DEFINITIONS);
       this.combatSystem.setAttackTool("rabbit-slipper");
       this.defenseToolSystem = new DefenseToolSystem(this.gameplayEventBus, TOOL_DEFINITIONS);
@@ -327,9 +326,6 @@ export class StageScene extends Phaser.Scene {
             const speaker = beat.dialogue?.[0]?.speaker;
             const actor = speaker === "calico" ? this.calicoSprite : speaker === "corgi" ? this.player : undefined;
             if (actor) this.cameraDirector?.focusDialogue(actor.x, stage.mapHeight / 2, index === 0);
-          }
-          if (cutsceneId === "world-01-boss-clear" && index === 7) {
-            this.calicoBoss?.showCollapseFrame();
           }
         }),
       );
@@ -538,6 +534,7 @@ export class StageScene extends Phaser.Scene {
     this.calicoBoss.stopAttacks();
     this.runtime?.setStatus("cutscene");
     this.holdPlayerForVictoryDialogue();
+    this.calicoBoss.showCollapseFrame();
     await this.cutsceneDirector?.play("world-01-boss-clear");
     if (!this.scene.isActive() || !this.calicoBoss?.isDefeated()) return;
     if (!this.progress.unlockedSkills.includes("bark")) {

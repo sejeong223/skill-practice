@@ -72,6 +72,7 @@ export class World01CalicoBoss {
       stroke: "#423039", strokeThickness: 4,
     }).setOrigin(0.5).setDepth(12).setVisible(false);
     this.unsubscribeDogs = eventBus.on("stray-dog-surge", () => this.spawnDogSurround());
+    this.facePlayer();
     this.drawHealth();
   }
 
@@ -84,6 +85,7 @@ export class World01CalicoBoss {
 
   public update(now: number, delta: number): void {
     if (this.state.phase === "intro" || this.state.phase === "defeated") return;
+    this.facePlayer();
     this.elapsed += Math.min(delta, 50);
     if (this.flashUntil && this.elapsed >= this.flashUntil) {
       this.sprite.clearTint();
@@ -116,6 +118,7 @@ export class World01CalicoBoss {
       player.flipX ? -1 : 1,
       this.sprite.getBounds(),
     )) return false;
+    this.facePlayer();
     const health = this.state.health - 1;
     this.state = { ...this.state, health };
     this.sprite.setTintFill(0xffffff);
@@ -143,6 +146,7 @@ export class World01CalicoBoss {
     };
     this.defense.resetForStage("upside-down-bowl");
     this.sprite.setFrame(0).clearTint();
+    this.facePlayer();
     this.warning.setVisible(false);
     this.drawHealth();
     this.onHeartsChanged(3);
@@ -157,11 +161,11 @@ export class World01CalicoBoss {
     this.clearFishbone();
     this.clearDogs();
     this.warning.setVisible(false);
-    this.sprite.setFrame(0).clearTint();
+    this.sprite.setFrame(this.isDefeated() ? 2 : 0).clearTint();
   }
 
   public showCollapseFrame(): void {
-    if (this.isDefeated()) this.sprite.setFrame(2);
+    if (this.isDefeated()) this.sprite.setFrame(2).clearTint();
   }
 
   public destroy(): void {
@@ -173,7 +177,14 @@ export class World01CalicoBoss {
     this.warning.destroy();
   }
 
+  private facePlayer(): void {
+    if (this.isDefeated()) return;
+    if (this.player.x < this.sprite.x) this.sprite.setFlipX(true);
+    else if (this.player.x > this.sprite.x) this.sprite.setFlipX(false);
+  }
+
   private releaseFishbone(): void {
+    this.facePlayer();
     this.warning.setVisible(false);
     this.sprite.setFrame(0);
     const direction = this.player.x < this.sprite.x ? -1 : 1;

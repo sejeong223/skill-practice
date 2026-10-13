@@ -10,16 +10,16 @@
 
 ## Active Task
 
-[T01 전투 종료 위치에서 승리 대화 진행](./phases/2026-10-13-world01-victory-dialogue-position/P01-victory-dialogue/T01-hold-victory-position.md)
+[T02-calico-facing-collapse](./phases/2026-10-13-world01-victory-dialogue-position/P01-victory-dialogue/T02-calico-facing-collapse.md)
 
 ## Status
 
-- 2026-10-13 계획 보완 완료. T01~T03 pending, 구현 시작 준비 완료(0/3). T01 코기 정지, T02 삼색이 방향/첫 대사 기절, T03 일반 맵 완료 문구 제거. 이번 요청에서는 코드를 변경하지 않았다.
-- 이전 계획 T01~T05는 완료 상태를 유지한다(마지막 구현735fdb0, 메모리 동기화ae89e99).
+- T01 완료: bcf8229. 진행률 1/3.
+- 사용자 요청에 따라 다음 Task를 즉시 순차 실행한다.
 
 ## Next Step (IMPORTANT)
 
-사용자가 `/memory-execute` 또는 "current 보고 이어서 해줘"라고 요청하면 T01 코기 위치 고정부터 시작해 T02 삼색이 방향/기절 이미지, T03 일반 맵 완료 문구 제거를 순차 구현한다. Task별 한국어 커밋과 검증을 수행한다. 지금은 계획 단계이므로 실행하지 않는다. 예전 compact의 다른 항목이나 상점 작업은 자동 재개하지 않는다.
+T02-calico-facing-collapse 청사진에 따라 구현·검증·한국어 커밋을 진행한다.
 
 ## Existing Worktree Baseline
 
