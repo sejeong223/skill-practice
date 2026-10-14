@@ -10,7 +10,7 @@
 
 | Phase | Status | Summary | Blueprint |
 | :--- | :--- | :--- | :--- |
-| P01 | `in_progress` | 대사창 통일, 코기 자산 교체, 정지 표시 및 검증 | [P01](../phases/2026-10-14-world02-dialogue-and-corgi-portraits/P01-visual-update/phase.md) |
+| P01 | `done ✅` | 대사창 통일, 코기 자산 교체, 정지 표시 및 검증 | [P01](../phases/2026-10-14-world02-dialogue-and-corgi-portraits/P01-visual-update/phase.md) |
 
 ## Execution Order
 
@@ -20,4 +20,4 @@
 
 ## Progress
 
-- done: 0/1 (active: T01)
+- done: 1/1 (active: 없음)
