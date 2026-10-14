@@ -2,18 +2,19 @@
 
 ## Active Plan
 
-[월드 1 짖기 해금 연출과 스킬 이름 한글화](./plans/2026-10-14-world01-bark-unlock-and-korean-skills.md)
+[월드 선택으로 월드 1 재도전](./plans/2026-10-14-world-selection-return.md)
 
 ## Active Phase
 
-[P01 스킬 이름, 해금 안내, 짖기 효과](./phases/2026-10-14-world01-bark-unlock-and-korean-skills/P01-skill-ui-and-bark/phase.md)
+[P01 월드 선택 저장과 화면 전환](./phases/2026-10-14-world-selection-return/P01-world-navigation/phase.md)
 
 ## Active Task
 
-없음 (월드 1 짖기 해금 연출과 스킬 이름 한글화 계획 완료)
+없음 (월드 선택으로 월드 1 재도전 계획 완료)
 
 ## Status
 
+- 월드 선택으로 월드 1 재도전 P01 완료(1/1): T01 `f21c08c`. 월드 선택 HUD·다이얼로그, 클리어 월드 왕복, 선택 월드 저장·복귀를 구현했다. 자동 테스트 14건과 타입·린트·빌드 및 Chrome 흐름 확인을 통과했다.
 - 월드 1 짖기 해금 연출과 스킬 이름 한글화 P01 완료(3/3): T01 `e77e5a4`, T02 `79ba51f`, T03 `87a31eb`. 한국어 기술 이름, 해금 안내 Scene, 삼색이 짖기 경직의 린트·타입·빌드·관련 테스트를 확인했다.
 - [월드 2 모래 바닥과 첫 스테이지 이름](./plans/2026-10-14-world02-sand-floor-and-stage-title.md)은 P01-T01 미착수 상태로 보존한다. 이번 새 계획 이후 자동 실행하지 않는다.
 - 월드 2 코기 위치 조정 P01-T01 완료(1/1, `9efdad8`). 두 표정의 공통 표시 중심을 데스크톱 32px, 작은 화면 12px 내렸고 린트·타입 검사를 통과했다.
@@ -23,7 +24,7 @@
 
 ## Next Step (IMPORTANT)
 
-이번 계획의 다음 Task는 없다. [월드 2 모래 바닥과 첫 스테이지 이름](./plans/2026-10-14-world02-sand-floor-and-stage-title.md)은 P01-T01 미착수 상태로 보존한다.
+이번 계획의 다음 Task는 없다. [월드 2 모래 바닥과 첫 스테이지 이름](./plans/2026-10-14-world02-sand-floor-and-stage-title.md)은 미착수 상태로 보존한다.
 
 ## Existing Worktree Baseline
 
@@ -33,6 +34,7 @@
 
 ## Completed Work
 
+- [월드 선택으로 월드 1 재도전](./plans/2026-10-14-world-selection-return.md): T01 `f21c08c`, 전체 1/1 완료. 월드 2에서 월드 1 첫 스테이지로 돌아가며 체크포인트를 새로 시작하고, 월드 2 재선택·새로고침 복귀도 가능하다. 자동 테스트 14건, 타입·린트·빌드 및 Chrome 확인 통과. 실제 모바일 터치는 미실시.
 - [월드 1 짖기 해금 연출과 스킬 이름 한글화](./plans/2026-10-14-world01-bark-unlock-and-korean-skills.md): T01 `e77e5a4`, T02 `79ba51f`, T03 `87a31eb`, 전체 3/3 완료. 배운 기술 한국어 이름, 해금 안내 입력·전환, 삼색이 짖기 경직을 구현하고 린트·타입·빌드·관련 테스트와 Scene/보스 하네스를 확인했다. 실제 사용자 재도전 UI와 후속 보스 전투는 기존에 없다.
 - [월드 2 놀이터 진입 대본 교체](./plans/2026-10-14-world02-playground-dialogue.md): T01 `af311f8`, 전체 1/1 완료. 6문장·화자·기존 이미지 3장 매핑, 첫 관람 자동 완료/ESC 차단, 재관람 건너뛰기와 저장 후 재접속, 데스크톱·좁은 화면 대사창 검증 통과. 자동 테스트·타입·lint·빌드 통과.
 - [월드 2 놀이터 진입 연출과 플레이 배경](./plans/2026-10-14-world02-playground-entrance.md): 이미지·배경 `84a1bb6`, 컷신 `d179756`, 메모리 완료 `2c350ea`, 전체2/2 완료. 이번 대본 계획은 기존 이미지·저장 ID·전환 경로를 재사용한다.

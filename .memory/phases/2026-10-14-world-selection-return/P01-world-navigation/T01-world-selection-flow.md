@@ -137,7 +137,7 @@ Task: T01-world-selection-flow
 
 - [x] 구현 완료
 - [x] 검증 통과
-- commit: 이번 Task 커밋
+- commit: `f21c08c`
 
 ## Validation Result
 

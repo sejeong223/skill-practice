@@ -12,7 +12,7 @@
 
 | Phase | Status | Summary | Blueprint |
 | :--- | :--- | :--- | :--- |
-| P01 | `in_progress` | 월드 선택 저장·전환·HUD/대화상자와 회귀 검증 | [P01](../phases/2026-10-14-world-selection-return/P01-world-navigation/phase.md) |
+| P01 | `done ✅` | 월드 선택 저장·전환·HUD/대화상자와 회귀 검증 | [P01](../phases/2026-10-14-world-selection-return/P01-world-navigation/phase.md) |
 
 ## Existing Worktree
 
