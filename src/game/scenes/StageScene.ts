@@ -45,6 +45,7 @@ import { SkillSystem } from "../systems/SkillSystem";
 import { StrayDogEvent } from "../systems/StrayDogEvent";
 import { World01CalicoBoss } from "../systems/World01CalicoBoss";
 import { getWorld01Respawn, isWorld01CheckpointStageId } from "../systems/world01Respawn";
+import { getWorldStartStageId, isWorldSelectionUnlocked } from "../systems/worldSelection";
 
 const NORMAL_EXIT_RUNOUT = 256;
 const WORLD01_CHECKPOINT_SNAPSHOT_KEY = "world01CheckpointSnapshot";
@@ -375,6 +376,21 @@ export class StageScene extends Phaser.Scene {
     }));
     this.eventUnsubscribers.push(this.eventBus.on("pause-requested", ({ paused }) => {
       this.setPaused(paused);
+    }));
+    this.eventUnsubscribers.push(this.eventBus.on("world-selection-requested", ({ worldId }) => {
+      if (!isWorldSelectionUnlocked(this.progress) || this.stageTransitionStarted) return;
+      this.stageTransitionStarted = true;
+      this.progress.selectedWorldId = worldId;
+      if (worldId === "world-01") {
+        this.progress.world01CheckpointStageId = null;
+        this.registry.remove(WORLD01_CHECKPOINT_SNAPSHOT_KEY);
+      }
+      this.eventBus?.emit("world-selection-committed", { worldId });
+      this.setPaused(false);
+      this.scene.start("StageScene", {
+        stageId: getWorldStartStageId(worldId),
+        playerName: this.progress.playerName,
+      } satisfies StageSceneData);
     }));
 
     if (process.env.NODE_ENV !== "production" && this.input.keyboard) {

@@ -117,6 +117,8 @@ export function migrateSave(input: unknown): ProgressState {
       onboardingCompleted,
       playerName: rawProgress.playerName.trim() || fallback.playerName,
       clearedStages,
+      selectedWorldId: rawProgress.selectedWorldId === "world-01" || rawProgress.selectedWorldId === "world-02"
+        ? rawProgress.selectedWorldId : null,
       world01CheckpointStageId: isWorld01CheckpointStageId(rawProgress.world01CheckpointStageId)
         ? rawProgress.world01CheckpointStageId : null,
       unlockedSkills: [...new Set(unlockedSkills.filter((id): id is SkillId => validSkillIds.has(id)))],

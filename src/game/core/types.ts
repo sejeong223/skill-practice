@@ -6,6 +6,7 @@ export type WorldId =
   | "world-03"
   | "world-04"
   | "world-05";
+export type SelectableWorldId = Extract<WorldId, "world-01" | "world-02">;
 
 export type StageNumber = 1 | 2 | 3 | 4 | "boss";
 export type StageId = `${WorldId}-stage-${StageNumber}`;
@@ -35,6 +36,7 @@ export interface ProgressState {
   onboardingCompleted: boolean;
   playerName: string;
   clearedStages: StageId[];
+  selectedWorldId: SelectableWorldId | null;
   world01CheckpointStageId: World01CheckpointStageId | null;
   unlockedSkills: SkillId[];
   ownedToolIds: ToolId[];

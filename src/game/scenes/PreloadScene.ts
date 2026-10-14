@@ -5,6 +5,7 @@ import type { ProgressState } from "../core/types";
 import { STAGE_IDS } from "../core/constants";
 import { FEEDBACK_AUDIO } from "../audio/audioManifest";
 import { getWorld01Respawn } from "../systems/world01Respawn";
+import { getSelectedWorldResume } from "../systems/worldSelection";
 
 export class PreloadScene extends Phaser.Scene {
   private loadError: string | null = null;
@@ -70,6 +71,14 @@ export class PreloadScene extends Phaser.Scene {
   public create(): void {
     const progress = this.registry.get("progressState") as ProgressState | undefined;
     if (!this.loadError && progress?.onboardingCompleted) {
+      const selectedWorldResume = getSelectedWorldResume(progress);
+      if (selectedWorldResume) {
+        this.scene.start("StageScene", {
+          ...selectedWorldResume,
+          playerName: progress.playerName,
+        });
+        return;
+      }
       const firstUncleared = STAGE_IDS.find(
         (stageId) => !progress.clearedStages.includes(stageId),
       );

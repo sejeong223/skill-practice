@@ -16,6 +16,8 @@ export interface HudProps {
   readonly paused: boolean;
   readonly onTogglePause: () => void;
   readonly onResetProgress: () => void;
+  readonly worldSelectUnlocked: boolean;
+  readonly onOpenWorldSelect: () => void;
 }
 
 export function Hud({
@@ -30,6 +32,8 @@ export function Hud({
   paused,
   onTogglePause,
   onResetProgress,
+  worldSelectUnlocked,
+  onOpenWorldSelect,
 }: HudProps): ReactElement {
   const activeCooldowns = Object.entries(cooldowns)
     .filter(([, value]) => (value ?? 0) > 0)
@@ -89,6 +93,19 @@ export function Hud({
           <path d="M7 1h5v2H7zM5 3h2v2H5zM3 5h2v5H3zM5 10h2v2H5zM7 12h5v2H7zM12 10h2v2h-2zM14 7h2v3h-2zM12 4h2v3h-2zM10 2h3v2h-3zM8 5h3v2H8zM9 7h3v2H9z" />
         </svg>
       </button>
+      {worldSelectUnlocked && (
+        <button
+          className="world-select-button"
+          type="button"
+          aria-label="월드 선택"
+          title="월드 선택"
+          onClick={onOpenWorldSelect}
+        >
+          <svg viewBox="0 0 16 16" shapeRendering="crispEdges" aria-hidden="true">
+            <path d="M1 3 5 1l5 2 5-2v12l-5 2-5-2-4 2V3Zm2 1v8l2-1V3L3 4Zm4-1v8l2 1V4L7 3Zm4 1v8l2-1V3l-2 1Z" />
+          </svg>
+        </button>
+      )}
     </div>
   );
 }

@@ -81,6 +81,7 @@ export function createDefaultProgressState(
     onboardingCompleted: false,
     playerName,
     clearedStages: [],
+    selectedWorldId: null,
     world01CheckpointStageId: null,
     unlockedSkills: [],
     ownedToolIds: [DEFAULT_ATTACK_TOOL_ID, DEFAULT_DEFENSE_TOOL_ID],

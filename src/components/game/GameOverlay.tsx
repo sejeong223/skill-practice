@@ -20,17 +20,19 @@ export interface GameOverlayProps {
   readonly paused: boolean;
   readonly onTogglePause: () => void;
   readonly onResetProgress: () => void;
+  readonly worldSelectUnlocked: boolean;
+  readonly onOpenWorldSelect: () => void;
   readonly onEquip: (tool: ToolDefinition) => void;
   readonly onPurchase: (tool: ToolDefinition) => void;
   readonly onKeybindChange: (action: InputAction, key: string) => void;
   readonly onToggleStatus: () => void;
 }
 
-export function GameOverlay({ stageTitle, runtime, progress, skills, tools, cooldowns, bossHearts, alive, safeZone, statusOpen, paused, onTogglePause, onResetProgress, onEquip, onPurchase, onKeybindChange, onToggleStatus }: GameOverlayProps): ReactElement {
+export function GameOverlay({ stageTitle, runtime, progress, skills, tools, cooldowns, bossHearts, alive, safeZone, statusOpen, paused, onTogglePause, onResetProgress, worldSelectUnlocked, onOpenWorldSelect, onEquip, onPurchase, onKeybindChange, onToggleStatus }: GameOverlayProps): ReactElement {
   const attackTool = tools.find((tool) => tool.id === progress.equippedAttackToolId);
   const defenseTool = tools.find((tool) => tool.id === progress.equippedDefenseToolId);
   return (
-    <div className={`game-overlay${bossHearts !== undefined ? " has-boss-hearts" : ""}`} inert={paused}>
+    <div className={`game-overlay${bossHearts !== undefined ? " has-boss-hearts" : ""}${worldSelectUnlocked ? " has-world-select" : ""}`} inert={paused}>
       <Hud
         stageTitle={stageTitle}
         runtime={runtime}
@@ -44,6 +46,8 @@ export function GameOverlay({ stageTitle, runtime, progress, skills, tools, cool
         paused={paused}
         onTogglePause={onTogglePause}
         onResetProgress={onResetProgress}
+        worldSelectUnlocked={worldSelectUnlocked}
+        onOpenWorldSelect={onOpenWorldSelect}
       />
       {statusOpen && (
         <div className="overlay-columns">

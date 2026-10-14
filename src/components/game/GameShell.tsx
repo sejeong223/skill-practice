@@ -1,6 +1,6 @@
 "use client";
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactElement } from "react";
-import type { InputAction, ProgressState, RuntimeStageState, StageId, ToolDefinition } from "@/game/core/types";
+import type { InputAction, ProgressState, RuntimeStageState, SelectableWorldId, StageId, ToolDefinition } from "@/game/core/types";
 import { createDefaultProgressState, createRuntimeStageState } from "@/game/core/constants";
 import { SKILL_DEFINITIONS } from "@/game/data/skills";
 import { TOOL_DEFINITIONS } from "@/game/data/tools";
@@ -10,6 +10,7 @@ import { GameEventBus, type GameEventType } from "@/game/bridge/GameEventBus";
 import { AutoSaveCoordinator } from "@/game/persistence/AutoSaveCoordinator";
 import { ProgressStore } from "@/game/persistence/ProgressStore";
 import { EconomySystem } from "@/game/systems/EconomySystem";
+import { isWorldSelectionUnlocked } from "@/game/systems/worldSelection";
 import { GameEventBridge } from "./GameEventBridge";
 import { CutsceneOverlay } from "./CutsceneOverlay";
 import { GameOverlay } from "./GameOverlay";
@@ -19,6 +20,7 @@ import { DeathCounterOverlay } from "./DeathCounterOverlay";
 import { ResetProgressDialog } from "./ResetProgressDialog";
 import { SnackCoinCounter } from "./SnackCoinCounter";
 import { PauseOverlay } from "./PauseOverlay";
+import { WorldSelectDialog } from "./WorldSelectDialog";
 
 export interface GameShellProps {
   readonly initialStageId: StageId;
@@ -57,6 +59,7 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
   const [deathOverlayVisible, setDeathOverlayVisible] = useState(false);
   const [deathOverlayCount, setDeathOverlayCount] = useState(0);
   const [resetProgressDialogOpen, setResetProgressDialogOpen] = useState(false);
+  const [worldSelectOpen, setWorldSelectOpen] = useState(false);
   const deathOverlayTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [statusOpen, setStatusOpen] = useState(false);
   const [activeStageId, setActiveStageId] = useState<StageId>(initialStageId);
@@ -67,8 +70,17 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
   useEffect(() => {
     const removeStage = eventBus.on("stage-started", ({ stageId }) => {
       setPaused(false);
+      setWorldSelectOpen(false);
       setActiveStageId(stageId);
       setBossHearts(stageId === "world-01-stage-boss" ? 3 : undefined);
+      if (progressRef.current.selectedWorldId !== null) {
+        const stageWorldId = stageId.startsWith("world-01-") ? "world-01"
+          : stageId.startsWith("world-02-") ? "world-02" : null;
+        if (progressRef.current.selectedWorldId !== stageWorldId) {
+          progressRef.current.selectedWorldId = stageWorldId;
+          autoSaveRef.current?.flush();
+        }
+      }
       Object.assign(runtimeRef.current, createRuntimeStageState(stageId));
       setRuntime({ ...runtimeRef.current });
       setProgress(cloneProgress(progressRef.current));
@@ -84,7 +96,11 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
       setRuntime({ ...runtimeRef.current });
       setProgress(cloneProgress(progressRef.current));
     });
-    return () => { removeStage(); removeHearts(); removeCheckpoint(); removeCoins(); };
+    const removeWorldSelection = eventBus.on("world-selection-committed", () => {
+      setWorldSelectOpen(false);
+      setProgress(cloneProgress(progressRef.current));
+    });
+    return () => { removeStage(); removeHearts(); removeCheckpoint(); removeCoins(); removeWorldSelection(); };
   }, [eventBus]);
 
   useEffect(() => {
@@ -218,7 +234,25 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
     window.location.reload();
   }, []);
 
+  const handleOpenWorldSelect = useCallback((): void => {
+    if (mode !== "play" || paused || !isWorldSelectionUnlocked(progressRef.current)) return;
+    setWorldSelectOpen(true);
+    eventBus.emit("pause-requested", { paused: true });
+  }, [eventBus, mode, paused]);
+
+  const handleCancelWorldSelect = useCallback((): void => {
+    setWorldSelectOpen(false);
+    eventBus.emit("pause-requested", { paused: false });
+  }, [eventBus]);
+
+  const handleSelectWorld = useCallback((worldId: SelectableWorldId): void => {
+    eventBus.emit("world-selection-requested", { worldId });
+  }, [eventBus]);
+
   const stage = getStageDefinition(activeStageId);
+  const worldSelectUnlocked = isWorldSelectionUnlocked(progress) &&
+    (activeStageId.startsWith("world-01-") || activeStageId.startsWith("world-02-"));
+  const currentWorldId: SelectableWorldId = activeStageId.startsWith("world-02-") ? "world-02" : "world-01";
   return (
     <div className="game-shell">
       <div className="game-content-frame">
@@ -227,8 +261,15 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
         <GameEventBridge eventBus={eventBus} onEvent={handleEvent} />
         <CutsceneOverlay eventBus={eventBus} onSkip={() => eventBus.emit("cutscene-skip-requested", {})} />
         {introGateStep === "title" && <IntroTitleOverlay initialName={progress.playerName} onConfirm={handleNameConfirm} />}
-        {introGateStep === "ready" && mode !== "stage-clear" && !world02EntranceActive && <GameOverlay stageTitle={stage.title} runtime={runtime} progress={progress} skills={SKILL_DEFINITIONS} tools={TOOL_DEFINITIONS} cooldowns={{}} bossHearts={activeStageId === "world-01-stage-boss" ? bossHearts : undefined} alive={mode !== "dead" && mode !== "cutscene"} safeZone={mode === "safe"} statusOpen={statusOpen} onEquip={handleEquip} onPurchase={handlePurchase} onKeybindChange={handleKeybindChange} onToggleStatus={() => setStatusOpen((open) => !open)} paused={paused} onTogglePause={() => eventBus.emit("pause-requested", { paused: !paused })} onResetProgress={() => setResetProgressDialogOpen(true)} />}
-        {paused && introGateStep === "ready" && <PauseOverlay onResume={() => eventBus.emit("pause-requested", { paused: false })} />}
+        {introGateStep === "ready" && mode !== "stage-clear" && !world02EntranceActive && <GameOverlay stageTitle={stage.title} runtime={runtime} progress={progress} skills={SKILL_DEFINITIONS} tools={TOOL_DEFINITIONS} cooldowns={{}} bossHearts={activeStageId === "world-01-stage-boss" ? bossHearts : undefined} alive={mode !== "dead" && mode !== "cutscene"} safeZone={mode === "safe"} statusOpen={statusOpen} onEquip={handleEquip} onPurchase={handlePurchase} onKeybindChange={handleKeybindChange} onToggleStatus={() => setStatusOpen((open) => !open)} paused={paused} onTogglePause={() => eventBus.emit("pause-requested", { paused: !paused })} onResetProgress={() => setResetProgressDialogOpen(true)} worldSelectUnlocked={worldSelectUnlocked} onOpenWorldSelect={handleOpenWorldSelect} />}
+        {paused && introGateStep === "ready" && !worldSelectOpen && <PauseOverlay onResume={() => eventBus.emit("pause-requested", { paused: false })} />}
+        {worldSelectOpen && (
+          <WorldSelectDialog
+            currentWorldId={currentWorldId}
+            onSelect={handleSelectWorld}
+            onCancel={handleCancelWorldSelect}
+          />
+        )}
         {resetProgressDialogOpen && (
           <ResetProgressDialog
             onCancel={() => setResetProgressDialogOpen(false)}
