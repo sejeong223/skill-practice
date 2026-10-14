@@ -2,18 +2,19 @@
 
 ## Active Plan
 
-[월드 선택으로 월드 1 재도전](./plans/2026-10-14-world-selection-return.md)
+[월드 1 재도전 시작 지점 선택](./plans/2026-10-14-world01-replay-entry-selection.md)
 
 ## Active Phase
 
-[P01 월드 선택 저장과 화면 전환](./phases/2026-10-14-world-selection-return/P01-world-navigation/phase.md)
+[P01 월드 1 재도전 지점 선택](./phases/2026-10-14-world01-replay-entry-selection/P01-replay-entry/phase.md)
 
 ## Active Task
 
-없음 (월드 선택으로 월드 1 재도전 계획 완료)
+없음 — [T01 월드 1 시작 지점 목록과 재도전](./phases/2026-10-14-world01-replay-entry-selection/P01-replay-entry/T01-entry-list-and-respawn.md) 완료.
 
 ## Status
 
+- 월드 1 재도전 시작 지점 선택 P01 완료(1/1): T01 `dba6ff7`. 처음부터·체크포인트 1·체크포인트 2·보스전을 세로 목록으로 제공하고 저장 복귀와 보스 패배 직후 재도전을 연결했다. 자동 테스트 16건, 타입·린트·빌드 및 Chrome에서 실제 진입·재도전·모바일 스크롤 확인을 통과했다.
 - 월드 선택으로 월드 1 재도전 P01 완료(1/1): T01 `f21c08c`. 월드 선택 HUD·다이얼로그, 클리어 월드 왕복, 선택 월드 저장·복귀를 구현했다. 자동 테스트 14건과 타입·린트·빌드 및 Chrome 흐름 확인을 통과했다.
 - 월드 1 짖기 해금 연출과 스킬 이름 한글화 P01 완료(3/3): T01 `e77e5a4`, T02 `79ba51f`, T03 `87a31eb`. 한국어 기술 이름, 해금 안내 Scene, 삼색이 짖기 경직의 린트·타입·빌드·관련 테스트를 확인했다.
 - [월드 2 모래 바닥과 첫 스테이지 이름](./plans/2026-10-14-world02-sand-floor-and-stage-title.md)은 P01-T01 미착수 상태로 보존한다. 이번 새 계획 이후 자동 실행하지 않는다.
@@ -24,7 +25,7 @@
 
 ## Next Step (IMPORTANT)
 
-이번 계획의 다음 Task는 없다. [월드 2 모래 바닥과 첫 스테이지 이름](./plans/2026-10-14-world02-sand-floor-and-stage-title.md)은 미착수 상태로 보존한다.
+이번 계획의 다음 Task는 없다. [월드 2 모래 바닥과 첫 스테이지 이름](./plans/2026-10-14-world02-sand-floor-and-stage-title.md)은 별도 미착수 계획으로 보존한다.
 
 ## Existing Worktree Baseline
 

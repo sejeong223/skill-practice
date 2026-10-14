@@ -12,7 +12,7 @@
 
 | Phase | Status | Summary | Blueprint |
 | :--- | :--- | :--- | :--- |
-| P01 | `in_progress` | 월드 1 지점 목록, Scene 이동, 저장 및 재도전 검증 | [P01](../phases/2026-10-14-world01-replay-entry-selection/P01-replay-entry/phase.md) |
+| P01 | `done` | 월드 1 지점 목록, Scene 이동, 저장 및 재도전 검증 (`dba6ff7`) | [P01](../phases/2026-10-14-world01-replay-entry-selection/P01-replay-entry/phase.md) |
 
 ## Existing Worktree
 

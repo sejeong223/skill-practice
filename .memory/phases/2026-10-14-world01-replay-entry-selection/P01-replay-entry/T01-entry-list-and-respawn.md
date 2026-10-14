@@ -135,4 +135,4 @@ Task: T01-entry-list-and-respawn
 
 - [x] 구현 완료
 - [x] 검증 통과: 자동 테스트 16건, 타입 검사, 린트, 빌드. Chrome에서 두 깃발·보스전 진입, 저장 복귀, 보스 패배 재도전, PC 전체 목록 및 모바일 스크롤 확인.
-- commit: pending
+- commit: `dba6ff7`
