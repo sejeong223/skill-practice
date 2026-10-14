@@ -2,25 +2,24 @@
 
 ## Active Plan
 
-[월드 2 놀이터 진입 연출과 플레이 배경](./plans/2026-10-14-world02-playground-entrance.md)
+없음. [월드 2 놀이터 진입 대본 교체](./plans/2026-10-14-world02-playground-dialogue.md)는 완료했다.
 
 ## Active Phase
 
-[P01 월드 2 진입 연출과 배경](./phases/2026-10-14-world02-playground-entrance/P01-entrance-and-background/phase.md)
+없음. [P01 월드 2 진입 대본과 대사창](./phases/2026-10-14-world02-playground-dialogue/P01-entrance-dialogue/phase.md)은 완료했다.
 
 ## Active Task
 
-없음 — 월드 2 놀이터 진입 계획 완료.
+없음. [T01 놀이터 진입 6문장 대사와 장면 전환](./phases/2026-10-14-world02-playground-dialogue/P01-entrance-dialogue/T01-six-line-entrance-dialogue.md)을 완료했다.
 
 ## Status
 
-- 월드 2 놀이터 진입 계획 P01-T01 `84a1bb6`, P01-T02 `d179756` 완료(2/2). 신규 이미지 7장, 낮 놀이터 플레이 배경, 세 장면 자동 컷신과 월드 2 시작을 반영했다.
-- 에셋 검사, 자동 테스트 8건, 타입 검사, lint, 빌드 통과. 브라우저에서 첫 관람 ESC 차단·재관람 ESC 건너뛰기·새로고침 후 클리어 화면과 완료 기록 보존·좁은 화면을 확인했다.
+- 월드 2 놀이터 진입 대본 P01-T01 완료(1/1, `af311f8`). 확정된 6문장과 기존 이미지 3장의 장면 전환, 자동 진행, 저장과 재관람을 검증했다.
 - 이전 월드 1 맵 간 체크포인트 T01 `9020e12`와 보스 방향·승리 대화 계획의 완료 상태는 유지한다.
 
 ## Next Step (IMPORTANT)
 
-현재 활성 Task가 없다. 후속 요청이 오면 새 결정과 계획을 확인한다. 기존 compact/상점 후속 작업은 자동 재개하지 않는다.
+현재 계획의 다음 Task는 없다. 기존 compact/상점 후속 작업은 자동 재개하지 않는다.
 
 ## Existing Worktree Baseline
 
@@ -30,6 +29,8 @@
 
 ## Completed Work
 
+- [월드 2 놀이터 진입 대본 교체](./plans/2026-10-14-world02-playground-dialogue.md): T01 `af311f8`, 전체 1/1 완료. 6문장·화자·기존 이미지 3장 매핑, 첫 관람 자동 완료/ESC 차단, 재관람 건너뛰기와 저장 후 재접속, 데스크톱·좁은 화면 대사창 검증 통과. 자동 테스트·타입·lint·빌드 통과.
+- [월드 2 놀이터 진입 연출과 플레이 배경](./plans/2026-10-14-world02-playground-entrance.md): 이미지·배경 `84a1bb6`, 컷신 `d179756`, 메모리 완료 `2c350ea`, 전체2/2 완료. 이번 대본 계획은 기존 이미지·저장 ID·전환 경로를 재사용한다.
 - [월드1 맵 간 체크포인트](./plans/2026-10-13-world01-cross-map-checkpoint.md): T01 `9020e12`, 전체1/1 완료. 실제3단계 가시 충돌→2단계 깃발, 깃발 전 사망→월드 시작, 새4단계 깃발/보스 복귀, 재접속, 사망1회/코인 보존/무음 복원 확인. 자동53건·타입·lint·빌드·맵·브라우저 통과. [검증 기록](./test-plans/2026-10-13-world01-cross-map-checkpoint.md). 예전1·3단계 해당 맵 시작점 정책은 대체됐다. 실제 모바일 터치 미실시.
 - [삼색이 방향·승리 대화·클리어 표시](./plans/2026-10-13-world01-victory-dialogue-position.md): T01 `bcf8229`, T02 `1e4ef5a`, T03 `5aba8f6`, 전체3/3 완료. 대화 중 코기 좌표 변화0px, 삼색이 좌우 방향/첫 대사 기절, 일반 맵 문구0개·보스 승리 후1개, 진행 저장/패배 복귀/월드2 전환 검증 통과. 최종 자동47건·타입·lint·빌드·브라우저 pageerror0건. [통합 기록](./test-plans/2026-10-13-boss-only-clear-message.md). 실제 모바일 터치 미실시.
 - [대사 카메라·출구·깃발 부활·새 효과음](./plans/2026-10-12-world01-camera-exit-sfx.md): T01 `dc60625`, T02 `974eb99`, T03 `7691fdf`, T04 `f8c0866`, T05 `735fdb0`, 전체5/5 완료. T01~T03 새 WAV2개, 자동38건·타입·lint·빌드·맵 검사와 브라우저 통합 검증 통과. 맵 유사성 원인 및 청음/실기기 한계는 [검증 기록](./test-plans/2026-10-12-world01-camera-exit-sfx.md) 참조. T04 후속 맵 끝 낙하 수정은 관련 자동6건·타입·lint·빌드·맵·브라우저 검증 통과: [낙하 수정 검증](./test-plans/2026-10-12-world01-exit-floor.md). T05 사망 반복 수정은 자동47건·타입·lint·빌드·맵·브라우저 검증 통과: [반복 사망 수정 검증](./test-plans/2026-10-12-checkpoint-death-loop.md).

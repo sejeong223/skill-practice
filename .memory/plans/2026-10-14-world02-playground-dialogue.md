@@ -12,7 +12,7 @@
 
 | Phase | Status | Summary | Blueprint |
 | :--- | :--- | :--- | :--- |
-| P01 | `in_progress` | 6문장 대본, 3장 이미지 전환, 긴 대사창과 자동 진행 검증 | [P01](../phases/2026-10-14-world02-playground-dialogue/P01-entrance-dialogue/phase.md) |
+| P01 | `done ✅` | 6문장 대본, 3장 이미지 전환, 긴 대사창과 자동 진행 검증 | [P01](../phases/2026-10-14-world02-playground-dialogue/P01-entrance-dialogue/phase.md) |
 
 ## Execution Order
 
@@ -34,4 +34,4 @@
 
 ## Progress
 
-- done: 0/1 (active: P01-T01)
+- done: 1/1 (active: 없음)
