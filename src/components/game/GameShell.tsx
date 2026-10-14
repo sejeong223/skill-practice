@@ -157,7 +157,7 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
     }
     if (type === "cutscene-started") setMode("cutscene");
     if (type === "cutscene-finished" || type === "stage-started") setMode("play");
-    if (type === "stage-clear-scene-opened") setMode("stage-clear");
+    if (type === "skill-unlock-scene-opened" || type === "stage-clear-scene-opened") setMode("stage-clear");
     if (type === "stage-started") setStatusOpen(false);
     if (type === "death") {
       setDeathOverlayCount(progressRef.current.deathsTotal);

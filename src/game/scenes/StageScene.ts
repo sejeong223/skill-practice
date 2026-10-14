@@ -544,9 +544,10 @@ export class StageScene extends Phaser.Scene {
       this.skillSystem?.unlockAfterBoss("world-01-boss");
     }
     this.runtime?.complete();
-    this.scene.start("World01StageClearScene", {
+    this.scene.start("World01SkillUnlockScene", {
       stageId: "world-01-stage-boss",
       nextStageId: "world-02-stage-1",
+      skillId: "bark",
     });
   }
 

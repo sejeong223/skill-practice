@@ -46,6 +46,10 @@ export interface StageEventMap {
     stageId: "world-01-stage-boss";
     nextStageId: "world-02-stage-1";
   };
+  "skill-unlock-scene-opened": {
+    stageId: "world-01-stage-boss";
+    skillId: "bark";
+  };
   "cutscene-requested": {
     stageId: StageId;
     cutsceneId: string;
