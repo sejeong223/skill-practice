@@ -273,13 +273,14 @@ form { display: flex; gap: 6px; margin-top: 10px; } form input { min-width: 0; f
   padding: 18px clamp(26px, 4vw, 54px);
   overflow: visible;
   border: 0;
-  background: transparent url("/assets/pixel/cutscenes/world-02/world-02-dialogue-frame.png") center / 100% auto no-repeat;
+  background: transparent url("/assets/pixel/cutscenes/world-02/world-02-dialogue-frame.png") center / 100% 200% no-repeat;
   box-shadow: none;
 }
 .cutscene-overlay--world02 .cutscene-footer { justify-content: flex-end; margin-top: 0; }
 .cutscene-overlay--world02 .cutscene-footer > span { display: none; }
 .cutscene-overlay--world02 .dialogue-line { align-items: center; font-size: clamp(14px, 1.8vw, 21px) !important; }
 .cutscene-overlay--world02 .dialogue-line .dialogue-speaker { color: #ffd87a; }
+.cutscene-overlay--world02 .cutscene-narration { line-height: 1.4; }
 
 .item-card {
   position: relative;
@@ -310,9 +311,12 @@ form { display: flex; gap: 6px; margin-top: 10px; } form input { min-width: 0; f
   .cutscene-narration,
   .dialogue-line { grid-template-columns: 62px minmax(0, 1fr); gap: 8px; }
   .cutscene-footer { width: 100%; }
-  .cutscene-overlay--world02 { padding: 0 2% 2%; }
+  .cutscene-overlay--world02 { gap: 0; padding: 0 2% 2%; }
   .cutscene-overlay--world02 .cutscene-caption-frame { min-height: 72px; padding: 9px 22px; }
-  .cutscene-overlay--world02 .dialogue-line { grid-template-columns: 52px minmax(0, 1fr); font-size: 12px !important; }
+  .cutscene-overlay--world02 .cutscene-narration,
+  .cutscene-overlay--world02 .dialogue-line { display: block; font-size: clamp(11px, 2.8vw, 12px) !important; line-height: 1.35; }
+  .cutscene-overlay--world02 .cutscene-speaker-label,
+  .cutscene-overlay--world02 .dialogue-line .dialogue-speaker { display: inline-block; margin-right: 7px; }
   .item-card { padding: 14px 16px; }
   .item-card h2 { font-size: clamp(16px, 3vw, 22px); }
 }

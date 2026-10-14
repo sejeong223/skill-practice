@@ -20,7 +20,6 @@ export class World02EntranceScene extends Phaser.Scene {
   private background?: Phaser.GameObjects.Image;
   private portrait?: Phaser.GameObjects.Image;
   private dimmer?: Phaser.GameObjects.Rectangle;
-  private skipControl?: Phaser.GameObjects.Container;
   private beatTimer?: Phaser.Time.TimerEvent;
   private removeSkipRequest?: () => void;
   private canSkip = false;
@@ -70,7 +69,6 @@ export class World02EntranceScene extends Phaser.Scene {
       skipAllowed: this.canSkip,
     });
     this.background = this.add.image(640, 360, IMAGE_KEYS[0]).setDisplaySize(1280, 720);
-    if (this.canSkip) this.createSkipControl();
     this.playBeat(0);
   }
 
@@ -88,30 +86,33 @@ export class World02EntranceScene extends Phaser.Scene {
         targets: this.background,
         scaleX: this.background.scaleX * 1.05,
         scaleY: this.background.scaleY * 1.05,
-        duration: beat.durationMs,
+        duration: WORLD02_ENTRANCE_CUTSCENE.beats[0].durationMs +
+          WORLD02_ENTRANCE_CUTSCENE.beats[1].durationMs,
         ease: "Sine.easeInOut",
       });
-    } else if (index === 1 || index === 2) {
-      this.showPortrait(index === 1 ? IMAGE_KEYS[1] : IMAGE_KEYS[2]);
-      if (index === 2) {
-        this.skipControl?.setVisible(false);
-        this.eventBus?.emit("cutscene-beat", {
-          cutsceneId: WORLD02_ENTRANCE_CUTSCENE.id,
-          beat,
-          index,
-          totalBeats: WORLD02_ENTRANCE_CUTSCENE.beats.length,
-          skipAllowed: this.canSkip,
-          manualAdvance: false,
-          captionIndex: 0,
-          captionCount: 1,
-        });
-      }
+    } else if (index === 2) {
+      this.showPortrait(IMAGE_KEYS[1]);
+    } else if (index === 4) {
+      this.showPortrait(IMAGE_KEYS[2]);
     }
+    this.eventBus?.emit("cutscene-beat", {
+      cutsceneId: WORLD02_ENTRANCE_CUTSCENE.id,
+      beat,
+      index,
+      totalBeats: WORLD02_ENTRANCE_CUTSCENE.beats.length,
+      skipAllowed: this.canSkip,
+      manualAdvance: false,
+      captionIndex: 0,
+      captionCount: 1,
+    });
     this.beatTimer = this.time.delayedCall(beat.durationMs, () => this.playBeat(index + 1));
   }
 
   private showPortrait(assetKey: string): void {
-    this.portrait?.destroy();
+    if (this.portrait) {
+      this.tweens.killTweensOf(this.portrait);
+      this.portrait.destroy();
+    }
     if (!this.dimmer) {
       this.dimmer = this.add.rectangle(640, 360, 1280, 720, 0x162838, 0.19);
     }
@@ -126,20 +127,6 @@ export class World02EntranceScene extends Phaser.Scene {
       yoyo: true,
       repeat: -1,
     });
-  }
-
-  private createSkipControl(): void {
-    const narrowScreen = window.innerWidth < 720;
-    const box = this.add.rectangle(0, 0, narrowScreen ? 360 : 202, narrowScreen ? 100 : 48, 0x272331, 0.88)
-      .setStrokeStyle(2, 0xf0b95f)
-      .setInteractive({ useHandCursor: true });
-    const label = this.add.text(0, 0, "건너뛰기  ESC", {
-      fontFamily: "Galmuri11Pixel, monospace",
-      fontSize: narrowScreen ? "36px" : "19px",
-      color: "#fff8e5",
-    }).setOrigin(0.5);
-    this.skipControl = this.add.container(narrowScreen ? 1050 : 1145, narrowScreen ? 85 : 58, [box, label]).setDepth(10);
-    box.on("pointerdown", this.skip, this);
   }
 
   private skip(): void {
@@ -172,6 +159,5 @@ export class World02EntranceScene extends Phaser.Scene {
     this.background = undefined;
     this.portrait = undefined;
     this.dimmer = undefined;
-    this.skipControl = undefined;
   }
 }
