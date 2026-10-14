@@ -258,6 +258,55 @@
     "required": true
   },
   {
+    "key": "world-02-entrance-playground",
+    "kind": "image",
+    "url": "/assets/pixel/cutscenes/world-02/world-02-playground-pov.png",
+    "worldId": "world-02",
+    "required": true
+  },
+  {
+    "key": "world-02-entrance-corgi-nervous",
+    "kind": "image",
+    "url": "/assets/pixel/cutscenes/world-02/world-02-corgi-nervous.png",
+    "worldId": "world-02",
+    "required": true
+  },
+  {
+    "key": "world-02-entrance-corgi-resolved",
+    "kind": "image",
+    "url": "/assets/pixel/cutscenes/world-02/world-02-corgi-resolved.png",
+    "worldId": "world-02",
+    "required": true
+  },
+  {
+    "key": "world-02-entrance-dialogue-frame",
+    "kind": "image",
+    "url": "/assets/pixel/cutscenes/world-02/world-02-dialogue-frame.png",
+    "worldId": "world-02",
+    "required": true
+  },
+  {
+    "key": "world-02-background-far",
+    "kind": "image",
+    "url": "/assets/pixel/backgrounds/world-02/world-02-far.png",
+    "worldId": "world-02",
+    "required": true
+  },
+  {
+    "key": "world-02-background-mid",
+    "kind": "image",
+    "url": "/assets/pixel/backgrounds/world-02/world-02-mid.png",
+    "worldId": "world-02",
+    "required": true
+  },
+  {
+    "key": "world-02-foreground",
+    "kind": "image",
+    "url": "/assets/pixel/backgrounds/world-02/world-02-foreground.png",
+    "worldId": "world-02",
+    "required": true
+  },
+  {
     "key": "world-02-tileset",
     "kind": "image",
     "url": "/assets/pixel/tiles/world-02/world-02-tileset.png",

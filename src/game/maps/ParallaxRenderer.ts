@@ -87,11 +87,16 @@ export class ParallaxRenderer {
       this.scene.textures.exists(assetKey);
 
     if (canDrawTexture) {
-      return this.scene.add
+      const sprite = this.scene.add
         .tileSprite(0, 0, mapWidth, mapHeight, assetKey)
         .setOrigin(0)
         .setDepth(depth)
         .setScrollFactor(scrollFactorX, scrollFactorY);
+      if (assetKey.startsWith("world-02-")) {
+        const textureHeight = this.scene.textures.get(assetKey).getSourceImage().height;
+        sprite.setTileScale(mapHeight / textureHeight);
+      }
+      return sprite;
     }
 
     return this.scene.add

@@ -2,24 +2,24 @@
 
 ## Active Plan
 
-[2026-10-13-world01-cross-map-checkpoint](./plans/2026-10-13-world01-cross-map-checkpoint.md)
+[월드 2 놀이터 진입 연출과 플레이 배경](./plans/2026-10-14-world02-playground-entrance.md)
 
 ## Active Phase
 
-없음 — [P01 월드1 맵 간 체크포인트](./phases/2026-10-13-world01-cross-map-checkpoint/P01-checkpoint/phase.md) 완료.
+[P01 월드 2 진입 연출과 배경](./phases/2026-10-14-world02-playground-entrance/P01-entrance-and-background/phase.md)
 
 ## Active Task
 
-없음 — T01 완료.
+[T01 새 픽셀 이미지와 월드 2 플레이 배경](./phases/2026-10-14-world02-playground-entrance/P01-entrance-and-background/T01-new-art-and-play-background.md)
 
 ## Status
 
-- 맵을 넘은 뒤 마지막 깃발 복귀 누락 수정 T01 `9020e12` 완료(1/1). 자동53건·타입·lint·빌드·맵·브라우저 검증 통과.
-- 이전 보스 방향·승리 대화 계획3/3 완료 상태는 유지한다.
+- 새 계획 P01-T01 대기(0/2). 첫 작업은 신규 이미지 7장 제작·manifest 등록·월드 2 플레이 배경 확인이다.
+- 이전 월드 1 맵 간 체크포인트 T01 `9020e12`와 보스 방향·승리 대화 계획의 완료 상태는 유지한다.
 
 ## Next Step (IMPORTANT)
 
-이번 계획의 다음 Task는 없다. 기존 compact/상점 후속 작업은 자동 재개하지 않는다. 월드1 미완료의 복귀는 이제 맵 시작점이 아니라 마지막 실제 깃발 또는 월드 시작점이다. 옛 저장의 미기록 깃발은 추정하지 않는다.
+T01 청사진을 읽고 이미지 생성 도구로 새 장면/배경 PNG 7장을 만든다. `src/game/assets/assetManifest.json`에 필수 키를 등록하고 월드 2 플레이 화면의 실제 3층 배경을 확인한다. 검증 통과 후 청사진의 메시지로 커밋하고 T02로 전진한다. 기존 compact/상점 후속 작업은 자동 재개하지 않는다.
 
 ## Existing Worktree Baseline
 
