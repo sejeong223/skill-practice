@@ -2,18 +2,19 @@
 
 ## Active Plan
 
-없음. [월드 2 대사창 통일과 코기 정면 이미지](./plans/2026-10-14-world02-dialogue-and-corgi-portraits.md)는 완료했다.
+없음. [월드 2 코기 위치 조정](./plans/2026-10-14-world02-corgi-position.md)은 완료했다.
 
 ## Active Phase
 
-없음. [P01 월드 2 시각 표현 교체](./phases/2026-10-14-world02-dialogue-and-corgi-portraits/P01-visual-update/phase.md)는 완료했다.
+없음. [P01 코기 위치 조정](./phases/2026-10-14-world02-corgi-position/P01-portrait-placement/phase.md)은 완료했다.
 
 ## Active Task
 
-없음. [T01 공통 대사창과 정면 정지 코기](./phases/2026-10-14-world02-dialogue-and-corgi-portraits/P01-visual-update/T01-dialogue-and-corgi.md)를 완료했다.
+없음. [T01 긴장·비장 코기의 공통 표시 위치 내리기](./phases/2026-10-14-world02-corgi-position/P01-portrait-placement/T01-lower-corgi-portraits.md)를 완료했다.
 
 ## Status
 
+- 월드 2 코기 위치 조정 P01-T01 완료(1/1, `9efdad8`). 두 표정의 공통 표시 중심을 데스크톱 32px, 작은 화면 12px 내렸고 린트·타입 검사를 통과했다.
 - 월드 2 대사창 통일과 앉은 정면 코기 이미지 P01-T01 완료(1/1, `e9ceda1`). 전용 대사창을 제거하고 두 표정의 전신 PNG를 교체했으며 린트·타입·빌드·진행 테스트를 통과했다.
 - 월드 2 놀이터 진입 대본 P01-T01 완료(1/1, `af311f8`). 확정된 6문장과 기존 이미지 3장의 장면 전환, 자동 진행, 저장과 재관람을 검증했다.
 - 이전 월드 1 맵 간 체크포인트 T01 `9020e12`와 보스 방향·승리 대화 계획의 완료 상태는 유지한다.

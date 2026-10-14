@@ -10,7 +10,7 @@
 
 | Phase | Status | Summary | Blueprint |
 | :--- | :--- | :--- | :--- |
-| P01 | `in_progress` | 두 코기의 공통 y좌표 조정과 검증 | [P01](../phases/2026-10-14-world02-corgi-position/P01-portrait-placement/phase.md) |
+| P01 | `done ✅` | 두 코기의 공통 y좌표 조정과 검증 | [P01](../phases/2026-10-14-world02-corgi-position/P01-portrait-placement/phase.md) |
 
 ## Execution Order
 
@@ -19,4 +19,4 @@
 
 ## Progress
 
-- done: 0/1 (active: T01)
+- done: 1/1 (active: 없음)
