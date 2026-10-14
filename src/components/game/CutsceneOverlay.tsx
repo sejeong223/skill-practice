@@ -12,6 +12,7 @@ export interface CutsceneOverlayProps {
 }
 
 interface CutsceneOverlayState {
+  readonly cutsceneId: string;
   readonly beat: CutsceneBeat;
   readonly index: number;
   readonly totalBeats: number;
@@ -30,6 +31,7 @@ export function CutsceneOverlay({ eventBus, onSkip }: CutsceneOverlayProps): Rea
     const removeBeat = eventBus.on("cutscene-beat", (payload) => {
       const hasText = Boolean(payload.beat.narration || payload.beat.dialogue?.length);
       setState({
+        cutsceneId: payload.cutsceneId,
         beat: payload.beat,
         index: payload.index,
         totalBeats: payload.totalBeats,
@@ -81,7 +83,7 @@ export function CutsceneOverlay({ eventBus, onSkip }: CutsceneOverlayProps): Rea
     ? "문장 끝까지 보기"
     : captionIndex + 1 < captionCount ? "다음 대사" : index + 1 === totalBeats ? "대화 마치기" : "다음 장면";
   return (
-    <div className="cutscene-overlay">
+    <div className={"cutscene-overlay" + (state.cutsceneId === "world-02-intro" ? " cutscene-overlay--world02" : "")}>
       <div className="cutscene-vignette" />
       {beat.itemCard && <ItemCard item={beat.itemCard} />}
       {(beat.narration || beat.dialogue) && (

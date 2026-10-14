@@ -92,9 +92,8 @@ export class World01StageClearScene extends Phaser.Scene {
   private continueToNextStage(): void {
     if (!this.canContinue || this.transitioning || !this.progress) return;
     this.transitioning = true;
-    this.scene.start("StageScene", {
-      stageId: "world-02-stage-1",
-      playerName: this.progress.playerName,
+    this.scene.start("World02EntranceScene", {
+      nextStageId: "world-02-stage-1",
     });
   }
 }

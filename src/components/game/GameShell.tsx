@@ -61,6 +61,7 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
   const [statusOpen, setStatusOpen] = useState(false);
   const [activeStageId, setActiveStageId] = useState<StageId>(initialStageId);
   const [bossHearts, setBossHearts] = useState<0 | 1 | 2 | 3 | undefined>();
+  const [world02EntranceActive, setWorld02EntranceActive] = useState(false);
   const [introGateStep, setIntroGateStep] = useState<"intro" | "title" | "ready">("intro");
 
   useEffect(() => {
@@ -89,13 +90,17 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
   useEffect(() => {
     const removeStart = eventBus.on("cutscene-started", (payload) => {
       if (payload.cutsceneId === "intro-home") setIntroGateStep("intro");
+      if (payload.cutsceneId === "world-02-intro") setWorld02EntranceActive(true);
     });
     const removeFinish = eventBus.on("cutscene-finished", (payload) => {
       if (payload.cutsceneId === "intro-home") setIntroGateStep("title");
+      if (payload.cutsceneId === "world-02-intro") setWorld02EntranceActive(false);
     });
+    const removeStage = eventBus.on("stage-started", () => setWorld02EntranceActive(false));
     return () => {
       removeStart();
       removeFinish();
+      removeStage();
     };
   }, [eventBus]);
 
@@ -217,12 +222,12 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
   return (
     <div className="game-shell">
       <div className="game-content-frame">
-        {progressLoaded && introGateStep === "ready" && <SnackCoinCounter balance={progress.bankedCoins} />}
+        {progressLoaded && introGateStep === "ready" && !world02EntranceActive && <SnackCoinCounter balance={progress.bankedCoins} />}
         {progressLoaded && <PhaserGame className="phaser-viewport" gameEventBus={eventBus} progressState={sharedProgressState} />}
         <GameEventBridge eventBus={eventBus} onEvent={handleEvent} />
         <CutsceneOverlay eventBus={eventBus} onSkip={() => eventBus.emit("cutscene-skip-requested", {})} />
         {introGateStep === "title" && <IntroTitleOverlay initialName={progress.playerName} onConfirm={handleNameConfirm} />}
-        {introGateStep === "ready" && mode !== "stage-clear" && <GameOverlay stageTitle={stage.title} runtime={runtime} progress={progress} skills={SKILL_DEFINITIONS} tools={TOOL_DEFINITIONS} cooldowns={{}} bossHearts={activeStageId === "world-01-stage-boss" ? bossHearts : undefined} alive={mode !== "dead" && mode !== "cutscene"} safeZone={mode === "safe"} statusOpen={statusOpen} onEquip={handleEquip} onPurchase={handlePurchase} onKeybindChange={handleKeybindChange} onToggleStatus={() => setStatusOpen((open) => !open)} paused={paused} onTogglePause={() => eventBus.emit("pause-requested", { paused: !paused })} onResetProgress={() => setResetProgressDialogOpen(true)} />}
+        {introGateStep === "ready" && mode !== "stage-clear" && !world02EntranceActive && <GameOverlay stageTitle={stage.title} runtime={runtime} progress={progress} skills={SKILL_DEFINITIONS} tools={TOOL_DEFINITIONS} cooldowns={{}} bossHearts={activeStageId === "world-01-stage-boss" ? bossHearts : undefined} alive={mode !== "dead" && mode !== "cutscene"} safeZone={mode === "safe"} statusOpen={statusOpen} onEquip={handleEquip} onPurchase={handlePurchase} onKeybindChange={handleKeybindChange} onToggleStatus={() => setStatusOpen((open) => !open)} paused={paused} onTogglePause={() => eventBus.emit("pause-requested", { paused: !paused })} onResetProgress={() => setResetProgressDialogOpen(true)} />}
         {paused && introGateStep === "ready" && <PauseOverlay onResume={() => eventBus.emit("pause-requested", { paused: false })} />}
         {resetProgressDialogOpen && (
           <ResetProgressDialog
@@ -231,8 +236,8 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
           />
         )}
         <DeathCounterOverlay deathCount={deathOverlayCount} visible={deathOverlayVisible} />
-        {introGateStep === "ready" && mode !== "stage-clear" && <div className="game-toast" role="status">{toast}</div>}
-        {onExit && <button className="exit-button" type="button" onClick={onExit}>나가기</button>}
+        {introGateStep === "ready" && mode !== "stage-clear" && !world02EntranceActive && <div className="game-toast" role="status">{toast}</div>}
+        {onExit && !world02EntranceActive && <button className="exit-button" type="button" onClick={onExit}>나가기</button>}
       </div>
     </div>
   );
