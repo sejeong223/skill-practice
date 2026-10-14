@@ -279,13 +279,6 @@
     "required": true
   },
   {
-    "key": "world-02-entrance-dialogue-frame",
-    "kind": "image",
-    "url": "/assets/pixel/cutscenes/world-02/world-02-dialogue-frame.png",
-    "worldId": "world-02",
-    "required": true
-  },
-  {
     "key": "world-02-background-far",
     "kind": "image",
     "url": "/assets/pixel/backgrounds/world-02/world-02-far.png",

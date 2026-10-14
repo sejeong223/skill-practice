@@ -11,7 +11,6 @@ const IMAGE_KEYS = [
   "world-02-entrance-playground",
   "world-02-entrance-corgi-nervous",
   "world-02-entrance-corgi-resolved",
-  "world-02-entrance-dialogue-frame",
 ] as const;
 
 export class World02EntranceScene extends Phaser.Scene {
@@ -116,17 +115,12 @@ export class World02EntranceScene extends Phaser.Scene {
     if (!this.dimmer) {
       this.dimmer = this.add.rectangle(640, 360, 1280, 720, 0x162838, 0.19);
     }
-    this.portrait = this.add.image(640, 406, assetKey).setDisplaySize(570, 570);
+    const compact = window.innerWidth <= 720;
+    const portraitSize = compact ? 360 : 480;
+    this.portrait = this.add.image(640, compact ? 225 : 310, assetKey)
+      .setDisplaySize(portraitSize, portraitSize);
     this.portrait.setAlpha(0);
     this.tweens.add({ targets: this.portrait, alpha: 1, duration: 220 });
-    this.tweens.add({
-      targets: this.portrait,
-      y: 403,
-      duration: 500,
-      ease: "Sine.easeInOut",
-      yoyo: true,
-      repeat: -1,
-    });
   }
 
   private skip(): void {
