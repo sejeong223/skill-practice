@@ -117,7 +117,7 @@ export class World02EntranceScene extends Phaser.Scene {
     }
     const compact = window.innerWidth <= 720;
     const portraitSize = compact ? 360 : 480;
-    this.portrait = this.add.image(640, compact ? 225 : 310, assetKey)
+    this.portrait = this.add.image(640, compact ? 237 : 342, assetKey)
       .setDisplaySize(portraitSize, portraitSize);
     this.portrait.setAlpha(0);
     this.tweens.add({ targets: this.portrait, alpha: 1, duration: 220 });
