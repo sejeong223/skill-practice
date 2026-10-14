@@ -3,6 +3,7 @@ import type { SkillDefinition } from "../core/types";
 export const SKILL_DEFINITIONS: readonly SkillDefinition[] = [
   {
     id: "bark",
+    displayName: "짖기",
     unlockAfterBossId: "world-01-boss",
     cooldownMs: 900,
     inputAction: "bark",
@@ -11,6 +12,7 @@ export const SKILL_DEFINITIONS: readonly SkillDefinition[] = [
   },
   {
     id: "bite",
+    displayName: "물기",
     unlockAfterBossId: "world-02-boss",
     cooldownMs: 600,
     inputAction: "attack",
@@ -19,6 +21,7 @@ export const SKILL_DEFINITIONS: readonly SkillDefinition[] = [
   },
   {
     id: "dash",
+    displayName: "대시",
     unlockAfterBossId: "world-03-boss",
     cooldownMs: 1400,
     inputAction: "dash",
@@ -27,6 +30,7 @@ export const SKILL_DEFINITIONS: readonly SkillDefinition[] = [
   },
   {
     id: "double-jump",
+    displayName: "더블 점프",
     unlockAfterBossId: "world-04-boss",
     cooldownMs: 0,
     inputAction: "jump",
@@ -35,6 +39,7 @@ export const SKILL_DEFINITIONS: readonly SkillDefinition[] = [
   },
   {
     id: "tail-rotor",
+    displayName: "꼬리 모터",
     unlockAfterBossId: "world-05-boss",
     cooldownMs: 2200,
     inputAction: "jump",

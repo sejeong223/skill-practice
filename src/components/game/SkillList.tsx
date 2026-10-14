@@ -17,7 +17,7 @@ export function SkillList({ progress, definitions }: SkillListProps): ReactEleme
           return (
             <div className={"record-row " + (unlocked ? "is-unlocked" : "is-locked")} key={skill.id}>
               <span className="record-icon">{unlocked ? "●" : "?"}</span>
-              <span><strong>{skill.id}</strong><small>{unlocked ? skill.description : "아직 잠겨 있습니다."}</small></span>
+              <span><strong>{skill.displayName}</strong><small>{unlocked ? skill.description : "아직 잠겨 있습니다."}</small></span>
             </div>
           );
         })}

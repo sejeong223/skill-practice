@@ -83,6 +83,7 @@ export interface StageDefinition {
 
 export interface SkillDefinition {
   id: SkillId;
+  displayName: string;
   unlockAfterBossId: string;
   cooldownMs: number;
   inputAction: Extract<InputAction, "bark" | "attack" | "dash"> | "jump";
