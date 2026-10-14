@@ -5,6 +5,7 @@ import type { SlipperAttackResult } from "./SlipperAttack";
 import { DefenseToolSystem } from "./DefenseToolSystem";
 import { StrayDogEvent } from "./StrayDogEvent";
 import { isCalicoInSlipperReach } from "./calicoMeleeHitbox";
+import { beginBossBarkStun, tickBossBarkStun, type BossBarkStunState } from "./bossBarkStun";
 import { createSamoyedSurge, sampleSamoyedDog, SAMOYED_RELEASE_MS, SAMOYED_DONE_MS, SAMOYED_SIZE, type SamoyedSurge, type SamoyedPath } from "./samoyedSurge";
 import {
   createFishboneTrajectory,
@@ -36,6 +37,7 @@ export class World01CalicoBoss {
   private readonly bar: Phaser.GameObjects.Graphics;
   private readonly name: Phaser.GameObjects.Text;
   private readonly warning: Phaser.GameObjects.Text;
+  private readonly stunNotice: Phaser.GameObjects.Text;
   private readonly dogSprites: Array<{ image: Phaser.GameObjects.Image; path: SamoyedPath }> = [];
   private surge?: SamoyedSurge;
   private readonly unsubscribeDogs: () => void;
@@ -50,6 +52,7 @@ export class World01CalicoBoss {
   private fishbone?: Fishbone;
   private flashUntil = 0;
   private playerFlashUntil = 0;
+  private barkStun: BossBarkStunState = { remainingMs: 0, nextAllowedAt: 0 };
 
   public constructor(
     private readonly scene: Phaser.Scene,
@@ -71,6 +74,10 @@ export class World01CalicoBoss {
       color: "#ffde70", fontFamily: "Galmuri11Pixel, monospace", fontSize: "20px",
       stroke: "#423039", strokeThickness: 4,
     }).setOrigin(0.5).setDepth(12).setVisible(false);
+    this.stunNotice = scene.add.text(sprite.x, sprite.y - 176, "당황!", {
+      color: "#a8e9ff", fontFamily: "Galmuri11Pixel, monospace", fontSize: "24px",
+      stroke: "#423039", strokeThickness: 4,
+    }).setOrigin(0.5).setDepth(12).setVisible(false);
     this.unsubscribeDogs = eventBus.on("stray-dog-surge", () => this.spawnDogSurround());
     this.facePlayer();
     this.drawHealth();
@@ -85,6 +92,11 @@ export class World01CalicoBoss {
 
   public update(now: number, delta: number): void {
     if (this.state.phase === "intro" || this.state.phase === "defeated") return;
+    if (this.barkStun.remainingMs > 0) {
+      this.barkStun = tickBossBarkStun(this.barkStun, Math.min(delta, 50));
+      if (this.barkStun.remainingMs === 0) this.stunNotice.setVisible(false);
+      return;
+    }
     this.facePlayer();
     this.elapsed += Math.min(delta, 50);
     if (this.flashUntil && this.elapsed >= this.flashUntil) {
@@ -108,6 +120,36 @@ export class World01CalicoBoss {
       this.releaseFishbone();
     }
     if (this.fishbone) this.updateFishbone(now, delta);
+  }
+
+  public tryBarkStun(now: number): boolean {
+    const bossBounds = this.sprite.getBounds();
+    const distance = Math.hypot(
+      this.player.body.center.x - bossBounds.centerX,
+      this.player.body.center.y - bossBounds.centerY,
+    );
+    const nextStun = beginBossBarkStun(
+      this.barkStun,
+      now,
+      distance,
+      this.state.phase !== "intro" && this.state.phase !== "defeated",
+    );
+    if (!nextStun) return false;
+
+    this.barkStun = nextStun;
+    this.clearFishbone();
+    this.clearDogs();
+    this.telegraphUntil = 0;
+    this.warning.setVisible(false);
+    this.state = {
+      ...this.state,
+      phase: "ready",
+      projectileId: null,
+      nextThrowAt: this.elapsed + 700,
+    };
+    this.sprite.setFrame(0);
+    this.stunNotice.setVisible(true);
+    return true;
   }
 
   public acceptMeleeHit(result: SlipperAttackResult, player: Player): boolean {
@@ -139,6 +181,7 @@ export class World01CalicoBoss {
     this.elapsed = 0;
     this.flashUntil = 0;
     this.playerFlashUntil = 0;
+    this.barkStun = { remainingMs: 0, nextAllowedAt: 0 };
     this.player.clearTint();
     this.state = {
       health: CALICO_MAX_HEALTH, phase: "intro", nextThrowAt: 1500,
@@ -148,6 +191,7 @@ export class World01CalicoBoss {
     this.sprite.setFrame(0).clearTint();
     this.facePlayer();
     this.warning.setVisible(false);
+    this.stunNotice.setVisible(false);
     this.drawHealth();
     this.onHeartsChanged(3);
   }
@@ -158,9 +202,11 @@ export class World01CalicoBoss {
 
   public stopAttacks(): void {
     this.state = { ...this.state, phase: "defeated" };
+    this.barkStun = { remainingMs: 0, nextAllowedAt: 0 };
     this.clearFishbone();
     this.clearDogs();
     this.warning.setVisible(false);
+    this.stunNotice.setVisible(false);
     this.sprite.setFrame(this.isDefeated() ? 2 : 0).clearTint();
   }
 
@@ -175,6 +221,7 @@ export class World01CalicoBoss {
     this.bar.destroy();
     this.name.destroy();
     this.warning.destroy();
+    this.stunNotice.destroy();
   }
 
   private facePlayer(): void {
@@ -257,7 +304,7 @@ export class World01CalicoBoss {
   }
 
   private spawnDogSurround(): void {
-    if (this.surge || this.state.phase === "defeated") return;
+    if (this.surge || this.state.phase === "defeated" || this.barkStun.remainingMs > 0) return;
     this.player.lockControl("bowl-stray-dog-blockade");
     this.player.setVelocityX(0);
     this.dogUntil = this.elapsed + SAMOYED_RELEASE_MS;

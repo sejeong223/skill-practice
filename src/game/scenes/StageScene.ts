@@ -501,7 +501,8 @@ export class StageScene extends Phaser.Scene {
       return;
     }
     if (input?.barkPressed && this.progress.unlockedSkills.includes("bark")) {
-      this.skillSystem?.use("bark", time);
+      const result = this.skillSystem?.use("bark", time);
+      if (result?.accepted) this.calicoBoss?.tryBarkStun(time);
     }
     if (this.calicoBoss && this.player && this.combatSystem) {
       this.calicoBoss.start(time);
