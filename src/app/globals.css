@@ -362,7 +362,10 @@ form { display: flex; gap: 6px; margin-top: 10px; } form input { min-width: 0; f
 }
 
 .world-select-overlay { position: absolute; inset: 0; z-index: 18; display: grid; place-items: center; padding: 16px; background: rgb(39 35 49 / 76%); pointer-events: auto; }
-.world-select-dialog { width: min(100%, 480px); padding: clamp(20px, 4vw, 34px); border: 4px solid #f0b95f; color: #fff8e5; background: #5f3942; box-shadow: 8px 8px 0 rgb(39 35 49 / 55%); text-align: center; font-family: "Galmuri11Pixel", monospace; }
+.world-select-dialog { width: min(100%, 480px); max-height: calc(100% - 24px); overflow-y: auto; padding: clamp(20px, 4vw, 34px); border: 4px solid #f0b95f; color: #fff8e5; background: #5f3942; box-shadow: 8px 8px 0 rgb(39 35 49 / 55%); text-align: center; font-family: "Galmuri11Pixel", monospace; }
+.world-select-dialog.is-entry-list { padding: 12px 22px; }
+.world-select-dialog.is-entry-list .intro-title-kicker { margin-bottom: 4px; }
+.world-select-dialog.is-entry-list > p:not(.intro-title-kicker) { margin: 4px 0 8px; }
 .world-select-dialog h2 { margin: 0; font-size: clamp(22px, 4vw, 32px); }
 .world-select-dialog > p:not(.intro-title-kicker) { margin: 10px 0 20px; color: #f5e7c7; font-size: 12px; line-height: 1.6; }
 .world-select-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
@@ -370,7 +373,13 @@ form { display: flex; gap: 6px; margin-top: 10px; } form input { min-width: 0; f
 .world-select-option.is-current { border-color: #f0b95f; background: #fff1bf; }
 .world-select-option small { font-size: 10px; font-weight: 400; }
 .world-select-option:hover, .world-select-option:focus-visible { background: #fff1bf; outline: 3px solid #fff8e5; outline-offset: 2px; }
-.world-select-cancel { margin-top: 18px; padding: 9px 20px; border: 2px solid #f0b95f; background: transparent; color: #fff8e5; font: 700 12px "Galmuri11Pixel", monospace; cursor: pointer; }
+.world-select-checkpoints { display: grid; gap: 6px; }
+.world-select-checkpoint-option { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 44px; padding: 6px 12px; border: 2px solid #5f3942; background: #e8cda0; color: #5f3942; font: 800 14px "Galmuri11Pixel", monospace; text-align: left; cursor: pointer; }
+.world-select-checkpoint-option small { font-size: 10px; font-weight: 400; white-space: nowrap; }
+.world-select-checkpoint-option:hover, .world-select-checkpoint-option:focus-visible { background: #fff1bf; outline: 3px solid #fff8e5; outline-offset: 2px; }
+.world-select-actions { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+.world-select-dialog.is-entry-list .world-select-actions { margin-top: 6px; }
+.world-select-cancel { padding: 9px 20px; border: 2px solid #f0b95f; background: transparent; color: #fff8e5; font: 700 12px "Galmuri11Pixel", monospace; cursor: pointer; }
 .world-select-cancel:focus-visible { outline: 3px solid #fff8e5; outline-offset: 3px; }
 @media (max-width: 480px) { .world-select-options { grid-template-columns: 1fr; } }
 

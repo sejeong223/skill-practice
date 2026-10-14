@@ -1,6 +1,6 @@
 "use client";
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactElement } from "react";
-import type { InputAction, ProgressState, RuntimeStageState, SelectableWorldId, StageId, ToolDefinition } from "@/game/core/types";
+import type { InputAction, ProgressState, RuntimeStageState, SelectableWorldId, StageId, ToolDefinition, WorldSelectionRequest } from "@/game/core/types";
 import { createDefaultProgressState, createRuntimeStageState } from "@/game/core/constants";
 import { SKILL_DEFINITIONS } from "@/game/data/skills";
 import { TOOL_DEFINITIONS } from "@/game/data/tools";
@@ -245,8 +245,8 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
     eventBus.emit("pause-requested", { paused: false });
   }, [eventBus]);
 
-  const handleSelectWorld = useCallback((worldId: SelectableWorldId): void => {
-    eventBus.emit("world-selection-requested", { worldId });
+  const handleSelectWorld = useCallback((selection: WorldSelectionRequest): void => {
+    eventBus.emit("world-selection-requested", selection);
   }, [eventBus]);
 
   const stage = getStageDefinition(activeStageId);

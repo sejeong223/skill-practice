@@ -1,8 +1,8 @@
-import type { SelectableWorldId, StageId } from "../core/types";
+import type { SelectableWorldId, StageId, WorldSelectionRequest } from "../core/types";
 import type { CutsceneBeat } from "../cutscenes/types";
 
 export interface StageEventMap {
-  "world-selection-requested": { worldId: SelectableWorldId };
+  "world-selection-requested": WorldSelectionRequest;
   "world-selection-committed": { worldId: SelectableWorldId };
   "stage-started": {
     stageId: StageId;

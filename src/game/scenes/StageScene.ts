@@ -45,7 +45,7 @@ import { SkillSystem } from "../systems/SkillSystem";
 import { StrayDogEvent } from "../systems/StrayDogEvent";
 import { World01CalicoBoss } from "../systems/World01CalicoBoss";
 import { getWorld01Respawn, isWorld01CheckpointStageId } from "../systems/world01Respawn";
-import { getWorldStartStageId, isWorldSelectionUnlocked } from "../systems/worldSelection";
+import { getWorld01ReplayTarget, getWorldStartStageId, isWorldSelectionUnlocked } from "../systems/worldSelection";
 
 const NORMAL_EXIT_RUNOUT = 256;
 const WORLD01_CHECKPOINT_SNAPSHOT_KEY = "world01CheckpointSnapshot";
@@ -377,20 +377,31 @@ export class StageScene extends Phaser.Scene {
     this.eventUnsubscribers.push(this.eventBus.on("pause-requested", ({ paused }) => {
       this.setPaused(paused);
     }));
-    this.eventUnsubscribers.push(this.eventBus.on("world-selection-requested", ({ worldId }) => {
+    this.eventUnsubscribers.push(this.eventBus.on("world-selection-requested", (selection) => {
       if (!isWorldSelectionUnlocked(this.progress) || this.stageTransitionStarted) return;
       this.stageTransitionStarted = true;
-      this.progress.selectedWorldId = worldId;
-      if (worldId === "world-01") {
-        this.progress.world01CheckpointStageId = null;
+      this.progress.selectedWorldId = selection.worldId;
+      let target: StageSceneData;
+      if (selection.worldId === "world-01") {
+        const replayTarget = getWorld01ReplayTarget(selection.point);
+        this.progress.world01CheckpointStageId = replayTarget.checkpointStageId;
+        this.progress.world01BossReplayActive = replayTarget.bossReplayActive;
         this.registry.remove(WORLD01_CHECKPOINT_SNAPSHOT_KEY);
+        target = {
+          stageId: replayTarget.stageId,
+          resumeCheckpointId: replayTarget.resumeCheckpointId,
+          playerName: this.progress.playerName,
+        };
+      } else {
+        this.progress.world01BossReplayActive = false;
+        target = {
+          stageId: getWorldStartStageId(selection.worldId),
+          playerName: this.progress.playerName,
+        };
       }
-      this.eventBus?.emit("world-selection-committed", { worldId });
+      this.eventBus?.emit("world-selection-committed", { worldId: selection.worldId });
       this.setPaused(false);
-      this.scene.start("StageScene", {
-        stageId: getWorldStartStageId(worldId),
-        playerName: this.progress.playerName,
-      } satisfies StageSceneData);
+      this.scene.start("StageScene", target);
     }));
 
     if (process.env.NODE_ENV !== "production" && this.input.keyboard) {
@@ -560,6 +571,10 @@ export class StageScene extends Phaser.Scene {
       this.progress.unlockedSkills.push("bark");
       this.skillSystem?.unlockAfterBoss("world-01-boss");
     }
+    this.progress.world01BossReplayActive = false;
+    if (this.progress.selectedWorldId === "world-01") {
+      this.progress.selectedWorldId = "world-02";
+    }
     this.runtime?.complete();
     this.scene.start("World01SkillUnlockScene", {
       stageId: "world-01-stage-boss",
@@ -582,15 +597,18 @@ export class StageScene extends Phaser.Scene {
     this.gameplayEventBus?.emit("death-requested", {
       stageId: "world-01-stage-boss",
       cause: "enemy",
-      checkpointId: getWorld01Respawn(this.progress).resumeCheckpointId ?? null,
+      checkpointId: this.progress.world01BossReplayActive
+        ? null : getWorld01Respawn(this.progress).resumeCheckpointId ?? null,
       now,
     });
   }
 
   private restartAtWorldCheckpoint(): boolean {
     if (this.stageDefinition?.worldId !== "world-01") return false;
-    const target = getWorld01Respawn(this.progress);
-    if (target.stageId === this.stageId) return false;
+    const target = this.stageId === "world-01-stage-boss" && this.progress.world01BossReplayActive
+      ? { stageId: "world-01-stage-boss" as const }
+      : getWorld01Respawn(this.progress);
+    if (target.stageId === this.stageId && this.stageId !== "world-01-stage-boss") return false;
     if (this.stageTransitionStarted) return true;
     this.stageTransitionStarted = true;
     this.runtime?.setStatus("dying");

@@ -10,7 +10,7 @@ require.extensions[".ts"] = (module, filename) => module._compile(ts.transpileMo
 }).outputText, filename);
 
 const { createDefaultProgressState } = require("../src/game/core/constants.ts");
-const { getSelectedWorldResume, getWorldStartStageId, isWorldSelectionUnlocked } = require("../src/game/systems/worldSelection.ts");
+const { getSelectedWorldResume, getWorld01ReplayTarget, getWorldStartStageId, isWorldSelectionUnlocked } = require("../src/game/systems/worldSelection.ts");
 const { migrateSave } = require("../src/game/persistence/migrations.ts");
 const { ProgressStore } = require("../src/game/persistence/ProgressStore.ts");
 const { AutoSaveCoordinator } = require("../src/game/persistence/AutoSaveCoordinator.ts");
@@ -38,6 +38,37 @@ test("월드 1은 처음부터 재도전하고 새 깃발을 밟은 뒤에는 �
   });
 });
 
+test("월드 1의 네 시작 지점은 실제 깃발과 보스 Scene에 연결된다", () => {
+  assert.deepEqual(getWorld01ReplayTarget("start"), {
+    stageId: "world-01-stage-1", checkpointStageId: null, bossReplayActive: false,
+  });
+  assert.deepEqual(getWorld01ReplayTarget("checkpoint-1"), {
+    stageId: "world-01-stage-2", resumeCheckpointId: "world-01-stage-2-checkpoint",
+    checkpointStageId: "world-01-stage-2", bossReplayActive: false,
+  });
+  assert.deepEqual(getWorld01ReplayTarget("checkpoint-2"), {
+    stageId: "world-01-stage-4", resumeCheckpointId: "world-01-stage-4-checkpoint",
+    checkpointStageId: "world-01-stage-4", bossReplayActive: false,
+  });
+  assert.deepEqual(getWorld01ReplayTarget("boss"), {
+    stageId: "world-01-stage-boss", checkpointStageId: null, bossReplayActive: true,
+  });
+});
+
+test("직접 선택한 보스전은 저장 후 새로고침해도 보스전으로 복귀한다", () => {
+  const progress = createDefaultProgressState();
+  progress.clearedStages.push("world-01-stage-boss");
+  progress.selectedWorldId = "world-01";
+  progress.world01BossReplayActive = true;
+  progress.world01CheckpointStageId = "world-01-stage-4";
+  assert.deepEqual(getSelectedWorldResume(progress), { stageId: "world-01-stage-boss" });
+  const loaded = migrateSave({ schemaVersion: 2, progress });
+  assert.equal(loaded.world01BossReplayActive, true);
+  assert.deepEqual(getSelectedWorldResume(loaded), { stageId: "world-01-stage-boss" });
+  loaded.world01BossReplayActive = false;
+  assert.equal(getSelectedWorldResume(loaded).stageId, "world-01-stage-4");
+});
+
 test("월드 2는 선택 직후 1스테이지로 가고 새로고침은 첫 미클리어 스테이지로 간다", () => {
   const progress = createDefaultProgressState();
   progress.clearedStages.push("world-01-stage-boss", "world-02-stage-1");
@@ -52,9 +83,14 @@ test("이전 저장과 잘못된 월드 값은 기존 자동 복귀 경로를 �
   const legacy = createDefaultProgressState();
   legacy.clearedStages.push("world-01-stage-boss");
   delete legacy.selectedWorldId;
+  delete legacy.world01BossReplayActive;
   assert.equal(migrateSave({ schemaVersion: 2, progress: legacy }).selectedWorldId, null);
+  assert.equal(migrateSave({ schemaVersion: 2, progress: legacy }).world01BossReplayActive, false);
   for (const invalid of ["world-03", "world-1", 1, {}]) {
     assert.equal(migrateSave({ schemaVersion: 2, progress: { ...legacy, selectedWorldId: invalid } }).selectedWorldId, null);
+  }
+  for (const invalid of ["true", 1, null]) {
+    assert.equal(migrateSave({ schemaVersion: 2, progress: { ...legacy, world01BossReplayActive: invalid } }).world01BossReplayActive, false);
   }
 });
 
@@ -76,6 +112,7 @@ test("월드 선택 완료는 진행 자산을 보존한 채 즉시 저장한다
   const loaded = store.load();
   assert.equal(loaded.selectedWorldId, "world-01");
   assert.equal(loaded.world01CheckpointStageId, null);
+  assert.equal(loaded.world01BossReplayActive, false);
   assert.deepEqual(loaded.clearedStages, ["world-01-stage-boss"]);
   assert.deepEqual(loaded.unlockedSkills, ["bark"]);
   assert.equal(loaded.bankedCoins, 83);

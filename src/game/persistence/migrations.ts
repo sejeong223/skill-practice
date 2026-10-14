@@ -119,6 +119,7 @@ export function migrateSave(input: unknown): ProgressState {
       clearedStages,
       selectedWorldId: rawProgress.selectedWorldId === "world-01" || rawProgress.selectedWorldId === "world-02"
         ? rawProgress.selectedWorldId : null,
+      world01BossReplayActive: rawProgress.world01BossReplayActive === true,
       world01CheckpointStageId: isWorld01CheckpointStageId(rawProgress.world01CheckpointStageId)
         ? rawProgress.world01CheckpointStageId : null,
       unlockedSkills: [...new Set(unlockedSkills.filter((id): id is SkillId => validSkillIds.has(id)))],
