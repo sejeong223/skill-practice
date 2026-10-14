@@ -117,4 +117,4 @@ Task: T02-entrance-cutscene-and-transition
 
 - [x] 구현 완료 — 3비트 컷신, 월드 1 클리어 전환, DOM 대사창, HUD 숨김, 배경 접합 수정
 - [x] 검증 통과 — 에셋 검사, 자동 테스트 8건, 타입, lint, 빌드, 브라우저 첫 관람·재관람·재접속 및 좁은 화면
-- commit: pending
+- commit: `d179756`

@@ -12,7 +12,7 @@
 
 | Phase | Status | Summary | Blueprint |
 | :--- | :--- | :--- | :--- |
-| P01 | `in_progress` | 신규 픽셀 이미지 7장과 월드 2 배경, 짧은 진입 연출 및 전환 검증 | [P01](../phases/2026-10-14-world02-playground-entrance/P01-entrance-and-background/phase.md) |
+| P01 | `done` | 신규 픽셀 이미지 7장과 월드 2 배경, 짧은 진입 연출 및 전환 검증 | [P01](../phases/2026-10-14-world02-playground-entrance/P01-entrance-and-background/phase.md) |
 
 ## Execution Order
 
@@ -35,4 +35,4 @@
 
 ## Progress
 
-- done: 0/2 (active: P01-T01)
+- done: 2/2 (active: none)

@@ -108,4 +108,4 @@ Task: T01-new-art-and-play-background
 
 - [x] 구현 완료 — 신규 PNG 7장과 필수 manifest 키 등록, 월드 2 레이어 높이 조정
 - [x] 검증 통과 — 에셋 검사, TypeScript, lint, production build
-- commit: pending
+- commit: `84a1bb6`

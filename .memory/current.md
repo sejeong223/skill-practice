@@ -10,16 +10,17 @@
 
 ## Active Task
 
-[T01 새 픽셀 이미지와 월드 2 플레이 배경](./phases/2026-10-14-world02-playground-entrance/P01-entrance-and-background/T01-new-art-and-play-background.md)
+없음 — 월드 2 놀이터 진입 계획 완료.
 
 ## Status
 
-- 새 계획 P01-T01 대기(0/2). 첫 작업은 신규 이미지 7장 제작·manifest 등록·월드 2 플레이 배경 확인이다.
+- 월드 2 놀이터 진입 계획 P01-T01 `84a1bb6`, P01-T02 `d179756` 완료(2/2). 신규 이미지 7장, 낮 놀이터 플레이 배경, 세 장면 자동 컷신과 월드 2 시작을 반영했다.
+- 에셋 검사, 자동 테스트 8건, 타입 검사, lint, 빌드 통과. 브라우저에서 첫 관람 ESC 차단·재관람 ESC 건너뛰기·새로고침 후 클리어 화면과 완료 기록 보존·좁은 화면을 확인했다.
 - 이전 월드 1 맵 간 체크포인트 T01 `9020e12`와 보스 방향·승리 대화 계획의 완료 상태는 유지한다.
 
 ## Next Step (IMPORTANT)
 
-T01 청사진을 읽고 이미지 생성 도구로 새 장면/배경 PNG 7장을 만든다. `src/game/assets/assetManifest.json`에 필수 키를 등록하고 월드 2 플레이 화면의 실제 3층 배경을 확인한다. 검증 통과 후 청사진의 메시지로 커밋하고 T02로 전진한다. 기존 compact/상점 후속 작업은 자동 재개하지 않는다.
+현재 활성 Task가 없다. 후속 요청이 오면 새 결정과 계획을 확인한다. 기존 compact/상점 후속 작업은 자동 재개하지 않는다.
 
 ## Existing Worktree Baseline
 
