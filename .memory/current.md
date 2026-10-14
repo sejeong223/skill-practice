@@ -2,18 +2,20 @@
 
 ## Active Plan
 
-없음. [월드 2 코기 위치 조정](./plans/2026-10-14-world02-corgi-position.md)은 완료했다.
+[월드 1 짖기 해금 연출과 스킬 이름 한글화](./plans/2026-10-14-world01-bark-unlock-and-korean-skills.md)
 
 ## Active Phase
 
-없음. [P01 코기 위치 조정](./phases/2026-10-14-world02-corgi-position/P01-portrait-placement/phase.md)은 완료했다.
+[P01 스킬 이름, 해금 안내, 짖기 효과](./phases/2026-10-14-world01-bark-unlock-and-korean-skills/P01-skill-ui-and-bark/phase.md)
 
 ## Active Task
 
-없음. [T01 긴장·비장 코기의 공통 표시 위치 내리기](./phases/2026-10-14-world02-corgi-position/P01-portrait-placement/T01-lower-corgi-portraits.md)를 완료했다.
+없음 (월드 1 짖기 해금 연출과 스킬 이름 한글화 계획 완료)
 
 ## Status
 
+- 월드 1 짖기 해금 연출과 스킬 이름 한글화 P01 완료(3/3): T01 `e77e5a4`, T02 `79ba51f`, T03 `87a31eb`. 한국어 기술 이름, 해금 안내 Scene, 삼색이 짖기 경직의 린트·타입·빌드·관련 테스트를 확인했다.
+- [월드 2 모래 바닥과 첫 스테이지 이름](./plans/2026-10-14-world02-sand-floor-and-stage-title.md)은 P01-T01 미착수 상태로 보존한다. 이번 새 계획 이후 자동 실행하지 않는다.
 - 월드 2 코기 위치 조정 P01-T01 완료(1/1, `9efdad8`). 두 표정의 공통 표시 중심을 데스크톱 32px, 작은 화면 12px 내렸고 린트·타입 검사를 통과했다.
 - 월드 2 대사창 통일과 앉은 정면 코기 이미지 P01-T01 완료(1/1, `e9ceda1`). 전용 대사창을 제거하고 두 표정의 전신 PNG를 교체했으며 린트·타입·빌드·진행 테스트를 통과했다.
 - 월드 2 놀이터 진입 대본 P01-T01 완료(1/1, `af311f8`). 확정된 6문장과 기존 이미지 3장의 장면 전환, 자동 진행, 저장과 재관람을 검증했다.
@@ -21,7 +23,7 @@
 
 ## Next Step (IMPORTANT)
 
-현재 계획의 다음 Task는 없다. 기존 compact/상점 후속 작업은 자동 재개하지 않는다.
+이번 계획의 다음 Task는 없다. [월드 2 모래 바닥과 첫 스테이지 이름](./plans/2026-10-14-world02-sand-floor-and-stage-title.md)은 P01-T01 미착수 상태로 보존한다.
 
 ## Existing Worktree Baseline
 
@@ -31,6 +33,7 @@
 
 ## Completed Work
 
+- [월드 1 짖기 해금 연출과 스킬 이름 한글화](./plans/2026-10-14-world01-bark-unlock-and-korean-skills.md): T01 `e77e5a4`, T02 `79ba51f`, T03 `87a31eb`, 전체 3/3 완료. 배운 기술 한국어 이름, 해금 안내 입력·전환, 삼색이 짖기 경직을 구현하고 린트·타입·빌드·관련 테스트와 Scene/보스 하네스를 확인했다. 실제 사용자 재도전 UI와 후속 보스 전투는 기존에 없다.
 - [월드 2 놀이터 진입 대본 교체](./plans/2026-10-14-world02-playground-dialogue.md): T01 `af311f8`, 전체 1/1 완료. 6문장·화자·기존 이미지 3장 매핑, 첫 관람 자동 완료/ESC 차단, 재관람 건너뛰기와 저장 후 재접속, 데스크톱·좁은 화면 대사창 검증 통과. 자동 테스트·타입·lint·빌드 통과.
 - [월드 2 놀이터 진입 연출과 플레이 배경](./plans/2026-10-14-world02-playground-entrance.md): 이미지·배경 `84a1bb6`, 컷신 `d179756`, 메모리 완료 `2c350ea`, 전체2/2 완료. 이번 대본 계획은 기존 이미지·저장 ID·전환 경로를 재사용한다.
 - [월드1 맵 간 체크포인트](./plans/2026-10-13-world01-cross-map-checkpoint.md): T01 `9020e12`, 전체1/1 완료. 실제3단계 가시 충돌→2단계 깃발, 깃발 전 사망→월드 시작, 새4단계 깃발/보스 복귀, 재접속, 사망1회/코인 보존/무음 복원 확인. 자동53건·타입·lint·빌드·맵·브라우저 통과. [검증 기록](./test-plans/2026-10-13-world01-cross-map-checkpoint.md). 예전1·3단계 해당 맵 시작점 정책은 대체됐다. 실제 모바일 터치 미실시.

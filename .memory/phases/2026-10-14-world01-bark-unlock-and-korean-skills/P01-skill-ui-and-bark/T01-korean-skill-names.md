@@ -111,4 +111,4 @@ Task: T01-korean-skill-names
 
 - [x] 구현 완료
 - [x] 검증 통과 (eslint, TypeScript, build, 서버 렌더링 문자열 확인)
-- commit: pending
+- commit: `e77e5a4`

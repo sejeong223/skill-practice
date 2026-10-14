@@ -131,4 +131,4 @@ Task: T03-bark-boss-stun
 
 - [x] 구현 완료
 - [x] 검증 통과 (경계·생선 가시 테스트 5건, eslint, TypeScript, build, 보스 통합 하네스)
-- commit: pending
+- commit: `87a31eb`

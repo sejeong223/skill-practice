@@ -148,4 +148,4 @@ Task: T02-world01-bark-unlock-scene
 
 - [x] 구현 완료
 - [x] 검증 통과 (eslint, TypeScript, 기존 테스트 9건, build, Scene 입력·전환 하네스)
-- commit: pending
+- commit: `79ba51f`
