@@ -53,7 +53,7 @@ const WORLD_BLUEPRINTS: readonly WorldBlueprint[] = [
     title: "놀이터",
     subtitle: "웃음소리와 함정이 동시에 튀어나오는 놀이터",
     stageTitles: [
-      "안전하지 않은 놀이터",
+      "지옥의 동네 놀이터",
       "미끄럼틀 낙하 구역",
       "그네 줄타기 골목",
       "정글짐 냥아치 통로",
@@ -114,19 +114,26 @@ function createSegment(
 ): StageSegment {
   const segmentId = stageId + "-segment-" + segmentNumber;
   const isSafeSection = !isBoss && (segmentNumber === 1 || segmentNumber === 5);
-
-  return {
-    id: segmentId,
-    length,
-    platforms: [
-      {
+  const platforms = stageId === "world-02-stage-1"
+    ? segmentNumber === 1 ? [{
+        id: segmentId + "-platform",
+        x: NORMAL_MAP_WIDTH / 2,
+        y: 520,
+        width: NORMAL_MAP_WIDTH,
+        height: 32,
+      }] : []
+    : [{
         id: segmentId + "-platform",
         x: isBoss ? length / 2 : 16,
         y: 520,
         width: length - 32,
         height: 32,
-      },
-    ],
+      }];
+
+  return {
+    id: segmentId,
+    length,
+    platforms,
     traps: isBoss || isSafeSection
       ? []
       : [

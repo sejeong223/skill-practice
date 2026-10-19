@@ -66,6 +66,7 @@ export class StageScene extends Phaser.Scene {
   private runtime?: StageRuntime;
   private loadedMap?: LoadedMap | null;
   private bossGround?: Phaser.Tilemaps.Tilemap;
+  private sandFloor?: Phaser.GameObjects.TileSprite;
   private exitFloor?: Phaser.GameObjects.Rectangle;
   private parallaxRenderer?: ParallaxRenderer;
   private eventBus?: GameEventBus;
@@ -157,6 +158,9 @@ export class StageScene extends Phaser.Scene {
       runtimeState,
       this.loadedMap,
     );
+    if (stage.id === "world-02-stage-1" && !this.loadedMap) {
+      this.createWorld02SandFloor(stage);
+    }
     this.gameplayEventBus = new GameplayEventBus();
     this.audioManager = new AudioManager(this, this.gameplayEventBus, this.eventBus);
     this.skillSystem = new SkillSystem(
@@ -259,6 +263,7 @@ export class StageScene extends Phaser.Scene {
         record.entity.setVisible(false);
         continue;
       }
+      if (this.sandFloor) record.entity.setVisible(false);
       this.physics.add.collider(this.player, record.entity as Phaser.GameObjects.GameObject);
     }
     this.createExitFloor(stage, gameplayLayer);
@@ -447,12 +452,29 @@ export class StageScene extends Phaser.Scene {
       this.loadedMap?.destroy();
       this.bossGround?.destroy();
       this.bossGround = undefined;
+      this.sandFloor?.destroy();
+      this.sandFloor = undefined;
       this.exitFloor?.destroy();
       this.exitFloor = undefined;
       this.parallaxRenderer?.destroy();
       this.gameplayEventBus?.clear();
       if (!this.persistenceEventBus) this.eventBus?.clear();
     });
+  }
+
+  private createWorld02SandFloor(stage: StageDefinition): void {
+    const platforms = this.runtime?.getEntities("platform") ?? [];
+    const bounds = platforms.length === 1
+      ? (platforms[0].entity as Phaser.GameObjects.Rectangle).getBounds()
+      : null;
+    if (!bounds || bounds.left !== 0 || bounds.right !== stage.mapWidth || bounds.top !== 504) {
+      throw new Error("월드 2 첫 스테이지의 모래 바닥과 충돌 범위가 일치하지 않습니다.");
+    }
+    this.sandFloor = this.add
+      .tileSprite(0, bounds.top, stage.mapWidth, stage.mapHeight - bounds.top, "world-02-sand-floor")
+      .setOrigin(0)
+      .setDepth(-2)
+      .setScrollFactor(1);
   }
 
   private createExitFloor(stage: StageDefinition, gameplayLayer?: Phaser.Tilemaps.TilemapLayer): void {
