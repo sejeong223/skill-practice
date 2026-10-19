@@ -102,6 +102,10 @@ export class SkillSystem {
     return this.cooldowns.getRemaining(skillId, now);
   }
 
+  public resetCooldowns(): void {
+    this.cooldowns.reset();
+  }
+
   public getRuntimeState(): SkillRuntimeState {
     const cooldownUntil: Partial<Record<SkillId, number>> = {};
 

@@ -1,11 +1,13 @@
 import type { SkillDefinition } from "../core/types";
 
+export const BARK_COOLDOWN_MS = 10_000;
+
 export const SKILL_DEFINITIONS: readonly SkillDefinition[] = [
   {
     id: "bark",
     displayName: "짖기",
     unlockAfterBossId: "world-01-boss",
-    cooldownMs: 900,
+    cooldownMs: BARK_COOLDOWN_MS,
     inputAction: "bark",
     description: "짧고 강한 짖음으로 가까운 적을 밀어낸다.",
     effect: "stun-and-knockback",

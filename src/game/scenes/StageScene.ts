@@ -14,7 +14,8 @@ import { getStageMusicKey } from "../audio/stageMusic";
 import { CutsceneDirector } from "../cutscenes/CutsceneDirector";
 import { CUTSCENE_SCRIPTS } from "../data/cutscenes";
 import { TOOL_DEFINITIONS } from "../data/tools";
-import { SKILL_DEFINITIONS } from "../data/skills";
+import { BARK_COOLDOWN_MS, SKILL_DEFINITIONS } from "../data/skills";
+import { BossFeedbackController, BARK_SHAKE_DURATION_MS, BARK_SHAKE_INTENSITY, type BossFeedbackSnapshot } from "../systems/bossFeedback";
 import { GameplayEventBus } from "../core/events";
 import { getStageDefinition, getWorldMapTheme } from "../data";
 import { getWorld01StageTheme } from "../data/worldMaps";
@@ -89,6 +90,9 @@ export class StageScene extends Phaser.Scene {
   private stageTransitionStarted = false;
   private combatSystem?: CombatSystem;
   private skillSystem?: SkillSystem;
+  private skillElapsedMs = 0;
+  private readonly bossFeedback = new BossFeedbackController();
+  private lastBossFeedbackSnapshot?: BossFeedbackSnapshot;
   private defenseToolSystem?: DefenseToolSystem;
   private bowlShieldVisual?: BowlShieldVisual;
   private audioManager?: AudioManager;
@@ -166,6 +170,23 @@ export class StageScene extends Phaser.Scene {
     this.skillSystem = new SkillSystem(
       this.player, SKILL_DEFINITIONS, this.gameplayEventBus,
       this.persistenceEventBus, this.progress.unlockedSkills,
+    );
+    this.resetBossFeedback();
+    this.eventUnsubscribers.push(
+      this.gameplayEventBus.on("death", () => {
+        this.resetBossFeedback();
+        this.publishBossFeedback(true, true);
+      }),
+      this.gameplayEventBus.on("restart", () => {
+        this.resetBossFeedback();
+        this.publishBossFeedback(true);
+      }),
+      this.gameplayEventBus.on("stray-dog-surge", ({ source, count }) => {
+        if (this.stageId !== "world-01-stage-boss" || source !== "upside-down-bowl" || count <= 0 ||
+            this.runtime?.getStatus() !== "play" || this.stageTransitionStarted || this.calicoBoss?.isDefeated()) return;
+        this.bossFeedback.showBowlAlarm();
+        this.publishBossFeedback(true);
+      }),
     );
     this.unsubscribeKeybinds = this.persistenceEventBus?.on("keybinds-changed", (payload) => {
       this.inputManager?.setKeybinds(toKeybindMap(payload.keybinds));
@@ -417,6 +438,8 @@ export class StageScene extends Phaser.Scene {
     }
 
     this.events.once("shutdown", () => {
+      this.resetBossFeedback();
+      this.publishBossFeedback(true, true);
       this.eventBus?.emit("pause-state-changed", { paused: false });
       this.inputManager?.destroy();
       this.playerAnimator?.destroy();
@@ -460,6 +483,7 @@ export class StageScene extends Phaser.Scene {
       this.gameplayEventBus?.clear();
       if (!this.persistenceEventBus) this.eventBus?.clear();
     });
+    this.publishBossFeedback(true);
   }
 
   private createWorld02SandFloor(stage: StageDefinition): void {
@@ -542,21 +566,37 @@ export class StageScene extends Phaser.Scene {
       this.setPaused(this.runtime?.getStatus() !== "paused");
     }
     if (this.runtime?.getStatus() !== "play") {
+      if (this.runtime?.getStatus() !== "paused") {
+        this.bossFeedback.clearWarning();
+        this.cameras.main.shakeEffect.reset();
+      }
+      this.publishBossFeedback();
       this.playerAnimator?.stopSlipperSwing();
       this.bowlShieldVisual?.update(0, false);
       return;
     }
+    const elapsed = Number.isFinite(delta) ? Math.max(0, delta) : 0;
+    this.skillElapsedMs += elapsed;
+    this.bossFeedback.update(elapsed);
     this.playerController?.update(time, delta);
     if (this.stageDefinition?.kind === "normal" && this.player &&
         !this.player.isControlLocked() && this.player.getBounds().left >= this.stageDefinition.mapWidth &&
         this.player.body.bottom < this.stageDefinition.mapHeight - 1) {
       this.player.setVelocity(0, 0);
       this.runtime.complete();
+      this.publishBossFeedback(true, true);
       return;
     }
     if (input?.barkPressed && this.progress.unlockedSkills.includes("bark")) {
-      const result = this.skillSystem?.use("bark", time);
-      if (result?.accepted) this.calicoBoss?.tryBarkStun(time);
+      const result = this.skillSystem?.use("bark", this.skillElapsedMs);
+      if (result?.accepted) {
+        this.calicoBoss?.tryBarkStun(time);
+        if (this.stageDefinition?.kind === "boss" && !this.stageTransitionStarted &&
+            !this.calicoBoss?.isDefeated() && this.bossFeedback.recordBarkUse()) {
+          this.cameras.main.shake(BARK_SHAKE_DURATION_MS, BARK_SHAKE_INTENSITY, true);
+        }
+        this.publishBossFeedback(true);
+      }
     }
     if (this.calicoBoss && this.player && this.combatSystem) {
       this.calicoBoss.start(time);
@@ -583,11 +623,41 @@ export class StageScene extends Phaser.Scene {
     for (const enemy of this.mapEnemies.values()) enemy.updateMovement(time);
     this.debugOverlay?.update();
     this.syncSectionCamera();
+    this.publishBossFeedback();
+  }
+
+  private resetBossFeedback(): void {
+    this.skillElapsedMs = 0;
+    this.skillSystem?.resetCooldowns();
+    this.bossFeedback.reset();
+    this.lastBossFeedbackSnapshot = undefined;
+    this.cameras.main.shakeEffect.reset();
+  }
+
+  private publishBossFeedback(force = false, forceInactive = false): void {
+    const active = !forceInactive && this.runtime?.getStatus() === "play" &&
+      !this.stageTransitionStarted && !this.victorySequenceStarted;
+    const barkUnlocked = this.progress.unlockedSkills.includes("bark");
+    const snapshot: BossFeedbackSnapshot = {
+      stageId: this.stageId, active, barkUnlocked,
+      barkRemainingMs: barkUnlocked
+        ? Math.ceil((this.skillSystem?.getRemainingCooldown("bark", this.skillElapsedMs) ?? 0) / 100) * 100 : 0,
+      barkCooldownMs: BARK_COOLDOWN_MS,
+      warning: active ? this.bossFeedback.getWarning() : null,
+    };
+    const last = this.lastBossFeedbackSnapshot;
+    if (!force && last && last.stageId === snapshot.stageId && last.active === snapshot.active &&
+        last.barkUnlocked === snapshot.barkUnlocked && last.barkRemainingMs === snapshot.barkRemainingMs &&
+        last.warning?.kind === snapshot.warning?.kind && last.warning?.sequence === snapshot.warning?.sequence) return;
+    this.lastBossFeedbackSnapshot = snapshot;
+    this.eventBus?.emit("boss-feedback-changed", snapshot);
   }
 
   private async handleCalicoDefeat(): Promise<void> {
     if (this.victorySequenceStarted || !this.calicoBoss?.isDefeated()) return;
     this.victorySequenceStarted = true;
+    this.resetBossFeedback();
+    this.publishBossFeedback(true, true);
     this.calicoBoss.stopAttacks();
     this.runtime?.setStatus("cutscene");
     this.holdPlayerForVictoryDialogue();
@@ -682,12 +752,14 @@ export class StageScene extends Phaser.Scene {
       runtime.pause();
       this.physics.world.pause();
       this.audioManager?.setPaused(true);
+      this.cameras.main.shakeEffect.reset();
     } else if (!paused && runtime.getStatus() === "paused") {
       runtime.resume();
       this.physics.world.resume();
       this.audioManager?.setPaused(false);
     }
 
+    this.publishBossFeedback(true);
     this.eventBus?.emit("pause-state-changed", {
       paused: runtime.getStatus() === "paused",
     });

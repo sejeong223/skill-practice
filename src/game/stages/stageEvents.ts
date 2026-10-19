@@ -1,7 +1,9 @@
 import type { SelectableWorldId, StageId, WorldSelectionRequest } from "../core/types";
 import type { CutsceneBeat } from "../cutscenes/types";
+import type { BossFeedbackSnapshot } from "../systems/bossFeedback";
 
 export interface StageEventMap {
+  "boss-feedback-changed": BossFeedbackSnapshot;
   "world-selection-requested": WorldSelectionRequest;
   "world-selection-committed": { worldId: SelectableWorldId };
   "stage-started": {

@@ -2,18 +2,19 @@
 
 ## Active Plan
 
-[월드 2 기존 음악 복원](./plans/2026-10-19-world02-original-music-restore.md)
+[짖기 이미지·효과음·일반 구간 사용과 보스 경고](./plans/2026-10-19-boss-bark-cooldown-and-warnings.md)
 
 ## Active Phase
 
-[P01 원래 편곡 복원](./phases/2026-10-19-world02-original-music-restore/P01-restore-arrangement/phase.md)
+[P01 공통 짖기 피드백과 보스 경고](./phases/2026-10-19-boss-bark-cooldown-and-warnings/P01-boss-feedback/phase.md)
 
 ## Active Task
 
-없음 — [T01 월드 2 변경 전 음표 복원](./phases/2026-10-19-world02-original-music-restore/P01-restore-arrangement/T01-restore-world02-notes.md) 완료.
+[T01 보스전 쿨타임·경고 상태와 카메라 연출](./phases/2026-10-19-boss-bark-cooldown-and-warnings/P01-boss-feedback/T01-boss-feedback-runtime.md)
 
 ## Status
 
+- 짖기 피드백·보스 경고 계획 확장 완료(0/3). T01 구현 준비. 공통10초 쿨타임/HUD, 보스전 성공 사용3회 경고, 빨간 배경8%, 경고2.5초, 흔들림0.8초, 사레는 시각 효과만. 추가 요청으로T03에 기존 플레이 코기 기반 열린 입 이미지112×128/450ms와 짧은 짖기WAV/성공 이벤트 연결을 추가했다. 해금한 짖기는 일반 장애물 구간에서도 이미지·소리·쿨타임을 사용한다. 일반 구간3회 경고까지 확장할지는 선택 질문 후 답변이 없어 기존 보스전 전용을 기본값으로 유지했다. 이번 요청은memory-plan이므로 코드·이미지·음원은 아직 만들지 않았다.
 - 월드 2 기존 음악 복원 P01 완료(1/1): 사용자 선호에 따라 `af78163` 이전 멜로디·베이스를 정확히 복원했다. 음악 테스트 11개, 타입 검사, 빌드 통과. 월드 1→2 중복 재생 회귀 검사는 유지했다.
 - 월드 2 인트로 내레이션 분리 P01 완료(1/1): 긴장한 코기 내레이션을 4초씩 두 비트로 나누고 비장한 코기 표정 전환을 비트 ID에 맞췄다. 컷신 테스트 5개, 타입 검사, 빌드 통과.
 - 월드 2 음악 화음 정렬 P01은 `af78163`에서 완료했으나, 이후 사용자 선호로 음표 변경을 되돌렸다. 월드 전환 회귀 검사는 유지했다.
@@ -28,7 +29,7 @@
 
 ## Next Step (IMPORTANT)
 
-이번 계획의 다음 Task는 없다.
+`/memory-execute` 또는 “current 보고 이어서 해줘” 요청 시 T01 청사진을 읽고 `src/game/data/skills.ts`, `SkillSystem`, 새 `bossFeedback.ts`, `StageScene`의 쿨타임·경고 상태부터 구현한다. T01 검증·한국어 커밋 후 T02 공통 쿨타임/보스 경고 UI, T03 짖기 이미지·효과음·일반 구간 통합 검증 순서로 진행한다. 각 Task 검증·커밋 뒤 포인터를 전진한다.
 
 ## Existing Worktree Baseline
 
