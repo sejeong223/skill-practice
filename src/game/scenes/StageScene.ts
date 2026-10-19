@@ -595,7 +595,7 @@ export class StageScene extends Phaser.Scene {
       if (result?.accepted) {
         this.playerAnimator?.triggerBark();
         this.calicoBoss?.tryBarkStun(time);
-        if (this.stageDefinition?.kind === "boss" && !this.stageTransitionStarted &&
+        if (!this.stageTransitionStarted &&
             !this.calicoBoss?.isDefeated() && this.bossFeedback.recordBarkUse()) {
           this.cameras.main.shake(BARK_SHAKE_DURATION_MS, BARK_SHAKE_INTENSITY, true);
         }

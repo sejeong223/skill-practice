@@ -1,0 +1,90 @@
+{
+  "checks": [
+    {
+      "stage": "world-01-stage-1",
+      "warning": null,
+      "shake": false,
+      "count": 1,
+      "cast": 1
+    },
+    {
+      "stage": "world-01-stage-1",
+      "warning": null,
+      "shake": false,
+      "count": 2,
+      "cast": 2
+    },
+    {
+      "stage": "world-01-stage-1",
+      "warning": "bark-third",
+      "shake": true,
+      "count": 3,
+      "cast": 3
+    },
+    {
+      "stage": "world-01-stage-1",
+      "warning": null,
+      "shake": false,
+      "count": 4,
+      "cast": 4
+    },
+    {
+      "stage": "world-01-stage-1",
+      "warning": null,
+      "shake": false,
+      "count": 5,
+      "cast": 5
+    },
+    {
+      "stage": "world-01-stage-1",
+      "warning": "bark-third",
+      "shake": true,
+      "count": 6,
+      "cast": 6
+    },
+    {
+      "stage": "world-02-stage-1",
+      "warning": null,
+      "shake": false,
+      "count": 1,
+      "cast": 1
+    },
+    {
+      "stage": "world-02-stage-1",
+      "warning": null,
+      "shake": false,
+      "count": 2,
+      "cast": 2
+    },
+    {
+      "stage": "world-02-stage-1",
+      "warning": "bark-third",
+      "shake": true,
+      "count": 3,
+      "cast": 3
+    },
+    {
+      "stage": "world-02-stage-1",
+      "warning": null,
+      "shake": false,
+      "count": 4,
+      "cast": 4
+    },
+    {
+      "stage": "world-02-stage-1",
+      "warning": null,
+      "shake": false,
+      "count": 5,
+      "cast": 5
+    },
+    {
+      "stage": "world-02-stage-1",
+      "warning": "bark-third",
+      "shake": true,
+      "count": 6,
+      "cast": 6
+    }
+  ],
+  "errors": [],
+  "clock": "10000ms skill clock advance between actual key inputs; rejected input after each cast"
+}
