@@ -2,22 +2,22 @@
 
 ## Active Plan
 
-[월드 1 재도전 시작 지점 선택](./plans/2026-10-14-world01-replay-entry-selection.md)
+[월드 2 모래 바닥과 첫 스테이지 이름](./plans/2026-10-14-world02-sand-floor-and-stage-title.md)
 
 ## Active Phase
 
-[P01 월드 1 재도전 지점 선택](./phases/2026-10-14-world01-replay-entry-selection/P01-replay-entry/phase.md)
+[P01 모래 바닥과 첫 스테이지 이름](./phases/2026-10-14-world02-sand-floor-and-stage-title/P01-sand-floor-and-title/phase.md)
 
 ## Active Task
 
-없음 — [T01 월드 1 시작 지점 목록과 재도전](./phases/2026-10-14-world01-replay-entry-selection/P01-replay-entry/T01-entry-list-and-respawn.md) 완료.
+없음 — [T02 첫 스테이지 연속 모래 바닥과 이름 변경](./phases/2026-10-14-world02-sand-floor-and-stage-title/P01-sand-floor-and-title/T02-sand-floor-runtime-and-title.md) 완료.
 
 ## Status
 
+- 월드 2 모래 바닥과 첫 스테이지 이름 P01 완료(2/2): T01 `5bca24d`에서 사용자가 제공한 놀이터 화면의 밝은 모래색과 잔자갈 무늬를 반영한 PNG와 필수 이미지 키를 추가했다. T02 `22ac69c`에서 첫 스테이지 전체의 연속 충돌 바닥과 이미지 반복, 제목 변경을 적용했다. 테스트 2건, 린트·타입·빌드 및 Chrome 실제 걷기·출구 근처 표시 확인을 통과했다.
 - 월드 1 재도전 시작 지점 선택 P01 완료(1/1): T01 `dba6ff7`. 처음부터·체크포인트 1·체크포인트 2·보스전을 세로 목록으로 제공하고 저장 복귀와 보스 패배 직후 재도전을 연결했다. 자동 테스트 16건, 타입·린트·빌드 및 Chrome에서 실제 진입·재도전·모바일 스크롤 확인을 통과했다.
 - 월드 선택으로 월드 1 재도전 P01 완료(1/1): T01 `f21c08c`. 월드 선택 HUD·다이얼로그, 클리어 월드 왕복, 선택 월드 저장·복귀를 구현했다. 자동 테스트 14건과 타입·린트·빌드 및 Chrome 흐름 확인을 통과했다.
 - 월드 1 짖기 해금 연출과 스킬 이름 한글화 P01 완료(3/3): T01 `e77e5a4`, T02 `79ba51f`, T03 `87a31eb`. 한국어 기술 이름, 해금 안내 Scene, 삼색이 짖기 경직의 린트·타입·빌드·관련 테스트를 확인했다.
-- [월드 2 모래 바닥과 첫 스테이지 이름](./plans/2026-10-14-world02-sand-floor-and-stage-title.md)은 P01-T01 미착수 상태로 보존한다. 이번 새 계획 이후 자동 실행하지 않는다.
 - 월드 2 코기 위치 조정 P01-T01 완료(1/1, `9efdad8`). 두 표정의 공통 표시 중심을 데스크톱 32px, 작은 화면 12px 내렸고 린트·타입 검사를 통과했다.
 - 월드 2 대사창 통일과 앉은 정면 코기 이미지 P01-T01 완료(1/1, `e9ceda1`). 전용 대사창을 제거하고 두 표정의 전신 PNG를 교체했으며 린트·타입·빌드·진행 테스트를 통과했다.
 - 월드 2 놀이터 진입 대본 P01-T01 완료(1/1, `af311f8`). 확정된 6문장과 기존 이미지 3장의 장면 전환, 자동 진행, 저장과 재관람을 검증했다.
@@ -25,7 +25,7 @@
 
 ## Next Step (IMPORTANT)
 
-이번 계획의 다음 Task는 없다. [월드 2 모래 바닥과 첫 스테이지 이름](./plans/2026-10-14-world02-sand-floor-and-stage-title.md)은 별도 미착수 계획으로 보존한다.
+이번 계획의 다음 Task는 없다.
 
 ## Existing Worktree Baseline
 

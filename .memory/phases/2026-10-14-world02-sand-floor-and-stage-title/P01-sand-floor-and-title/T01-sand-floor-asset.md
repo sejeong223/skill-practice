@@ -94,4 +94,4 @@ Task: T01-sand-floor-asset
 
 - [x] 구현 완료
 - [x] 검증 통과: 에셋 검증 60항목, PNG 크기·alpha, 타입 검사 및 시각 점검.
-- commit: pending
+- commit: `5bca24d`

@@ -10,7 +10,7 @@
 
 | Phase | Status | Summary | Blueprint |
 | :--- | :--- | :--- | :--- |
-| P01 | `in_progress` | 모래 PNG 제작·등록, 첫 스테이지 충돌/렌더링 및 이름 변경 | [P01](../phases/2026-10-14-world02-sand-floor-and-stage-title/P01-sand-floor-and-title/phase.md) |
+| P01 | `done` | 모래 PNG 제작·등록, 첫 스테이지 충돌/렌더링 및 이름 변경 | [P01](../phases/2026-10-14-world02-sand-floor-and-stage-title/P01-sand-floor-and-title/phase.md) |
 
 ## Execution Order
 
@@ -33,4 +33,4 @@
 
 ## Progress
 
-- done: 0/2 (active: T01)
+- done: 2/2 (active: 없음)

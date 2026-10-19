@@ -119,4 +119,4 @@ Task: T02-sand-floor-runtime-and-title
 
 - [x] 구현 완료
 - [x] 검증 통과: 테스트 2건, 관련 파일 린트, 타입 검사, 프로덕션 빌드. Chrome에서 HUD와 이미지, 구간 경계 걷기(740→928), 다섯 지점의 발 위치 y=504, 출구 연결·함정·적·코인 확인.
-- commit: pending
+- commit: `22ac69c`
