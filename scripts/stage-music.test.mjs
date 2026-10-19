@@ -38,3 +38,17 @@ test("신규 두 곡의 16마디 반주 길이가 일치하고 서로 다른 멜
   }
   assert.notDeepEqual(MUSIC_ARRANGEMENTS["world-01-peaceful"].melody, MUSIC_ARRANGEMENTS["world-01-calico"].melody);
 });
+
+test("월드 2 음악의 베이스와 멜로디 강박이 현재 화음에 맞는다", () => {
+  const { melody, chords, bass } = MUSIC_ARRANGEMENTS["world-02-amusement"];
+  const pitchClass = note => note.replace(/[0-8]$/, "");
+  assert.equal(melody.length, chords.length * 4);
+  assert.equal(bass.length, chords.length * 2);
+  chords.forEach((chord, index) => {
+    const voicing = CHORD_VOICINGS[chord];
+    const chordTones = new Set(voicing.map(pitchClass));
+    assert.equal(pitchClass(bass[index * 2]), pitchClass(voicing[0]), `${chord} 베이스 루트`);
+    assert.ok(chordTones.has(pitchClass(bass[index * 2 + 1])), `${chord} 베이스 두 번째 음`);
+    assert.ok(chordTones.has(pitchClass(melody[index * 4])), `${chord} 멜로디 강박`);
+  });
+});

@@ -151,7 +151,9 @@ test("정지 중 곡 교체는 재개할 때 한 번 시작한다", () => {
 test("이전 관리자의 정지·재개·폐기가 새 곡을 건드리지 않는다", async () => {
   const h = harness(); const old = h.create(); const next = h.create();
   old.playMusic("world-01-peaceful"); old.setPaused(true);
-  next.playMusic("world-01-calico"); h.transport.ticks = 123;
+  next.playMusic("world-02-amusement"); h.transport.ticks = 123;
+  assert.equal(h.transport.bpm.value, 120);
+  assert.equal(h.nodes.filter(node => !node.disposed && node instanceof h.Sequence).length, 3);
   const starts = h.transport.starts; const stops = h.transport.stops;
   old.setPaused(false); old.unlock(); await h.unlock(); old.setPaused(true); old.destroy();
   assert.equal(h.transport.starts, starts); assert.equal(h.transport.stops, stops);
