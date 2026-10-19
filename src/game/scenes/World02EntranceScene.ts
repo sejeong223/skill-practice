@@ -91,7 +91,7 @@ export class World02EntranceScene extends Phaser.Scene {
       });
     } else if (index === 2) {
       this.showPortrait(IMAGE_KEYS[1]);
-    } else if (index === 4) {
+    } else if (beat.id === "corgi-resolved-narration") {
       this.showPortrait(IMAGE_KEYS[2]);
     }
     this.eventBus?.emit("cutscene-beat", {

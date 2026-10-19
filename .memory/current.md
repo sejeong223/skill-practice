@@ -2,18 +2,19 @@
 
 ## Active Plan
 
-[World 2 music harmony](./plans/2026-10-19-world02-music-harmony.md)
+[월드 2 인트로 내레이션 분리](./plans/2026-10-19-world02-intro-narration-split.md)
 
 ## Active Phase
 
-[P01 Arrangement and transition](./phases/2026-10-19-world02-music-harmony/P01-arrangement-and-transition/phase.md)
+[P01 비트 분리](./phases/2026-10-19-world02-intro-narration-split/P01-beat-split/phase.md)
 
 ## Active Task
 
-없음 — [T01 월드 2 음악 화음 정렬](./phases/2026-10-19-world02-music-harmony/P01-arrangement-and-transition/T01-align-world02-music.md) 완료.
+없음 — [T01 긴장한 코기 내레이션 분리](./phases/2026-10-19-world02-intro-narration-split/P01-beat-split/T01-split-nervous-narration.md) 완료.
 
 ## Status
 
+- 월드 2 인트로 내레이션 분리 P01 완료(1/1): 긴장한 코기 내레이션을 4초씩 두 비트로 나누고 비장한 코기 표정 전환을 비트 ID에 맞췄다. 컷신 테스트 5개, 타입 검사, 빌드 통과.
 - 월드 2 음악 화음 정렬 P01 완료(1/1): `world-02-amusement` 멜로디와 베이스를 화음에 맞추고, 월드 1→2 음악 전환 시 한 곡분의 시퀀스만 남는 것을 검증했다. 음악 테스트 12개, 타입 검사, 빌드 통과. 실제 스피커 청음은 수행하지 않았다.
 - 월드 2 모래 바닥과 첫 스테이지 이름 P01 완료(2/2): T01 `5bca24d`에서 밝은 모래 PNG를 추가했고, 사용자 지적에 따라 `edf00e7`에서 윗면을 1~10px로 굴곡지게 수정했다. T02 `22ac69c`에서 연속 충돌 바닥·제목 변경을 적용했고, `35e6124`에서 시각적 윗면을 코기 발 높이에 맞췄다. 에셋 검사, 테스트 2건, 린트·타입·빌드 및 Chrome 화면을 확인했다.
 - 월드 1 재도전 시작 지점 선택 P01 완료(1/1): T01 `dba6ff7`. 처음부터·체크포인트 1·체크포인트 2·보스전을 세로 목록으로 제공하고 저장 복귀와 보스 패배 직후 재도전을 연결했다. 자동 테스트 16건, 타입·린트·빌드 및 Chrome에서 실제 진입·재도전·모바일 스크롤 확인을 통과했다.

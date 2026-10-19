@@ -46,8 +46,14 @@ export const WORLD02_ENTRANCE_CUTSCENE: CutsceneScript = {
     },
     {
       id: "corgi-nervous-narration",
-      durationMs: 8000,
-      narration: "슬개골이 비명을 지르고 엉덩이가 공포로 떨려왔지만, 녀석은 멈추지 않는다. 녀석의 뇌리를 스치는 단 하나의 향기... [투뿔 한우 육즙]!",
+      durationMs: 4000,
+      narration: "슬개골이 비명을 지르고 엉덩이가 공포로 떨려왔지만, 녀석은 멈추지 않는다.",
+      skipAllowedAfterSeen: true,
+    },
+    {
+      id: "corgi-nervous-narration-2",
+      durationMs: 4000,
+      narration: "녀석의 뇌리를 스치는 단 하나의 향기... [투뿔 한우 육즙]!",
       skipAllowedAfterSeen: true,
     },
     {
