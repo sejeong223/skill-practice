@@ -152,4 +152,4 @@ Task: T01-boss-feedback-runtime
 ## Progress
 - [x] 구현 완료
 - [x] 검증 통과
-- commit: recorded in git history
+- commit: 54c3837

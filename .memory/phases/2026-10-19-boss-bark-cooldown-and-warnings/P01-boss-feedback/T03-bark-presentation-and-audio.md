@@ -143,4 +143,4 @@ Task: T03-bark-presentation-and-audio
 ## Progress
 - [x] 구현 완료
 - [x] 검증 통과
-- commit: recorded in git history
+- commit: f921d97

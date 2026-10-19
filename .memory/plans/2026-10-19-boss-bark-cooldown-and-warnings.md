@@ -12,7 +12,7 @@
 ## Phases
 | Phase | Status | Summary | Blueprint |
 | :--- | :--- | :--- | :--- |
-| P01 | `in_progress` | 공통 짖기 피드백과 보스 경고 연결 | [P01](../phases/2026-10-19-boss-bark-cooldown-and-warnings/P01-boss-feedback/phase.md) |
+| P01 | `done` | 공통 짖기 피드백과 보스 경고 연결 | [P01](../phases/2026-10-19-boss-bark-cooldown-and-warnings/P01-boss-feedback/phase.md) |
 
 ## Tasks
 1. **T01**: 10초 쿨타임, 플레이 시간 기준 계산, 3회 카운트, 밥그릇 소환 경고 상태, 카메라 흔들림, UI 전달 이벤트와 단위 검증.
@@ -36,4 +36,4 @@
 `SkillSystem.getRuntimeState()`가 항상 빈 쿨타임 객체를 반환하는 기존 미완성 API가 있다. 이번 기능은 정상 동작하는 `getRemainingCooldown()`으로 연결한다. 기존 상단의 빈 쿨타임 행은 공통 왼쪽 아래 짖기 표시와 중복되므로 제거한다. 전체 스킬 상태 API 개편, 아직 해금되지 않는 후속 네 스킬의 전투 구현, 일반 적을 짖기로 경직시키는 새 규칙은 별도 요청이 있을 때 정한다.
 
 ## Completion
-T01·T02·T03 테스트, 에셋·타입·린트·빌드 및 실제 브라우저의 1280×720/좁은 화면 검증을 통과한 뒤 완료한다. 짖는 모습과 실제 출력되는 오디오를 확인하고 검증 기록은 `.memory/test-plans/2026-10-19-boss-bark-cooldown-and-warnings.md`에 남긴다. 현재는 계획 단계이며 구현하지 않았다.
+전체3/3 완료. T01 `54c3837`, T02 `bc24697`, T03 `f921d97`. 테스트·에셋·타입·린트·빌드 및 별도 Chrome의 1280×720/390px 화면 검증을 통과했다. 재도전 중 카메라 종료 순서 오류는 T03에서 수정했다. 짖는 이미지와 실제 AudioBufferSource 출력을 확인했으며 물리 스피커 청음·실제 모바일 터치는 미실시다. [검증 기록](../test-plans/2026-10-19-boss-bark-cooldown-and-warnings.md).
