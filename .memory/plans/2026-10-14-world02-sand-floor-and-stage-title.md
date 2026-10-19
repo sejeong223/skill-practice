@@ -21,7 +21,7 @@
 
 - 월드 2 `world-02-background-far`/`mid`/`world-02-foreground` 3장은 이미 필수 로드되고 패럴랙스로 그려진다. 실제 `world-02-tileset.png`와 `world-02-stage-1.json`은 없으므로 `TiledMapLoader.load()`는 `null`이고, `StageRuntime.buildFromSegments()`가 임시 발판과 장애물을 만든다.
 - 첫 스테이지 맵은 3840×720이고 임시 발판 상단은 y=520−16=504다. 기존 발판은 섹션별 중심 x=16 때문에 겹침·큰 틈이 있으며, 이미지로 연속 바닥을 보여주려면 충돌 범위도 함께 고쳐야 한다.
-- `StageEntityFactory.createPlatform()`의 갈색 사각형은 충돌과 외형을 겸한다. 첫 스테이지에서만 사각형을 숨기고 충돌은 유지하며, 모래 이미지를 깊이 -2에 두면 깊이 -1의 함정과 깊이 10의 코기가 앞에 남는다.
+- `StageEntityFactory.createPlatform()`의 갈색 사각형은 충돌과 외형을 겸한다. 첫 스테이지에서만 사각형을 숨기고 충돌은 유지하며, 모래 이미지를 깊이 -2에 두면 깊이 -1의 함정과 깊이 10의 코기가 앞에 남는다. 후속 수정에서 이미지는 y=499에 배치해 윗면 굴곡이 y=504 충돌선 근처에 보인다.
 - `src/game/data/worlds.ts`의 `stageTitles[0]`이 `stage.title`로 전달되어 HUD에 표시된다. 월드 전체 title은 `놀이터`이며 이번 이름 변경의 대상이 아니다.
 
 ## Acceptance

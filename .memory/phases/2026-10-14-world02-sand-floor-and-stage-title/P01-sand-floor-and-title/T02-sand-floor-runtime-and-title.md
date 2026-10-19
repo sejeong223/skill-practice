@@ -63,13 +63,13 @@ private createWorld02SandFloor(stage: StageDefinition): void;
 #### Data & Schema Fields
 
 - `sandFloor`: 현재 씬에서만 소유하는 Phaser `TileSprite` 또는 `undefined`; 저장 데이터와 이벤트 계약에는 추가 필드가 없다.
-- 이미지 키는 정확히 `"world-02-sand-floor"`, 깊이는 `-2`, 스크롤 팩터는 `1`, x=0, y=504, 표시 폭=3840, 높이=216이다.
+- 이미지 키는 정확히 `"world-02-sand-floor"`, 깊이는 `-2`, 스크롤 팩터는 `1`, x=0, 표시 폭=3840이다. 후속 윗면 굴곡 수정에서는 충돌 높이 y=504를 유지하고 이미지 y=499, 표시 높이=221로 맞춘다.
 
 #### Execution Flow / Logic
 
 1. `StageScene.create()`에서 runtime 생성 직후 `stage.id === "world-02-stage-1" && !this.loadedMap`일 때만 `createWorld02SandFloor(stage)`를 호출한다. 실제 Tiled 맵이 추가되면 중복 바닥을 만들지 않는다.
 2. helper는 `this.runtime.getEntities("platform")`에서 유일한 Phaser 사각형을 가져와 `getBounds().top`이 504인지 확인한다. 없거나 여러 개면 명확한 오류를 던져 보이는 바닥과 충돌 바닥이 어긋난 채 진행하지 않는다.
-3. `this.add.tileSprite(0, floorY, stage.mapWidth, stage.mapHeight - floorY, "world-02-sand-floor")`에 `.setOrigin(0).setDepth(-2).setScrollFactor(1)`을 적용한다. PNG가 512×216이므로 x방향으로만 자연스럽게 반복되고 화면 아래까지 채운다. 원경/중경(-30/-20) 위, 함정(-1)·적·코기 아래에 렌더링한다.
+3. `this.add.tileSprite(0, visualTop, stage.mapWidth, visualHeight, "world-02-sand-floor")`에 `.setOrigin(0).setDepth(-2).setScrollFactor(1)`을 적용한다. 후속 수정에서는 `visualTop = floorY - 5`, `visualHeight = 221`이며 세로 타일 스케일로 PNG의 216px 높이를 221px에 맞춰 화면 아래 반복선을 없앤다. x방향은 자연스럽게 반복한다. 원경/중경(-30/-20) 위, 함정(-1)·적·코기 아래에 렌더링한다.
 4. 기존 플랫폼 collider 루프에서는 이 첫 스테이지의 플랫폼 사각형만 `setVisible(false)`로 숨기되 `this.physics.add.collider(this.player, record.entity)`는 계속 만든다. 다른 월드/스테이지에는 적용하지 않는다.
 5. `shutdown`에서 `sandFloor?.destroy()` 후 `undefined`로 비운다. 재시작·스테이지 전환 때 모래 타일스프라이트가 남지 않는다.
 
@@ -120,3 +120,9 @@ Task: T02-sand-floor-runtime-and-title
 - [x] 구현 완료
 - [x] 검증 통과: 테스트 2건, 관련 파일 린트, 타입 검사, 프로덕션 빌드. Chrome에서 HUD와 이미지, 구간 경계 걷기(740→928), 다섯 지점의 발 위치 y=504, 출구 연결·함정·적·코인 확인.
 - commit: `22ac69c`
+
+## 2026-10-19 윗면 굴곡 정렬 수정
+
+- 이미지의 1~10px 굴곡을 y=499에 배치해 시각적 표면이 충돌선 y=504의 위아래에 걸치게 했다. 연속 충돌 바닥은 그대로 둔다.
+- 221px 표시 높이에 `tileScaleY = 221/216`을 적용해 화면 아래에서 모래 이미지가 한 번 더 반복되지 않게 했다.
+- 에셋 검사, 테스트 2건, 타입 검사, 관련 파일 린트, 빌드가 통과했다. Chrome에서 윗면 굴곡·코기 발 위치·HUD를 확인했다.

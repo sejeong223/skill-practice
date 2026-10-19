@@ -470,11 +470,16 @@ export class StageScene extends Phaser.Scene {
     if (!bounds || bounds.left !== 0 || bounds.right !== stage.mapWidth || bounds.top !== 504) {
       throw new Error("월드 2 첫 스테이지의 모래 바닥과 충돌 범위가 일치하지 않습니다.");
     }
+    // Center the small surface bumps around the flat collision plane.
+    const visualTop = bounds.top - 5;
+    const visualHeight = stage.mapHeight - visualTop;
+    const textureHeight = this.textures.get("world-02-sand-floor").getSourceImage().height;
     this.sandFloor = this.add
-      .tileSprite(0, bounds.top, stage.mapWidth, stage.mapHeight - bounds.top, "world-02-sand-floor")
+      .tileSprite(0, visualTop, stage.mapWidth, visualHeight, "world-02-sand-floor")
       .setOrigin(0)
       .setDepth(-2)
-      .setScrollFactor(1);
+      .setScrollFactor(1)
+      .setTileScale(1, visualHeight / textureHeight);
   }
 
   private createExitFloor(stage: StageDefinition, gameplayLayer?: Phaser.Tilemaps.TilemapLayer): void {
