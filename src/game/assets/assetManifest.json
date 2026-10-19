@@ -300,6 +300,13 @@
     "required": true
   },
   {
+    "key": "world-02-sand-floor",
+    "kind": "image",
+    "url": "/assets/pixel/tiles/world-02/world-02-sand-floor.png",
+    "worldId": "world-02",
+    "required": true
+  },
+  {
     "key": "world-02-tileset",
     "kind": "image",
     "url": "/assets/pixel/tiles/world-02/world-02-tileset.png",
