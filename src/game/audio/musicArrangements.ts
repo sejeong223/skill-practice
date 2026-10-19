@@ -95,9 +95,9 @@ export const MUSIC_ARRANGEMENTS: Readonly<Record<MusicKey, MusicArrangement>> = 
   },
   "world-02-amusement": {
     bpm: 120,
-    melody: ["A5", "C6", "A5", "F5", "G5", "E5", "G5", null, "A5", "F5", "D5", "F5", "Bb5", "F5", "D5", "F5"],
+    melody: ["A5", "C6", "A5", "G5", "F5", "G5", "A5", null, "C6", "A5", "G5", "F5", "A5", "C6", "D6", "C6"],
     chords: ["F", "C", "Dm", "Bb"],
-    bass: ["F2", "C3", "C2", "G2", "D2", "A2", "Bb2", "F2"],
+    bass: ["F2", "C3", "D2", "A2", "Bb2", "F2", "C3", "C3"],
   },
   "world-03-factory": {
     bpm: 112,

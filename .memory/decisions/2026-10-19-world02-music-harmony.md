@@ -1,7 +1,7 @@
 # Decisions: 월드 2 음악 화음 정렬
 
 - Date: 2026-10-19
-- Status: Confirmed
+- Status: Superseded by [월드 2 기존 음악 복원](./2026-10-19-world02-original-music-restore.md)
 
 ## D01. 확인된 원인
 - **Chosen**: 월드 2 기본 음악 `world-02-amusement`의 베이스·멜로디를 코드에 정의된 화음 진행 `F → C → Dm → Bb`와 맞춘다.
