@@ -1,6 +1,6 @@
 # Task: T02 보스전 쿨타임 HUD와 옅은 빨간 경고 화면
 
-## Status: pending
+## Status: done
 
 ## Goal
 보스전과 일반 장애물 구간 왼쪽 아래에 짖기의 실제 남은 쿨타임을 표시하고, 보스전의 사레·밥그릇 경고를 화면 중앙과 동일한 8% 빨간 배경으로 보여 준다. 코기·보스·강아지·공격을 계속 볼 수 있고 경고 중에도 기존 조작을 유지한다.
@@ -99,11 +99,11 @@ bowl-alarm
 - 화면·런타임 콘솔 오류, 검증 결과 및 실제 확인하지 못한 범위는 보고서에 기록한다. DOM에 이벤트만 주입한 결과를 실제 방어/짖기 입력 검증으로 보고하지 않는다.
 
 ## Acceptance Criteria
-- [ ] 해금된 짖기의 남은 10초 쿨타임이 보스전·일반 장애물 구간 왼쪽 아래에 실제 값으로 표시된다.
-- [ ] 두 경고의 제목·본문이 정확하고 공통 8% 빨간 배경을 사용한다.
-- [ ] 코기·보스·강아지의 대치 상황이 보이며 경고 UI가 조작을 차단하지 않는다.
-- [ ] 모바일에서도 표시되고 pause·death·victory·이동·재도전에서 상태가 맞는다.
-- [ ] 이전 기능 회귀 테스트 및 타입·린트·빌드가 통과하며 검증 보고서를 남겼다.
+- [x] 해금된 짖기의 남은 10초 쿨타임이 보스전·일반 장애물 구간 왼쪽 아래에 실제 값으로 표시된다.
+- [x] 두 경고의 제목·본문이 정확하고 공통 8% 빨간 배경을 사용한다.
+- [x] 코기·보스·강아지의 대치 상황이 보이며 경고 UI가 조작을 차단하지 않는다.
+- [x] 모바일에서도 표시되고 pause·death·victory·이동·재도전에서 상태가 맞는다.
+- [x] 이전 기능 회귀 테스트 및 타입·린트·빌드가 통과하며 검증 보고서를 남겼다.
 
 ## Validation
 - `node --test scripts/boss-feedback.test.mjs scripts/bark-boss-stun.test.mjs scripts/bowl-defense.test.mjs scripts/world-selection.test.mjs scripts/world01-respawn.test.mjs`
@@ -126,6 +126,6 @@ Task: T02-boss-feedback-overlay
 ```
 
 ## Progress
-- [ ] 구현 완료
-- [ ] 검증 통과
-- commit: pending
+- [x] 구현 완료
+- [x] 검증 통과
+- commit: recorded in git history

@@ -21,6 +21,7 @@ import { ResetProgressDialog } from "./ResetProgressDialog";
 import { SnackCoinCounter } from "./SnackCoinCounter";
 import { PauseOverlay } from "./PauseOverlay";
 import { WorldSelectDialog } from "./WorldSelectDialog";
+import { BossCombatOverlay } from "./BossCombatOverlay";
 
 export interface GameShellProps {
   readonly initialStageId: StageId;
@@ -256,6 +257,8 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
   return (
     <div className="game-shell">
       <div className="game-content-frame">
+        <BossCombatOverlay eventBus={eventBus} stageId={activeStageId} barkKeybind={progress.keybinds.bark}
+          visible={progressLoaded && introGateStep === "ready" && mode === "play" && !paused && !world02EntranceActive} />
         {progressLoaded && introGateStep === "ready" && !world02EntranceActive && <SnackCoinCounter balance={progress.bankedCoins} />}
         {progressLoaded && <PhaserGame className="phaser-viewport" gameEventBus={eventBus} progressState={sharedProgressState} />}
         <GameEventBridge eventBus={eventBus} onEvent={handleEvent} />

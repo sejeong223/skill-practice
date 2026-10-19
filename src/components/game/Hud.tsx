@@ -25,7 +25,6 @@ export function Hud({
   runtime,
   attackTool,
   defenseTool,
-  cooldowns,
   bossHearts,
   statusOpen,
   onToggleStatus,
@@ -35,10 +34,6 @@ export function Hud({
   worldSelectUnlocked,
   onOpenWorldSelect,
 }: HudProps): ReactElement {
-  const activeCooldowns = Object.entries(cooldowns)
-    .filter(([, value]) => (value ?? 0) > 0)
-    .map(([id, value]) => id + " " + Math.ceil((value ?? 0) / 100) / 10 + "s")
-    .join(", ");
   return (
     <div className="game-hud" aria-label="게임 HUD">
       <div className="hud-stage">
@@ -50,7 +45,6 @@ export function Hud({
         <span>
           <b>장비</b> {attackTool ? getToolPresentation(attackTool.id).nameKo : "없음"} / {defenseTool ? getToolPresentation(defenseTool.id).nameKo : "없음"}
         </span>
-        <span><b>쿨다운</b> {activeCooldowns || "준비"}</span>
       </div>
       <button
         className="tiny-button status-menu-button"

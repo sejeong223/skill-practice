@@ -1,0 +1,13 @@
+{
+  "alpha": "rgba(239, 68, 68, 0.08)",
+  "bounds": {
+    "x": 8,
+    "y": 459.6875,
+    "width": 125,
+    "height": 64
+  },
+  "errors": [],
+  "actualCooldownSeconds": 10,
+  "pausedSeconds": 3,
+  "bowlValidation": "DefenseToolSystem.tryBlock injection; projectile collision pending"
+}

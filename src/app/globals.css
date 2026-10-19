@@ -1,5 +1,19 @@
 @import "tailwindcss";
 
+.boss-combat-overlay { position: absolute; inset: 0; z-index: 6; pointer-events: none; font-family: "Galmuri11Pixel", monospace; }
+.boss-warning { position: absolute; inset: 0; display: grid; place-items: center; background: rgb(239 68 68 / 8%); }
+.boss-warning-text { width: min(90%, 760px); text-align: center; word-break: keep-all; overflow-wrap: anywhere; color: #fff8e5; text-shadow: 1px 1px 0 #58333b, -1px -1px 0 #58333b, 1px -1px 0 #58333b, -1px 1px 0 #58333b; line-height: 1.5; }
+.boss-warning-text strong { font-size: clamp(16px, 3vw, 32px); }
+.boss-warning-text svg { display: inline-block; width: 1em; height: 1em; margin-right: .4em; vertical-align: -.1em; }
+.boss-warning-text p { margin: 12px 0 0; font-size: clamp(11px, 1.7vw, 20px); }
+.boss-bark-cooldown { position: absolute; left: 16px; bottom: 16px; width: 150px; max-width: 45%; padding: 10px 12px; border: 2px solid #926256; background: #fff5db; color: #603c3f; box-shadow: 3px 3px 0 #603c3f33; font-size: 12px; }
+.boss-bark-cooldown > div:first-child { display: flex; justify-content: space-between; gap: 8px; }
+.boss-bark-cooldown kbd { font: inherit; opacity: .75; }
+.boss-bark-cooldown > span { display: block; margin: 5px 0; font-variant-numeric: tabular-nums; }
+.boss-bark-track { height: 5px; background: #dec6a5; }
+.boss-bark-track > div { height: 100%; background: #a26051; }
+@media (max-width: 600px) { .boss-bark-cooldown { left: 8px; bottom: 8px; padding: 6px 8px; width: 125px; font-size: 11px; } }
+
 :root {
   --background: #f5e7c7;
   --foreground: #5f3942;
