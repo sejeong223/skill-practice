@@ -73,12 +73,9 @@
   },
   {
     "key": "corgi-bark",
-    "kind": "spritesheet",
+    "kind": "image",
     "url": "/assets/pixel/characters/corgi/corgi-bark.png",
-    "frameWidth": 32,
-    "frameHeight": 48,
-    "frameCount": 4,
-    "required": false
+    "required": true
   },
   {
     "key": "corgi-double-jump",

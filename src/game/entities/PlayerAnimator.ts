@@ -4,6 +4,9 @@ import { DEFAULT_PLAYER_TUNING } from "./playerTypes";
 
 const RUN_ANIMATION_KEY = "corgi-run";
 const RUN_FRAME_RATE = 10;
+export const BARK_PRESENTATION_MS = 450;
+const BARK_TEXTURE_KEY = "corgi-bark";
+const BARK_FOOT_ANCHOR = 99;
 const SLIPPER_SWING_MS = 220;
 // Opaque paw rows in corgi-run.png, measured per animation frame.
 const RUN_FRAME_FOOT_ANCHORS = [99, 99, 100, 104] as const;
@@ -11,6 +14,7 @@ const RUN_FRAME_FOOT_ANCHORS = [99, 99, 100, 104] as const;
 export class PlayerAnimator {
   private readonly player: Player;
   private activeAnimationKey: string | null = null;
+  private barkRemainingMs = 0;
   private slipperImage?: Phaser.GameObjects.Image;
   private slipperSwingStartedAt = 0;
   private slipperSwingUntil = 0;
@@ -31,8 +35,32 @@ export class PlayerAnimator {
     this.updateSlipperSwing(now);
   }
 
-  public update(now = this.player.scene.time.now): void {
+  public triggerBark(): void {
+    if (!this.player.scene.textures.exists(BARK_TEXTURE_KEY)) return;
+    this.barkRemainingMs = BARK_PRESENTATION_MS;
+    this.player.anims.stop();
+    this.player.anims.timeScale = 1;
+    this.activeAnimationKey = null;
+    this.player.setTexture(BARK_TEXTURE_KEY);
+    this.player.alignFeetToFrame(BARK_FOOT_ANCHOR);
+  }
+
+  public stopBark(): void {
+    this.barkRemainingMs = 0;
+    if (!this.player.scene || this.player.texture?.key !== BARK_TEXTURE_KEY) return;
+    this.player.setTexture(RUN_ANIMATION_KEY, 0);
+    this.player.alignFeetToFrame(RUN_FRAME_FOOT_ANCHORS[0]);
+    this.player.anims.timeScale = 1;
+    this.activeAnimationKey = null;
+  }
+
+  public update(now = this.player.scene.time.now, deltaMs = 0): void {
     this.updateSlipperSwing(now);
+    if (this.barkRemainingMs > 0) {
+      this.barkRemainingMs = Math.max(0, this.barkRemainingMs - (Number.isFinite(deltaMs) ? Math.max(0, deltaMs) : 0));
+      if (this.barkRemainingMs > 0) return;
+      this.stopBark();
+    }
     if (this.player.getAnimationState() === "run") {
       this.playRunAnimation();
       this.player.anims.timeScale = Math.min(1.25, Math.max(
@@ -53,6 +81,7 @@ export class PlayerAnimator {
   }
 
   public destroy(): void {
+    this.stopBark();
     this.player.off("animationupdate", this.syncRunFootAnchor, this);
     this.slipperImage?.destroy();
     this.slipperImage = undefined;

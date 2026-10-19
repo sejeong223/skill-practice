@@ -225,17 +225,20 @@ export class PrototypeScene extends Phaser.Scene {
       );
     });
     this.eventBus.on("death", (payload) => {
+      this.playerAnimator?.stopBark();
       this.eventLogText?.setText(
         "event: death  " + payload.cause + "  retrying",
       );
     });
     this.eventBus.on("restart", (payload) => {
+      this.playerAnimator?.stopBark();
       this.eventLogText?.setText(
         "event: restart  attempt " + payload.attempt,
       );
     });
 
     this.events.once("shutdown", () => {
+      this.playerAnimator?.destroy();
       this.inputManager?.destroy();
       this.strayDogEvent?.destroy();
       this.drawbackDiscovery?.destroy();
@@ -299,13 +302,13 @@ export class PrototypeScene extends Phaser.Scene {
       this.skillSystem?.use("dash", time);
     }
     if (snapshot?.barkPressed) {
-      this.skillSystem?.use("bark", time);
+      if (this.skillSystem?.use("bark", time).accepted) this.playerAnimator?.triggerBark();
     }
 
     this.combatSystem?.update(time);
     this.enemySystem?.update(time);
     this.trapSystem?.update(time);
-    this.playerAnimator?.update();
+    this.playerAnimator?.update(time, delta);
 
     const checkpointId = this.checkpointSystem?.getSnapshot()?.checkpointId;
     const firstCheckpointId = getStageDefinition("world-01-stage-1").checkpointIds[0];

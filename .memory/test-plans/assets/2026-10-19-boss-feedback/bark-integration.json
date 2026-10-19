@@ -1,0 +1,86 @@
+{
+  "before": {
+    "stage": "world-01-stage-boss",
+    "status": "play",
+    "texture": "corgi-run",
+    "body": [
+      48,
+      40
+    ],
+    "flip": false,
+    "x": 160,
+    "y": 504,
+    "barkMs": 0,
+    "warning": null,
+    "sources": 0
+  },
+  "during": {
+    "stage": "world-01-stage-boss",
+    "status": "play",
+    "texture": "corgi-bark",
+    "body": [
+      48,
+      40
+    ],
+    "flip": false,
+    "x": 160,
+    "y": 504,
+    "barkMs": 383.4666666666666,
+    "warning": null,
+    "sources": 1
+  },
+  "audio": [
+    {
+      "duration": 0.4,
+      "state": "running",
+      "rms": 0.10151213295569131
+    },
+    {
+      "duration": 0.4,
+      "state": "running",
+      "rms": 0.09438473679875431
+    },
+    {
+      "duration": 0.4,
+      "state": "running",
+      "rms": 0.13037976320260353
+    },
+    {
+      "duration": 0.4,
+      "state": "running",
+      "rms": 0.10895278516834127
+    },
+    {
+      "duration": 0.4,
+      "state": "running",
+      "rms": 0.12009857745427416
+    },
+    {
+      "duration": 0.4,
+      "state": "running",
+      "rms": 0.10895278516834127
+    },
+    {
+      "duration": 0.4,
+      "state": "running",
+      "rms": 0.10895278516834127
+    }
+  ],
+  "errors": [],
+  "final": {
+    "stage": "world-02-stage-1",
+    "status": "play",
+    "texture": "corgi-run",
+    "body": [
+      72,
+      40
+    ],
+    "flip": false,
+    "x": 96,
+    "y": 504,
+    "barkMs": 0,
+    "warning": null,
+    "sources": 7
+  },
+  "projectileBlocks": 3
+}

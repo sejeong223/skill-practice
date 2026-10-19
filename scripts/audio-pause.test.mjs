@@ -104,6 +104,25 @@ function harness({ locked = false, cached = [] } = {}) {
   };
 }
 
+test("짖기 사용 성공만 소리를 한 번 내고 거절·다른 스킬은 재생하지 않는다", async () => {
+  const { GameplayEventBus } = require("../src/game/core/events.ts");
+  const { SkillSystem } = require("../src/game/systems/SkillSystem.ts");
+  const { SKILL_DEFINITIONS } = require("../src/game/data/skills.ts");
+  const bus = new GameplayEventBus(); const h = harness(); const audio = h.create(bus);
+  const skills = new SkillSystem({setAnimationState() {}},SKILL_DEFINITIONS,bus,undefined,["bark"]);
+  await h.decode();
+  assert.equal(skills.use("bark",0).accepted,true); await Promise.resolve();
+  assert.equal(h.sources.length,1);
+  assert.equal(skills.use("bark",9999).accepted,false); await Promise.resolve();
+  bus.emit("skill-used",{skillId:"bite",now:10000}); await Promise.resolve();
+  assert.equal(h.sources.length,1);
+  audio.setPaused(true); assert.ok(h.sources[0].stopped);
+  audio.setPaused(false);
+  skills.use("bark",10000); await Promise.resolve(); assert.equal(h.sources.length,2);
+  audio.destroy(); bus.emit("skill-used",{skillId:"bark",now:20000}); await Promise.resolve();
+  assert.equal(h.sources.length,2);
+});
+
 test("정지·재개 10회에도 음악 위치와 시퀀스를 보존한다", () => {
   const h = harness(); const audio = h.create();
   audio.playMusic("world-01-peaceful");
@@ -163,11 +182,11 @@ test("이전 관리자의 정지·재개·폐기가 새 곡을 건드리지 않�
 });
 
 test("캐시 음악도 자신의 인스턴스만 pause/resume하고 효과음은 누적하지 않는다", () => {
-  const h = harness({ cached: ["world-01-peaceful", "world-01-calico", "bark"] });
+  const h = harness({ cached: ["world-01-peaceful", "world-01-calico", "whine"] });
   const old = h.create(); const next = h.create();
-  old.playMusic("world-01-peaceful"); old.playSfx("bark"); old.setPaused(true);
+  old.playMusic("world-01-peaceful"); old.playSfx("whine"); old.setPaused(true);
   assert.equal(h.sounds[0].isPaused, true); assert.equal(h.sounds[1].destroyed, true);
-  old.playSfx("bark"); assert.equal(h.sounds.length, 2);
+  old.playSfx("whine"); assert.equal(h.sounds.length, 2);
   old.setPaused(false); assert.equal(h.sounds[0].plays, 1); assert.equal(h.sounds[0].resumes, 1);
   next.playMusic("world-01-calico"); old.destroy();
   assert.equal(h.sounds[2].isPlaying, true); assert.equal(h.sounds[2].destroyed, false);

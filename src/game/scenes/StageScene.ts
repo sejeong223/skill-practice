@@ -174,10 +174,12 @@ export class StageScene extends Phaser.Scene {
     this.resetBossFeedback();
     this.eventUnsubscribers.push(
       this.gameplayEventBus.on("death", () => {
+        this.playerAnimator?.stopBark();
         this.resetBossFeedback();
         this.publishBossFeedback(true, true);
       }),
       this.gameplayEventBus.on("restart", () => {
+        this.playerAnimator?.stopBark();
         this.resetBossFeedback();
         this.publishBossFeedback(true);
       }),
@@ -567,8 +569,9 @@ export class StageScene extends Phaser.Scene {
     }
     if (this.runtime?.getStatus() !== "play") {
       if (this.runtime?.getStatus() !== "paused") {
+        this.playerAnimator?.stopBark();
         this.bossFeedback.clearWarning();
-        this.cameras.main.shakeEffect.reset();
+        this.cameras.main?.shakeEffect.reset();
       }
       this.publishBossFeedback();
       this.playerAnimator?.stopSlipperSwing();
@@ -590,6 +593,7 @@ export class StageScene extends Phaser.Scene {
     if (input?.barkPressed && this.progress.unlockedSkills.includes("bark")) {
       const result = this.skillSystem?.use("bark", this.skillElapsedMs);
       if (result?.accepted) {
+        this.playerAnimator?.triggerBark();
         this.calicoBoss?.tryBarkStun(time);
         if (this.stageDefinition?.kind === "boss" && !this.stageTransitionStarted &&
             !this.calicoBoss?.isDefeated() && this.bossFeedback.recordBarkUse()) {
@@ -616,7 +620,7 @@ export class StageScene extends Phaser.Scene {
       }
       this.calicoBoss.update(time, delta);
     }
-    this.playerAnimator?.update(time);
+    this.playerAnimator?.update(time, delta);
     this.bowlShieldVisual?.update(delta, this.runtime?.getStatus() === "play" && !this.calicoBoss?.isDefeated());
     this.gimmickSystem?.update(time, delta);
     this.mapInteraction?.update(time, delta);
@@ -631,7 +635,7 @@ export class StageScene extends Phaser.Scene {
     this.skillSystem?.resetCooldowns();
     this.bossFeedback.reset();
     this.lastBossFeedbackSnapshot = undefined;
-    this.cameras.main.shakeEffect.reset();
+    this.cameras.main?.shakeEffect.reset();
   }
 
   private publishBossFeedback(force = false, forceInactive = false): void {
@@ -685,6 +689,7 @@ export class StageScene extends Phaser.Scene {
     // Keep the visible actor at the final hit position while dialogue continues.
     this.player.disableBody(false, false);
     this.player.setAnimationState("idle");
+    this.playerAnimator?.stopBark();
     this.playerAnimator?.stopSlipperSwing();
     this.playerAnimator?.update(this.time.now);
     this.bowlShieldVisual?.update(0, false);
@@ -752,7 +757,7 @@ export class StageScene extends Phaser.Scene {
       runtime.pause();
       this.physics.world.pause();
       this.audioManager?.setPaused(true);
-      this.cameras.main.shakeEffect.reset();
+      this.cameras.main?.shakeEffect.reset();
     } else if (!paused && runtime.getStatus() === "paused") {
       runtime.resume();
       this.physics.world.resume();

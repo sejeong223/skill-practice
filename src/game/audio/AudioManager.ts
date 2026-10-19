@@ -8,7 +8,6 @@ import { FEEDBACK_AUDIO, MUSIC_KEYS, SOUND_KEYS, type FeedbackSoundKey, type Mus
 
 const SOUND_PATTERNS: Readonly<Partial<Record<SoundKey, readonly number[]>>> = {
   "rib-reveal": [523, 659, 784],
-  bark: [262, 196],
   whine: [494, 440, 370],
   "cat-land": [196],
   "cat-taunt": [587, 494, 392],
@@ -65,9 +64,13 @@ export class AudioManager {
       this.audioContext = Tone.getContext().rawContext as AudioContext;
       this.prepareFeedbackSound("coin");
       this.prepareFeedbackSound("checkpoint");
+      this.prepareFeedbackSound("bark");
     }
     this.bindUnlockGesture();
     if (gameplayBus) {
+      this.unsubscribers.push(gameplayBus.on("skill-used", ({ skillId }) => {
+        if (skillId === "bark") this.playSfx("bark");
+      }));
       this.unsubscribers.push(gameplayBus.on("slipper-hit", () => this.playSfx("slipper-hit")));
       this.unsubscribers.push(gameplayBus.on("slipper-sneeze", () => this.playSfx("sneeze")));
       this.unsubscribers.push(gameplayBus.on("bite-hit", () => this.playSfx("bark")));
@@ -96,7 +99,7 @@ export class AudioManager {
 
   public playSfx(key: string): void {
     if (this.destroyed || this.paused || !SOUND_KEYS.includes(key as SoundKey)) return;
-    if (key === "coin" || key === "checkpoint") {
+    if (key === "coin" || key === "checkpoint" || key === "bark") {
       void this.playFeedbackSound(key);
       return;
     }
