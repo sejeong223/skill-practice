@@ -39,6 +39,32 @@ test('장애물 7개는 즉시 사망이고 잠자는 고양이만 할퀴기 접
   assert.deepEqual(obstacles.filter(({ contact }) => contact === 'cat-scratch').map(({ kind }) => kind), ['sleeping-fat-cat']);
 });
 
+test('작은 사물 다섯 종만 확대하고 기본 점프 한 번으로 모두 넘어간다', () => {
+  const sizes = new Map([
+    ['crushed-cola-can', [72, 50]],
+    ['empty-snack-bag', [96, 64]],
+    ['pink-sand-shovel', [64, 84]],
+    ['orange-traffic-cone', [72, 78]],
+    ['sleeping-fat-cat', [128, 75]],
+  ]);
+  for (const obstacle of obstacles) {
+    const size = sizes.get(obstacle.kind);
+    if (size) assert.deepEqual(obstacle.displaySize, { width: size[0], height: size[1] });
+    else assert.equal(obstacle.displaySize, undefined, `${obstacle.kind} spring size must stay native`);
+
+    // Clearance time above the collision zone, times horizontal speed, must
+    // exceed the zone width plus the corgi's 72 px Arcade body.
+    const v = 460;
+    const gravity = 1200;
+    const speed = 240;
+    const clearance = 2 * Math.sqrt(v * v - 2 * gravity * obstacle.hitbox.height) / gravity * speed;
+    assert.ok(clearance > obstacle.hitbox.width + 72, `${obstacle.kind} must remain jumpable`);
+  }
+  assert.deepEqual(obstacles.filter(({ kind }) => kind.endsWith('-spring')).map(({ hitbox }) => hitbox), [
+    { width: 42, height: 44 }, { width: 44, height: 44 }, { width: 42, height: 44 },
+  ]);
+});
+
 test('첫 스테이지 임시 함정·적만 사라지고 모래 발판과 후속 스테이지 요소는 남는다', () => {
   assert.ok(stage.segments.every(({ traps, enemies }) => traps.length === 0 && enemies.length === 0));
   assert.equal(stage.segments.flatMap(({ platforms }) => platforms).length, 1);

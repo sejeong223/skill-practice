@@ -45,6 +45,9 @@ export class World02ObstacleSystem {
       const image = scene.add.image(definition.x, definition.groundY, definition.textureKey)
         .setOrigin(0.5, 1)
         .setDepth(2);
+      if (definition.displaySize) {
+        image.setDisplaySize(definition.displaySize.width, definition.displaySize.height);
+      }
       const zone = scene.add.zone(
         definition.x,
         definition.groundY - definition.hitbox.height / 2,
@@ -96,6 +99,12 @@ export class World02ObstacleSystem {
     this.attackPending = false;
     this.attackRemainingMs = 0;
     this.catSprite?.image.setTexture("world-02-obstacle-sleeping-fat-cat");
+    if (this.catSprite?.definition.displaySize) {
+      this.catSprite.image.setDisplaySize(
+        this.catSprite.definition.displaySize.width,
+        this.catSprite.definition.displaySize.height,
+      );
+    }
     this.clearScratchMarks();
     this.player.unlockControl("world02-cat-scratch");
   }
@@ -107,6 +116,9 @@ export class World02ObstacleSystem {
     this.player.lockControl("world02-cat-scratch");
     this.player.setVelocity(0, 0);
     sprite.image.setTexture("world-02-obstacle-scratching-fat-cat");
+    if (sprite.definition.displaySize) {
+      sprite.image.setDisplaySize(sprite.definition.displaySize.width, sprite.definition.displaySize.height);
+    }
     this.drawScratchMarks(sprite);
     this.eventBus.emit("world02-cat-scratch", {
       obstacleId: sprite.definition.id,

@@ -15,7 +15,7 @@ const specs = [
   ['sleeping-fat-cat', 96, 56],
   ['scratching-fat-cat', 96, 56],
   ['crushed-cola-can', 40, 28],
-  ['empty-snack-bag', 48, 32],
+  ['empty-snack-bag', 96, 64],
 ];
 
 const manifest = JSON.parse(await readFile(path.join(root, 'src/game/assets/assetManifest.json'), 'utf8'));
@@ -72,4 +72,22 @@ test('고양이의 잠든 포즈와 할퀴는 포즈가 다른 이미지다', as
   const sleeping = await readFile(path.join(base, 'sleeping-fat-cat.png'));
   const scratching = await readFile(path.join(base, 'scratching-fat-cat.png'));
   assert.notDeepEqual(sleeping, scratching);
+});
+
+test('과자 봉지는 파란색 면과 밝은 포카칩 글자가 구분된다', async () => {
+  const bytes = await readFile(path.join(root, 'public/assets/pixel/props/world-02/empty-snack-bag.png'));
+  const { data, info } = await sharp(bytes).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+  let blue = 0;
+  let lettering = 0;
+  for (let y = 0; y < info.height; y++) {
+    for (let x = 0; x < info.width; x++) {
+      const index = (y * info.width + x) * 4;
+      const [r, g, b, a] = data.subarray(index, index + 4);
+      if (a < 200) continue;
+      if (b > r * 1.8 && b > g * 1.15) blue++;
+      if (x >= 23 && x <= 72 && y >= 24 && y <= 44 && r > 190 && g > 160 && b > 135) lettering++;
+    }
+  }
+  assert.ok(blue > 1100, 'blue bag surface should dominate');
+  assert.ok(lettering > 70, 'the cream-colored Korean label should be visible');
 });
