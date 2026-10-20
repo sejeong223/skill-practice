@@ -15,7 +15,7 @@ const specs = [
   ['sleeping-fat-cat', 96, 56],
   ['scratching-fat-cat', 96, 56],
   ['crushed-cola-can', 40, 28],
-  ['empty-snack-bag', 96, 64],
+  ['empty-snack-bag', 80, 84],
 ];
 
 const manifest = JSON.parse(await readFile(path.join(root, 'src/game/assets/assetManifest.json'), 'utf8'));
@@ -74,20 +74,29 @@ test('고양이의 잠든 포즈와 할퀴는 포즈가 다른 이미지다', as
   assert.notDeepEqual(sleeping, scratching);
 });
 
-test('과자 봉지는 파란색 면과 밝은 포카칩 글자가 구분된다', async () => {
+test('과자 봉지는 흰 윗부분·빨간 로고·파란 하단·감자칩과 포카칩 글자가 구분된다', async () => {
   const bytes = await readFile(path.join(root, 'public/assets/pixel/props/world-02/empty-snack-bag.png'));
   const { data, info } = await sharp(bytes).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
   let blue = 0;
   let lettering = 0;
+  let whiteTop = 0;
+  let redLogo = 0;
+  let yellowChips = 0;
   for (let y = 0; y < info.height; y++) {
     for (let x = 0; x < info.width; x++) {
       const index = (y * info.width + x) * 4;
       const [r, g, b, a] = data.subarray(index, index + 4);
       if (a < 200) continue;
       if (b > r * 1.8 && b > g * 1.15) blue++;
-      if (x >= 23 && x <= 72 && y >= 24 && y <= 44 && r > 190 && g > 160 && b > 135) lettering++;
+      if (x >= 19 && x <= 61 && y >= 22 && y <= 39 && r > 190 && g > 160 && b > 135) lettering++;
+      if (y < 22 && r > 190 && g > 170 && b > 140) whiteTop++;
+      if (y > 10 && y < 43 && r > 150 && g < 95 && b < 115) redLogo++;
+      if (y > 43 && r > 180 && g > 120 && b < 120) yellowChips++;
     }
   }
-  assert.ok(blue > 1100, 'blue bag surface should dominate');
-  assert.ok(lettering > 70, 'the cream-colored Korean label should be visible');
+  assert.ok(blue > 900, 'blue lower bag surface should remain visible');
+  assert.ok(lettering > 45, 'the cream-colored Korean label should be visible');
+  assert.ok(whiteTop > 300, 'the pale sealed top should be visible');
+  assert.ok(redLogo > 350, 'the red central logo should be visible');
+  assert.ok(yellowChips > 300, 'the golden potato chips should be visible');
 });

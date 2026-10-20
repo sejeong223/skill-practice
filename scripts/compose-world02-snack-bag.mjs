@@ -5,10 +5,10 @@ import { fileURLToPath } from "node:url";
 import sharp from "sharp";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const sourcePath = path.join(root, ".memory/test-plans/assets/2026-10-20-blue-snack-source.png");
+const sourcePath = path.join(root, ".memory/test-plans/assets/2026-10-20-blue-snack-source-v2.png");
 const outputPath = path.join(root, "public/assets/pixel/props/world-02/empty-snack-bag.png");
-const width = 96;
-const height = 64;
+const width = 80;
+const height = 84;
 
 const { data, info } = await sharp(await readFile(sourcePath))
   .ensureAlpha().raw().toBuffer({ resolveWithObject: true });
@@ -21,15 +21,15 @@ for (let index = 0; index < data.length; index += 4) {
 }
 
 const bag = await sharp(data, { raw: { width: info.width, height: info.height, channels: 4 } })
-  .extract({ left: 70, top: 155, width: 1430, height: 830 })
-  .resize({ width: 92, height: 56, fit: "inside", kernel: sharp.kernel.nearest })
+  .extract({ left: 120, top: 70, width: 990, height: 1170 })
+  .resize({ width: 76, height: 80, fit: "inside", kernel: sharp.kernel.nearest })
   .png().toBuffer();
 const bagSize = await sharp(bag).metadata();
 assert.ok(bagSize.width && bagSize.height);
 
-const label = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="96" height="64" viewBox="0 0 96 64">
-  <text x="48" y="42" text-anchor="middle" font-family="Malgun Gothic" font-size="15" font-weight="900"
-    paint-order="stroke fill" stroke="#391c40" stroke-width="1.6" fill="#fff1cb">포카칩</text>
+const label = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="80" height="84" viewBox="0 0 80 84">
+  <text x="40" y="37" text-anchor="middle" font-family="Malgun Gothic" font-size="13" font-weight="900"
+    paint-order="stroke fill" stroke="#391c40" stroke-width="1.2" fill="#fff8e5">포카칩</text>
 </svg>`);
 
 const composed = await sharp({
