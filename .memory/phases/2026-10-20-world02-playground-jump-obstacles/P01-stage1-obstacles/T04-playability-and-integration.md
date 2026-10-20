@@ -1,6 +1,6 @@
 # Task: T04 여덟 장애물의 점프 가능성과 실제 플레이 통합 검증
 
-## Status: pending
+## Status: done
 
 ## Goal
 
@@ -18,6 +18,8 @@
 - Related Files:
   - `src/game/data/world02Obstacles.ts` :: `WORLD02_STAGE1_OBSTACLES` — 필요한 경우 x/Zone 폭·높이 조정; modify if needed.
   - `src/game/systems/World02ObstacleSystem.ts` :: Zone 위치·이미지 위치·콜라이더 수명 — 실제 플레이에서 보인 오류만 수정; modify if needed.
+  - `src/game/stages/StageRuntime.ts` :: `addCheckpoint` — 연속 모래의 실제 표면 y=504에 월드 2 첫 스테이지 재시작 발 위치 정렬; 실제 브라우저에서 발견한 오류 수정.
+  - `src/app/globals.css` :: `.boss-bark-cooldown` 모바일 크기 — 작은 화면에서 코기를 가리는 실제 겹침 수정.
   - `public/assets/pixel/props/world-02/*.png` — 배경과 충돌 윤곽 차이가 크면 수정; modify if needed.
   - `public/assets/audio/world-02-cat-hiss.wav`, `src/game/audio/audioManifest.ts` — 소리가 불명확하거나 너무 크면 원본 발췌/`gain` 조정; modify if needed.
   - `scripts/world02-obstacles.test.mjs`, `scripts/world02-cat-attack.test.mjs`, `scripts/world02-obstacle-assets.test.mjs` — 발견한 실제 버그의 비중복 회귀 테스트 추가; modify if needed.
@@ -46,10 +48,10 @@
 
 ## Acceptance Criteria
 
-- [ ] 8종을 모두 기본 점프와 오른쪽 이동으로 넘을 수 있고, 각 7종 일반 장애물 접촉은 체크포인트 복귀를 일으킨다.
-- [ ] 고양이 접촉은 소리·할퀴기·사망 순서로 한 번만 실행되고 재시작 후 다시 잠든다.
-- [ ] 기존 모래 바닥·음악·짖기·체크포인트·출구와 다른 월드가 정상이다.
-- [ ] 실제 게임 화면과 모바일 캡처 및 검증 결과가 메모에 남는다.
+- [x] 8종을 모두 기본 점프와 오른쪽 이동으로 넘을 수 있고, 각 7종 일반 장애물 접촉은 체크포인트 복귀를 일으킨다.
+- [x] 고양이 접촉은 소리·할퀴기·사망 순서로 한 번만 실행되고 재시작 후 다시 잠든다.
+- [x] 기존 모래 바닥·음악·짖기·체크포인트·출구와 다른 월드가 정상이다.
+- [x] 실제 게임 화면과 모바일 캡처 및 검증 결과가 메모에 남는다.
 
 ## Validation
 
@@ -75,6 +77,6 @@ Task: T04-playability-and-integration
 
 ## Progress
 
-- [ ] 구현 완료
-- [ ] 검증 통과
-- commit: pending
+- [x] 구현 완료
+- [x] 검증 통과 — Chrome 연속 완주, 관련 테스트 37건, 에셋 검사, 린트, 빌드, 타입 검사
+- commit: 이 Task의 한국어 커밋

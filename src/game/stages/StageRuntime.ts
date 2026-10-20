@@ -218,7 +218,7 @@ export class StageRuntime {
       kind: "checkpoint",
       id: checkpointId,
       x,
-      y: 460,
+      y: this.definition.id === "world-02-stage-1" ? 444 : 460,
     }));
   }
 

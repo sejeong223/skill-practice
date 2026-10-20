@@ -12,7 +12,7 @@
 .boss-bark-cooldown > span { display: block; margin: 5px 0; font-variant-numeric: tabular-nums; }
 .boss-bark-track { height: 5px; background: #dec6a5; }
 .boss-bark-track > div { height: 100%; background: #a26051; }
-@media (max-width: 600px) { .boss-bark-cooldown { left: 8px; bottom: 8px; padding: 6px 8px; width: 125px; font-size: 11px; } }
+@media (max-width: 600px) { .boss-bark-cooldown { left: 4px; bottom: 4px; padding: 4px 6px; width: 96px; font-size: 10px; } }
 
 :root {
   --background: #f5e7c7;

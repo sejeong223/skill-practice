@@ -33,7 +33,8 @@ function harness() {
     add: {
       image(x, y, key) {
         const image = { x, y, key, destroyed: false, setOrigin() { return this; }, setDepth() { return this; },
-          setTexture(next) { this.key = next; return this; }, destroy() { this.destroyed = true; } };
+          setTexture(next) { if (this.destroyed) throw new Error('Cannot set a texture after scene shutdown');
+            this.key = next; return this; }, destroy() { this.destroyed = true; } };
         images.push(image); return image;
       },
       zone(x, y, width, height) {
@@ -118,6 +119,15 @@ test('정지·재시작·종료가 고양이 연출의 시간과 수명을 정�
   h.system.update(1000);
   h.cat.callback();
   assert.equal(h.events.filter(({ type }) => type === 'death-requested').length, 0);
+});
+
+test('장면 종료로 이미지가 먼저 파괴돼도 고양이 정리가 전환을 막지 않는다', () => {
+  const h = harness();
+  h.cat.callback();
+  h.images.forEach(image => image.destroy());
+  assert.doesNotThrow(() => h.system.destroy());
+  assert.equal(h.locks.size, 0);
+  assert.ok(h.overlaps.every(({ destroyed }) => destroyed));
 });
 
 test('고양이 하악질 WAV는 44.1 kHz 단일 채널 16-bit PCM이며 0.95초 실제 신호다', () => {

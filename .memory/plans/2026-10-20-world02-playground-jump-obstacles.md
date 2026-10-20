@@ -12,7 +12,7 @@
 
 | Phase | Status | Summary | Blueprint |
 | :--- | :--- | :--- | :--- |
-| P01 | `in_progress` | 이미지 9장, 8종 배치·충돌, 고양이 소리·할퀴기, 통합 검증 | [P01](../phases/2026-10-20-world02-playground-jump-obstacles/P01-stage1-obstacles/phase.md) |
+| P01 | `done` | 이미지 9장, 8종 배치·충돌, 고양이 소리·할퀴기, 통합 검증 | [P01](../phases/2026-10-20-world02-playground-jump-obstacles/P01-stage1-obstacles/phase.md) |
 
 ## Task Order
 

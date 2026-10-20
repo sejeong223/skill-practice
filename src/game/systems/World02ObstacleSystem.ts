@@ -136,8 +136,11 @@ export class World02ObstacleSystem {
 
   public destroy(): void {
     if (this.destroyed) return;
-    this.resetForAttempt();
     this.destroyed = true;
+    this.attackPending = false;
+    this.attackRemainingMs = 0;
+    this.clearScratchMarks();
+    this.player.unlockControl("world02-cat-scratch");
     for (const collider of this.colliders) collider.destroy();
     for (const { image, zone } of this.sprites) {
       zone.destroy();
