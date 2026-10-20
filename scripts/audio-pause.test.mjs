@@ -113,13 +113,13 @@ test("짖기 사용 성공만 소리를 한 번 내고 거절·다른 스킬은 
   await h.decode();
   assert.equal(skills.use("bark",0).accepted,true); await Promise.resolve();
   assert.equal(h.sources.length,1);
-  assert.equal(skills.use("bark",9999).accepted,false); await Promise.resolve();
-  bus.emit("skill-used",{skillId:"bite",now:10000}); await Promise.resolve();
+  assert.equal(skills.use("bark",2999).accepted,false); await Promise.resolve();
+  bus.emit("skill-used",{skillId:"bite",now:3000}); await Promise.resolve();
   assert.equal(h.sources.length,1);
   audio.setPaused(true); assert.ok(h.sources[0].stopped);
   audio.setPaused(false);
-  skills.use("bark",10000); await Promise.resolve(); assert.equal(h.sources.length,2);
-  audio.destroy(); bus.emit("skill-used",{skillId:"bark",now:20000}); await Promise.resolve();
+  skills.use("bark",3000); await Promise.resolve(); assert.equal(h.sources.length,2);
+  audio.destroy(); bus.emit("skill-used",{skillId:"bark",now:6000}); await Promise.resolve();
   assert.equal(h.sources.length,2);
 });
 

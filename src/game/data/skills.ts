@@ -1,6 +1,6 @@
 import type { SkillDefinition } from "../core/types";
 
-export const BARK_COOLDOWN_MS = 10_000;
+export const BARK_COOLDOWN_MS = 3_000;
 
 export const SKILL_DEFINITIONS: readonly SkillDefinition[] = [
   {

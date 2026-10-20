@@ -11,18 +11,18 @@ const { BossFeedbackController } = require("../src/game/systems/bossFeedback.ts"
 const { SkillSystem } = require("../src/game/systems/SkillSystem.ts");
 const { SKILL_DEFINITIONS } = require("../src/game/data/skills.ts");
 
-test("성공한 짖기만 10초 간격으로 세며 재도전에서 해금은 유지한다", () => {
+test("성공한 짖기만 3초 간격으로 세며 재도전에서 해금은 유지한다", () => {
   const player = { setAnimationState() {} };
   const locked = new SkillSystem(player, SKILL_DEFINITIONS);
   assert.equal(locked.use("bark", 0).reason, "locked");
   const skills = new SkillSystem(player, SKILL_DEFINITIONS, undefined, undefined, ["bark"]);
   const feedback = new BossFeedbackController();
   const warnings = [];
-  for (const now of [0, 9999, 10000, 19999, 20000, 30000, 40000, 50000]) {
+  for (const now of [0, 2999, 3000, 5999, 6000, 9000, 12000, 15000]) {
     if (skills.use("bark", now).accepted && feedback.recordBarkUse()) warnings.push(now);
   }
-  assert.deepEqual(warnings, [20000, 50000]);
-  assert.equal(skills.getRemainingCooldown("bark", 50000), 10000);
+  assert.deepEqual(warnings, [6000, 15000]);
+  assert.equal(skills.getRemainingCooldown("bark", 15000), 3000);
   skills.resetCooldowns(); feedback.reset();
   assert.equal(skills.use("bark", 0).accepted, true);
   assert.equal(feedback.recordBarkUse(), false);

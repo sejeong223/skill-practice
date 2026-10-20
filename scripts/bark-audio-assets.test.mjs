@@ -3,18 +3,22 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import sharp from "sharp";
 import { fileURLToPath } from "node:url";
-import { renderBarkAudio } from "./generate-bark-audio.mjs";
 
-test("짖기 음원은 재현 가능한 0.4초 PCM이며 무음·클리핑이 없다", () => {
+test("실제 단발 짖음은 브라우저에서 재생 가능한 짧은 PCM 음원이다", () => {
   const wav = fs.readFileSync(new URL("../public/assets/audio/corgi-bark.wav",import.meta.url));
-  assert.deepEqual(wav, renderBarkAudio().wav);
   assert.equal(wav.toString("ascii",0,4),"RIFF");
+  assert.equal(wav.toString("ascii",8,12),"WAVE");
+  assert.equal(wav.toString("ascii",36,40),"data");
   assert.equal(wav.readUInt16LE(20),1); assert.equal(wav.readUInt16LE(22),1);
   assert.equal(wav.readUInt32LE(24),44100); assert.equal(wav.readUInt16LE(34),16);
-  assert.equal(wav.length,44+17640*2);
-  const samples=Array.from({length:17640},(_,i)=>wav.readInt16LE(44+i*2)/32768);
+  const sampleCount=wav.readUInt32LE(40)/2;
+  assert.equal(wav.length,44+sampleCount*2);
+  assert.ok(sampleCount/44100>0.25 && sampleCount/44100<0.4);
+  const samples=Array.from({length:sampleCount},(_,i)=>wav.readInt16LE(44+i*2)/32768);
   const peak=Math.max(...samples.map(Math.abs));
-  assert.ok(peak>0.1 && peak<=0.651);
+  const rms=Math.sqrt(samples.reduce((sum,s)=>sum+s*s,0)/samples.length);
+  assert.ok(peak>0.7 && peak<0.9);
+  assert.ok(rms>0.1);
   assert.ok(Math.abs(samples.reduce((sum,s)=>sum+s,0)/samples.length)<0.001);
   assert.equal(samples.at(-1),0);
 });
