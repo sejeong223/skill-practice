@@ -1,6 +1,6 @@
 # Task: T02 상자 통과 발동과 열린 상태 유지
 
-## Status: pending
+## Status: done
 
 ## Goal
 
@@ -17,6 +17,7 @@
 
 - Related Files:
   - `src/game/systems/MapGimmickSystem.ts` :: `update`, `reset`, `createGimmickVisual`, `requestDeath`, `overlapsGimmick` — 상자 전용 발동·시각·피격·복원; modify.
+  - `src/game/systems/world01BoxTrap.ts` :: `isAtStaticBox`, `hasPassedStaticBox`, `getOpenStaticBoxDangerRects` — 가로 진입과 판지/손 두 영역의 순수 기하 계산; new.
   - `src/game/data/world01Gimmicks.ts` :: `visuals["box-static"]` — 기존 좌표와 닫힌 상자 크기 참고; read-only.
   - `src/game/systems/checkpointGimmickState.ts` :: `toCheckpointGimmickState` — 열린 상태 저장 정책 참고; read-only.
   - `src/game/assets/assetManifest.json` :: `world-01-prop-cat-box-open` — T01 키 참조; read-only.
@@ -26,7 +27,7 @@
 - `update`에서 `box-static`만 일반 `status !== "armed"` 건너뛰기보다 앞에서 처리한다. 코기 몸체의 가로 구간이 상자 x부터 폭44의 근처(예: 좌우 12px 여유)에 진입하면 높이와 점프 입력에 관계없이 `armed -> triggered`로 한 번 전환한다. `triggered`/`escaped`인 상자도 다시 닫히지 않으며, 왼쪽으로 되돌아와도 열린 채다.
 - T01 PNG를 기존 이미지 객체의 texture로 전환한다. 표시 크기는 실제 PNG 형태에 맞춰 폭 56~68px, 높이 50~64px 안에서 정하고 하단을 기존 바닥 `gimmick.y + gimmick.height`에 맞춘다. 원래 닫힌 이미지는 `world-01-props` 아틀라스의 `cat-box` 프레임으로 그대로 사용한다. 열린 상자만 바꾸고 별도의 2번째 상자 오브젝트를 겹쳐 그리지 않는다.
 - 코기 몸체가 상자 오른쪽을 통과하면 `escaped`로 기록해 성공한 회피를 남긴다. `triggered`와 `escaped` 모두 시각은 열린 채이며 위험 영역도 유지한다. 닿으면 기존 `requestDeath` 경로를 써서 사망·체크포인트 복귀를 실행한다. `requestDeath` 후 `dead`인 상자는 반복 사망 이벤트를 내지 않는다.
-- 열린 상자의 판지+손을 포함한 충돌 판정은 바닥 y=512(스테이지 2·4의 해당 구간에서는 `gimmick.y + height`)에서 위로 약 50~60px, 폭은 시각의 가운데 위험 영역에 맞춘다. 닫힌 상자 44×36보다 높아도 보이는 부분만 치명 영역으로 잡는다. 처음 열린 프레임에서도 열린 판정을 적용한다. 점프 정점에서 코기 몸체 아래끝이 위험 영역 위에 있어야 하며, 상자 전방에서 점프를 시작할 현실적인 간격이 있어야 한다.
+- 열린 상자의 판지와 손은 서로 다른 두 개의 위험 사각형으로 판정한다. 바닥 `gimmick.y + gimmick.height`를 기준으로 상자 몸체는 `x=gimmick.x, width=44, height=36`, 손은 `x=gimmick.x+14, width=16, height=54`다. 월드 1 코기 몸체 폭은 `StageScene`에서 48px로 설정된다. 열린 그림 전체를 폭 56×높이54 사각형으로 잡을 경우 피할 수는 있어도 도약 시작 허용 구간이 좁으므로, 판지의 열린 날개는 장식으로 두고 실제 고양이 손의 좁은 폭만 높은 판정에 넣는다. 처음 열린 프레임부터 이 판정을 적용한다.
 - `reset(snapshot)`은 `armed`면 닫힌 아틀라스·원래 44×36 크기/위치, `triggered`/`escaped`면 열린 PNG·열린 크기/위치를 복원한다. 저장된 체크포인트의 열린 상태는 그대로 표시하고, 새 시도의 초기화는 스냅샷 상태를 따른다. 기존 `box-cat-arm`의 `showTriggeredVisual`은 수정하지 않는다.
 
 ### I02. 회귀 검증과 게임 화면 확인
@@ -54,7 +55,7 @@
 ## Validation
 
 - `node --test scripts/world01-box-open-art.test.mjs scripts/world01-box-open.test.mjs scripts/world01-respawn.test.mjs` — 새 상자·기존 재시작 검증.
-- `node scripts/world01-maps.mjs` — 맵 좌표 회귀.
+- `npm.cmd run world01:maps:check` — 맵 좌표 회귀(파일 재생성 없음).
 - `node node_modules/typescript/bin/tsc --noEmit` — 타입 검사.
 - `npm.cmd run lint` — lint.
 - `npm.cmd run build` — 빌드.
@@ -75,6 +76,6 @@ Task: T02-box-trigger-and-collision
 
 ## Progress
 
-- [ ] 구현 완료
-- [ ] 검증 통과
-- commit: pending
+- [x] 구현 완료
+- [x] 검증 통과
+- commit: 이 Task의 Git 커밋 메시지 참조

@@ -12,7 +12,7 @@
 
 | Phase | Status | Summary | Blueprint |
 | :--- | :--- | :--- | :--- |
-| P01 | `in_progress` | 참조 그림에 맞는 열린 상자 에셋과 통과 발동·검증 | [P01](../phases/2026-10-20-world01-cat-box-open/P01-box-open/phase.md) |
+| P01 | `done` | 참조 그림에 맞는 열린 상자 에셋과 통과 발동·검증 | [P01](../phases/2026-10-20-world01-cat-box-open/P01-box-open/phase.md) |
 
 ## Task Order
 

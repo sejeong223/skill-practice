@@ -15,6 +15,13 @@ import type { InputManager } from "../input/InputManager";
 import type { LoadedMap } from "../maps/mapTypes";
 import { MapInteractionSystem } from "../maps/MapInteractionSystem";
 import { toCheckpointGimmickState } from "./checkpointGimmickState";
+import {
+  BOX_OPEN_DISPLAY,
+  BOX_OPEN_TEXTURE_KEY,
+  getOpenStaticBoxDangerRects,
+  hasPassedStaticBox,
+  isAtStaticBox,
+} from "./world01BoxTrap";
 
 type RuntimeEntry = GimmickRuntimeState;
 
@@ -123,6 +130,10 @@ export class MapGimmickSystem {
 
     for (const gimmick of this.map.gimmicks) {
       const state = this.entries.get(gimmick.id);
+      if (gimmick.kind === "box-static") {
+        this.updateStaticBox(gimmick, time);
+        continue;
+      }
       if (!state || state.status !== "armed") {
         if (gimmick.kind === "ground-rise" && state?.status === "triggered") {
           this.updateRisingGround(gimmick, state, time);
@@ -162,7 +173,6 @@ export class MapGimmickSystem {
         case "ant-static":
         case "white-spike-static":
         case "pigeon-static":
-        case "box-static":
           this.requestDeath(gimmick, time);
           break;
         case "open-manhole":
@@ -246,6 +256,9 @@ export class MapGimmickSystem {
           };
       this.entries.set(gimmick.id, next);
       this.visuals.get(gimmick.id)?.setVisible(this.isDefaultVisible(gimmick));
+      if (gimmick.kind === "box-static") {
+        this.syncStaticBoxVisual(gimmick, next.status !== "armed");
+      }
       if (["fake-bone-green", "fake-bone-reverse", "fake-bone-fire"].includes(gimmick.kind)) {
         const baseFrame = this.getVisualFrame(gimmick, false);
         if (baseFrame) this.visuals.get(gimmick.id)?.setFrame(baseFrame)
@@ -331,6 +344,46 @@ export class MapGimmickSystem {
       return;
     }
     this.beginGimmick(gimmick, now, "object-enter");
+  }
+
+  private updateStaticBox(gimmick: WorldGimmickDefinition, now: number): void {
+    const state = this.entries.get(gimmick.id);
+    if (!state || state.status === "dead") return;
+
+    const bounds = this.getPlayerBounds();
+    if (state.status === "armed" && isAtStaticBox(bounds, gimmick.x, gimmick.width)) {
+      this.setStatus(gimmick, "triggered", now);
+      this.syncStaticBoxVisual(gimmick, true);
+    }
+
+    if (this.entries.get(gimmick.id)?.status !== "armed" && this.overlapsGimmick(gimmick)) {
+      this.requestDeath(gimmick, now);
+      return;
+    }
+
+    if (this.entries.get(gimmick.id)?.status === "triggered" &&
+      hasPassedStaticBox(bounds, gimmick.x, gimmick.width)) {
+      this.setStatus(gimmick, "escaped", now);
+    }
+  }
+
+  private syncStaticBoxVisual(gimmick: WorldGimmickDefinition, open: boolean): void {
+    const image = this.visuals.get(gimmick.id);
+    if (!image) return;
+
+    const floorY = gimmick.y + gimmick.height;
+    const centerX = gimmick.x + gimmick.width / 2;
+    if (open && this.scene.textures.exists(BOX_OPEN_TEXTURE_KEY)) {
+      image.setTexture(BOX_OPEN_TEXTURE_KEY);
+      image.setDisplaySize(BOX_OPEN_DISPLAY.width, BOX_OPEN_DISPLAY.height);
+      image.setPosition(centerX, floorY - BOX_OPEN_DISPLAY.height / 2);
+      return;
+    }
+
+    const closedFrame = this.getVisualFrame(gimmick, false);
+    if (closedFrame) image.setTexture("world-01-props", closedFrame);
+    image.setDisplaySize(gimmick.width, gimmick.height);
+    image.setPosition(centerX, floorY - gimmick.height / 2);
   }
 
   private beginDelayedJumpTrap(gimmick: WorldGimmickDefinition, now: number): void {
@@ -798,6 +851,13 @@ export class MapGimmickSystem {
       case "revealed-white-spike":
         zone = new Phaser.Geom.Rectangle(gimmick.x + 12, floorY - 20, gimmick.width - 24, 20);
         break;
+      case "box-static":
+        return getOpenStaticBoxDangerRects(gimmick.x, floorY).some((rect) =>
+          Phaser.Geom.Rectangle.Overlaps(
+            this.getPlayerBounds(),
+            new Phaser.Geom.Rectangle(rect.x, rect.y, rect.width, rect.height),
+          ),
+        );
       case "jump-pigeon":
       case "box-cat-arm":
       case "cloud-rain":
