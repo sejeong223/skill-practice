@@ -16,3 +16,11 @@
 - `node --test scripts/goodboy-wearables-assets.test.mjs scripts/goodboy-wearables.test.mjs scripts/bark-presentation.test.mjs`: 6/6 통과. 20개 PNG 프레임·투명도, 포즈/방향/교체/벗기기, 저장·자동 저장 연결을 확인했다.
 - `node scripts/generate-goodboy-wearables.mjs --check`, `node scripts/sync-goodboy-wearables-manifest.mjs --check`, `node scripts/validate-assets.mjs`, `node node_modules/typescript/bin/tsc --noEmit`, `npm.cmd run lint`, `npm.cmd run build`: 모두 통과.
 - 상점 구매 버튼에서 즉시 착용 이벤트를 보내는 경로는 P04-T01에서 연결한다.
+
+## P02-T03 무기·방패 장착
+
+- 상점 아이콘과 일치하는 투명 64×64 장착 이미지 9개를 만들고 필수 자산으로 등록했다. 기본 밥그릇은 기존 그림을 유지하며 새 방패를 장착하면 표시하지 않는다.
+- [월드 2 신문지·우산](./assets/2026-10-21-goodboy-held-newspaper-umbrella.png), [삑삑이 공·쿠션](./assets/2026-10-21-goodboy-held-ball-cushion.png), [공격 중](./assets/2026-10-21-goodboy-held-attack.png), [좌향 이동](./assets/2026-10-21-goodboy-held-left.png), [월드 1 원반·냄비 뚜껑](./assets/2026-10-21-goodboy-held-world01.png)을 실제 Chrome 화면에서 확인했다. 처음 겹쳤던 무기·방패 위치는 분리해 다시 확인했다.
+- 새 장비는 저장된 선택값으로 보스전에도 들어가며, 새 무기 J 입력은 고유 효과가 붙기 전까지 물건 이미지의 휘두름만 보여 준다. 기본 슬리퍼 이벤트는 발생하지 않는다. 공격·방어 고유 효과는 P03에서 연결한다.
+- `node --test scripts/goodboy-held-assets.test.mjs scripts/goodboy-equipment-visual.test.mjs scripts/bowl-defense.test.mjs`: 5/5 통과. 장비 전면 배치·좌우 반전·교체·정리·기본 슬리퍼 이벤트 분리를 확인했다.
+- 생성기·매니페스트 `--check`, `node scripts/validate-assets.mjs`, 타입 검사, 린트, 빌드가 모두 통과했다.

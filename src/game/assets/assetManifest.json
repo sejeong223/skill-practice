@@ -681,5 +681,59 @@
     "kind": "image",
     "url": "/assets/pixel/characters/corgi/equipment/prince-crown-bark.png",
     "required": true
+  },
+  {
+    "key": "held-squeaky-ball",
+    "kind": "image",
+    "url": "/assets/pixel/characters/corgi/equipment/squeaky-ball-held.png",
+    "required": true
+  },
+  {
+    "key": "held-rolled-newspaper",
+    "kind": "image",
+    "url": "/assets/pixel/characters/corgi/equipment/rolled-newspaper-held.png",
+    "required": true
+  },
+  {
+    "key": "held-pink-backscratcher",
+    "kind": "image",
+    "url": "/assets/pixel/characters/corgi/equipment/pink-backscratcher-held.png",
+    "required": true
+  },
+  {
+    "key": "held-drumstick-boomerang",
+    "kind": "image",
+    "url": "/assets/pixel/characters/corgi/equipment/drumstick-boomerang-held.png",
+    "required": true
+  },
+  {
+    "key": "held-plastic-frisbee",
+    "kind": "image",
+    "url": "/assets/pixel/characters/corgi/equipment/plastic-frisbee-held.png",
+    "required": true
+  },
+  {
+    "key": "held-cushion-pad",
+    "kind": "image",
+    "url": "/assets/pixel/characters/corgi/equipment/cushion-pad-held.png",
+    "required": true
+  },
+  {
+    "key": "held-greasy-pizza-box",
+    "kind": "image",
+    "url": "/assets/pixel/characters/corgi/equipment/greasy-pizza-box-held.png",
+    "required": true
+  },
+  {
+    "key": "held-umbrella",
+    "kind": "image",
+    "url": "/assets/pixel/characters/corgi/equipment/umbrella-held.png",
+    "required": true
+  },
+  {
+    "key": "held-yellow-pot-lid",
+    "kind": "image",
+    "url": "/assets/pixel/characters/corgi/equipment/yellow-pot-lid-held.png",
+    "required": true
   }
 ]

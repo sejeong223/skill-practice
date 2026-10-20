@@ -8,7 +8,8 @@ export interface SlipperAttackResult {
     | "slipper-sneeze"
     | "bite-hit"
     | "cooldown"
-    | "bite-window-expired";
+    | "bite-window-expired"
+    | "tool-preview";
   comboCount: number;
   knockbackX: number;
 }

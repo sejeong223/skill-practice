@@ -12,6 +12,7 @@ export class CombatSystem {
   private readonly eventBus: GameplayEventBus;
   private readonly slipperAttack: SlipperAttackController;
   private attackToolId = "rabbit-slipper";
+  private nextToolAttackAt = 0;
 
   public constructor(
     player: Player,
@@ -36,7 +37,12 @@ export class CombatSystem {
       };
     }
 
-    return this.slipperAttack.tryAttack(now);
+    if (tool.id === "rabbit-slipper") return this.slipperAttack.tryAttack(now);
+    if (now < this.nextToolAttackAt) {
+      return { accepted: false, kind: "cooldown", comboCount: 0, knockbackX: 0 };
+    }
+    this.nextToolAttackAt = now + 280;
+    return { accepted: true, kind: "tool-preview", comboCount: 0, knockbackX: 0 };
   }
 
   public setAttackTool(toolId: string): void {
@@ -44,6 +50,7 @@ export class CombatSystem {
 
     if (tool?.slot === "attack") {
       this.attackToolId = toolId;
+      this.nextToolAttackAt = 0;
     }
   }
 
@@ -53,6 +60,7 @@ export class CombatSystem {
 
   public resetForStage(): void {
     this.slipperAttack.resetForStage();
+    this.nextToolAttackAt = 0;
   }
 
   public getAttackToolId(): string {

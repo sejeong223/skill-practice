@@ -27,6 +27,7 @@ import { Enemy } from "../entities/Enemy";
 import { Player } from "../entities/Player";
 import { PlayerAnimator } from "../entities/PlayerAnimator";
 import { PlayerWearables } from "../entities/PlayerWearables";
+import { EquipmentVisual } from "../entities/EquipmentVisual";
 import { BowlShieldVisual } from "../entities/BowlShieldVisual";
 import { DEFAULT_PLAYER_TUNING } from "../entities/playerTypes";
 import { InputManager, toKeybindMap } from "../input/InputManager";
@@ -66,6 +67,7 @@ export class StageScene extends Phaser.Scene {
   private player?: Player;
   private playerAnimator?: PlayerAnimator;
   private playerWearables?: PlayerWearables;
+  private equipmentVisual?: EquipmentVisual;
   private inputManager?: InputManager;
   private playerController?: PlayerController;
   private cameraDirector?: CameraDirector;
@@ -126,10 +128,6 @@ export class StageScene extends Phaser.Scene {
     const registeredProgress = this.registry.get("progressState") as ProgressState | undefined;
     this.progress = registeredProgress ?? createDefaultProgressState(data.playerName);
     if (data.playerName) this.progress.playerName = data.playerName;
-    if (stage.id === "world-01-stage-boss") {
-      this.progress.equippedAttackToolId = "rabbit-slipper";
-      this.progress.equippedDefenseToolId = "upside-down-bowl";
-    }
     const theme = getWorld01StageTheme(stage.id, getWorldMapTheme(stage.worldId));
     const savedCheckpoint = this.registry.get(WORLD01_CHECKPOINT_SNAPSHOT_KEY) as CheckpointSnapshot | undefined;
     const seed = data.seed ?? (savedCheckpoint?.stageId === stage.id &&
@@ -155,6 +153,8 @@ export class StageScene extends Phaser.Scene {
     this.playerAnimator = new PlayerAnimator(this.player);
     this.playerWearables = new PlayerWearables(this, this.player);
     this.playerWearables.setEquipment(this.progress.equippedOutfitId, this.progress.equippedAccessoryId);
+    this.equipmentVisual = new EquipmentVisual(this, this.player);
+    this.equipmentVisual.setTools(this.progress.equippedAttackToolId, this.progress.equippedDefenseToolId);
     this.inputManager = new InputManager(this, toKeybindMap(this.progress.keybinds));
     this.playerController = new PlayerController(
       this.player,
@@ -351,8 +351,9 @@ export class StageScene extends Phaser.Scene {
       this.calicoSprite = this.add.sprite(1280, 472, "world-01-calico-boss", 0)
         .setDepth(10);
       this.combatSystem = new CombatSystem(this.player, this.gameplayEventBus, TOOL_DEFINITIONS);
-      this.combatSystem.setAttackTool("rabbit-slipper");
+      this.combatSystem.setAttackTool(this.progress.equippedAttackToolId);
       this.defenseToolSystem = new DefenseToolSystem(this.gameplayEventBus, TOOL_DEFINITIONS);
+      this.defenseToolSystem.resetForStage(this.progress.equippedDefenseToolId);
       this.bowlShieldVisual = new BowlShieldVisual(this, this.player, this.defenseToolSystem, this.gameplayEventBus);
       this.strayDogEvent = new StrayDogEvent(this.gameplayEventBus, () => ({
         x: this.player!.x, y: this.player!.y - 20,
@@ -442,6 +443,22 @@ export class StageScene extends Phaser.Scene {
       }
       this.playerWearables?.setEquipment(this.progress.equippedOutfitId, this.progress.equippedAccessoryId);
     }));
+    this.eventUnsubscribers.push(this.eventBus.on("equipment-change-requested", (selection) => {
+      const status = this.runtime?.getStatus();
+      if (status !== "play" && status !== "paused") return;
+      if (selection.attackToolId && this.progress.ownedToolIds.includes(selection.attackToolId) &&
+          TOOL_DEFINITIONS.some((tool) => tool.id === selection.attackToolId && tool.slot === "attack")) {
+        this.progress.equippedAttackToolId = selection.attackToolId;
+        this.combatSystem?.setAttackTool(selection.attackToolId);
+      }
+      if (selection.defenseToolId && this.progress.ownedToolIds.includes(selection.defenseToolId) &&
+          TOOL_DEFINITIONS.some((tool) => tool.id === selection.defenseToolId && tool.slot === "defense")) {
+        this.progress.equippedDefenseToolId = selection.defenseToolId;
+        this.defenseToolSystem?.setDefenseTool(selection.defenseToolId);
+      }
+      this.equipmentVisual?.setTools(this.progress.equippedAttackToolId, this.progress.equippedDefenseToolId);
+      this.bowlShieldVisual?.update(0, false);
+    }));
     this.eventUnsubscribers.push(this.eventBus.on("world-selection-requested", (selection) => {
       if (!isWorldSelectionUnlocked(this.progress) || this.stageTransitionStarted) return;
       this.stageTransitionStarted = true;
@@ -484,6 +501,8 @@ export class StageScene extends Phaser.Scene {
       this.playerAnimator?.destroy();
       this.playerWearables?.destroy();
       this.playerWearables = undefined;
+      this.equipmentVisual?.destroy();
+      this.equipmentVisual = undefined;
       this.stageReviewKey?.off("down", this.reviewNextWorld01Stage, this);
       if (this.stageReviewKey) this.input.keyboard?.removeKey(this.stageReviewKey, true);
       this.overviewKey?.off("down", this.toggleMapOverview, this);
@@ -609,6 +628,7 @@ export class StageScene extends Phaser.Scene {
       this.setPaused(this.runtime?.getStatus() !== "paused");
     }
     if (this.runtime?.getStatus() !== "play") {
+      this.equipmentVisual?.setEnabled(this.runtime?.getStatus() === "paused");
       if (this.runtime?.getStatus() !== "paused") {
         this.playerAnimator?.stopBark();
         this.bossFeedback.clearWarning();
@@ -620,6 +640,7 @@ export class StageScene extends Phaser.Scene {
       return;
     }
     const elapsed = Number.isFinite(delta) ? Math.max(0, delta) : 0;
+    this.equipmentVisual?.setEnabled(true);
     this.skillElapsedMs += elapsed;
     this.bossFeedback.update(elapsed);
     this.playerController?.update(time, delta);
@@ -651,6 +672,8 @@ export class StageScene extends Phaser.Scene {
         const result = this.combatSystem.tryAttack(time);
         if (result.accepted && result.kind === "slipper-hit") {
           this.playerAnimator?.triggerSlipperSwing(time);
+        } else if (result.accepted && result.kind === "tool-preview") {
+          this.equipmentVisual?.showAttack(time, ["squeaky-ball", "drumstick-boomerang", "plastic-frisbee"].includes(this.progress.equippedAttackToolId) ? "projectile" : "melee");
         } else if (result.kind === "slipper-sneeze") {
           this.playerAnimator?.stopSlipperSwing();
         }
@@ -661,9 +684,11 @@ export class StageScene extends Phaser.Scene {
         }
       }
       this.calicoBoss.update(time, delta);
+    } else if (input?.attackPressed && this.progress.equippedAttackToolId !== "rabbit-slipper") {
+      this.equipmentVisual?.showAttack(time, ["squeaky-ball", "drumstick-boomerang", "plastic-frisbee"].includes(this.progress.equippedAttackToolId) ? "projectile" : "melee");
     }
     this.playerAnimator?.update(time, delta);
-    this.bowlShieldVisual?.update(delta, this.runtime?.getStatus() === "play" && !this.calicoBoss?.isDefeated());
+    this.bowlShieldVisual?.update(delta, this.progress.equippedDefenseToolId === "upside-down-bowl" && this.runtime?.getStatus() === "play" && !this.calicoBoss?.isDefeated());
     this.gimmickSystem?.update(time, delta);
     this.mapInteraction?.update(time, delta);
     for (const enemy of this.mapEnemies.values()) enemy.updateMovement(time);

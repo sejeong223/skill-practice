@@ -73,4 +73,4 @@ Task: T02-corgi-wearables
 
 - [x] 구현 완료
 - [x] 검증 통과
-- commit: pending
+- commit: `8ac75e0`
