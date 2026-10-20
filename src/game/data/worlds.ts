@@ -134,7 +134,7 @@ function createSegment(
     id: segmentId,
     length,
     platforms,
-    traps: isBoss || isSafeSection
+    traps: stageId === "world-02-stage-1" || isBoss || isSafeSection
       ? []
       : [
           {
@@ -151,7 +151,7 @@ function createSegment(
             effect: "knockback-and-reset",
           },
         ],
-    enemies: isBoss || isSafeSection
+    enemies: stageId === "world-02-stage-1" || isBoss || isSafeSection
       ? []
       : [
           {

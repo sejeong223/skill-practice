@@ -14,6 +14,7 @@ import { getStageMusicKey } from "../audio/stageMusic";
 import { CutsceneDirector } from "../cutscenes/CutsceneDirector";
 import { CUTSCENE_SCRIPTS } from "../data/cutscenes";
 import { TOOL_DEFINITIONS } from "../data/tools";
+import { WORLD02_STAGE1_OBSTACLES } from "../data/world02Obstacles";
 import { BARK_COOLDOWN_MS, SKILL_DEFINITIONS } from "../data/skills";
 import { BossFeedbackController, BARK_SHAKE_DURATION_MS, BARK_SHAKE_INTENSITY, type BossFeedbackSnapshot } from "../systems/bossFeedback";
 import { GameplayEventBus } from "../core/events";
@@ -45,6 +46,7 @@ import { RestartController } from "../systems/RestartController";
 import { SkillSystem } from "../systems/SkillSystem";
 import { StrayDogEvent } from "../systems/StrayDogEvent";
 import { World01CalicoBoss } from "../systems/World01CalicoBoss";
+import { World02ObstacleSystem } from "../systems/World02ObstacleSystem";
 import { getWorld01Respawn, isWorld01CheckpointStageId } from "../systems/world01Respawn";
 import { getWorld01ReplayTarget, getWorldStartStageId, isWorldSelectionUnlocked } from "../systems/worldSelection";
 
@@ -68,6 +70,7 @@ export class StageScene extends Phaser.Scene {
   private loadedMap?: LoadedMap | null;
   private bossGround?: Phaser.Tilemaps.Tilemap;
   private sandFloor?: Phaser.GameObjects.TileSprite;
+  private world02Obstacles?: World02ObstacleSystem;
   private exitFloor?: Phaser.GameObjects.Rectangle;
   private parallaxRenderer?: ParallaxRenderer;
   private eventBus?: GameEventBus;
@@ -257,6 +260,17 @@ export class StageScene extends Phaser.Scene {
       this.persistenceEventBus,
       () => this.runtime?.getStatus() === "play",
     );
+    if (stage.id === "world-02-stage-1" && !this.loadedMap) {
+      this.world02Obstacles = new World02ObstacleSystem(
+        this,
+        this.player,
+        this.gameplayEventBus,
+        stage.id,
+        WORLD02_STAGE1_OBSTACLES,
+        () => this.runtime?.runtimeState.checkpointId ?? null,
+        () => this.runtime?.getStatus() === "play" && !this.stageTransitionStarted,
+      );
+    }
 
     if (process.env.NODE_ENV !== "production") {
       this.debugOverlay = new MapDebugOverlay(
@@ -469,6 +483,8 @@ export class StageScene extends Phaser.Scene {
       this.calicoSprite?.destroy();
       this.calicoSprite = undefined;
       this.mapInteraction?.destroy();
+      this.world02Obstacles?.destroy();
+      this.world02Obstacles = undefined;
       this.gimmickSystem?.destroy();
       this.deathSystem?.destroy();
       this.checkpointSystem?.resetForStage();
