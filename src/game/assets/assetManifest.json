@@ -311,6 +311,69 @@
     "required": true
   },
   {
+    "key": "world-02-obstacle-duck-spring",
+    "kind": "image",
+    "url": "/assets/pixel/props/world-02/duck-spring.png",
+    "worldId": "world-02",
+    "required": true
+  },
+  {
+    "key": "world-02-obstacle-elephant-spring",
+    "kind": "image",
+    "url": "/assets/pixel/props/world-02/elephant-spring.png",
+    "worldId": "world-02",
+    "required": true
+  },
+  {
+    "key": "world-02-obstacle-rabbit-spring",
+    "kind": "image",
+    "url": "/assets/pixel/props/world-02/rabbit-spring.png",
+    "worldId": "world-02",
+    "required": true
+  },
+  {
+    "key": "world-02-obstacle-pink-sand-shovel",
+    "kind": "image",
+    "url": "/assets/pixel/props/world-02/pink-sand-shovel.png",
+    "worldId": "world-02",
+    "required": true
+  },
+  {
+    "key": "world-02-obstacle-orange-traffic-cone",
+    "kind": "image",
+    "url": "/assets/pixel/props/world-02/orange-traffic-cone.png",
+    "worldId": "world-02",
+    "required": true
+  },
+  {
+    "key": "world-02-obstacle-sleeping-fat-cat",
+    "kind": "image",
+    "url": "/assets/pixel/props/world-02/sleeping-fat-cat.png",
+    "worldId": "world-02",
+    "required": true
+  },
+  {
+    "key": "world-02-obstacle-scratching-fat-cat",
+    "kind": "image",
+    "url": "/assets/pixel/props/world-02/scratching-fat-cat.png",
+    "worldId": "world-02",
+    "required": true
+  },
+  {
+    "key": "world-02-obstacle-crushed-cola-can",
+    "kind": "image",
+    "url": "/assets/pixel/props/world-02/crushed-cola-can.png",
+    "worldId": "world-02",
+    "required": true
+  },
+  {
+    "key": "world-02-obstacle-empty-snack-bag",
+    "kind": "image",
+    "url": "/assets/pixel/props/world-02/empty-snack-bag.png",
+    "worldId": "world-02",
+    "required": true
+  },
+  {
     "key": "world-02-tileset",
     "kind": "image",
     "url": "/assets/pixel/tiles/world-02/world-02-tileset.png",
