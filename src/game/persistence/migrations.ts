@@ -2,7 +2,8 @@ import { DEFAULT_KEYBINDS, DEFAULT_VERSION, createDefaultProgressState } from ".
 import { SKILL_DEFINITIONS } from "../data/skills";
 import { STAGE_IDS } from "../core/constants";
 import { TOOL_DEFINITIONS } from "../data/tools";
-import type { InputAction, ProgressState, SkillId, StageId, ToolId } from "../core/types";
+import { MARKET_PRODUCTS } from "../data/marketCatalog";
+import type { CosmeticId, InputAction, ProgressState, SkillId, StageId, ToolId } from "../core/types";
 import { isWorld01CheckpointStageId } from "../systems/world01Respawn";
 
 const validSkillIds = new Set<string>(SKILL_DEFINITIONS.map((definition) => definition.id));
@@ -13,6 +14,10 @@ const validAttackToolIds = new Set<string>(
 );
 const validDefenseToolIds = new Set<string>(
   TOOL_DEFINITIONS.filter((definition) => definition.slot === "defense").map((definition) => definition.id),
+);
+const cosmeticCategoryById = new Map<string, "outfit" | "accessory">(
+  MARKET_PRODUCTS.filter((product) => product.category === "outfit" || product.category === "accessory")
+    .map((product) => [product.cosmeticId!, product.category as "outfit" | "accessory"]),
 );
 
 type UnknownRecord = Record<string, unknown>;
@@ -47,6 +52,11 @@ function readToolIds(value: unknown): ToolId[] {
   return [...new Set(value.filter((id) => validToolIds.has(id)))];
 }
 
+function readCosmeticIds(value: unknown): CosmeticId[] {
+  if (!isStringArray(value)) return [];
+  return [...new Set(value.filter((id): id is CosmeticId => cosmeticCategoryById.has(id)))];
+}
+
 export function migrateSave(input: unknown): ProgressState {
   const fallback = createDefaultProgressState();
   if (!isRecord(input)) {
@@ -55,7 +65,7 @@ export function migrateSave(input: unknown): ProgressState {
   }
 
   const schemaVersion = input.schemaVersion === undefined ? 0 : input.schemaVersion;
-  if (typeof schemaVersion !== "number" || schemaVersion > 2) {
+  if (typeof schemaVersion !== "number" || !Number.isInteger(schemaVersion) || schemaVersion < 0 || schemaVersion > 3) {
     warn("unsupported schema version; using defaults");
     return fallback;
   }
@@ -100,7 +110,11 @@ export function migrateSave(input: unknown): ProgressState {
         keybinds[action] = key;
       }
     }
-    const safeOwnedTools = ownedToolIds.length > 0 ? ownedToolIds : fallback.ownedToolIds;
+    const safeOwnedTools = [...new Set([...fallback.ownedToolIds, ...ownedToolIds])];
+    const ownedCosmeticIds = readCosmeticIds(rawProgress.ownedCosmeticIds);
+    const equippedCosmetic = (value: unknown, category: "outfit" | "accessory"): CosmeticId | null =>
+      typeof value === "string" && ownedCosmeticIds.includes(value as CosmeticId) && cosmeticCategoryById.get(value) === category
+        ? value as CosmeticId : null;
     const attackToolId = typeof rawProgress.equippedAttackToolId === "string" &&
       validAttackToolIds.has(rawProgress.equippedAttackToolId) &&
       safeOwnedTools.includes(rawProgress.equippedAttackToolId)
@@ -124,8 +138,11 @@ export function migrateSave(input: unknown): ProgressState {
         ? rawProgress.world01CheckpointStageId : null,
       unlockedSkills: [...new Set(unlockedSkills.filter((id): id is SkillId => validSkillIds.has(id)))],
       ownedToolIds: safeOwnedTools,
+      ownedCosmeticIds,
       equippedAttackToolId: attackToolId,
       equippedDefenseToolId: defenseToolId,
+      equippedOutfitId: equippedCosmetic(rawProgress.equippedOutfitId, "outfit"),
+      equippedAccessoryId: equippedCosmetic(rawProgress.equippedAccessoryId, "accessory"),
       bankedCoins: rawProgress.bankedCoins,
       collectedItems: [...new Set(collectedItems)],
       deathsTotal: rawProgress.deathsTotal,

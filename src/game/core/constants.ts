@@ -60,7 +60,7 @@ export const DEFAULT_KEYBINDS: Readonly<Record<InputAction, string>> = {
   pause: "Escape",
 };
 
-export const DEFAULT_VERSION = 2;
+export const DEFAULT_VERSION = 3;
 export const DEFAULT_ATTACK_TOOL_ID = "rabbit-slipper";
 export const DEFAULT_DEFENSE_TOOL_ID = "upside-down-bowl";
 export const DEFAULT_DEFENSE_CHARGES = 3;
@@ -86,8 +86,11 @@ export function createDefaultProgressState(
     world01CheckpointStageId: null,
     unlockedSkills: [],
     ownedToolIds: [DEFAULT_ATTACK_TOOL_ID, DEFAULT_DEFENSE_TOOL_ID],
+    ownedCosmeticIds: [],
     equippedAttackToolId: DEFAULT_ATTACK_TOOL_ID,
     equippedDefenseToolId: DEFAULT_DEFENSE_TOOL_ID,
+    equippedOutfitId: null,
+    equippedAccessoryId: null,
     bankedCoins: 0,
     collectedItems: [],
     deathsTotal: 0,

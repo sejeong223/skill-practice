@@ -35,6 +35,7 @@ function cloneProgress(progress: ProgressState): ProgressState {
     clearedStages: [...progress.clearedStages],
     unlockedSkills: [...progress.unlockedSkills],
     ownedToolIds: [...progress.ownedToolIds],
+    ownedCosmeticIds: [...progress.ownedCosmeticIds],
     collectedItems: [...progress.collectedItems],
     deathsByStage: { ...progress.deathsByStage },
     seenCutsceneIds: [...progress.seenCutsceneIds],

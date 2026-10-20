@@ -22,6 +22,26 @@ export type SkillId =
   | "double-jump"
   | "tail-rotor";
 export type ToolId = string;
+export type CosmeticId =
+  | "pink-caterpillar-suit" | "banana-peel-suit" | "bee-bodysuit"
+  | "hotdog-outfit" | "diamond-armor" | "shinchan-eyebrow-sticker"
+  | "birthday-party-hat" | "strawberry-headpiece" | "propeller-hat" | "prince-crown";
+export type MarketCategory = "weapon" | "shield" | "outfit" | "accessory";
+export type MarketProduct = Readonly<{
+  id: string;
+  nameKo: string;
+  price: number;
+  iconUrl: string;
+  advantageKo: string;
+} & (
+  { category: "weapon" | "shield"; toolId: ToolId; cosmeticId?: never } |
+  { category: "outfit" | "accessory"; cosmeticId: CosmeticId; toolId?: never }
+)>;
+export type ToolEffectId =
+  | "slipper-combo" | "squeaky-bounce" | "newspaper-reach"
+  | "backscratcher-arc" | "drumstick-return" | "frisbee-straight"
+  | "legacy-tube" | "bowl-three-block" | "cushion-two-block"
+  | "pizza-slip" | "umbrella-front" | "pot-lid-stagger" | "legacy-box";
 export type InputAction =
   | "left"
   | "right"
@@ -45,8 +65,11 @@ export interface ProgressState {
   world01CheckpointStageId: World01CheckpointStageId | null;
   unlockedSkills: SkillId[];
   ownedToolIds: ToolId[];
+  ownedCosmeticIds: CosmeticId[];
   equippedAttackToolId: ToolId;
   equippedDefenseToolId: ToolId;
+  equippedOutfitId: CosmeticId | null;
+  equippedAccessoryId: CosmeticId | null;
   bankedCoins: number;
   collectedItems: string[];
   deathsTotal: number;
@@ -102,6 +125,7 @@ export interface ToolDefinition {
   id: ToolId;
   slot: ToolSlot;
   price: number;
+  effectId: ToolEffectId;
   passiveEffect: string;
   charges: number | null;
   hiddenDrawbackId: string;
