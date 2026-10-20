@@ -1,5 +1,5 @@
-import type { ProgressState, RuntimeStageState, StageId } from "../core/types";
-import { TOOL_DEFINITIONS } from "../data/tools";
+import type { MarketCategory, ProgressState, RuntimeStageState, StageId } from "../core/types";
+import { getMarketProduct } from "../data/marketCatalog";
 import { GameEventBus } from "../bridge/GameEventBus";
 
 export class EconomySystem {
@@ -42,17 +42,30 @@ export class EconomySystem {
   }
 
   public purchaseTool(toolId: string): boolean {
-    const tool = TOOL_DEFINITIONS.find((candidate) => candidate.id === toolId);
-    if (!tool || this.progress.ownedToolIds.includes(toolId) || this.progress.bankedCoins < tool.price) {
-      return false;
+    const product = getMarketProduct(toolId);
+    return Boolean(product && (product.category === "weapon" || product.category === "shield") &&
+      this.purchaseMarketProduct(toolId).ok);
+  }
+
+  public purchaseMarketProduct(itemId: string): PurchaseResult {
+    const product = getMarketProduct(itemId);
+    if (!product) return { ok: false, reason: "unknown-item" };
+    const alreadyOwned = product.cosmeticId !== undefined
+      ? this.progress.ownedCosmeticIds.includes(product.cosmeticId)
+      : this.progress.ownedToolIds.includes(product.toolId);
+    if (alreadyOwned) return { ok: false, reason: "already-owned" };
+    if (this.progress.bankedCoins < product.price) return { ok: false, reason: "insufficient-coins" };
+
+    this.progress.bankedCoins -= product.price;
+    if (product.cosmeticId === undefined) {
+      this.progress.ownedToolIds.push(product.toolId);
+      this.eventBus.emit("tool-purchased", { toolId: product.toolId, bankedCoins: this.progress.bankedCoins });
+    } else {
+      this.progress.ownedCosmeticIds.push(product.cosmeticId);
     }
-    this.progress.bankedCoins -= tool.price;
-    this.progress.ownedToolIds.push(toolId);
-    this.eventBus.emit("tool-purchased", {
-      toolId,
-      bankedCoins: this.progress.bankedCoins,
-    });
-    return true;
+    this.eventBus.emit("market-item-purchased", { itemId, category: product.category, bankedCoins: this.progress.bankedCoins });
+    this.emitCoins(this.runtime.stageId);
+    return { ok: true, itemId, category: product.category, bankedCoins: this.progress.bankedCoins };
   }
 
   public getBankedCoins(): number {
@@ -71,3 +84,7 @@ export class EconomySystem {
     });
   }
 }
+
+export type PurchaseResult =
+  | { ok: true; itemId: string; category: MarketCategory; bankedCoins: number }
+  | { ok: false; reason: "insufficient-coins" | "already-owned" | "unknown-item" };

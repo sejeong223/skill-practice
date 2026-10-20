@@ -13,6 +13,7 @@ import { StageRandom } from "../random/StageRandom";
 import { StageEntityFactory, type StageEntity, type StageEntityKind } from "./StageEntityFactory";
 import type { LoadedMap } from "../maps/mapTypes";
 import { EconomySystem } from "../systems/EconomySystem";
+import { segmentCoinPresentation } from "./segmentCoinPresentation";
 
 interface RuntimeEntityRecord {
   readonly kind: StageEntityKind;
@@ -105,8 +106,8 @@ export class StageRuntime {
         this.add("coin", coinId, this.factory.create(this.scene, {
           kind: "coin",
           id: coinId,
+          ...segmentCoinPresentation(this.definition.worldId),
           x: segmentOffset + 180 + index * 72,
-          y: 450,
         }));
       });
 

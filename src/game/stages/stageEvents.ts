@@ -1,4 +1,4 @@
-import type { SelectableWorldId, StageId, WorldSelectionRequest } from "../core/types";
+import type { MarketCategory, SelectableWorldId, StageId, WorldSelectionRequest } from "../core/types";
 import type { CutsceneBeat } from "../cutscenes/types";
 import type { BossFeedbackSnapshot } from "../systems/bossFeedback";
 
@@ -90,6 +90,11 @@ export interface StageEventMap {
   };
   "tool-purchased": {
     toolId: string;
+    bankedCoins: number;
+  };
+  "market-item-purchased": {
+    itemId: string;
+    category: MarketCategory;
     bankedCoins: number;
   };
   "collectible-found": {
