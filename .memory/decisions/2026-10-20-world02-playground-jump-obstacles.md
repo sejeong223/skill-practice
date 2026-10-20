@@ -22,6 +22,7 @@
 - **사용자 추가 피드백**: 형태와 채색은 `world-01-props.png`의 만화 같은 픽셀 소품 스타일에 맞춘다. 동물 기구의 눈은 흰 안광이 없는 단순한 점눈으로 그리고, 광택·실사 질감 대신 두꺼운 자주색 윤곽과 넓은 단색 면을 쓴다.
 - 각 장애물은 멀리서도 구분되어야 한다. 삽은 날이 모래 속에 들어간 모습, 캔은 찌그러짐, 과자 봉지는 빈 봉지의 주름이 보여야 한다. 콜라 캔과 과자 봉지는 실제 상표를 넣지 않는다.
 - 고양이는 같은 외형의 잠든 포즈와 눈을 뜨고 앞발을 뻗는 할퀴기 포즈를 별도로 만든다. 고양이 소리는 현재 `cat-taunt`의 합성음 대신 실제 고양이 하악질이 들리는 녹음을 자른다. 후보는 [Wikimedia Commons: Gruñido gato (Chacha).ogg](https://commons.wikimedia.org/wiki/File:Gru%C3%B1ido_gato_(Chacha).ogg)이며 CC BY-SA 4.0 출처·가공·파생 음원 라이선스를 기록한다. 원본의 소리 상태를 확인한 뒤 사용한다.
+- 실행 중 위 후보는 Wikimedia HTTP 429로 원본을 받을 수 없어, 같은 하악질 분류의 [Zabuhailo 녹음](https://www.marefa.org/%D9%85%D9%84%D9%81:Cat_hissing_-_Zabuhailo.wav)을 CC0 대체 소스로 사용한다. 정확한 가공 내역과 해시는 `public/assets/audio/ATTRIBUTION.md`에 남긴다.
 
 ## D04. 현재 코드 경계
 

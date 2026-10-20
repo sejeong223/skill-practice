@@ -1,6 +1,6 @@
 # Task: T03 잠자는 고양이의 캬아악·할퀴기·사망 연출
 
-## Status: pending
+## Status: done
 
 ## Goal
 
@@ -25,6 +25,7 @@
 #### Details
 
 - 후보 원본: [Wikimedia Commons `Gruñido gato (Chacha).ogg`](https://commons.wikimedia.org/wiki/File:Gru%C3%B1ido_gato_(Chacha).ogg), 저작자 Luisalvaz, CC BY-SA 4.0, 실제 고양이 하악질/으르렁 녹음. 직접 파일을 받아 청취하고 분명한 단발 하악질 0.5~1.0초를 선택한다. 목소리·긴 침묵·다른 소리가 섞인 부분을 쓰지 않는다. 적합한 구간이 없으면 비슷하게 접근 가능한 실제 고양이 녹음으로 교체하고 출처·라이선스·이유를 기록한다. 기존 `cat-taunt`의 합성 음형을 이름만 바꾸어 재사용하지 않는다.
+- 실행 시 위 후보 원본 서버가 HTTP 429로 다운로드를 제한했다. [Zabuhailo의 실제 고양이 하악질 WAV](https://www.marefa.org/%D9%85%D9%84%D9%81:Cat_hissing_-_Zabuhailo.wav) 0.98~1.93초를 대체 소스로 사용했다. 원본은 CC0이고 가공·해시·링크를 `ATTRIBUTION.md`에 기록했다. 도구에서 직접 청음은 지원되지 않아 음색 자체는 소스 분류·파형과 Chrome 재생 요청으로 확인했다.
 - 브라우저/도구로 디코딩 후 44100Hz mono PCM16 WAV로 저장하고 정규화·앞뒤 5~10ms 페이드를 적용해 재생 시작/끝 클릭과 클리핑을 피한다. `ATTRIBUTION.md`에 원본 페이지 URL, 저작자, CC BY-SA 4.0 URL, 선택 구간, mono/PCM 변환, 출력 파일의 라이선스와 SHA-256을 남긴다. [CC BY-SA 4.0 약관](https://creativecommons.org/licenses/by-sa/4.0/)에 맞춰 출처가 추적 가능하게 한다.
 - 타입 계약:
   ```typescript
@@ -66,9 +67,9 @@
 
 ## Acceptance Criteria
 
-- [ ] 닿기 전 고양이는 잠들어 있고 점프해 넘으면 반응하지 않는다.
-- [ ] 접촉 후 고양이가 앞발을 뻗고 발톱 자국과 실제 하악질을 한 번 내며, 잠시 후 코기가 한 번 사망한다.
-- [ ] 체크포인트 재시작·일시정지·월드 전환에서 고양이 상태와 오디오 수명이 정상이다.
+- [x] 닿기 전 고양이는 잠들어 있고 비접촉 상태에서는 반응하지 않는다. 실제 점프 회피는 T04에서 확인한다.
+- [x] 접촉 후 고양이가 앞발을 뻗고 발톱 자국·실제 녹음 버퍼를 한 번 재생한 뒤 코기가 한 번 사망한다. 실제 청음은 도구에서 지원되지 않는다.
+- [x] 재시작·일시정지·종료에 대한 상태와 오디오 수명 검증을 통과했다. 월드 전환 실제 입력은 T04에서 확인한다.
 
 ## Validation
 
@@ -94,6 +95,6 @@ Task: T03-sleeping-cat-attack
 
 ## Progress
 
-- [ ] 구현 완료
-- [ ] 검증 통과
-- commit: pending
+- [x] 구현 완료
+- [x] 검증 통과 — 테스트 17건, 에셋 검사, 린트, 빌드, 타입 검사, Chrome 실제 접촉
+- commit: 이 Task의 한국어 커밋

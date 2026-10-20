@@ -13,6 +13,12 @@
 - 일반 7종에는 보이지 않는 정적 Arcade Zone의 overlap을 연결하고 기존 `death-requested` 이벤트를 전송한다. 고양이는 T03을 위해 특수 접촉으로 구분했다.
 - `node --test scripts/world02-obstacle-assets.test.mjs scripts/world02-obstacles.test.mjs scripts/world02-sand-floor.test.mjs` 16/16, `npm.cmd run lint`, `npm.cmd run build`, `node node_modules/typescript/bin/tsc --noEmit` 모두 통과했다. 실제 충돌·점프와 체크포인트 재시작은 T04에서 확인한다.
 
-## T03~T04
+## T03 — 고양이 하악질과 할퀴기
 
-- 고양이 연출과 브라우저 플레이 검증 결과를 작업 순서대로 추가한다.
+- 처음 제안한 Wikimedia 녹음은 HTTP 429로 다운로드가 거부되어 [Zabuhailo의 CC0 하악질 녹음](https://www.marefa.org/%D9%85%D9%84%D9%81:Cat_hissing_-_Zabuhailo.wav)으로 교체했다. 0.98~1.93초를 44.1kHz·mono·PCM16 WAV로 변환하고 8ms 페이드를 주었다. 저작자·라이선스·변환 내역·SHA-256은 `public/assets/audio/ATTRIBUTION.md`에 있다.
+- 상태·오디오 테스트 `node --test scripts/world02-cat-attack.test.mjs scripts/audio-pause.test.mjs scripts/world02-obstacles.test.mjs` 17/17, 에셋 검사, 린트, 빌드, 타입 검사 통과.
+- 실제 Chrome에서 첫 스테이지에 PNG 8종과 연속 모래 바닥이 로드됐다. 고양이 접촉 약 90ms 뒤 공격 이미지·효과음 요청 1건·활성 오디오 버퍼 source 1개·사망 0건, 약 450ms 뒤 사망 1건·시작점 복귀·잠든 고양이 복원·페이지 오류 0건을 확인했다. [공격 순간 화면](./assets/2026-10-20-world02-cat-scratch.png). 실행 환경의 도구는 직접 청음을 지원하지 않으므로 음색은 실제 녹음의 출처와 신호 검증에 근거한다.
+
+## T04
+
+- 8종 점프·충돌·체크포인트·일시정지·모바일 화면의 브라우저 검증 결과를 추가한다.

@@ -246,3 +246,24 @@ test("해독·잠금 해제가 늦은 효과음은 정지나 폐기 뒤 재생�
   const destroyed = harness(), gone = destroyed.create(); gone.playSfx("coin"); gone.destroy();
   await destroyed.decode(); assert.equal(destroyed.sources.length, 0);
 });
+
+test('고양이 할퀴기 이벤트는 실제 샘플 하나를 재생하고 정지·종료 뒤 새 소리를 만들지 않는다', async () => {
+  const { GameplayEventBus } = require('../src/game/core/events.ts');
+  const bus = new GameplayEventBus();
+  const h = harness();
+  const audio = h.create(bus);
+  await h.decode();
+  bus.emit('world02-cat-scratch', { obstacleId: 'world-02-stage-1-obstacle-sleeping-fat-cat', now: 100 });
+  await Promise.resolve();
+  assert.equal(h.sources.length, 1);
+  assert.equal(h.sources[0].started, true);
+  audio.setPaused(true);
+  assert.equal(h.sources[0].stopped, true);
+  bus.emit('world02-cat-scratch', { obstacleId: 'world-02-stage-1-obstacle-sleeping-fat-cat', now: 200 });
+  await Promise.resolve();
+  assert.equal(h.sources.length, 1);
+  audio.destroy();
+  bus.emit('world02-cat-scratch', { obstacleId: 'world-02-stage-1-obstacle-sleeping-fat-cat', now: 300 });
+  await Promise.resolve();
+  assert.equal(h.sources.length, 1);
+});

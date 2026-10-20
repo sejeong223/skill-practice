@@ -19,6 +19,10 @@ export class World02ObstacleSystem {
   private readonly canHandleContact: () => boolean;
   private readonly sprites: ObstacleSprite[] = [];
   private readonly colliders: Phaser.Physics.Arcade.Collider[] = [];
+  private catSprite?: ObstacleSprite;
+  private scratchMarks?: Phaser.GameObjects.Graphics;
+  private attackPending = false;
+  private attackRemainingMs = 0;
   private destroyed = false;
 
   public constructor(
@@ -49,7 +53,8 @@ export class World02ObstacleSystem {
       );
       scene.physics.add.existing(zone, true);
       (zone.body as Phaser.Physics.Arcade.StaticBody).updateFromGameObject();
-      this.sprites.push({ definition, image, zone });
+      const sprite = { definition, image, zone };
+      this.sprites.push(sprite);
 
       if (definition.contact === "instant-death") {
         this.colliders.push(scene.physics.add.overlap(player, zone, () => {
@@ -61,12 +66,77 @@ export class World02ObstacleSystem {
             now: this.scene.time.now,
           });
         }));
+      } else {
+        this.catSprite = sprite;
+        this.colliders.push(scene.physics.add.overlap(player, zone, () => {
+          this.handleCatContact(sprite);
+        }));
       }
     }
   }
 
+  public update(delta: number): void {
+    if (!this.attackPending || this.destroyed) return;
+    this.attackRemainingMs = Math.max(0, this.attackRemainingMs - Math.max(0, delta));
+    if (this.attackRemainingMs <= 180) this.clearScratchMarks();
+    if (this.attackRemainingMs > 0) return;
+
+    this.attackPending = false;
+    this.player.unlockControl("world02-cat-scratch");
+    if (!this.canHandleContact()) return;
+    this.eventBus.emit("death-requested", {
+      stageId: this.stageId,
+      cause: "trap",
+      checkpointId: this.getCheckpointId(),
+      now: this.scene.time.now,
+    });
+  }
+
+  public resetForAttempt(): void {
+    this.attackPending = false;
+    this.attackRemainingMs = 0;
+    this.catSprite?.image.setTexture("world-02-obstacle-sleeping-fat-cat");
+    this.clearScratchMarks();
+    this.player.unlockControl("world02-cat-scratch");
+  }
+
+  private handleCatContact(sprite: ObstacleSprite): void {
+    if (this.destroyed || this.attackPending || !this.canHandleContact()) return;
+    this.attackPending = true;
+    this.attackRemainingMs = 360;
+    this.player.lockControl("world02-cat-scratch");
+    this.player.setVelocity(0, 0);
+    sprite.image.setTexture("world-02-obstacle-scratching-fat-cat");
+    this.drawScratchMarks(sprite);
+    this.eventBus.emit("world02-cat-scratch", {
+      obstacleId: sprite.definition.id,
+      now: this.scene.time.now,
+    });
+  }
+
+  private drawScratchMarks(sprite: ObstacleSprite): void {
+    this.clearScratchMarks();
+    const direction = this.player.x < sprite.definition.x ? 1 : -1;
+    const marks = this.scene.add.graphics()
+      .setPosition(this.player.x + direction * 18, sprite.definition.groundY - 34)
+      .setDepth(11);
+    marks.fillStyle(0xfff0d8, 1);
+    for (let line = 0; line < 3; line++) {
+      for (let step = 0; step < 6; step++) {
+        marks.fillRect(direction * step * 3, line * 7 - step * 2, 3, 3);
+      }
+    }
+    this.scratchMarks = marks;
+  }
+
+  private clearScratchMarks(): void {
+    this.scratchMarks?.destroy();
+    this.scratchMarks = undefined;
+  }
+
   public destroy(): void {
     if (this.destroyed) return;
+    this.resetForAttempt();
     this.destroyed = true;
     for (const collider of this.colliders) collider.destroy();
     for (const { image, zone } of this.sprites) {
@@ -75,5 +145,6 @@ export class World02ObstacleSystem {
     }
     this.colliders.length = 0;
     this.sprites.length = 0;
+    this.catSprite = undefined;
   }
 }

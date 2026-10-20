@@ -182,6 +182,7 @@ export class StageScene extends Phaser.Scene {
         this.publishBossFeedback(true, true);
       }),
       this.gameplayEventBus.on("restart", () => {
+        this.world02Obstacles?.resetForAttempt();
         this.playerAnimator?.stopBark();
         this.resetBossFeedback();
         this.publishBossFeedback(true);
@@ -598,6 +599,7 @@ export class StageScene extends Phaser.Scene {
     this.skillElapsedMs += elapsed;
     this.bossFeedback.update(elapsed);
     this.playerController?.update(time, delta);
+    this.world02Obstacles?.update(elapsed);
     if (this.stageDefinition?.kind === "normal" && this.player &&
         !this.player.isControlLocked() && this.player.getBounds().left >= this.stageDefinition.mapWidth &&
         this.player.body.bottom < this.stageDefinition.mapHeight - 1) {

@@ -3,6 +3,10 @@ export interface GameplayEventMap {
     skillId: string;
     now: number;
   };
+  "world02-cat-scratch": {
+    obstacleId: string;
+    now: number;
+  };
   "slipper-hit": {
     comboCount: number;
     now: number;
