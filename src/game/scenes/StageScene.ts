@@ -26,6 +26,7 @@ import { MapDebugOverlay } from "../debug/MapDebugOverlay";
 import { Enemy } from "../entities/Enemy";
 import { Player } from "../entities/Player";
 import { PlayerAnimator } from "../entities/PlayerAnimator";
+import { PlayerWearables } from "../entities/PlayerWearables";
 import { BowlShieldVisual } from "../entities/BowlShieldVisual";
 import { DEFAULT_PLAYER_TUNING } from "../entities/playerTypes";
 import { InputManager, toKeybindMap } from "../input/InputManager";
@@ -49,6 +50,7 @@ import { World01CalicoBoss } from "../systems/World01CalicoBoss";
 import { World02ObstacleSystem } from "../systems/World02ObstacleSystem";
 import { getWorld01Respawn, isWorld01CheckpointStageId } from "../systems/world01Respawn";
 import { getWorld01ReplayTarget, getWorldStartStageId, isWorldSelectionUnlocked } from "../systems/worldSelection";
+import { getMarketProduct } from "../data/marketCatalog";
 
 const NORMAL_EXIT_RUNOUT = 256;
 const WORLD01_CHECKPOINT_SNAPSHOT_KEY = "world01CheckpointSnapshot";
@@ -63,6 +65,7 @@ export interface StageSceneData {
 export class StageScene extends Phaser.Scene {
   private player?: Player;
   private playerAnimator?: PlayerAnimator;
+  private playerWearables?: PlayerWearables;
   private inputManager?: InputManager;
   private playerController?: PlayerController;
   private cameraDirector?: CameraDirector;
@@ -150,6 +153,8 @@ export class StageScene extends Phaser.Scene {
     );
     this.player.setDepth(10);
     this.playerAnimator = new PlayerAnimator(this.player);
+    this.playerWearables = new PlayerWearables(this, this.player);
+    this.playerWearables.setEquipment(this.progress.equippedOutfitId, this.progress.equippedAccessoryId);
     this.inputManager = new InputManager(this, toKeybindMap(this.progress.keybinds));
     this.playerController = new PlayerController(
       this.player,
@@ -420,6 +425,23 @@ export class StageScene extends Phaser.Scene {
     this.eventUnsubscribers.push(this.eventBus.on("pause-requested", ({ paused }) => {
       this.setPaused(paused);
     }));
+    this.eventUnsubscribers.push(this.eventBus.on("cosmetic-change-requested", (selection) => {
+      const status = this.runtime?.getStatus();
+      if (status !== "play" && status !== "paused") return;
+      if ("outfitId" in selection) {
+        const id = selection.outfitId;
+        if (id === null || (id && this.progress.ownedCosmeticIds.includes(id) && getMarketProduct(id)?.category === "outfit")) {
+          this.progress.equippedOutfitId = id;
+        }
+      }
+      if ("accessoryId" in selection) {
+        const id = selection.accessoryId;
+        if (id === null || (id && this.progress.ownedCosmeticIds.includes(id) && getMarketProduct(id)?.category === "accessory")) {
+          this.progress.equippedAccessoryId = id;
+        }
+      }
+      this.playerWearables?.setEquipment(this.progress.equippedOutfitId, this.progress.equippedAccessoryId);
+    }));
     this.eventUnsubscribers.push(this.eventBus.on("world-selection-requested", (selection) => {
       if (!isWorldSelectionUnlocked(this.progress) || this.stageTransitionStarted) return;
       this.stageTransitionStarted = true;
@@ -460,6 +482,8 @@ export class StageScene extends Phaser.Scene {
       this.eventBus?.emit("pause-state-changed", { paused: false });
       this.inputManager?.destroy();
       this.playerAnimator?.destroy();
+      this.playerWearables?.destroy();
+      this.playerWearables = undefined;
       this.stageReviewKey?.off("down", this.reviewNextWorld01Stage, this);
       if (this.stageReviewKey) this.input.keyboard?.removeKey(this.stageReviewKey, true);
       this.overviewKey?.off("down", this.toggleMapOverview, this);

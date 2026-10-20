@@ -531,5 +531,155 @@
     "kind": "image",
     "url": "/assets/pixel/cutscenes/intro/intro-corgi-carry-slipper-v1.png",
     "required": true
+  },
+  {
+    "key": "wear-pink-caterpillar-suit-run",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/characters/corgi/equipment/pink-caterpillar-suit-run.png",
+    "frameWidth": 112,
+    "frameHeight": 128,
+    "frameCount": 4,
+    "required": true
+  },
+  {
+    "key": "wear-pink-caterpillar-suit-bark",
+    "kind": "image",
+    "url": "/assets/pixel/characters/corgi/equipment/pink-caterpillar-suit-bark.png",
+    "required": true
+  },
+  {
+    "key": "wear-banana-peel-suit-run",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/characters/corgi/equipment/banana-peel-suit-run.png",
+    "frameWidth": 112,
+    "frameHeight": 128,
+    "frameCount": 4,
+    "required": true
+  },
+  {
+    "key": "wear-banana-peel-suit-bark",
+    "kind": "image",
+    "url": "/assets/pixel/characters/corgi/equipment/banana-peel-suit-bark.png",
+    "required": true
+  },
+  {
+    "key": "wear-bee-bodysuit-run",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/characters/corgi/equipment/bee-bodysuit-run.png",
+    "frameWidth": 112,
+    "frameHeight": 128,
+    "frameCount": 4,
+    "required": true
+  },
+  {
+    "key": "wear-bee-bodysuit-bark",
+    "kind": "image",
+    "url": "/assets/pixel/characters/corgi/equipment/bee-bodysuit-bark.png",
+    "required": true
+  },
+  {
+    "key": "wear-hotdog-outfit-run",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/characters/corgi/equipment/hotdog-outfit-run.png",
+    "frameWidth": 112,
+    "frameHeight": 128,
+    "frameCount": 4,
+    "required": true
+  },
+  {
+    "key": "wear-hotdog-outfit-bark",
+    "kind": "image",
+    "url": "/assets/pixel/characters/corgi/equipment/hotdog-outfit-bark.png",
+    "required": true
+  },
+  {
+    "key": "wear-diamond-armor-run",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/characters/corgi/equipment/diamond-armor-run.png",
+    "frameWidth": 112,
+    "frameHeight": 128,
+    "frameCount": 4,
+    "required": true
+  },
+  {
+    "key": "wear-diamond-armor-bark",
+    "kind": "image",
+    "url": "/assets/pixel/characters/corgi/equipment/diamond-armor-bark.png",
+    "required": true
+  },
+  {
+    "key": "wear-shinchan-eyebrow-sticker-run",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/characters/corgi/equipment/shinchan-eyebrow-sticker-run.png",
+    "frameWidth": 112,
+    "frameHeight": 128,
+    "frameCount": 4,
+    "required": true
+  },
+  {
+    "key": "wear-shinchan-eyebrow-sticker-bark",
+    "kind": "image",
+    "url": "/assets/pixel/characters/corgi/equipment/shinchan-eyebrow-sticker-bark.png",
+    "required": true
+  },
+  {
+    "key": "wear-birthday-party-hat-run",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/characters/corgi/equipment/birthday-party-hat-run.png",
+    "frameWidth": 112,
+    "frameHeight": 128,
+    "frameCount": 4,
+    "required": true
+  },
+  {
+    "key": "wear-birthday-party-hat-bark",
+    "kind": "image",
+    "url": "/assets/pixel/characters/corgi/equipment/birthday-party-hat-bark.png",
+    "required": true
+  },
+  {
+    "key": "wear-strawberry-headpiece-run",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/characters/corgi/equipment/strawberry-headpiece-run.png",
+    "frameWidth": 112,
+    "frameHeight": 128,
+    "frameCount": 4,
+    "required": true
+  },
+  {
+    "key": "wear-strawberry-headpiece-bark",
+    "kind": "image",
+    "url": "/assets/pixel/characters/corgi/equipment/strawberry-headpiece-bark.png",
+    "required": true
+  },
+  {
+    "key": "wear-propeller-hat-run",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/characters/corgi/equipment/propeller-hat-run.png",
+    "frameWidth": 112,
+    "frameHeight": 128,
+    "frameCount": 4,
+    "required": true
+  },
+  {
+    "key": "wear-propeller-hat-bark",
+    "kind": "image",
+    "url": "/assets/pixel/characters/corgi/equipment/propeller-hat-bark.png",
+    "required": true
+  },
+  {
+    "key": "wear-prince-crown-run",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/characters/corgi/equipment/prince-crown-run.png",
+    "frameWidth": 112,
+    "frameHeight": 128,
+    "frameCount": 4,
+    "required": true
+  },
+  {
+    "key": "wear-prince-crown-bark",
+    "kind": "image",
+    "url": "/assets/pixel/characters/corgi/equipment/prince-crown-bark.png",
+    "required": true
   }
 ]

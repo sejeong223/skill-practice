@@ -1,4 +1,4 @@
-import type { MarketCategory, SelectableWorldId, StageId, WorldSelectionRequest } from "../core/types";
+import type { CosmeticId, MarketCategory, SelectableWorldId, StageId, WorldSelectionRequest } from "../core/types";
 import type { CutsceneBeat } from "../cutscenes/types";
 import type { BossFeedbackSnapshot } from "../systems/bossFeedback";
 
@@ -121,5 +121,9 @@ export interface StageEventMap {
   "equipment-change-requested": {
     attackToolId?: string;
     defenseToolId?: string;
+  };
+  "cosmetic-change-requested": {
+    outfitId?: CosmeticId | null;
+    accessoryId?: CosmeticId | null;
   };
 }

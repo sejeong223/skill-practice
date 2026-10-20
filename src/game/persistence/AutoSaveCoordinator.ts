@@ -8,6 +8,7 @@ const SAVE_EVENTS: readonly GameEventType[] = [
   "skill-unlocked",
   "tool-purchased",
   "market-item-purchased",
+  "cosmetic-change-requested",
   "collectible-found",
   "keybinds-changed",
   "drawback-discovered",
