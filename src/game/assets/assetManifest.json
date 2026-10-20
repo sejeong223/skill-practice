@@ -248,6 +248,13 @@
     "required": true
   },
   {
+    "key": "world-01-prop-cat-box-open",
+    "kind": "image",
+    "url": "/assets/pixel/props/world-01/cat-box-open.png",
+    "worldId": "world-01",
+    "required": true
+  },
+  {
     "key": "world-01-prop-white-spike-triggered",
     "kind": "image",
     "url": "/assets/pixel/props/world-01/white-spike-triggered.svg",
