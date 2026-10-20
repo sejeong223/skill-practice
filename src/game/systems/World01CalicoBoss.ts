@@ -2,6 +2,8 @@ import * as Phaser from "phaser";
 import { Player } from "../entities/Player";
 import type { GameplayEventBus } from "../core/events";
 import type { SlipperAttackResult } from "./SlipperAttack";
+import type { AttackContact } from "./WeaponAttack";
+import { WeaponHitTracker } from "./weaponHitbox";
 import { DefenseToolSystem } from "./DefenseToolSystem";
 import { StrayDogEvent } from "./StrayDogEvent";
 import { isCalicoInSlipperReach } from "./calicoMeleeHitbox";
@@ -53,6 +55,7 @@ export class World01CalicoBoss {
   private flashUntil = 0;
   private playerFlashUntil = 0;
   private barkStun: BossBarkStunState = { remainingMs: 0, nextAllowedAt: 0 };
+  private readonly weaponHits = new WeaponHitTracker();
 
   public constructor(
     private readonly scene: Phaser.Scene,
@@ -160,6 +163,21 @@ export class World01CalicoBoss {
       player.flipX ? -1 : 1,
       this.sprite.getBounds(),
     )) return false;
+    return this.applyDamage();
+  }
+
+  public acceptToolHit(contact: AttackContact): boolean {
+    if (this.state.phase === "intro" || this.state.phase === "defeated") return false;
+    const boss = this.sprite.getBounds();
+    if (!this.weaponHits.accept(contact, boss)) return false;
+    this.applyDamage();
+    this.eventBus.emit("weapon-hit", {
+      attackId: contact.attackId, toolId: contact.toolId, remainingHealth: this.state.health, now: contact.now,
+    });
+    return true;
+  }
+
+  private applyDamage(): boolean {
     this.facePlayer();
     const health = this.state.health - 1;
     this.state = { ...this.state, health };
@@ -182,12 +200,13 @@ export class World01CalicoBoss {
     this.flashUntil = 0;
     this.playerFlashUntil = 0;
     this.barkStun = { remainingMs: 0, nextAllowedAt: 0 };
+    this.weaponHits.reset();
     this.player.clearTint();
     this.state = {
       health: CALICO_MAX_HEALTH, phase: "intro", nextThrowAt: 1500,
       projectileId: null, corgiHearts: 3, damageLockedUntil: 0,
     };
-    this.defense.resetForStage("upside-down-bowl");
+    this.defense.resetForStage(this.defense.getToolId());
     this.sprite.setFrame(0).clearTint();
     this.facePlayer();
     this.warning.setVisible(false);

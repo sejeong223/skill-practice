@@ -61,7 +61,10 @@ test("새 무기는 기본 슬리퍼 콤보 이벤트를 발생시키지 않는�
   const bus = new GameplayEventBus();
   const events = [];
   bus.on("slipper-hit", () => events.push("slipper"));
-  const player = { setAnimationState() {}, lockControl() {}, unlockControl() {}, setVelocityX() {}, setVelocityY() {}, flipX: false };
+  const scene = { add: { image: () => ({ setDisplaySize() { return this; }, setDepth() { return this; }, setFlipX() { return this; }, destroy() {} }) },
+    physics: { world: { bounds: { left: 0, right: 2000, top: 0, bottom: 720 } } } };
+  const player = { scene, body: { center: { x: 100, y: 480 } }, x: 100, y: 500, depth: 10,
+    setAnimationState() {}, lockControl() {}, unlockControl() {}, setVelocityX() {}, setVelocityY() {}, flipX: false };
   const combat = new CombatSystem(player, bus, TOOL_DEFINITIONS);
   combat.setAttackTool("squeaky-ball");
   assert.equal(combat.tryAttack(1000).kind, "tool-preview");

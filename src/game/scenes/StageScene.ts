@@ -42,6 +42,7 @@ import { CheckpointSystem } from "../systems/CheckpointSystem";
 import { CombatSystem } from "../systems/CombatSystem";
 import { DeathSystem } from "../systems/DeathSystem";
 import { DefenseToolSystem } from "../systems/DefenseToolSystem";
+import { DrawbackDiscovery } from "../systems/DrawbackDiscovery";
 import { MapGimmickSystem } from "../systems/MapGimmickSystem";
 import { PlayerController } from "../systems/PlayerController";
 import { RestartController } from "../systems/RestartController";
@@ -102,6 +103,7 @@ export class StageScene extends Phaser.Scene {
   private readonly bossFeedback = new BossFeedbackController();
   private lastBossFeedbackSnapshot?: BossFeedbackSnapshot;
   private defenseToolSystem?: DefenseToolSystem;
+  private drawbackDiscovery?: DrawbackDiscovery;
   private bowlShieldVisual?: BowlShieldVisual;
   private audioManager?: AudioManager;
   private strayDogEvent?: StrayDogEvent;
@@ -174,6 +176,9 @@ export class StageScene extends Phaser.Scene {
       this.createWorld02SandFloor(stage);
     }
     this.gameplayEventBus = new GameplayEventBus();
+    this.combatSystem = new CombatSystem(this.player, this.gameplayEventBus, TOOL_DEFINITIONS);
+    this.combatSystem.setAttackTool(this.progress.equippedAttackToolId);
+    this.drawbackDiscovery = new DrawbackDiscovery(this.progress, this.gameplayEventBus, this.persistenceEventBus);
     this.audioManager = new AudioManager(this, this.gameplayEventBus, this.eventBus);
     this.skillSystem = new SkillSystem(
       this.player, SKILL_DEFINITIONS, this.gameplayEventBus,
@@ -182,11 +187,13 @@ export class StageScene extends Phaser.Scene {
     this.resetBossFeedback();
     this.eventUnsubscribers.push(
       this.gameplayEventBus.on("death", () => {
+        this.combatSystem?.resetForStage();
         this.playerAnimator?.stopBark();
         this.resetBossFeedback();
         this.publishBossFeedback(true, true);
       }),
       this.gameplayEventBus.on("restart", () => {
+        this.combatSystem?.resetForStage();
         this.world02Obstacles?.resetForAttempt();
         this.playerAnimator?.stopBark();
         this.resetBossFeedback();
@@ -350,8 +357,6 @@ export class StageScene extends Phaser.Scene {
     if (stage.id === "world-01-stage-boss") {
       this.calicoSprite = this.add.sprite(1280, 472, "world-01-calico-boss", 0)
         .setDepth(10);
-      this.combatSystem = new CombatSystem(this.player, this.gameplayEventBus, TOOL_DEFINITIONS);
-      this.combatSystem.setAttackTool(this.progress.equippedAttackToolId);
       this.defenseToolSystem = new DefenseToolSystem(this.gameplayEventBus, TOOL_DEFINITIONS);
       this.defenseToolSystem.resetForStage(this.progress.equippedDefenseToolId);
       this.bowlShieldVisual = new BowlShieldVisual(this, this.player, this.defenseToolSystem, this.gameplayEventBus);
@@ -514,8 +519,10 @@ export class StageScene extends Phaser.Scene {
       this.calicoBoss = undefined;
       this.strayDogEvent?.destroy();
       this.strayDogEvent = undefined;
-      this.combatSystem?.resetForStage();
+      this.combatSystem?.destroy();
       this.combatSystem = undefined;
+      this.drawbackDiscovery?.destroy();
+      this.drawbackDiscovery = undefined;
       this.skillSystem = undefined;
       this.defenseToolSystem = undefined;
       this.bowlShieldVisual?.destroy();
@@ -665,28 +672,31 @@ export class StageScene extends Phaser.Scene {
         this.publishBossFeedback(true);
       }
     }
-    if (this.calicoBoss && this.player && this.combatSystem) {
-      this.calicoBoss.start(time);
-      this.combatSystem.update(time);
-      if (input?.attackPressed) {
-        const result = this.combatSystem.tryAttack(time);
-        if (result.accepted && result.kind === "slipper-hit") {
-          this.playerAnimator?.triggerSlipperSwing(time);
-        } else if (result.accepted && result.kind === "tool-preview") {
-          this.equipmentVisual?.showAttack(time, ["squeaky-ball", "drumstick-boomerang", "plastic-frisbee"].includes(this.progress.equippedAttackToolId) ? "projectile" : "melee");
-        } else if (result.kind === "slipper-sneeze") {
-          this.playerAnimator?.stopSlipperSwing();
-        }
+    this.calicoBoss?.start(time);
+    if (input?.attackPressed && this.combatSystem && this.player) {
+      const result = this.combatSystem.tryAttack(time);
+      if (result.accepted && result.kind === "slipper-hit" && this.calicoBoss) {
+        this.playerAnimator?.triggerSlipperSwing(time);
+      } else if (result.accepted && result.kind === "tool-preview") {
+        this.equipmentVisual?.showAttack(time, result.weaponKind ?? "melee");
+      } else if (result.kind === "slipper-sneeze") {
+        this.playerAnimator?.stopSlipperSwing();
+      }
+      if (this.calicoBoss) {
         this.calicoBoss.acceptMeleeHit(result, this.player);
-        if (this.runtime.getStatus() !== "play") {
-          this.playerAnimator?.stopSlipperSwing();
-          return;
+        for (const contact of result.contacts ?? []) {
+          if (this.calicoBoss.acceptToolHit(contact)) this.combatSystem.registerHit(contact);
         }
       }
-      this.calicoBoss.update(time, delta);
-    } else if (input?.attackPressed && this.progress.equippedAttackToolId !== "rabbit-slipper") {
-      this.equipmentVisual?.showAttack(time, ["squeaky-ball", "drumstick-boomerang", "plastic-frisbee"].includes(this.progress.equippedAttackToolId) ? "projectile" : "melee");
+      if (this.runtime.getStatus() !== "play") {
+        this.playerAnimator?.stopSlipperSwing();
+        return;
+      }
     }
+    for (const contact of this.combatSystem?.update(time, elapsed) ?? []) {
+      if (this.calicoBoss?.acceptToolHit(contact)) this.combatSystem?.registerHit(contact);
+    }
+    this.calicoBoss?.update(time, delta);
     this.playerAnimator?.update(time, delta);
     this.bowlShieldVisual?.update(delta, this.progress.equippedDefenseToolId === "upside-down-bowl" && this.runtime?.getStatus() === "play" && !this.calicoBoss?.isDefeated());
     this.gimmickSystem?.update(time, delta);

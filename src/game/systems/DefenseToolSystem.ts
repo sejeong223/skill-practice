@@ -103,6 +103,8 @@ export class DefenseToolSystem {
     return this.remainingCharges;
   }
 
+  public getToolId(): string { return this.toolId; }
+
   public isBroken(): boolean {
     return this.broken;
   }

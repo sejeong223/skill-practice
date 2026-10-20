@@ -18,6 +18,18 @@ export interface GameplayEventMap {
   "bite-hit": {
     now: number;
   };
+  "weapon-fired": {
+    attackId: string;
+    toolId: string;
+    kind: "melee" | "projectile";
+    now: number;
+  };
+  "weapon-hit": {
+    attackId: string;
+    toolId: string;
+    remainingHealth: number;
+    now: number;
+  };
   clang: {
     toolId: string;
     remainingCharges: number;

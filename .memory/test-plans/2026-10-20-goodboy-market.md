@@ -24,3 +24,10 @@
 - 새 장비는 저장된 선택값으로 보스전에도 들어가며, 새 무기 J 입력은 고유 효과가 붙기 전까지 물건 이미지의 휘두름만 보여 준다. 기본 슬리퍼 이벤트는 발생하지 않는다. 공격·방어 고유 효과는 P03에서 연결한다.
 - `node --test scripts/goodboy-held-assets.test.mjs scripts/goodboy-equipment-visual.test.mjs scripts/bowl-defense.test.mjs`: 5/5 통과. 장비 전면 배치·좌우 반전·교체·정리·기본 슬리퍼 이벤트 분리를 확인했다.
 - 생성기·매니페스트 `--check`, `node scripts/validate-assets.mjs`, 타입 검사, 린트, 빌드가 모두 통과했다.
+
+## P03-T01 무기별 실제 공격
+
+- 월드 1 보스 재도전 화면에서 저장된 무기를 각각 장착해 `J`로 삼색이를 한 번씩 공격했다. 다섯 경우 모두 공격 전 체력 10/10에서 공격 후 9/10으로 바뀌었다: [신문지](./assets/2026-10-21-boss-rolled-newspaper-hit.png), [효자손](./assets/2026-10-21-boss-pink-backscratcher-hit.png), [삑삑이 공](./assets/2026-10-21-boss-squeaky-ball-hit.png), [뼈 부메랑](./assets/2026-10-21-boss-drumstick-boomerang-hit.png), [원반](./assets/2026-10-21-boss-plastic-frisbee-hit.png). [원반 공격 전 10/10](./assets/2026-10-21-boss-plastic-frisbee-before.png)과 비교했다.
+- 신문지의 전방 사거리와 450ms 후딜레이, 효자손의 위쪽 판정과 명중 후 18px 반동, 공의 1회 튕김과 세 번째 고양이 그림자 방해, 부메랑의 귀환 중 재투척 금지, 원반의 빗나간 뒤 900ms 대기를 구현했다. `DrawbackDiscovery`를 실제 StageScene에 연결해 첫 발동만 저장한다.
+- `node --test scripts/goodboy-weapons.test.mjs scripts/goodboy-equipment-visual.test.mjs scripts/calico-melee-hitbox.test.mjs scripts/bark-boss-stun.test.mjs`: 11/11 통과. 보스 공격 ID 중복 방지와 기본 슬리퍼·짖기 회귀를 포함한다.
+- 타입 검사, 린트, `npm.cmd run build`를 서로 겹치지 않게 다시 실행해 모두 통과했다.
