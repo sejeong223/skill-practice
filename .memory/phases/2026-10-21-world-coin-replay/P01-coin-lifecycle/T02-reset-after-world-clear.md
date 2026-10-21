@@ -66,4 +66,4 @@ Task: T02-reset-after-world-clear
 
 - [x] 구현 완료
 - [x] 검증 통과
-- commit: pending
+- commit: `d231b77`
