@@ -359,6 +359,7 @@ export class StageScene extends Phaser.Scene {
         .setDepth(10);
       this.defenseToolSystem = new DefenseToolSystem(this.gameplayEventBus, TOOL_DEFINITIONS);
       this.defenseToolSystem.resetForStage(this.progress.equippedDefenseToolId);
+      this.equipmentVisual?.setShieldCharges(this.defenseToolSystem.getRemainingCharges());
       this.bowlShieldVisual = new BowlShieldVisual(this, this.player, this.defenseToolSystem, this.gameplayEventBus);
       this.strayDogEvent = new StrayDogEvent(this.gameplayEventBus, () => ({
         x: this.player!.x, y: this.player!.y - 20,
@@ -462,6 +463,7 @@ export class StageScene extends Phaser.Scene {
         this.defenseToolSystem?.setDefenseTool(selection.defenseToolId);
       }
       this.equipmentVisual?.setTools(this.progress.equippedAttackToolId, this.progress.equippedDefenseToolId);
+      this.equipmentVisual?.setShieldCharges(this.defenseToolSystem?.getRemainingCharges() ?? null);
       this.bowlShieldVisual?.update(0, false);
     }));
     this.eventUnsubscribers.push(this.eventBus.on("world-selection-requested", (selection) => {
@@ -697,6 +699,7 @@ export class StageScene extends Phaser.Scene {
       if (this.calicoBoss?.acceptToolHit(contact)) this.combatSystem?.registerHit(contact);
     }
     this.calicoBoss?.update(time, delta);
+    this.equipmentVisual?.setShieldCharges(this.defenseToolSystem?.getRemainingCharges() ?? null);
     this.playerAnimator?.update(time, delta);
     this.bowlShieldVisual?.update(delta, this.progress.equippedDefenseToolId === "upside-down-bowl" && this.runtime?.getStatus() === "play" && !this.calicoBoss?.isDefeated());
     this.gimmickSystem?.update(time, delta);

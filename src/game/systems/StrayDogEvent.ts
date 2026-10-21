@@ -24,7 +24,7 @@ export class StrayDogEvent {
     this.eventBus = eventBus;
     this.getOrigin = getOrigin;
     this.unsubscribe = eventBus.on("bowl-broken", (payload) => {
-      this.spawnSurge(payload.now);
+      if (payload.toolId === "upside-down-bowl") this.spawnSurge(payload.now);
     });
   }
 

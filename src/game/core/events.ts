@@ -39,6 +39,15 @@ export interface GameplayEventMap {
     toolId: string;
     now: number;
   };
+  "shield-blocked": {
+    toolId: string;
+    remainingCharges: number;
+    now: number;
+  };
+  "shield-broken": {
+    toolId: string;
+    now: number;
+  };
   "stray-dog-surge": {
     count: number;
     source: string;

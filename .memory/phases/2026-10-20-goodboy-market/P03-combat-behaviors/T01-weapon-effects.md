@@ -73,4 +73,4 @@ Task: T01-weapon-effects
 
 - [x] 구현 완료
 - [x] 검증 통과
-- commit: pending
+- commit: `7aac82d`

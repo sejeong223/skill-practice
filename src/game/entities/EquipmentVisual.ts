@@ -14,6 +14,7 @@ export class EquipmentVisual {
   private attackStartedAt = -Infinity;
   private attackKind: "melee" | "projectile" = "melee";
   private enabled = true;
+  private shieldCharges: number | null = null;
   private destroyed = false;
 
   public constructor(private readonly scene: Phaser.Scene, private readonly player: Player) {
@@ -39,6 +40,11 @@ export class EquipmentVisual {
 
   public setEnabled(enabled: boolean): void {
     this.enabled = enabled;
+    this.sync();
+  }
+
+  public setShieldCharges(charges: number | null): void {
+    this.shieldCharges = charges;
     this.sync();
   }
 
@@ -69,7 +75,7 @@ export class EquipmentVisual {
       .setAngle(0)
       .setDisplaySize(48, 48)
       .setDepth(this.player.depth + 3)
-      .setVisible(visible);
+      .setVisible(visible && (this.shieldCharges === null || this.shieldCharges > 0));
   }
 
   public destroy(): void {

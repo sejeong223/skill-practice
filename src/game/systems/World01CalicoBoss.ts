@@ -40,6 +40,7 @@ export class World01CalicoBoss {
   private readonly name: Phaser.GameObjects.Text;
   private readonly warning: Phaser.GameObjects.Text;
   private readonly stunNotice: Phaser.GameObjects.Text;
+  private readonly ringingNotice: Phaser.GameObjects.Text;
   private readonly dogSprites: Array<{ image: Phaser.GameObjects.Image; path: SamoyedPath }> = [];
   private surge?: SamoyedSurge;
   private readonly unsubscribeDogs: () => void;
@@ -56,6 +57,9 @@ export class World01CalicoBoss {
   private playerFlashUntil = 0;
   private barkStun: BossBarkStunState = { remainingMs: 0, nextAllowedAt: 0 };
   private readonly weaponHits = new WeaponHitTracker();
+  private slipRemainingMs = 0;
+  private slipDirection: -1 | 1 = -1;
+  private ringingUntil = 0;
 
   public constructor(
     private readonly scene: Phaser.Scene,
@@ -81,7 +85,13 @@ export class World01CalicoBoss {
       color: "#a8e9ff", fontFamily: "Galmuri11Pixel, monospace", fontSize: "24px",
       stroke: "#423039", strokeThickness: 4,
     }).setOrigin(0.5).setDepth(12).setVisible(false);
-    this.unsubscribeDogs = eventBus.on("stray-dog-surge", () => this.spawnDogSurround());
+    this.ringingNotice = scene.add.text(player.x, player.y - 106, "귀가 띵!", {
+      color: "#ffdf89", fontFamily: "Galmuri11Pixel, monospace", fontSize: "18px",
+      stroke: "#423039", strokeThickness: 4,
+    }).setOrigin(0.5).setDepth(15).setVisible(false);
+    this.unsubscribeDogs = eventBus.on("stray-dog-surge", ({ source }) => {
+      if (source === "upside-down-bowl") this.spawnDogSurround();
+    });
     this.facePlayer();
     this.drawHealth();
   }
@@ -95,13 +105,23 @@ export class World01CalicoBoss {
 
   public update(now: number, delta: number): void {
     if (this.state.phase === "intro" || this.state.phase === "defeated") return;
+    const frameMs = Math.min(delta, 50);
+    if (this.slipRemainingMs > 0) {
+      const movedMs = Math.min(this.slipRemainingMs, frameMs);
+      this.player.x += this.slipDirection * 72 * movedMs / 350;
+      this.slipRemainingMs -= movedMs;
+    }
     if (this.barkStun.remainingMs > 0) {
-      this.barkStun = tickBossBarkStun(this.barkStun, Math.min(delta, 50));
+      this.barkStun = tickBossBarkStun(this.barkStun, frameMs);
       if (this.barkStun.remainingMs === 0) this.stunNotice.setVisible(false);
       return;
     }
     this.facePlayer();
-    this.elapsed += Math.min(delta, 50);
+    this.elapsed += frameMs;
+    if (this.ringingUntil && this.elapsed >= this.ringingUntil) {
+      this.ringingNotice.setVisible(false);
+      this.ringingUntil = 0;
+    } else if (this.ringingUntil) this.ringingNotice.setPosition(this.player.x, this.player.y - 106);
     if (this.flashUntil && this.elapsed >= this.flashUntil) {
       this.sprite.clearTint();
       this.flashUntil = 0;
@@ -201,6 +221,9 @@ export class World01CalicoBoss {
     this.playerFlashUntil = 0;
     this.barkStun = { remainingMs: 0, nextAllowedAt: 0 };
     this.weaponHits.reset();
+    this.slipRemainingMs = 0;
+    this.ringingUntil = 0;
+    this.ringingNotice.setVisible(false);
     this.player.clearTint();
     this.state = {
       health: CALICO_MAX_HEALTH, phase: "intro", nextThrowAt: 1500,
@@ -226,6 +249,8 @@ export class World01CalicoBoss {
     this.clearDogs();
     this.warning.setVisible(false);
     this.stunNotice.setVisible(false);
+    this.ringingNotice.setVisible(false);
+    this.slipRemainingMs = 0;
     this.sprite.setFrame(this.isDefeated() ? 2 : 0).clearTint();
   }
 
@@ -241,6 +266,7 @@ export class World01CalicoBoss {
     this.name.destroy();
     this.warning.destroy();
     this.stunNotice.destroy();
+    this.ringingNotice.destroy();
   }
 
   private facePlayer(): void {
@@ -295,8 +321,24 @@ export class World01CalicoBoss {
     if (!Phaser.Geom.Rectangle.Overlaps(hitbox, body)) return;
     this.clearFishbone();
     if (this.elapsed < this.state.damageLockedUntil) return;
-    const block = this.defense.tryBlock({ id: bone.id, kind: "weak", damage: 1 }, now);
-    if (block.blocked) return;
+    const block = this.defense.tryBlock({ id: bone.id, kind: "weak", damage: 1,
+      sourceX: this.sprite.x, defenderX: this.player.body.center.x,
+      facing: this.player.flipX ? -1 : 1, projectile: true }, now);
+    if (block.blocked) {
+      if (block.toolId === "cushion-pad" && block.remainingCharges === 0) {
+        this.player.x -= (this.player.flipX ? -1 : 1) * 24;
+      } else if (block.toolId === "greasy-pizza-box") {
+        this.slipRemainingMs = 350;
+        this.slipDirection = this.player.flipX ? 1 : -1;
+      } else if (block.toolId === "yellow-pot-lid") {
+        this.state = { ...this.state, nextThrowAt: Math.max(this.state.nextThrowAt, this.elapsed) + 250 };
+        if (block.remainingCharges === 0) {
+          this.ringingUntil = this.elapsed + 400;
+          this.ringingNotice.setPosition(this.player.x, this.player.y - 106).setVisible(true);
+        }
+      }
+      return;
+    }
     const remaining = (this.state.corgiHearts - 1) as 0 | 1 | 2;
     this.state = {
       ...this.state, corgiHearts: remaining,

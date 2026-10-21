@@ -31,3 +31,10 @@
 - 신문지의 전방 사거리와 450ms 후딜레이, 효자손의 위쪽 판정과 명중 후 18px 반동, 공의 1회 튕김과 세 번째 고양이 그림자 방해, 부메랑의 귀환 중 재투척 금지, 원반의 빗나간 뒤 900ms 대기를 구현했다. `DrawbackDiscovery`를 실제 StageScene에 연결해 첫 발동만 저장한다.
 - `node --test scripts/goodboy-weapons.test.mjs scripts/goodboy-equipment-visual.test.mjs scripts/calico-melee-hitbox.test.mjs scripts/bark-boss-stun.test.mjs`: 11/11 통과. 보스 공격 ID 중복 방지와 기본 슬리퍼·짖기 회귀를 포함한다.
 - 타입 검사, 린트, `npm.cmd run build`를 서로 겹치지 않게 다시 실행해 모두 통과했다.
+
+## P03-T02 방패별 실제 방어
+
+- 보스 재도전 화면에 저장된 방패를 장착해 실제 가시 공격을 받았다. [쿠션](./assets/2026-10-21-boss-shield-cushion-pad-after.png), [피자 상자](./assets/2026-10-21-boss-shield-greasy-pizza-box-after.png), [우산](./assets/2026-10-21-boss-shield-umbrella-after.png), [냄비 뚜껑](./assets/2026-10-21-boss-shield-yellow-pot-lid-after.png) 모두 첫 방어 뒤 하트 3개, 강아지 0마리, 방어 횟수 1 감소를 확인했다.
+- 방어 횟수를 마지막 1회로 설정한 실제 가시 충돌에서는 네 방패 모두 0회가 되어 그림이 사라지고 강아지는 0마리였다. [쿠션 마지막 방어](./assets/2026-10-21-boss-shield-cushion-pad-last-after.png)는 코기를 24px 밀었고, [피자 상자](./assets/2026-10-21-boss-shield-greasy-pizza-box-last-after.png)는 350ms 동안 미끄러졌다. [우산](./assets/2026-10-21-boss-shield-umbrella-last-after.png)은 앞쪽 가시만 막았다. [냄비 뚜껑](./assets/2026-10-21-boss-shield-yellow-pot-lid-last-after.png)은 ‘귀가 띵!’ 표시와 다음 투척 250ms 지연을 보였다.
+- 같은 조건에서 [기본 밥그릇 마지막 방어](./assets/2026-10-21-boss-shield-upside-down-bowl-last-after.png)만 강아지 5마리와 중앙 경고를 표시했다. 옅은 붉은 화면과 기존 문구를 유지했다.
+- `node --test scripts/goodboy-shields.test.mjs scripts/bowl-defense.test.mjs scripts/boss-feedback.test.mjs scripts/world02-obstacles.test.mjs`: 14/14 통과. 앞뒤·투사체·횟수·단점·기본 밥그릇·월드 2 장애물 즉사 규칙을 확인했다. 타입 검사, 린트, 빌드도 순차 통과했다.
