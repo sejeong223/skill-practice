@@ -311,6 +311,30 @@
     "required": true
   },
   {
+    "key": "world-02-pigeon-fly",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/props/world-02/pigeon-fly.png",
+    "frameWidth": 80,
+    "frameHeight": 56,
+    "frameCount": 3,
+    "worldId": "world-02",
+    "required": true
+  },
+  {
+    "key": "world-02-pigeon-dropping",
+    "kind": "image",
+    "url": "/assets/pixel/props/world-02/pigeon-dropping.png",
+    "worldId": "world-02",
+    "required": true
+  },
+  {
+    "key": "world-02-pigeon-splat",
+    "kind": "image",
+    "url": "/assets/pixel/props/world-02/pigeon-splat.png",
+    "worldId": "world-02",
+    "required": true
+  },
+  {
     "key": "world-02-obstacle-duck-spring",
     "kind": "image",
     "url": "/assets/pixel/props/world-02/duck-spring.png",
