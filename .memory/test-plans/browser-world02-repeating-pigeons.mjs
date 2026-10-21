@@ -144,7 +144,7 @@ try {
   assert(dropGaps.every(gap => Math.abs(gap - 84 / 102 * 1000) < 100), `Pigeon drop gaps are ${dropGaps}`);
   const repeated = await until(s => s?.spawnTimes?.length >= 2, "second pigeon");
   const gap = repeated.spawnTimes[1] - repeated.spawnTimes[0];
-  assert(Math.abs(gap - 1500) < 100, `Pigeon interval is ${gap}ms`);
+  assert(Math.abs(gap - 3000) < 100, `Pigeon interval is ${gap}ms`);
   await screenshot("2026-10-21-world02-repeating-pigeons");
 
   await evaluate(`(${scene})?.eventBus.emit('pause-requested',{paused:true})`);

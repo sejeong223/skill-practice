@@ -89,7 +89,7 @@ test("세 비행 구간과 연속 낙하 지점은 놀이터 안전 경계 안�
     [830, 1280], [1530, 1980], [2590, 3040],
   ]);
   assert.equal(new Set(definitions.map(({ id }) => id)).size, 3);
-  assert.equal(spawnIntervalMs, 1500);
+  assert.equal(spawnIntervalMs, 3000);
   assert.deepEqual(dropOffsets, [84, 0, -84]);
   assert.ok(definitions.every(({ birdSpeedX, droppingSpeedY }) => birdSpeedX === 102 && droppingSpeedY === 770));
   for (const definition of definitions) {
@@ -130,17 +130,17 @@ test("한 비둘기가 왼쪽으로 날면서 세 위치에 차례대로 똥을 
   h.system.destroy();
 });
 
-test("첫 비둘기 이후 1.5초마다 정확히 한 마리씩 등장한다", () => {
+test("첫 비둘기 이후 3초마다 정확히 한 마리씩 등장한다", () => {
   const h = harness();
   h.player.x = 830;
   h.tick();
-  h.tick(29);
+  h.tick(59);
   assert.equal(h.birds.length, 1);
   h.tick();
   assert.equal(h.birds.length, 2);
-  h.tick(30);
+  h.tick(60);
   assert.equal(h.birds.length, 3);
-  assert.deepEqual(h.birds.map(({ createdAt }) => createdAt), [50, 1550, 3050]);
+  assert.deepEqual(h.birds.map(({ createdAt }) => createdAt), [50, 3050, 6050]);
   assert.ok(h.droppings.length >= 3);
   h.system.destroy();
 });
@@ -151,7 +151,7 @@ test("낙하물 하나에 닿으면 모든 동시 비행을 정리하고 정확�
   h.tick(75);
   const first = h.overlaps[0];
   const second = h.overlaps[1];
-  assert.equal(h.birds.length, 3);
+  assert.equal(h.birds.length, 2);
   first.callback();
   first.callback();
   second.callback();
@@ -164,14 +164,14 @@ test("낙하물 하나에 닿으면 모든 동시 비행을 정리하고 정확�
   assert.ok(h.droppings.every(({ active }) => !active));
   assert.ok(h.overlaps.every(({ active }) => !active));
   h.tick(80);
-  assert.equal(h.birds.length, 3, "death pending must stop spawning until restart");
+  assert.equal(h.birds.length, 2, "death pending must stop spawning until restart");
   h.player.x = 96;
   h.system.resetForAttempt(h.player.x);
   h.tick(10);
-  assert.equal(h.birds.length, 3);
+  assert.equal(h.birds.length, 2);
   h.player.x = 830;
   h.tick();
-  assert.equal(h.birds.length, 4);
+  assert.equal(h.birds.length, 3);
   h.system.destroy();
 });
 
@@ -201,7 +201,7 @@ test("체크포인트에서는 뒤쪽 구간만 재생성하고 출구 앞에서
   h.tick();
   assert.equal(h.birds.length, 1);
   assert.equal(h.birds[0].x, 3040 + 240 - 5.1);
-  h.tick(40);
+  h.tick(60);
   assert.equal(h.birds.length, 2);
   h.player.x = 3300;
   h.tick(80);
@@ -219,7 +219,7 @@ test("일시정지·상점·장면 종료는 타이머와 모든 낙하 리소�
   h.tick(50, 1000);
   collider.callback();
   assert.equal(h.birds[0].x, birdX);
-  assert.equal(h.birds.length, 2);
+  assert.equal(h.birds.length, 1);
   assert.equal(h.events.length, 0);
   h.setPlaying(true);
   h.system.destroy();
@@ -230,6 +230,6 @@ test("일시정지·상점·장면 종료는 타이머와 모든 낙하 리소�
   assert.ok(h.overlaps.every(({ active }) => !active));
   h.tick(80);
   collider.callback();
-  assert.equal(h.birds.length, 2);
+  assert.equal(h.birds.length, 1);
   assert.equal(h.events.length, 0);
 });
