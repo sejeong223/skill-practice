@@ -1,6 +1,6 @@
 # Task: T02 출입 딸랑 효과음과 상점 전용 음악
 
-## Status: pending
+## Status: done
 
 ## Goal
 
@@ -68,6 +68,6 @@ Task: T02-shop-audio
 
 ## Progress
 
-- [ ] 구현 완료
-- [ ] 검증 통과
+- [x] 구현 완료
+- [x] 검증 통과 (오디오·일시정지 테스트, 타입·린트, 월드 1·2 브라우저 3회 출입; 빌드는 T03에서 재확인)
 - commit: pending

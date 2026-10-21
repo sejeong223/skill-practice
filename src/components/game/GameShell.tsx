@@ -9,6 +9,7 @@ import { getStageDefinition } from "@/game/data";
 import { INTRO_CUTSCENE } from "@/game/data/cutscenes/intro";
 import { GameEventBus, type GameEventType } from "@/game/bridge/GameEventBus";
 import { AutoSaveCoordinator } from "@/game/persistence/AutoSaveCoordinator";
+import { ShopAudioController } from "@/game/audio/ShopAudioController";
 import { ProgressStore } from "@/game/persistence/ProgressStore";
 import { EconomySystem, type PurchaseResult } from "@/game/systems/EconomySystem";
 import { isWorldSelectionUnlocked } from "@/game/systems/worldSelection";
@@ -57,6 +58,7 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
   const runtimeRef = useRef<RuntimeStageState>(runtime);
   const economyRef = useRef<EconomySystem | null>(null);
   const autoSaveRef = useRef<AutoSaveCoordinator | null>(null);
+  const shopAudioRef = useRef<ShopAudioController | null>(null);
   const [toast, setToast] = useState("진행 상태를 준비하는 중...");
   const [mode, setMode] = useState<UiMode>("safe");
   const [paused, setPaused] = useState(false);
@@ -74,6 +76,8 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
 
   useEffect(() => {
     const removeStage = eventBus.on("stage-started", ({ stageId }) => {
+      shopAudioRef.current?.destroy();
+      shopAudioRef.current = null;
       setPaused(false);
       setWorldSelectOpen(false);
       setShopOpen(false);
@@ -161,6 +165,8 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
   }, [eventBus]);
 
   useEffect(() => () => {
+    shopAudioRef.current?.destroy();
+    shopAudioRef.current = null;
     if (deathOverlayTimeoutRef.current) {
       clearTimeout(deathOverlayTimeoutRef.current);
     }
@@ -246,10 +252,19 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
     setShopOpen(true);
     eventBus.emit("shop-state-changed", { open: true, closeViaEscape: false });
     eventBus.emit("pause-requested", { paused: true });
+    if (typeof Audio !== "undefined") {
+      try {
+        shopAudioRef.current ??= new ShopAudioController();
+        void shopAudioRef.current.enter();
+      } catch {
+        // An unavailable audio device must not prevent entering the shop.
+      }
+    }
   }, [activeStageId, eventBus, introGateStep, mode, paused, resetProgressDialogOpen, shopOpen, worldSelectOpen]);
 
   const handleCloseShop = useCallback((source: "button" | "keyboard"): void => {
     if (!shopOpen) return;
+    void shopAudioRef.current?.exit();
     setShopOpen(false);
     eventBus.emit("shop-state-changed", { open: false, closeViaEscape: source === "keyboard" });
     eventBus.emit("pause-requested", { paused: false });
