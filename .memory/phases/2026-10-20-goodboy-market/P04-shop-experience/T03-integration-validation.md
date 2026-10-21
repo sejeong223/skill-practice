@@ -1,6 +1,6 @@
 # Task: T03 상점 전체 통합 검증과 회귀 수정
 
-## Status: pending
+## Status: done
 
 ## Goal
 
@@ -59,6 +59,6 @@ Task: T03-integration-validation
 
 ## Progress
 
-- [ ] 구현 완료
-- [ ] 검증 통과
+- [x] 구현 완료
+- [x] 검증 통과
 - commit: pending

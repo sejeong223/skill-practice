@@ -13,9 +13,9 @@
 | Phase | Status | Summary | Blueprint |
 | :--- | :--- | :--- | :--- |
 | P01 | `done` | 상품 카탈로그·저장 스키마·코인·구매 | [P01](../phases/2026-10-20-goodboy-market/P01-catalog-and-economy/phase.md) |
-| P02 | `in_progress` | 상점 주인과 상품 이미지, 기존 코기에 맞는 착용 레이어 | [P02](../phases/2026-10-20-goodboy-market/P02-pixel-art-and-equipment/phase.md) |
-| P03 | `pending` | 현재 구현된 전투에서 무기·방패별 실제 효과 | [P03](../phases/2026-10-20-goodboy-market/P03-combat-behaviors/phase.md) |
-| P04 | `pending` | 상점 UI·일시정지·음향·전체 검증 | [P04](../phases/2026-10-20-goodboy-market/P04-shop-experience/phase.md) |
+| P02 | `done` | 상점 주인과 상품 이미지, 기존 코기에 맞는 착용 레이어 | [P02](../phases/2026-10-20-goodboy-market/P02-pixel-art-and-equipment/phase.md) |
+| P03 | `done` | 현재 구현된 전투에서 무기·방패별 실제 효과 | [P03](../phases/2026-10-20-goodboy-market/P03-combat-behaviors/phase.md) |
+| P04 | `done` | 상점 UI·일시정지·음향·전체 검증 | [P04](../phases/2026-10-20-goodboy-market/P04-shop-experience/phase.md) |
 
 ## Dependencies and guardrails
 

@@ -74,4 +74,4 @@ Task: T01-shop-ui-and-flow
 
 - [x] 구현 완료
 - [x] 검증 통과 (타입·린트·자동 테스트·브라우저, 프로덕션 빌드는 T03에서 재확인)
-- commit: pending
+- commit: `7eacf9f`

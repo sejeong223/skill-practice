@@ -62,12 +62,14 @@ const sceneState = `(() => {
 try {
   await call("Page.enable");
   await call("Runtime.enable");
-  for (const world of ["world-02", "world-01"]) {
+  const scenarios = process.env.GOODBOY_BOSS_ONLY === "1" ? [["world-01", true]] : [["world-02", false], ["world-01", false], ["world-01", true]];
+  for (const [world, bossReplay] of scenarios) {
     const progress = createDefaultProgressState("오디오 검증 코기");
     progress.onboardingCompleted = true;
     progress.clearedStages = ["world-01-stage-boss"];
     progress.selectedWorldId = world;
-    progress.seenCutsceneIds = ["intro-home", "world-02-intro"];
+    progress.world01BossReplayActive = bossReplay;
+    progress.seenCutsceneIds = ["intro-home", "world-02-intro", "world-01-boss-intro"];
     const envelope = { schemaVersion: 3, updatedAt: new Date().toISOString(), progress };
     const injection = await call("Page.addScriptToEvaluateOnNewDocument", { source: `
       if(location.hostname === 'localhost') localStorage.setItem(${JSON.stringify(PROGRESS_STORAGE_KEY)}, ${JSON.stringify(JSON.stringify(envelope))});
@@ -77,16 +79,20 @@ try {
     ` });
     await call("Page.navigate", { url: "http://localhost:3001" });
     for (let i = 0; i < 80 && !(await evaluate(`Boolean(document.querySelector('[aria-label="상점 열기"]'))`)); i += 1) await sleep(200);
-    for (let i = 0; i < 80 && (await evaluate(sceneState)).status !== "play"; i += 1) await sleep(200);
+    for (let i = 0; i < 160 && (await evaluate(sceneState)).status !== "play"; i += 1) {
+      await evaluate(`([...document.querySelectorAll('button')].find(b => b.textContent?.includes('건너뛰기')))?.click()`);
+      await sleep(200);
+    }
     await sleep(400);
-    console.log(world, "before", JSON.stringify(await evaluate(sceneState)));
+    const scenario = bossReplay ? "world-01-boss" : world;
+    console.log(scenario, "before", JSON.stringify(await evaluate(sceneState)));
     for (let count = 0; count < 3; count += 1) {
       await click('[aria-label="상점 열기"]');
       await sleep(360);
-      console.log(world, "inside", count + 1, JSON.stringify(await evaluate(sceneState)));
+      console.log(scenario, "inside", count + 1, JSON.stringify(await evaluate(sceneState)));
       await click('.goodboy-shop-close');
       await sleep(300);
-      console.log(world, "outside", count + 1, JSON.stringify(await evaluate(sceneState)));
+      console.log(scenario, "outside", count + 1, JSON.stringify(await evaluate(sceneState)));
     }
     await call("Page.removeScriptToEvaluateOnNewDocument", { identifier: injection.identifier });
   }
