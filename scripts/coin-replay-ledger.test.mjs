@@ -106,3 +106,35 @@ test("legacy save without the ledger keeps its wallet and equipment", () => {
   assert.deepEqual(restored.collectedCoinIds, []);
   h.save.destroy();
 });
+
+test("normal stage clear keeps eaten coins; world boss clear only resets its own world", () => {
+  const h = harness(20);
+  const runtime = createRuntimeStageState("world-01-stage-1");
+  const economy = new EconomySystem(h.progress, runtime, h.bus);
+  assert.equal(economy.collectCoin(runtime.stageId, 1, "bone-a"), true);
+  runtime.stageId = "world-02-stage-1";
+  assert.equal(economy.collectCoin(runtime.stageId, 1, "bone-a"), true);
+  assert.equal(h.progress.bankedCoins, 22);
+
+  runtime.stageId = "world-01-stage-2";
+  economy.commitStageClear();
+  assert.equal(h.progress.collectedCoinIds.length, 2);
+  assert.equal(h.store.load().collectedCoinIds.length, 2);
+
+  runtime.stageId = "world-01-stage-boss";
+  economy.commitStageClear();
+  assert.deepEqual(h.progress.collectedCoinIds, ["world-02-stage-1:bone-a"]);
+  assert.deepEqual(h.store.load().collectedCoinIds, ["world-02-stage-1:bone-a"]);
+  assert.equal(h.progress.bankedCoins, 22);
+
+  runtime.stageId = "world-01-stage-1";
+  assert.equal(economy.collectCoin(runtime.stageId, 1, "bone-a"), true);
+  assert.equal(h.progress.bankedCoins, 23);
+  runtime.stageId = "world-02-stage-1";
+  assert.equal(economy.collectCoin(runtime.stageId, 1, "bone-a"), false);
+  assert.equal(h.progress.bankedCoins, 23);
+  runtime.stageId = "world-02-stage-boss";
+  economy.commitStageClear();
+  assert.deepEqual(h.progress.collectedCoinIds, ["world-01-stage-1:bone-a"]);
+  h.save.destroy();
+});

@@ -1,4 +1,4 @@
-import type { ProgressState, StageId } from "../core/types";
+import type { ProgressState, StageId, WorldId } from "../core/types";
 
 type CoinLedgerProgress = Pick<ProgressState, "collectedCoinIds">;
 
@@ -14,4 +14,10 @@ export function recordCollectedCoin(progress: CoinLedgerProgress, stageId: Stage
   if (coinId.trim().length === 0 || hasCollectedCoin(progress, stageId, coinId)) return false;
   progress.collectedCoinIds.push(coinLedgerKey(stageId, coinId));
   return true;
+}
+
+export function clearCollectedCoinsForWorld(progress: CoinLedgerProgress, worldId: WorldId): number {
+  const before = progress.collectedCoinIds.length;
+  progress.collectedCoinIds = progress.collectedCoinIds.filter((key) => !key.startsWith(`${worldId}-stage-`));
+  return before - progress.collectedCoinIds.length;
 }

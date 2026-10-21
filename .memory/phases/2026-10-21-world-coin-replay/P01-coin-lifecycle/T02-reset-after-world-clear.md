@@ -1,6 +1,6 @@
 # Task: T02 월드 클리어 후 돌아오면 코인 재획득
 
-## Status: pending
+## Status: done
 
 ## Goal
 
@@ -64,6 +64,6 @@ Task: T02-reset-after-world-clear
 
 ## Progress
 
-- [ ] 구현 완료
-- [ ] 검증 통과
+- [x] 구현 완료
+- [x] 검증 통과
 - commit: pending

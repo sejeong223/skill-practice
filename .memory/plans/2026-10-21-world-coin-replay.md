@@ -12,7 +12,7 @@
 
 | Phase | Status | Summary | Blueprint |
 | :--- | :--- | :--- | :--- |
-| P01 | `in_progress` | 획득 기록 저장·재시도 숨김, 월드 완료 후 재수급 검증 | [P01](../phases/2026-10-21-world-coin-replay/P01-coin-lifecycle/phase.md) |
+| P01 | `done` | 획득 기록 저장·재시도 숨김, 월드 완료 후 재수급 검증 | [P01](../phases/2026-10-21-world-coin-replay/P01-coin-lifecycle/phase.md) |
 
 ## Guardrails
 

@@ -1,6 +1,6 @@
-import type { MarketCategory, ProgressState, RuntimeStageState, StageId } from "../core/types";
+import type { MarketCategory, ProgressState, RuntimeStageState, StageId, WorldId } from "../core/types";
 import { getMarketProduct } from "../data/marketCatalog";
-import { hasCollectedCoin, recordCollectedCoin } from "./coinLedger";
+import { clearCollectedCoinsForWorld, hasCollectedCoin, recordCollectedCoin } from "./coinLedger";
 import { GameEventBus } from "../bridge/GameEventBus";
 
 export class EconomySystem {
@@ -34,6 +34,10 @@ export class EconomySystem {
     this.runtime.currentStageCoins = 0;
     if (!this.progress.clearedStages.includes(this.runtime.stageId)) {
       this.progress.clearedStages.push(this.runtime.stageId);
+    }
+    if (this.runtime.stageId.endsWith("-stage-boss")) {
+      const worldId = this.runtime.stageId.split("-stage-")[0] as WorldId;
+      clearCollectedCoinsForWorld(this.progress, worldId);
     }
     this.emitCoins(this.runtime.stageId);
     return this.progress.bankedCoins;
