@@ -89,7 +89,7 @@ test("세 비행 구간과 연속 낙하 지점은 놀이터 안전 경계 안�
     [830, 1280], [1530, 1980], [2590, 3040],
   ]);
   assert.equal(new Set(definitions.map(({ id }) => id)).size, 3);
-  assert.equal(spawnIntervalMs, 2000);
+  assert.equal(spawnIntervalMs, 1500);
   assert.deepEqual(dropOffsets, [84, 0, -84]);
   assert.ok(definitions.every(({ birdSpeedX, droppingSpeedY }) => birdSpeedX === 102 && droppingSpeedY === 770));
   for (const definition of definitions) {
@@ -113,17 +113,11 @@ test("한 비둘기가 왼쪽으로 날면서 세 위치에 차례대로 똥을 
   h.tick();
   assert.equal(h.birds[0].key, "world-02-pigeon-fly");
   assert.ok(h.birds[0].x < 1280 + 240);
-  const tickUntilDropCount = (count) => {
-    for (let tick = 0; tick < 400 && h.droppings.length < count; tick++) h.tick(1, 10);
-    assert.equal(h.droppings.length, count);
-  };
-  tickUntilDropCount(1);
-  assert.deepEqual(h.droppings.map((sprite) => sprite.x), [1364]);
-  tickUntilDropCount(2);
-  assert.deepEqual(h.droppings.map((sprite) => sprite.x), [1364, 1280]);
-  tickUntilDropCount(3);
-  assert.deepEqual(h.droppings.map((sprite) => sprite.x), [1364, 1280, 1196]);
-  const dropTimes = h.droppings.map(({ createdAt }) => createdAt);
+  for (let tick = 0; tick < 400 && h.system.flights[0].drops.some(drop => drop.status === "pending"); tick++) h.tick(1, 10);
+  assert.ok(h.system.flights[0].drops.every(drop => drop.status !== "pending"));
+  const firstFlightDrops = h.system.flights[0].drops.map(drop => drop.sprite ?? h.droppings.find(sprite => sprite.x === drop.x));
+  assert.deepEqual(firstFlightDrops.map(sprite => sprite.x), [1364, 1280, 1196]);
+  const dropTimes = firstFlightDrops.map(({ createdAt }) => createdAt);
   for (let index = 1; index < dropTimes.length; index++) {
     assert.ok(Math.abs(dropTimes[index] - dropTimes[index - 1] - 84 / 102 * 1000) <= 20);
   }
@@ -131,23 +125,23 @@ test("한 비둘기가 왼쪽으로 날면서 세 위치에 차례대로 똥을 
   assert.ok(h.droppings.every((sprite) => sprite.velocity.vx === 0 && sprite.velocity.vy === 770));
   assert.ok(h.droppings.every((sprite) => sprite.body.allowGravity === false &&
     sprite.body.width === 14 && sprite.body.height === 20));
-  assert.equal(h.overlaps.length, 3);
+  assert.ok(h.overlaps.length >= 3);
   assert.equal(h.events.length, 0);
   h.system.destroy();
 });
 
-test("같은 구간에 머물러도 2초 간격으로 비둘기가 계속 등장한다", () => {
+test("첫 비둘기 이후 1.5초마다 정확히 한 마리씩 등장한다", () => {
   const h = harness();
   h.player.x = 830;
   h.tick();
-  h.tick(39);
+  h.tick(29);
   assert.equal(h.birds.length, 1);
   h.tick();
   assert.equal(h.birds.length, 2);
-  h.tick(40);
+  h.tick(30);
   assert.equal(h.birds.length, 3);
-  assert.deepEqual(h.birds.map(({ createdAt }) => createdAt), [50, 2050, 4050]);
-  assert.ok(h.droppings.length >= 4);
+  assert.deepEqual(h.birds.map(({ createdAt }) => createdAt), [50, 1550, 3050]);
+  assert.ok(h.droppings.length >= 3);
   h.system.destroy();
 });
 
@@ -157,7 +151,7 @@ test("낙하물 하나에 닿으면 모든 동시 비행을 정리하고 정확�
   h.tick(75);
   const first = h.overlaps[0];
   const second = h.overlaps[1];
-  assert.equal(h.birds.length, 2);
+  assert.equal(h.birds.length, 3);
   first.callback();
   first.callback();
   second.callback();
@@ -170,14 +164,14 @@ test("낙하물 하나에 닿으면 모든 동시 비행을 정리하고 정확�
   assert.ok(h.droppings.every(({ active }) => !active));
   assert.ok(h.overlaps.every(({ active }) => !active));
   h.tick(80);
-  assert.equal(h.birds.length, 2, "death pending must stop spawning until restart");
+  assert.equal(h.birds.length, 3, "death pending must stop spawning until restart");
   h.player.x = 96;
   h.system.resetForAttempt(h.player.x);
   h.tick(10);
-  assert.equal(h.birds.length, 2);
+  assert.equal(h.birds.length, 3);
   h.player.x = 830;
   h.tick();
-  assert.equal(h.birds.length, 3);
+  assert.equal(h.birds.length, 4);
   h.system.destroy();
 });
 
@@ -185,7 +179,7 @@ test("각 똥은 따로 착지해 무해한 자국을 남기고 사라진다", (
   const h = harness();
   h.player.x = 830;
   h.tick(65);
-  assert.equal(h.droppings.length, 3);
+  assert.ok(h.droppings.length >= 3);
   h.droppings[0].body.bottom = 504;
   h.tick();
   assert.equal(h.droppings[0].active, false);
@@ -225,7 +219,7 @@ test("일시정지·상점·장면 종료는 타이머와 모든 낙하 리소�
   h.tick(50, 1000);
   collider.callback();
   assert.equal(h.birds[0].x, birdX);
-  assert.equal(h.birds.length, 1);
+  assert.equal(h.birds.length, 2);
   assert.equal(h.events.length, 0);
   h.setPlaying(true);
   h.system.destroy();
@@ -236,6 +230,6 @@ test("일시정지·상점·장면 종료는 타이머와 모든 낙하 리소�
   assert.ok(h.overlaps.every(({ active }) => !active));
   h.tick(80);
   collider.callback();
-  assert.equal(h.birds.length, 1);
+  assert.equal(h.birds.length, 2);
   assert.equal(h.events.length, 0);
 });

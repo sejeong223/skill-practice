@@ -112,11 +112,16 @@ try {
     const s=${scene}; const system=s.world02PigeonDrops;
     window.__pigeonSpawnTimes=[];
     window.__pigeonDropTimes=[];
+    const flightIds=new WeakMap();
     const original=system.spawnFlight.bind(system);
-    system.spawnFlight=(definition)=>{window.__pigeonSpawnTimes.push(s.time.now); original(definition);};
+    system.spawnFlight=(definition)=>{
+      window.__pigeonSpawnTimes.push(s.time.now);
+      original(definition);
+      flightIds.set(system.flights.at(-1),window.__pigeonSpawnTimes.length);
+    };
     const originalRelease=system.releaseDropping.bind(system);
     system.releaseDropping=(flight,drop)=>{
-      window.__pigeonDropTimes.push({x:drop.x,time:s.time.now});
+      window.__pigeonDropTimes.push({flightId:flightIds.get(flight),x:drop.x,time:s.time.now});
       originalRelease(flight,drop);
     };
   })()`);
@@ -132,13 +137,13 @@ try {
   const threeDrops = await until(s => s?.flights?.[0]?.drops.every(d => d.status !== "pending"), "three drops");
   assert(threeDrops.flights[0].drops.map(d => d.x).join() === "1364,1280,1196", "Drop order or locations changed");
   assert(threeDrops.flights[0].drops.every(d => !d.hasWarning), "Ground warning marker was created");
-  const firstThreeDrops = threeDrops.dropTimes.slice(0, 3);
+  const firstThreeDrops = threeDrops.dropTimes.filter(({flightId}) => flightId === 1);
   assert(firstThreeDrops.map(({x}) => x).join() === "1364,1280,1196", "First pigeon drop order changed");
   const dropGaps = firstThreeDrops.slice(1).map(({time}, index) => time - firstThreeDrops[index].time);
   assert(dropGaps.every(gap => Math.abs(gap - 84 / 102 * 1000) < 100), `Pigeon drop gaps are ${dropGaps}`);
   const repeated = await until(s => s?.spawnTimes?.length >= 2, "second pigeon");
   const gap = repeated.spawnTimes[1] - repeated.spawnTimes[0];
-  assert(Math.abs(gap - 2000) < 100, `Pigeon interval is ${gap}ms`);
+  assert(Math.abs(gap - 1500) < 100, `Pigeon interval is ${gap}ms`);
   await screenshot("2026-10-21-world02-repeating-pigeons");
 
   await evaluate(`(${scene})?.eventBus.emit('pause-requested',{paused:true})`);
