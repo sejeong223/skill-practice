@@ -69,6 +69,7 @@ export class InputManager {
       dashPressed: this.wasPressed("dash"),
       barkPressed: this.wasPressed("bark"),
       pausePressed: this.wasPressed("pause"),
+      pauseHeld: this.isHeld("pause"),
     };
 
     return this.cachedSnapshot;

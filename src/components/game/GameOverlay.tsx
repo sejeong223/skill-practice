@@ -4,7 +4,6 @@ import type { InputAction, ProgressState, RuntimeStageState, SkillDefinition, To
 import { CharacterStatusPanel } from "./CharacterStatusPanel";
 import { Hud } from "./Hud";
 import { KeybindPanel } from "./KeybindPanel";
-import { ShopPanel } from "./ShopPanel";
 
 export interface GameOverlayProps {
   readonly stageTitle: string;
@@ -15,20 +14,19 @@ export interface GameOverlayProps {
   readonly cooldowns: Partial<Record<string, number>>;
   readonly bossHearts?: 0 | 1 | 2 | 3;
   readonly alive: boolean;
-  readonly safeZone: boolean;
   readonly statusOpen: boolean;
   readonly paused: boolean;
   readonly onTogglePause: () => void;
   readonly onResetProgress: () => void;
   readonly worldSelectUnlocked: boolean;
   readonly onOpenWorldSelect: () => void;
+  readonly onOpenShop: () => void;
   readonly onEquip: (tool: ToolDefinition) => void;
-  readonly onPurchase: (tool: ToolDefinition) => void;
   readonly onKeybindChange: (action: InputAction, key: string) => void;
   readonly onToggleStatus: () => void;
 }
 
-export function GameOverlay({ stageTitle, runtime, progress, skills, tools, cooldowns, bossHearts, alive, safeZone, statusOpen, paused, onTogglePause, onResetProgress, worldSelectUnlocked, onOpenWorldSelect, onEquip, onPurchase, onKeybindChange, onToggleStatus }: GameOverlayProps): ReactElement {
+export function GameOverlay({ stageTitle, runtime, progress, skills, tools, cooldowns, bossHearts, alive, statusOpen, paused, onTogglePause, onResetProgress, worldSelectUnlocked, onOpenWorldSelect, onOpenShop, onEquip, onKeybindChange, onToggleStatus }: GameOverlayProps): ReactElement {
   const attackTool = tools.find((tool) => tool.id === progress.equippedAttackToolId);
   const defenseTool = tools.find((tool) => tool.id === progress.equippedDefenseToolId);
   return (
@@ -48,6 +46,7 @@ export function GameOverlay({ stageTitle, runtime, progress, skills, tools, cool
         onResetProgress={onResetProgress}
         worldSelectUnlocked={worldSelectUnlocked}
         onOpenWorldSelect={onOpenWorldSelect}
+        onOpenShop={onOpenShop}
       />
       {statusOpen && (
         <div className="overlay-columns">
@@ -55,14 +54,6 @@ export function GameOverlay({ stageTitle, runtime, progress, skills, tools, cool
             <KeybindPanel keybinds={progress.keybinds} onChange={onKeybindChange} />
           </div>
           <div className="overlay-stack">
-            {safeZone && (
-              <ShopPanel
-                bankedCoins={progress.bankedCoins}
-                ownedToolIds={progress.ownedToolIds}
-                tools={tools}
-                onPurchase={onPurchase}
-              />
-            )}
             <CharacterStatusPanel
               progress={progress}
               skills={skills}

@@ -4,12 +4,13 @@ import type { InputAction, ProgressState, RuntimeStageState, SelectableWorldId, 
 import { createDefaultProgressState, createRuntimeStageState } from "@/game/core/constants";
 import { SKILL_DEFINITIONS } from "@/game/data/skills";
 import { TOOL_DEFINITIONS } from "@/game/data/tools";
+import { getMarketProduct, MARKET_PRODUCTS } from "@/game/data/marketCatalog";
 import { getStageDefinition } from "@/game/data";
 import { INTRO_CUTSCENE } from "@/game/data/cutscenes/intro";
 import { GameEventBus, type GameEventType } from "@/game/bridge/GameEventBus";
 import { AutoSaveCoordinator } from "@/game/persistence/AutoSaveCoordinator";
 import { ProgressStore } from "@/game/persistence/ProgressStore";
-import { EconomySystem } from "@/game/systems/EconomySystem";
+import { EconomySystem, type PurchaseResult } from "@/game/systems/EconomySystem";
 import { isWorldSelectionUnlocked } from "@/game/systems/worldSelection";
 import { GameEventBridge } from "./GameEventBridge";
 import { CutsceneOverlay } from "./CutsceneOverlay";
@@ -22,6 +23,7 @@ import { SnackCoinCounter } from "./SnackCoinCounter";
 import { PauseOverlay } from "./PauseOverlay";
 import { WorldSelectDialog } from "./WorldSelectDialog";
 import { BossCombatOverlay } from "./BossCombatOverlay";
+import { ShopPanel } from "./ShopPanel";
 
 export interface GameShellProps {
   readonly initialStageId: StageId;
@@ -62,6 +64,7 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
   const [deathOverlayCount, setDeathOverlayCount] = useState(0);
   const [resetProgressDialogOpen, setResetProgressDialogOpen] = useState(false);
   const [worldSelectOpen, setWorldSelectOpen] = useState(false);
+  const [shopOpen, setShopOpen] = useState(false);
   const deathOverlayTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [statusOpen, setStatusOpen] = useState(false);
   const [activeStageId, setActiveStageId] = useState<StageId>(initialStageId);
@@ -73,6 +76,7 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
     const removeStage = eventBus.on("stage-started", ({ stageId }) => {
       setPaused(false);
       setWorldSelectOpen(false);
+      setShopOpen(false);
       setActiveStageId(stageId);
       setBossHearts(stageId === "world-01-stage-boss" ? 3 : undefined);
       if (progressRef.current.selectedWorldId !== null) {
@@ -203,13 +207,6 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
     setIntroGateStep("ready");
   }, [eventBus, replaceProgress]);
 
-  const handlePurchase = useCallback((tool: ToolDefinition): void => {
-    if (mode !== "safe") return;
-    if (economyRef.current?.purchaseTool(tool.id)) {
-      replaceProgress(progressRef.current);
-    }
-  }, [mode, replaceProgress]);
-
   const handleEquip = useCallback((tool: ToolDefinition): void => {
     if (mode === "cutscene" || mode === "dead") return;
     if (!progressRef.current.ownedToolIds.includes(tool.id)) return;
@@ -237,10 +234,58 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
   }, []);
 
   const handleOpenWorldSelect = useCallback((): void => {
-    if (mode !== "play" || paused || !isWorldSelectionUnlocked(progressRef.current)) return;
+    if (mode !== "play" || paused || shopOpen || !isWorldSelectionUnlocked(progressRef.current)) return;
     setWorldSelectOpen(true);
     eventBus.emit("pause-requested", { paused: true });
-  }, [eventBus, mode, paused]);
+  }, [eventBus, mode, paused, shopOpen]);
+
+  const handleOpenShop = useCallback((): void => {
+    if (mode !== "play" || paused || shopOpen || worldSelectOpen || resetProgressDialogOpen ||
+        introGateStep !== "ready" || !(activeStageId.startsWith("world-01-") || activeStageId.startsWith("world-02-"))) return;
+    setStatusOpen(false);
+    setShopOpen(true);
+    eventBus.emit("shop-state-changed", { open: true, closeViaEscape: false });
+    eventBus.emit("pause-requested", { paused: true });
+  }, [activeStageId, eventBus, introGateStep, mode, paused, resetProgressDialogOpen, shopOpen, worldSelectOpen]);
+
+  const handleCloseShop = useCallback((source: "button" | "keyboard"): void => {
+    if (!shopOpen) return;
+    setShopOpen(false);
+    eventBus.emit("shop-state-changed", { open: false, closeViaEscape: source === "keyboard" });
+    eventBus.emit("pause-requested", { paused: false });
+  }, [eventBus, shopOpen]);
+
+  const handleMarketEquip = useCallback((id: string): void => {
+    if (!shopOpen || mode !== "play") return;
+    const product = getMarketProduct(id);
+    if (!product) return;
+    if (product.cosmeticId !== undefined) {
+      if (!progressRef.current.ownedCosmeticIds.includes(product.cosmeticId)) return;
+      if (product.category === "outfit") progressRef.current.equippedOutfitId = product.cosmeticId;
+      else progressRef.current.equippedAccessoryId = product.cosmeticId;
+      eventBus.emit("cosmetic-change-requested", product.category === "outfit"
+        ? { outfitId: product.cosmeticId } : { accessoryId: product.cosmeticId });
+    } else {
+      if (!progressRef.current.ownedToolIds.includes(product.toolId)) return;
+      if (product.category === "weapon") progressRef.current.equippedAttackToolId = product.toolId;
+      else progressRef.current.equippedDefenseToolId = product.toolId;
+      eventBus.emit("equipment-change-requested", product.category === "weapon"
+        ? { attackToolId: product.toolId } : { defenseToolId: product.toolId });
+    }
+    setProgress(cloneProgress(progressRef.current));
+    autoSaveRef.current?.flush();
+  }, [eventBus, mode, shopOpen]);
+
+  const handleMarketPurchase = useCallback((id: string): PurchaseResult => {
+    if (!shopOpen || mode !== "play") return { ok: false, reason: "unknown-item" };
+    const result = economyRef.current?.purchaseMarketProduct(id) ?? { ok: false, reason: "unknown-item" };
+    if (result.ok) {
+      handleMarketEquip(id);
+      setProgress(cloneProgress(progressRef.current));
+      autoSaveRef.current?.flush();
+    }
+    return result;
+  }, [handleMarketEquip, mode, shopOpen]);
 
   const handleCancelWorldSelect = useCallback((): void => {
     setWorldSelectOpen(false);
@@ -265,8 +310,10 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
         <GameEventBridge eventBus={eventBus} onEvent={handleEvent} />
         <CutsceneOverlay eventBus={eventBus} onSkip={() => eventBus.emit("cutscene-skip-requested", {})} />
         {introGateStep === "title" && <IntroTitleOverlay initialName={progress.playerName} onConfirm={handleNameConfirm} />}
-        {introGateStep === "ready" && mode !== "stage-clear" && !world02EntranceActive && <GameOverlay stageTitle={stage.title} runtime={runtime} progress={progress} skills={SKILL_DEFINITIONS} tools={TOOL_DEFINITIONS} cooldowns={{}} bossHearts={activeStageId === "world-01-stage-boss" ? bossHearts : undefined} alive={mode !== "dead" && mode !== "cutscene"} safeZone={mode === "safe"} statusOpen={statusOpen} onEquip={handleEquip} onPurchase={handlePurchase} onKeybindChange={handleKeybindChange} onToggleStatus={() => setStatusOpen((open) => !open)} paused={paused} onTogglePause={() => eventBus.emit("pause-requested", { paused: !paused })} onResetProgress={() => setResetProgressDialogOpen(true)} worldSelectUnlocked={worldSelectUnlocked} onOpenWorldSelect={handleOpenWorldSelect} />}
-        {paused && introGateStep === "ready" && !worldSelectOpen && <PauseOverlay onResume={() => eventBus.emit("pause-requested", { paused: false })} />}
+        {introGateStep === "ready" && mode !== "stage-clear" && !world02EntranceActive && <GameOverlay stageTitle={stage.title} runtime={runtime} progress={progress} skills={SKILL_DEFINITIONS} tools={TOOL_DEFINITIONS} cooldowns={{}} bossHearts={activeStageId === "world-01-stage-boss" ? bossHearts : undefined} alive={mode !== "dead" && mode !== "cutscene"} statusOpen={statusOpen} onEquip={handleEquip} onKeybindChange={handleKeybindChange} onToggleStatus={() => setStatusOpen((open) => !open)} paused={paused} onTogglePause={() => eventBus.emit("pause-requested", { paused: !paused })} onResetProgress={() => setResetProgressDialogOpen(true)} worldSelectUnlocked={worldSelectUnlocked} onOpenWorldSelect={handleOpenWorldSelect} onOpenShop={handleOpenShop} />}
+        {paused && introGateStep === "ready" && !worldSelectOpen && !shopOpen && <PauseOverlay onResume={() => eventBus.emit("pause-requested", { paused: false })} />}
+        {shopOpen && <ShopPanel bankedCoins={progress.bankedCoins} products={MARKET_PRODUCTS} progress={progress}
+          onPurchase={handleMarketPurchase} onEquip={handleMarketEquip} onClose={handleCloseShop} />}
         {worldSelectOpen && (
           <WorldSelectDialog
             currentWorldId={currentWorldId}

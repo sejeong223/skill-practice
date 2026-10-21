@@ -320,7 +320,8 @@ form { display: flex; gap: 6px; margin-top: 10px; } form input { min-width: 0; f
 
 .pause-button,
 .reset-progress-button,
-.world-select-button {
+.world-select-button,
+.shop-open-button {
   position: absolute;
   top: 16px;
   z-index: 5;
@@ -339,40 +340,116 @@ form { display: flex; gap: 6px; margin-top: 10px; } form input { min-width: 0; f
 .pause-button { right: 58px; }
 .reset-progress-button { right: 16px; }
 .world-select-button { right: 16px; }
+.shop-open-button { right: 100px; }
 .game-overlay.has-world-select .pause-button { right: 100px; }
 .game-overlay.has-world-select .reset-progress-button { right: 58px; }
-.game-overlay.has-world-select .game-hud { max-width: calc(100% - 142px); }
+.game-overlay.has-world-select .shop-open-button { right: 142px; }
+.game-overlay .game-hud { max-width: calc(100% - 142px); }
+.game-overlay.has-world-select .game-hud { max-width: calc(100% - 184px); }
 .game-overlay.has-world-select .hud-stage,
 .game-overlay.has-world-select .hud-stats { min-width: 0; overflow: hidden; }
 .game-overlay.has-world-select .hud-stage strong { overflow: hidden; text-overflow: ellipsis; }
-.boss-hearts { position: absolute; top: 16px; right: 102px; z-index: 5; display: flex; align-items: center; gap: 5px; min-height: 32px; padding: 2px 7px; border: 2px solid #5f3942; background: rgb(255 248 229 / 95%); white-space: nowrap; }
-.game-overlay.has-world-select .boss-hearts { right: 144px; }
+.boss-hearts { position: absolute; top: 16px; right: 144px; z-index: 5; display: flex; align-items: center; gap: 5px; min-height: 32px; padding: 2px 7px; border: 2px solid #5f3942; background: rgb(255 248 229 / 95%); white-space: nowrap; }
+.game-overlay.has-world-select .boss-hearts { right: 186px; }
 .boss-hearts-face { width: 24px; height: 24px; flex: 0 0 24px; background: url("/assets/pixel/references/characters/corgi-reference-v2.png") -81.45px -23.27px / 129.02px 64.51px no-repeat; image-rendering: pixelated; }
 .boss-heart { color: #db4053; font: 900 23px monospace; line-height: 1; text-shadow: 1px 2px #5f3942; }
 .boss-heart.is-empty { color: #a7a1a0; text-shadow: none; }
 @media (max-width: 720px) {
-  .game-overlay.has-boss-hearts .game-hud { width: calc(100% - 218px); max-width: calc(100% - 218px); min-height: 32px; box-sizing: border-box; padding: 4px 5px; overflow: hidden; }
-  .game-overlay.has-boss-hearts.has-world-select .game-hud { width: calc(100% - 260px); max-width: calc(100% - 260px); }
+  .game-overlay.has-boss-hearts .game-hud { width: calc(100% - 260px); max-width: calc(100% - 260px); min-height: 32px; box-sizing: border-box; padding: 4px 5px; overflow: hidden; }
+  .game-overlay.has-boss-hearts.has-world-select .game-hud { width: calc(100% - 302px); max-width: calc(100% - 302px); }
   .game-overlay.has-boss-hearts .hud-stage { min-width: 0; overflow: hidden; }
   .game-overlay.has-boss-hearts .hud-stage strong { overflow: hidden; text-overflow: ellipsis; }
   .game-overlay.has-boss-hearts .hud-label,
   .game-overlay.has-boss-hearts .hud-subtitle,
   .game-overlay.has-boss-hearts .hud-stats { display: none; }
   .game-overlay.has-boss-hearts .status-menu-button { position: absolute; top: 56px; left: 8px; }
-  .boss-hearts { top: 16px; right: 102px; gap: 3px; padding: 1px 5px; }
-  .game-overlay.has-world-select .boss-hearts { right: 144px; }
+  .boss-hearts { top: 16px; right: 144px; gap: 3px; padding: 1px 5px; }
+  .game-overlay.has-world-select .boss-hearts { right: 186px; }
   .boss-hearts-face { width: 20px; height: 20px; flex-basis: 20px; background-position: -67.88px -19.39px; background-size: 107.52px 53.76px; }
   .boss-heart { font-size: 19px; }
 }
 
 .pause-button svg,
 .reset-progress-button svg,
-.world-select-button svg {
+.world-select-button svg,
+.shop-open-button svg {
   display: block;
   width: 16px;
   height: 16px;
   fill: currentColor;
   image-rendering: pixelated;
+}
+
+.goodboy-shop-overlay { position: absolute; inset: 0; z-index: 22; display: grid; place-items: center; padding: 16px; background: rgb(39 35 49 / 68%); pointer-events: auto; }
+.goodboy-shop-dialog { width: min(100%, 900px); max-height: calc(100% - 4px); overflow-y: auto; border: 4px solid #f0b95f; color: #5f3942; background: #fff8e5; box-shadow: 8px 8px 0 rgb(39 35 49 / 50%); font-family: "Galmuri11Pixel", monospace; }
+.goodboy-shop-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px; background: #5f3942; color: #fff8e5; }
+.goodboy-shop-header h2 { margin: 3px 0 0; font-size: clamp(17px, 2.4vw, 27px); line-height: 1.25; }
+.goodboy-shop-kicker { color: #f0b95f; font-size: 9px; letter-spacing: .18em; }
+.goodboy-shop-header-actions { display: flex; align-items: center; gap: 10px; white-space: nowrap; }
+.goodboy-shop-header-actions strong { color: #ffe2a0; font-size: 14px; }
+.goodboy-shop-close { display: grid; width: 34px; height: 34px; place-items: center; border: 2px solid #f0b95f; background: #e8cda0; color: #5f3942; font: 900 24px/1 monospace; cursor: pointer; }
+.goodboy-shop-body { display: grid; grid-template-columns: minmax(220px, .8fr) minmax(0, 1.2fr); min-height: 390px; }
+.goodboy-shop-vendor { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 18px; border-right: 3px solid #c69a6d; background: #e9efc9; }
+.goodboy-shop-vendor-portrait { display: grid; width: min(100%, 206px); aspect-ratio: 1; place-items: center; border: 3px solid #5f3942; background: #d4e8b1; overflow: hidden; }
+.goodboy-shop-vendor-portrait img { width: 100%; height: 100%; object-fit: contain; image-rendering: pixelated; }
+.goodboy-shop-vendor-name { margin: 0; font-size: 11px; color: #5f3942; font-weight: 800; }
+.goodboy-shop-dialogue { align-self: stretch; min-height: 76px; margin: 0; padding: 12px; border: 2px solid #5f3942; background: #fff8e5; font-size: 12px; line-height: 1.6; word-break: keep-all; }
+.goodboy-shop-products { min-width: 0; padding: 16px 18px 20px; }
+.goodboy-shop-categories { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 5px; }
+.goodboy-shop-categories button { min-height: 38px; padding: 4px; border: 2px solid #5f3942; background: #e8cda0; color: #5f3942; font: 800 11px "Galmuri11Pixel", monospace; cursor: pointer; }
+.goodboy-shop-categories button.is-active { background: #9ed760; box-shadow: inset 0 -3px #568b49; }
+.goodboy-shop-product { display: grid; justify-items: center; gap: 10px; padding-top: 12px; text-align: center; }
+.goodboy-shop-category-label { color: #8b5a56; font-size: 10px; }
+.goodboy-shop-product-stage { display: grid; grid-template-columns: 44px minmax(110px, 1fr) 44px; align-items: center; gap: 12px; width: 100%; }
+.goodboy-shop-arrow { display: grid; width: 44px; height: 44px; place-items: center; border: 3px solid #5f3942; background: #e8cda0; color: #5f3942; font: 20px monospace; cursor: pointer; }
+.goodboy-shop-arrow:hover, .goodboy-shop-arrow:focus-visible, .goodboy-shop-categories button:hover, .goodboy-shop-categories button:focus-visible, .goodboy-shop-close:focus-visible, .goodboy-shop-action:focus-visible { outline: 3px solid #f0b95f; outline-offset: 2px; }
+.goodboy-shop-item-portrait { display: grid; min-height: 124px; place-items: center; border: 2px dashed #d0a777; background: #f5e7c7; }
+.goodboy-shop-item-portrait img { width: 104px; height: 104px; object-fit: contain; image-rendering: pixelated; }
+.goodboy-shop-product-info { display: grid; justify-items: center; gap: 5px; max-width: 360px; }
+.goodboy-shop-product-info h3 { margin: 0; font-size: 17px; }
+.goodboy-shop-product-info p { min-height: 34px; margin: 0; color: #8b5a56; font-size: 11px; line-height: 1.5; }
+.goodboy-shop-product-info strong { color: #a5524b; font-size: 15px; }
+.goodboy-shop-product-info span { font-size: 10px; }
+.goodboy-shop-action { min-width: 150px; min-height: 40px; padding: 8px 14px; border: 3px solid #5f3942; background: #9ed760; color: #432b38; font: 800 13px "Galmuri11Pixel", monospace; cursor: pointer; }
+.goodboy-shop-action:disabled { opacity: .6; }
+@media (max-width: 720px) {
+  .pause-button, .reset-progress-button, .world-select-button, .shop-open-button { top: 8px; }
+  .pause-button { right: 50px; } .reset-progress-button { right: 8px; } .shop-open-button { right: 92px; }
+  .game-overlay.has-world-select .pause-button { right: 92px; }
+  .game-overlay.has-world-select .reset-progress-button { right: 50px; }
+  .game-overlay.has-world-select .world-select-button { right: 8px; }
+  .game-overlay.has-world-select .shop-open-button { right: 134px; }
+  .boss-hearts { top: 8px; right: 136px; } .game-overlay.has-world-select .boss-hearts { right: 178px; }
+  .goodboy-shop-overlay { padding: 6px; }
+  .goodboy-shop-dialog { border-width: 3px; max-height: calc(100% - 2px); }
+  .goodboy-shop-header { padding: 7px 9px; }
+  .goodboy-shop-header h2 { font-size: 15px; }
+  .goodboy-shop-body { grid-template-columns: minmax(125px, .7fr) minmax(0, 1.3fr); min-height: 0; }
+  .goodboy-shop-vendor { padding: 8px; gap: 5px; }
+  .goodboy-shop-vendor-portrait { width: min(100%, 110px); }
+  .goodboy-shop-vendor-name { font-size: 9px; }
+  .goodboy-shop-dialogue { min-height: 0; padding: 6px; font-size: 9px; line-height: 1.45; }
+  .goodboy-shop-products { padding: 8px; }
+  .goodboy-shop-categories button { min-height: 30px; font-size: 9px; }
+  .goodboy-shop-product { gap: 5px; padding-top: 5px; }
+  .goodboy-shop-product-stage { grid-template-columns: 32px minmax(72px, 1fr) 32px; gap: 5px; }
+  .goodboy-shop-arrow { width: 32px; height: 32px; font-size: 14px; }
+  .goodboy-shop-item-portrait { min-height: 68px; }
+  .goodboy-shop-item-portrait img { width: 62px; height: 62px; }
+  .goodboy-shop-product-info h3 { font-size: 12px; }
+  .goodboy-shop-product-info p { min-height: 0; font-size: 9px; }
+  .goodboy-shop-product-info strong { font-size: 11px; }
+  .goodboy-shop-action { min-height: 32px; padding: 5px; font-size: 10px; }
+}
+@media (max-width: 480px) {
+  .goodboy-shop-body { display: block; }
+  .goodboy-shop-vendor { display: grid; grid-template-columns: 62px 1fr; align-items: center; text-align: left; }
+  .goodboy-shop-vendor-portrait { grid-row: span 2; width: 62px; }
+  .goodboy-shop-vendor-name { align-self: end; }
+  .goodboy-shop-dialogue { align-self: start; }
+  .goodboy-shop-header-actions strong { font-size: 10px; }
+  .goodboy-shop-header h2 { font-size: 12px; }
+  .goodboy-shop-kicker { font-size: 7px; }
 }
 
 .world-select-overlay { position: absolute; inset: 0; z-index: 18; display: grid; place-items: center; padding: 16px; background: rgb(39 35 49 / 76%); pointer-events: auto; }

@@ -19,4 +19,5 @@ export interface InputSnapshot {
   dashPressed: boolean;
   barkPressed: boolean;
   pausePressed: boolean;
+  pauseHeld: boolean;
 }

@@ -1,6 +1,6 @@
 # Task: T01 상점 버튼·모달·주인 대사
 
-## Status: pending
+## Status: done
 
 ## Goal
 
@@ -72,6 +72,6 @@ Task: T01-shop-ui-and-flow
 
 ## Progress
 
-- [ ] 구현 완료
-- [ ] 검증 통과
+- [x] 구현 완료
+- [x] 검증 통과 (타입·린트·자동 테스트·브라우저, 프로덕션 빌드는 T03에서 재확인)
 - commit: pending

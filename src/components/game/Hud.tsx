@@ -18,6 +18,7 @@ export interface HudProps {
   readonly onResetProgress: () => void;
   readonly worldSelectUnlocked: boolean;
   readonly onOpenWorldSelect: () => void;
+  readonly onOpenShop: () => void;
 }
 
 export function Hud({
@@ -33,6 +34,7 @@ export function Hud({
   onResetProgress,
   worldSelectUnlocked,
   onOpenWorldSelect,
+  onOpenShop,
 }: HudProps): ReactElement {
   return (
     <div className="game-hud" aria-label="게임 HUD">
@@ -62,6 +64,17 @@ export function Hud({
           ))}
         </div>
       )}
+      <button
+        className="shop-open-button"
+        type="button"
+        aria-label="상점 열기"
+        title="리트리버의 굿보이 마켓"
+        onClick={onOpenShop}
+      >
+        <svg viewBox="0 0 16 16" shapeRendering="crispEdges" aria-hidden="true">
+          <path d="M2 2h12v3H2zM1 5h14v3H1zM3 8h10v6H3zM6 9h4v5H6zM4 1h8v1H4z" />
+        </svg>
+      </button>
       <button
         className="pause-button"
         type="button"
