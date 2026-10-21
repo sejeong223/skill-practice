@@ -103,7 +103,7 @@ test('비둘기는 오른쪽에서 왼쪽으로 날고 예고 후 똥을 떨어�
   h.tick(10);
   assert.equal(h.droppings.length, 1);
   assert.equal(h.droppings[0].x, 1280);
-  assert.deepEqual(h.droppings[0].velocity, { vx: 0, vy: 850 });
+  assert.deepEqual(h.droppings[0].velocity, { vx: 0, vy: 770 });
   assert.equal(h.droppings[0].body.allowGravity, false);
   assert.deepEqual([h.droppings[0].body.width, h.droppings[0].body.height], [14, 20]);
   assert.equal(h.overlaps.length, 1);

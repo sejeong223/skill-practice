@@ -12,7 +12,7 @@
 
 | Phase | Status | Summary | Blueprint |
 | :--- | :--- | :--- | :--- |
-| P01 | `in_progress` | 비둘기·똥 아트, 낙하·사망 시스템, 실제 플레이 검증 | [P01](../phases/2026-10-21-world02-pigeon-droppings/P01-stage1-pigeon-drops/phase.md) |
+| P01 | `done ✅` | 비둘기·똥 아트, 낙하·사망 시스템, 실제 플레이 검증 | [P01](../phases/2026-10-21-world02-pigeon-droppings/P01-stage1-pigeon-drops/phase.md) |
 
 ## Task Order
 

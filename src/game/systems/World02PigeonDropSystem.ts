@@ -115,11 +115,13 @@ export class World02PigeonDropSystem {
     if (pass.warning) return;
     const warning = this.scene.add.graphics()
       .setPosition(pass.definition.dropX, SAND_TOP_Y - 5)
-      .setDepth(3);
-    warning.fillStyle(0x683852, 0.68);
-    warning.fillEllipse(0, 0, 44, 12);
-    warning.fillStyle(0xdba8ba, 0.9);
-    warning.fillEllipse(0, -1, 24, 5);
+      .setDepth(11);
+    warning.fillStyle(0xff927c, 0.95);
+    warning.fillEllipse(0, 0, 54, 18);
+    warning.fillStyle(0x683852, 0.9);
+    warning.fillEllipse(0, 0, 46, 12);
+    warning.fillStyle(0xffdbc8, 0.95);
+    warning.fillEllipse(0, -1, 26, 5);
     pass.warning = warning;
   }
 
