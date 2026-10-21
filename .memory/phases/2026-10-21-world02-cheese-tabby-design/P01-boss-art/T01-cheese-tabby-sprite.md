@@ -84,4 +84,4 @@ Task: T01-cheese-tabby-sprite
 
 - [x] 구현 완료
 - [x] 검증 통과: 생성기 동기화, 이미지 계약 검사 2건, 타입 검사, 린트, 빌드, 1배·4배 육안 확인
-- commit: 이 Task의 Git 커밋 메시지 참조
+- commit: `a19cf28`

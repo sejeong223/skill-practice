@@ -1,6 +1,6 @@
 # Task: T02 치즈 태비 에셋 등록과 보스 맵 표시
 
-## Status: pending
+## Status: done
 
 ## Goal
 
@@ -104,6 +104,6 @@ Task: T02-boss-stage-display
 
 ## Progress
 
-- [ ] 구현 완료
-- [ ] 검증 통과
-- commit: pending
+- [x] 구현 완료
+- [x] 검증 통과: 생성기 동기화, 아트 검사 2건, 전체 에셋 검사 103건, 타입 검사, 린트, 빌드, Chrome 씬 재시작 2회와 화면 확인
+- commit: 이 Task의 Git 커밋 메시지 참조

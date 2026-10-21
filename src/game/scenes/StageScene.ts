@@ -97,6 +97,7 @@ export class StageScene extends Phaser.Scene {
   private debugOverlay?: MapDebugOverlay;
   private cutsceneDirector?: CutsceneDirector;
   private calicoSprite?: Phaser.GameObjects.Sprite;
+  private cheeseTabbySprite?: Phaser.GameObjects.Sprite;
   private calicoBoss?: World01CalicoBoss;
   private victorySequenceStarted = false;
   private stageTransitionStarted = false;
@@ -427,6 +428,10 @@ export class StageScene extends Phaser.Scene {
         });
       }
     }
+    if (stage.id === "world-02-stage-boss") {
+      this.cheeseTabbySprite = this.add.sprite(1280, 446, "world-02-cheese-tabby-boss", 0)
+        .setDepth(10).setFlipX(true);
+    }
     this.runtime.getEventBus().on("map-state-restored", () => {
       const snapshot = this.runtime?.getMapSnapshot() ?? null;
       this.mapInteraction?.reset(snapshot);
@@ -563,6 +568,8 @@ export class StageScene extends Phaser.Scene {
       this.audioManager = undefined;
       this.calicoSprite?.destroy();
       this.calicoSprite = undefined;
+      this.cheeseTabbySprite?.destroy();
+      this.cheeseTabbySprite = undefined;
       this.mapInteraction?.destroy();
       this.world02Obstacles?.destroy();
       this.world02Obstacles = undefined;

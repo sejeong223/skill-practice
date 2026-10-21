@@ -12,7 +12,7 @@
 
 | Phase | Status | Summary | Blueprint |
 | :--- | :--- | :--- | :--- |
-| P01 | `in_progress` | 치즈 태비 그림 제작, 에셋 등록, 보스 스테이지 시각 표시와 검증 | [P01](../phases/2026-10-21-world02-cheese-tabby-design/P01-boss-art/phase.md) |
+| P01 | `done` | 치즈 태비 그림 제작, 에셋 등록, 보스 스테이지 시각 표시와 검증 | [P01](../phases/2026-10-21-world02-cheese-tabby-design/P01-boss-art/phase.md) |
 
 ## Task Order
 
