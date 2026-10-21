@@ -12,7 +12,7 @@
 
 | Phase | Status | Summary | Blueprint |
 | :--- | :--- | :--- | :--- |
-| P01 | `in_progress` | 장애물 시각과 비둘기 낙하 연출 | [P01](../phases/2026-10-21-world02-obstacle-pigeon-polish/P01-visual-and-flight/phase.md) |
+| P01 | `done` | 장애물 시각과 비둘기 낙하 연출 | [P01](../phases/2026-10-21-world02-obstacle-pigeon-polish/P01-visual-and-flight/phase.md) |
 
 ## Task Order
 

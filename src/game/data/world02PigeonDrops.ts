@@ -8,7 +8,7 @@ export interface World02PigeonPassDefinition {
 }
 
 export const WORLD02_PIGEON_SPAWN_INTERVAL_MS = 2000;
-export const WORLD02_PIGEON_DROP_OFFSETS: readonly number[] = [44, 0, -44];
+export const WORLD02_PIGEON_DROP_OFFSETS: readonly number[] = [84, 0, -84];
 
 export const WORLD02_STAGE1_PIGEON_PASSES: readonly World02PigeonPassDefinition[] = [
   { id: "world-02-stage-1-pigeon-1", triggerX: 830, dropX: 1280, flightY: 190, birdSpeedX: 160, droppingSpeedY: 770 },

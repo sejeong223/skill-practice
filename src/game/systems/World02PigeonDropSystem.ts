@@ -10,18 +10,16 @@ import { Player } from "../entities/Player";
 
 const BIRD_START_OFFSET = 240;
 const BIRD_END_OFFSET = 320;
-const WARNING_OFFSET = 80;
 const SAND_TOP_Y = 504;
 const SPLAT_LIFETIME_MS = 300;
 const WING_FRAME_MS = 120;
 
-type DroppingStatus = "pending" | "warned" | "falling" | "landed" | "finished";
+type DroppingStatus = "pending" | "falling" | "landed" | "finished";
 
 interface PigeonDropping {
   readonly x: number;
   status: DroppingStatus;
   splatRemainingMs: number;
-  warning?: Phaser.GameObjects.Graphics;
   sprite?: Phaser.Physics.Arcade.Sprite;
   splat?: Phaser.GameObjects.Image;
   overlap?: Phaser.Physics.Arcade.Collider;
@@ -74,10 +72,7 @@ export class World02PigeonDropSystem {
         flight.bird.x -= flight.definition.birdSpeedX * elapsed / 1000;
         flight.bird.setFrame(Math.floor(flight.flightElapsedMs / WING_FRAME_MS) % 3);
         for (const drop of flight.drops) {
-          if (drop.status === "pending" && flight.bird.x <= drop.x + WARNING_OFFSET) {
-            this.showWarning(drop);
-          }
-          if (drop.status === "warned" && flight.bird.x <= drop.x) {
+          if (drop.status === "pending" && flight.bird.x <= drop.x) {
             this.releaseDropping(flight, drop);
           }
         }
@@ -147,20 +142,6 @@ export class World02PigeonDropSystem {
     });
   }
 
-  private showWarning(drop: PigeonDropping): void {
-    drop.status = "warned";
-    const warning = this.scene.add.graphics()
-      .setPosition(drop.x, SAND_TOP_Y - 5)
-      .setDepth(11);
-    warning.fillStyle(0xff927c, 0.95);
-    warning.fillEllipse(0, 0, 54, 18);
-    warning.fillStyle(0x683852, 0.9);
-    warning.fillEllipse(0, 0, 46, 12);
-    warning.fillStyle(0xffdbc8, 0.95);
-    warning.fillEllipse(0, -1, 26, 5);
-    drop.warning = warning;
-  }
-
   private releaseDropping(flight: PigeonFlight, drop: PigeonDropping): void {
     drop.status = "falling";
     const sprite = this.scene.physics.add.sprite(
@@ -220,8 +201,6 @@ export class World02PigeonDropSystem {
 
   private clearDropping(drop: PigeonDropping): void {
     this.destroyDroppingSprite(drop);
-    if (drop.warning?.active) drop.warning.destroy();
-    drop.warning = undefined;
     if (drop.splat?.active) drop.splat.destroy();
     drop.splat = undefined;
     drop.splatRemainingMs = 0;

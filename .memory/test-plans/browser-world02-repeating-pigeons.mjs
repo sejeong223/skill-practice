@@ -64,7 +64,7 @@ const state = `(() => {
     spawnTimes:window.__pigeonSpawnTimes,
     flights:s.world02PigeonDrops?.flights?.map(f=>({
       bird:f.bird && {x:f.bird.x,y:f.bird.y},
-      drops:f.drops.map(d=>({x:d.x,status:d.status,warning:!!d.warning?.active,
+      drops:f.drops.map(d=>({x:d.x,status:d.status,hasWarning:Object.hasOwn(d,'warning'),
         falling:!!d.sprite?.active,splat:!!d.splat?.active}))
     }))
   } : null;
@@ -82,6 +82,10 @@ async function until(predicate, label, timeout = 12000) {
 function assert(condition, label) { if (!condition) throw new Error(label); }
 async function teleport(x, y = 460) {
   await evaluate(`(() => { const s=${scene}; s.player.resetTo({x:${x},y:${y}}); s.player.setVelocity(0,0); })()`);
+}
+async function screenshot(name) {
+  const shot = await call("Page.captureScreenshot", { format:"png", captureBeyondViewport:false });
+  fs.writeFileSync(path.join(root, `.memory/test-plans/assets/${name}.png`), Buffer.from(shot.data, "base64"));
 }
 
 try {
@@ -110,16 +114,20 @@ try {
   })()`);
   const initial = await getState();
   assert(initial.flights.length === 0, "Bird appeared before trigger");
+  await teleport(670);
+  await sleep(120);
+  await screenshot("2026-10-21-world02-snack-bag-ground");
+  await teleport(96);
   await teleport(850);
   const first = await until(s => s?.spawnTimes?.length === 1, "first pigeon");
   assert(first.flights[0].bird, "First pigeon missing");
-  const threeDrops = await until(s => s?.flights?.[0]?.drops.every(d => d.status !== "pending" && d.status !== "warned"), "three drops");
-  assert(threeDrops.flights[0].drops.map(d => d.x).join() === "1324,1280,1236", "Drop order or locations changed");
+  const threeDrops = await until(s => s?.flights?.[0]?.drops.every(d => d.status !== "pending"), "three drops");
+  assert(threeDrops.flights[0].drops.map(d => d.x).join() === "1364,1280,1196", "Drop order or locations changed");
+  assert(threeDrops.flights[0].drops.every(d => !d.hasWarning), "Ground warning marker was created");
   const repeated = await until(s => s?.spawnTimes?.length >= 2, "second pigeon");
   const gap = repeated.spawnTimes[1] - repeated.spawnTimes[0];
   assert(Math.abs(gap - 2000) < 100, `Pigeon interval is ${gap}ms`);
-  const screenshot = await call("Page.captureScreenshot", { format:"png", captureBeyondViewport:false });
-  fs.writeFileSync(path.join(root, ".memory/test-plans/assets/2026-10-21-world02-repeating-pigeons.png"), Buffer.from(screenshot.data, "base64"));
+  await screenshot("2026-10-21-world02-repeating-pigeons");
 
   await evaluate(`(${scene})?.eventBus.emit('pause-requested',{paused:true})`);
   const paused = await until(s => s?.status === "paused", "pause");
@@ -132,6 +140,9 @@ try {
   await evaluate(`(${scene})?.eventBus.emit('pause-requested',{paused:false})`);
   await until(s => s?.status === "play" && s.spawnTimes.length >= 3, "third pigeon after resume", 5000);
 
+  await teleport(2050);
+  await sleep(120);
+  await screenshot("2026-10-21-world02-smaller-cat");
   await evaluate(`(${scene})?.activateCheckpoint('world-02-stage-1-checkpoint')`);
   await teleport(2496);
   await evaluate(`(${scene})?.world02PigeonDrops.resetForAttempt(2496)`);

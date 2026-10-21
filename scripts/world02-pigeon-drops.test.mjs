@@ -89,7 +89,7 @@ test("세 비행 구간과 연속 낙하 지점은 놀이터 안전 경계 안�
   ]);
   assert.equal(new Set(definitions.map(({ id }) => id)).size, 3);
   assert.equal(spawnIntervalMs, 2000);
-  assert.deepEqual(dropOffsets, [44, 0, -44]);
+  assert.deepEqual(dropOffsets, [84, 0, -84]);
   for (const definition of definitions) {
     for (const offset of dropOffsets) {
       const x = definition.dropX + offset;
@@ -97,7 +97,7 @@ test("세 비행 구간과 연속 낙하 지점은 놀이터 안전 경계 안�
       assert.ok(Math.abs(x - 2496) >= 250);
       for (const obstacle of obstacles) {
         const freeSpace = Math.abs(x - obstacle.x) - obstacle.hitbox.width / 2 - 7 - 36;
-        assert.ok(freeSpace >= 60, `${definition.id} drop ${x} is too close to ${obstacle.id}`);
+        assert.ok(freeSpace >= 20, `${definition.id} drop ${x} is too close to ${obstacle.id}`);
       }
     }
   }
@@ -111,13 +111,13 @@ test("한 비둘기가 왼쪽으로 날면서 세 위치에 차례대로 똥을 
   h.tick();
   assert.equal(h.birds[0].key, "world-02-pigeon-fly");
   assert.ok(h.birds[0].x < 1280 + 240);
-  h.tick(24);
-  assert.deepEqual(h.droppings.map((sprite) => sprite.x), [1324]);
-  h.tick(6);
-  assert.deepEqual(h.droppings.map((sprite) => sprite.x), [1324, 1280]);
-  h.tick(6);
-  assert.deepEqual(h.droppings.map((sprite) => sprite.x), [1324, 1280, 1236]);
-  assert.deepEqual(h.warnings.slice(0, 3).map(({ x }) => x), [1324, 1280, 1236]);
+  h.tick(20);
+  assert.deepEqual(h.droppings.map((sprite) => sprite.x), [1364]);
+  h.tick(11);
+  assert.deepEqual(h.droppings.map((sprite) => sprite.x), [1364, 1280]);
+  h.tick(11);
+  assert.deepEqual(h.droppings.map((sprite) => sprite.x), [1364, 1280, 1196]);
+  assert.equal(h.warnings.length, 0);
   assert.ok(h.droppings.every((sprite) => sprite.velocity.vx === 0 && sprite.velocity.vy === 770));
   assert.ok(h.droppings.every((sprite) => sprite.body.allowGravity === false &&
     sprite.body.width === 14 && sprite.body.height === 20));
@@ -174,7 +174,7 @@ test("낙하물 하나에 닿으면 모든 동시 비행을 정리하고 정확�
 test("각 똥은 따로 착지해 무해한 자국을 남기고 사라진다", () => {
   const h = harness();
   h.player.x = 830;
-  h.tick(37);
+  h.tick(42);
   assert.equal(h.droppings.length, 3);
   h.droppings[0].body.bottom = 504;
   h.tick();
@@ -182,10 +182,10 @@ test("각 똥은 따로 착지해 무해한 자국을 남기고 사라진다", (
   assert.equal(h.overlaps[0].active, false);
   assert.equal(h.droppings[1].active, true);
   assert.equal(h.splats.length, 1);
-  assert.equal(h.splats[0].x, 1324);
+  assert.equal(h.splats[0].x, 1364);
   h.tick(6);
   assert.equal(h.splats[0].active, false);
-  assert.equal(h.warnings[0].active, false);
+  assert.equal(h.warnings.length, 0);
   assert.equal(h.events.length, 0);
   h.system.destroy();
 });

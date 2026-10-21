@@ -62,4 +62,4 @@ Task: T01-cat-and-snack-bag
 
 - [x] 구현 완료
 - [x] 검증 통과 — 관련 테스트 8건, 타입 검사, lint, build
-- commit: pending
+- commit: `2cd9265` (기본 크기), `7c3fdea` (최초 봉지 자세 반영)
