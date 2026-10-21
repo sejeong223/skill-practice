@@ -15,6 +15,7 @@ import { CutsceneDirector } from "../cutscenes/CutsceneDirector";
 import { CUTSCENE_SCRIPTS } from "../data/cutscenes";
 import { TOOL_DEFINITIONS } from "../data/tools";
 import { WORLD02_STAGE1_OBSTACLES } from "../data/world02Obstacles";
+import { WORLD02_STAGE1_PIGEON_PASSES } from "../data/world02PigeonDrops";
 import { BARK_COOLDOWN_MS, SKILL_DEFINITIONS } from "../data/skills";
 import { BossFeedbackController, BARK_SHAKE_DURATION_MS, BARK_SHAKE_INTENSITY, type BossFeedbackSnapshot } from "../systems/bossFeedback";
 import { GameplayEventBus } from "../core/events";
@@ -50,6 +51,7 @@ import { SkillSystem } from "../systems/SkillSystem";
 import { StrayDogEvent } from "../systems/StrayDogEvent";
 import { World01CalicoBoss } from "../systems/World01CalicoBoss";
 import { World02ObstacleSystem } from "../systems/World02ObstacleSystem";
+import { World02PigeonDropSystem } from "../systems/World02PigeonDropSystem";
 import { getWorld01Respawn, isWorld01CheckpointStageId } from "../systems/world01Respawn";
 import { getWorld01ReplayTarget, getWorldStartStageId, isWorldSelectionUnlocked } from "../systems/worldSelection";
 import { getMarketProduct } from "../data/marketCatalog";
@@ -77,6 +79,7 @@ export class StageScene extends Phaser.Scene {
   private bossGround?: Phaser.Tilemaps.Tilemap;
   private sandFloor?: Phaser.GameObjects.TileSprite;
   private world02Obstacles?: World02ObstacleSystem;
+  private world02PigeonDrops?: World02PigeonDropSystem;
   private exitFloor?: Phaser.GameObjects.Rectangle;
   private parallaxRenderer?: ParallaxRenderer;
   private eventBus?: GameEventBus;
@@ -199,6 +202,7 @@ export class StageScene extends Phaser.Scene {
       this.gameplayEventBus.on("restart", () => {
         this.combatSystem?.resetForStage();
         this.world02Obstacles?.resetForAttempt();
+        this.world02PigeonDrops?.resetForAttempt(this.player?.x ?? stage.spawn.x);
         this.playerAnimator?.stopBark();
         this.resetBossFeedback();
         this.publishBossFeedback(true);
@@ -287,6 +291,15 @@ export class StageScene extends Phaser.Scene {
         () => this.runtime?.runtimeState.checkpointId ?? null,
         () => this.runtime?.getStatus() === "play" && !this.stageTransitionStarted,
       );
+      this.world02PigeonDrops = new World02PigeonDropSystem(
+        this,
+        this.player,
+        this.gameplayEventBus,
+        stage.id,
+        WORLD02_STAGE1_PIGEON_PASSES,
+        () => this.runtime?.runtimeState.checkpointId ?? null,
+        () => this.runtime?.getStatus() === "play" && !this.stageTransitionStarted,
+      );
     }
 
     if (process.env.NODE_ENV !== "production") {
@@ -349,6 +362,7 @@ export class StageScene extends Phaser.Scene {
     this.syncSectionCamera();
     if (data.resumeCheckpointId) {
       this.restoreCheckpoint(data.resumeCheckpointId);
+      this.world02PigeonDrops?.resetForAttempt(this.player.x);
     }
     this.runtime.start();
     this.eventBus.emit("pause-state-changed", { paused: false });
@@ -546,6 +560,8 @@ export class StageScene extends Phaser.Scene {
       this.mapInteraction?.destroy();
       this.world02Obstacles?.destroy();
       this.world02Obstacles = undefined;
+      this.world02PigeonDrops?.destroy();
+      this.world02PigeonDrops = undefined;
       this.gimmickSystem?.destroy();
       this.deathSystem?.destroy();
       this.checkpointSystem?.resetForStage();
@@ -663,6 +679,7 @@ export class StageScene extends Phaser.Scene {
     this.bossFeedback.update(elapsed);
     this.playerController?.update(time, delta);
     this.world02Obstacles?.update(elapsed);
+    this.world02PigeonDrops?.update(elapsed);
     if (this.stageDefinition?.kind === "normal" && this.player &&
         !this.player.isControlLocked() && this.player.getBounds().left >= this.stageDefinition.mapWidth &&
         this.player.body.bottom < this.stageDefinition.mapHeight - 1) {
