@@ -71,6 +71,7 @@ export interface ProgressState {
   equippedOutfitId: CosmeticId | null;
   equippedAccessoryId: CosmeticId | null;
   bankedCoins: number;
+  collectedCoinIds: string[];
   collectedItems: string[];
   deathsTotal: number;
   deathsByStage: Partial<Record<StageId, number>>;

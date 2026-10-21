@@ -92,6 +92,7 @@ export function createDefaultProgressState(
     equippedOutfitId: null,
     equippedAccessoryId: null,
     bankedCoins: 0,
+    collectedCoinIds: [],
     collectedItems: [],
     deathsTotal: 0,
     deathsByStage: {},

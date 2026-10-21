@@ -144,6 +144,12 @@ export function migrateSave(input: unknown): ProgressState {
       equippedOutfitId: equippedCosmetic(rawProgress.equippedOutfitId, "outfit"),
       equippedAccessoryId: equippedCosmetic(rawProgress.equippedAccessoryId, "accessory"),
       bankedCoins: rawProgress.bankedCoins,
+      collectedCoinIds: isStringArray(rawProgress.collectedCoinIds)
+        ? [...new Set(rawProgress.collectedCoinIds.filter((key) => {
+          const separator = key.indexOf(":");
+          return separator > 0 && separator < key.length - 1 && validStageIds.has(key.slice(0, separator));
+        }))]
+        : [],
       collectedItems: [...new Set(collectedItems)],
       deathsTotal: rawProgress.deathsTotal,
       deathsByStage,

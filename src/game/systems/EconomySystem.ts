@@ -1,5 +1,6 @@
 import type { MarketCategory, ProgressState, RuntimeStageState, StageId } from "../core/types";
 import { getMarketProduct } from "../data/marketCatalog";
+import { hasCollectedCoin, recordCollectedCoin } from "./coinLedger";
 import { GameEventBus } from "../bridge/GameEventBus";
 
 export class EconomySystem {
@@ -17,10 +18,12 @@ export class EconomySystem {
     this.eventBus = eventBus;
   }
 
-  public collectCoin(stageId: StageId, amount = 1): boolean {
-    if (stageId !== this.runtime.stageId || !Number.isInteger(amount) || amount <= 0) {
+  public collectCoin(stageId: StageId, amount = 1, coinId?: string): boolean {
+    if (stageId !== this.runtime.stageId || !Number.isInteger(amount) || amount <= 0 ||
+        (coinId !== undefined && (amount !== 1 || coinId.trim().length === 0 || hasCollectedCoin(this.progress, stageId, coinId)))) {
       return false;
     }
+    if (coinId !== undefined && !recordCollectedCoin(this.progress, stageId, coinId)) return false;
     this.runtime.currentStageCoins += amount;
     this.progress.bankedCoins += amount;
     this.emitCoins(stageId);

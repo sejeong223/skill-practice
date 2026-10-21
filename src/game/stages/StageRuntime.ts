@@ -13,6 +13,7 @@ import { StageRandom } from "../random/StageRandom";
 import { StageEntityFactory, type StageEntity, type StageEntityKind } from "./StageEntityFactory";
 import type { LoadedMap } from "../maps/mapTypes";
 import { EconomySystem } from "../systems/EconomySystem";
+import { hasCollectedCoin } from "../systems/coinLedger";
 import { segmentCoinPresentation } from "./segmentCoinPresentation";
 
 interface RuntimeEntityRecord {
@@ -409,12 +410,12 @@ export class StageRuntime {
       return false;
     }
 
-    record.entity.setActive(false);
-    record.entity.setVisible(false);
-    const body = (record.entity as Phaser.GameObjects.Image).body as Phaser.Physics.Arcade.StaticBody | null;
-    if (body) body.enable = false;
-    if (this.economy) this.economy.collectCoin(this.definition.id);
-    else {
+    if (this.economy && !this.economy.collectCoin(this.definition.id, 1, coinId)) {
+      this.setCoinActive(record.entity, false);
+      return false;
+    }
+    this.setCoinActive(record.entity, false);
+    if (!this.economy) {
       this.runtimeState.currentStageCoins += 1;
       this.emitCoins();
     }
@@ -423,10 +424,8 @@ export class StageRuntime {
   }
 
   public resetCoins(): void {
-    for (const { entity } of this.getEntities("coin")) {
-      entity.setActive(true).setVisible(true);
-      const body = (entity as Phaser.GameObjects.Image).body as Phaser.Physics.Arcade.StaticBody | null;
-      if (body) body.enable = true;
+    for (const { id, entity } of this.getEntities("coin")) {
+      this.setCoinActive(entity, !this.progress || !hasCollectedCoin(this.progress, this.definition.id, id));
     }
     this.runtimeState.currentStageCoins = 0;
     this.emitCoins();
@@ -447,6 +446,15 @@ export class StageRuntime {
 
   private add(kind: StageEntityKind, id: string, entity: StageEntity): void {
     this.records.push({ kind, id, entity });
+    if (kind === "coin" && this.progress && hasCollectedCoin(this.progress, this.definition.id, id)) {
+      this.setCoinActive(entity, false);
+    }
+  }
+
+  private setCoinActive(entity: StageEntity, active: boolean): void {
+    entity.setActive(active).setVisible(active);
+    const body = (entity as Phaser.GameObjects.Image).body as Phaser.Physics.Arcade.StaticBody | null;
+    if (body) body.enable = active;
   }
 
   private clearEntities(): void {

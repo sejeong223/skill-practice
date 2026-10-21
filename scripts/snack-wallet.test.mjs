@@ -41,7 +41,7 @@ test("획득 즉시 저장하고 사망·재접속·클리어 때 잔액을 유�
   const s = setup();
   const payloads = [];
   s.bus.on("coin-changed", p => payloads.push(p));
-  for (let i = 0; i < 3; i++) assert.equal(s.economy.collectCoin(s.runtime.stageId), true);
+  for (let i = 0; i < 3; i++) assert.equal(s.economy.collectCoin(s.runtime.stageId, 1, `coin-${i}`), true);
   assert.equal(s.progress.bankedCoins, 13);
   assert.equal(s.runtime.currentStageCoins, 3);
   assert.equal(s.store.load().bankedCoins, 13); // No timer wait: synchronous save.
@@ -50,12 +50,17 @@ test("획득 즉시 저장하고 사망·재접속·클리어 때 잔액을 유�
   s.economy.handleDeath();
   assert.equal(s.runtime.currentStageCoins, 0);
   assert.equal(s.progress.bankedCoins, 13);
-  s.economy.collectCoin(s.runtime.stageId);
+  assert.equal(s.economy.collectCoin(s.runtime.stageId, 1, "coin-0"), false);
+  assert.equal(s.progress.bankedCoins, 13);
+  assert.equal(s.economy.collectCoin(s.runtime.stageId, 1, "coin-3"), true);
   s.save.destroy();
   const restored = s.store.load();
   const save = new AutoSaveCoordinator(s.store, restored, s.bus);
   const economy = new EconomySystem(restored, s.runtime, s.bus);
   assert.equal(restored.bankedCoins, 14);
+  assert.deepEqual(restored.collectedCoinIds, [
+    "world-01-stage-1:coin-0", "world-01-stage-1:coin-1", "world-01-stage-1:coin-2", "world-01-stage-1:coin-3",
+  ]);
   assert.equal(restored.playerName, "기존 코기");
   assert.equal(restored.deathsTotal, 7);
   assert.equal(restored.onboardingCompleted, true);
