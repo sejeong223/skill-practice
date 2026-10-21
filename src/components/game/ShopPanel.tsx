@@ -13,10 +13,11 @@ export interface ShopPanelProps {
   readonly progress: ProgressState;
   readonly onPurchase: (id: string) => PurchaseResult;
   readonly onEquip: (id: string) => void;
+  readonly onUnequip: (category: "outfit" | "accessory") => void;
   readonly onClose: (source: "button" | "keyboard") => void;
 }
 
-export function ShopPanel({ bankedCoins, products, progress, onPurchase, onEquip, onClose }: ShopPanelProps): ReactElement {
+export function ShopPanel({ bankedCoins, products, progress, onPurchase, onEquip, onUnequip, onClose }: ShopPanelProps): ReactElement {
   const [category, setCategory] = useState<MarketCategory>("weapon");
   const [index, setIndex] = useState(0);
   const [dialogue, setDialogue] = useState(() => pickShopDialogue("entry"));
@@ -32,6 +33,7 @@ export function ShopPanel({ bankedCoins, products, progress, onPurchase, onEquip
     : product?.category === "shield" ? progress.equippedDefenseToolId === product.toolId
       : product?.category === "outfit" ? progress.equippedOutfitId === product.cosmeticId
         : product?.category === "accessory" ? progress.equippedAccessoryId === product.cosmeticId : false;
+  const canUnequip = owned && equipped && (category === "outfit" || category === "accessory");
 
   useEffect(() => {
     previousFocusRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
@@ -118,9 +120,9 @@ export function ShopPanel({ bankedCoins, products, progress, onPurchase, onEquip
                   <strong>{product.price} 코인</strong>
                   <span>{owned ? equipped ? "착용 중" : "구매 완료" : "미보유"}</span>
                 </div>
-                <button className="goodboy-shop-action" type="button" disabled={equipped}
-                  onClick={() => owned ? onEquip(product.id) : purchase()}>
-                  {equipped ? "장착 중" : owned ? "장착" : "구매"}
+                <button className="goodboy-shop-action" type="button" disabled={equipped && !canUnequip}
+                  onClick={() => canUnequip ? onUnequip(category as "outfit" | "accessory") : owned ? onEquip(product.id) : purchase()}>
+                  {canUnequip ? "벗기" : equipped ? "장착 중" : owned ? "장착" : "구매"}
                 </button>
               </div>
             )}

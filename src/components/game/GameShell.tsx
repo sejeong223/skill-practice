@@ -295,6 +295,25 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
     autoSaveRef.current?.flush();
   }, [eventBus, mode, shopOpen]);
 
+  const unequipCosmetic = useCallback((category: "outfit" | "accessory"): void => {
+    const current = progressRef.current;
+    if (category === "outfit") {
+      if (current.equippedOutfitId === null) return;
+      current.equippedOutfitId = null;
+    } else {
+      if (current.equippedAccessoryId === null) return;
+      current.equippedAccessoryId = null;
+    }
+    setProgress(cloneProgress(current));
+    eventBus.emit("cosmetic-change-requested", category === "outfit" ? { outfitId: null } : { accessoryId: null });
+    autoSaveRef.current?.flush();
+  }, [eventBus]);
+
+  const handleMarketUnequip = useCallback((category: "outfit" | "accessory"): void => {
+    if (!shopOpen || mode !== "play") return;
+    unequipCosmetic(category);
+  }, [mode, shopOpen, unequipCosmetic]);
+
   const handleMarketPurchase = useCallback((id: string): PurchaseResult => {
     if (!shopOpen || mode !== "play") return { ok: false, reason: "unknown-item" };
     const result = economyRef.current?.purchaseMarketProduct(id) ?? { ok: false, reason: "unknown-item" };
@@ -332,7 +351,7 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
         {introGateStep === "ready" && mode !== "stage-clear" && !world02EntranceActive && <GameOverlay stageTitle={stage.title} runtime={runtime} progress={progress} skills={SKILL_DEFINITIONS} tools={TOOL_DEFINITIONS} cooldowns={{}} bossHearts={activeStageId === "world-01-stage-boss" ? bossHearts : undefined} alive={mode !== "dead" && mode !== "cutscene"} statusOpen={statusOpen} onEquip={handleEquip} onKeybindChange={handleKeybindChange} onToggleStatus={() => setStatusOpen((open) => !open)} paused={paused} onTogglePause={() => eventBus.emit("pause-requested", { paused: !paused })} onResetProgress={() => setResetProgressDialogOpen(true)} worldSelectUnlocked={worldSelectUnlocked} onOpenWorldSelect={handleOpenWorldSelect} onOpenShop={handleOpenShop} />}
         {paused && introGateStep === "ready" && !worldSelectOpen && !shopOpen && <PauseOverlay onResume={() => eventBus.emit("pause-requested", { paused: false })} />}
         {shopOpen && <ShopPanel bankedCoins={progress.bankedCoins} products={MARKET_PRODUCTS} progress={progress}
-          onPurchase={handleMarketPurchase} onEquip={handleMarketEquip} onClose={handleCloseShop} />}
+          onPurchase={handleMarketPurchase} onEquip={handleMarketEquip} onUnequip={handleMarketUnequip} onClose={handleCloseShop} />}
         {worldSelectOpen && (
           <WorldSelectDialog
             currentWorldId={currentWorldId}

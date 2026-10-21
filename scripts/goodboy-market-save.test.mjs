@@ -92,3 +92,28 @@ test("저장 키를 유지하며 스키마 3 envelope로 왕복하고 미래 버
   assert.equal(store.load().equippedOutfitId, "banana-peel-suit");
   assert.deepEqual(migrateSave({ schemaVersion: 4, progress }).ownedCosmeticIds, []);
 });
+
+test("외형을 벗고 저장해도 소유권과 코인은 남아 다시 착용할 수 있다", () => {
+  const data = new Map();
+  const storage = { getItem: key => data.get(key) ?? null, setItem: (key, value) => data.set(key, value), removeItem: key => data.delete(key) };
+  const store = new ProgressStore(storage);
+  const progress = createDefaultProgressState();
+  progress.bankedCoins = 27;
+  progress.ownedCosmeticIds = ["bee-bodysuit", "prince-crown"];
+  progress.equippedOutfitId = "bee-bodysuit";
+  progress.equippedAccessoryId = "prince-crown";
+  store.save(progress);
+  progress.equippedOutfitId = null;
+  progress.equippedAccessoryId = null;
+  store.save(progress);
+  const restored = store.load();
+  assert.equal(restored.equippedOutfitId, null);
+  assert.equal(restored.equippedAccessoryId, null);
+  assert.deepEqual(restored.ownedCosmeticIds, ["bee-bodysuit", "prince-crown"]);
+  assert.equal(restored.bankedCoins, 27);
+  assert.equal(restored.equippedAttackToolId, progress.equippedAttackToolId);
+  assert.equal(restored.equippedDefenseToolId, progress.equippedDefenseToolId);
+  restored.equippedOutfitId = "bee-bodysuit";
+  store.save(restored);
+  assert.equal(store.load().equippedOutfitId, "bee-bodysuit");
+});
