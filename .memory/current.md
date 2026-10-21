@@ -6,20 +6,20 @@
 
 ## Active Phase
 
-[P01 보유 아이템 다시 착용하기](./phases/2026-10-21-owned-item-catalog/P01-owned-items/phase.md)
+[P01 보유 아이템 다시 착용하기 — 완료](./phases/2026-10-21-owned-item-catalog/P01-owned-items/phase.md)
 
 ## Active Task
 
-[T02 상단 카탈로그 메뉴와 재장착](./phases/2026-10-21-owned-item-catalog/P01-owned-items/T02-catalog-menu.md)
+없음 — 보유 아이템 카탈로그 계획의 모든 Task 완료.
 
 ## Status
 
-- 보유 아이템 카탈로그 T01 완료. 보유품 목록과 상점 외형 벗기·저장 검증을 구현했다. T02 진행 중.
+- 보유 아이템 카탈로그 계획 2/2 완료. 보유품 목록·상점 외형 벗기·상단 카탈로그·재장착·저장·보스전·모바일 검증을 마쳤다.
 - 의상·장신구만 벗고, 무기·방패는 보유품끼리 교체한다. 카탈로그에는 보유한 물건만 표시한다.
 
 ## Next Step (IMPORTANT)
 
-`T02-catalog-menu.md`를 읽고 상단 카탈로그 메뉴, 재장착, 브라우저 검증을 구현한다.
+다음 구현 요청을 기다린다. 미실행 상태로 보존된 월드 2 놀이터 맵 1~3 계획은 위의 '직전 미실행 계획'에 있다.
 
 ## 이전 작업 포인터와 기록
 

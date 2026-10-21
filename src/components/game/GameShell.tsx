@@ -5,6 +5,7 @@ import { createDefaultProgressState, createRuntimeStageState } from "@/game/core
 import { SKILL_DEFINITIONS } from "@/game/data/skills";
 import { TOOL_DEFINITIONS } from "@/game/data/tools";
 import { getMarketProduct, MARKET_PRODUCTS } from "@/game/data/marketCatalog";
+import { getOwnedCatalogEntries, type OwnedCatalogEntry } from "@/game/data/ownedItemCatalog";
 import { getStageDefinition } from "@/game/data";
 import { INTRO_CUTSCENE } from "@/game/data/cutscenes/intro";
 import { GameEventBus, type GameEventType } from "@/game/bridge/GameEventBus";
@@ -26,6 +27,7 @@ import { PauseOverlay } from "./PauseOverlay";
 import { WorldSelectDialog } from "./WorldSelectDialog";
 import { BossCombatOverlay } from "./BossCombatOverlay";
 import { ShopPanel } from "./ShopPanel";
+import { OwnedItemCatalogDialog } from "./OwnedItemCatalogDialog";
 
 export interface GameShellProps {
   readonly initialStageId: StageId;
@@ -69,6 +71,7 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
   const [resetProgressDialogOpen, setResetProgressDialogOpen] = useState(false);
   const [worldSelectOpen, setWorldSelectOpen] = useState(false);
   const [shopOpen, setShopOpen] = useState(false);
+  const [catalogOpen, setCatalogOpen] = useState(false);
   const deathOverlayTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [statusOpen, setStatusOpen] = useState(false);
   const [activeStageId, setActiveStageId] = useState<StageId>(initialStageId);
@@ -83,6 +86,7 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
       setPaused(false);
       setWorldSelectOpen(false);
       setShopOpen(false);
+      setCatalogOpen(false);
       setActiveStageId(stageId);
       setBossHearts(stageId === "world-01-stage-boss" ? 3 : undefined);
       if (progressRef.current.selectedWorldId !== null) {
@@ -217,17 +221,31 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
     setIntroGateStep("ready");
   }, [eventBus, replaceProgress]);
 
+  const equipOwnedEntry = useCallback((entry: OwnedCatalogEntry): void => {
+    const current = progressRef.current;
+    if (entry.category === "weapon") {
+      current.equippedAttackToolId = entry.toolId;
+      eventBus.emit("equipment-change-requested", { attackToolId: entry.toolId });
+    } else if (entry.category === "shield") {
+      current.equippedDefenseToolId = entry.toolId;
+      eventBus.emit("equipment-change-requested", { defenseToolId: entry.toolId });
+    } else if (entry.category === "outfit" && entry.cosmeticId !== undefined) {
+      current.equippedOutfitId = entry.cosmeticId;
+      eventBus.emit("cosmetic-change-requested", { outfitId: entry.cosmeticId });
+    } else if (entry.category === "accessory" && entry.cosmeticId !== undefined) {
+      current.equippedAccessoryId = entry.cosmeticId;
+      eventBus.emit("cosmetic-change-requested", { accessoryId: entry.cosmeticId });
+    }
+    setProgress(cloneProgress(current));
+    autoSaveRef.current?.flush();
+  }, [eventBus]);
+
   const handleEquip = useCallback((tool: ToolDefinition): void => {
     if (mode === "cutscene" || mode === "dead") return;
-    if (!progressRef.current.ownedToolIds.includes(tool.id)) return;
-    const next = cloneProgress(progressRef.current);
-    if (tool.slot === "attack") next.equippedAttackToolId = tool.id;
-    else next.equippedDefenseToolId = tool.id;
-    replaceProgress(next);
-    eventBus.emit("equipment-change-requested", {
-      [tool.slot === "attack" ? "attackToolId" : "defenseToolId"]: tool.id,
-    });
-  }, [eventBus, mode, replaceProgress]);
+    const entry = getOwnedCatalogEntries(progressRef.current).find((item) => item.id === tool.id);
+    if (entry && (entry.category === "weapon" || entry.category === "shield") &&
+        (tool.slot === "attack" ? entry.category === "weapon" : entry.category === "shield")) equipOwnedEntry(entry);
+  }, [equipOwnedEntry, mode]);
 
   const handleKeybindChange = useCallback((action: InputAction, key: string): void => {
     const next = cloneProgress(progressRef.current);
@@ -244,13 +262,13 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
   }, []);
 
   const handleOpenWorldSelect = useCallback((): void => {
-    if (mode !== "play" || paused || shopOpen || !isWorldSelectionUnlocked(progressRef.current)) return;
+    if (mode !== "play" || paused || shopOpen || catalogOpen || !isWorldSelectionUnlocked(progressRef.current)) return;
     setWorldSelectOpen(true);
     eventBus.emit("pause-requested", { paused: true });
-  }, [eventBus, mode, paused, shopOpen]);
+  }, [catalogOpen, eventBus, mode, paused, shopOpen]);
 
   const handleOpenShop = useCallback((): void => {
-    if (mode !== "play" || paused || shopOpen || worldSelectOpen || resetProgressDialogOpen ||
+    if (mode !== "play" || paused || shopOpen || catalogOpen || worldSelectOpen || resetProgressDialogOpen ||
         introGateStep !== "ready" || !(activeStageId.startsWith("world-01-") || activeStageId.startsWith("world-02-"))) return;
     setStatusOpen(false);
     setShopOpen(true);
@@ -264,7 +282,7 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
         // An unavailable audio device must not prevent entering the shop.
       }
     }
-  }, [activeStageId, eventBus, introGateStep, mode, paused, resetProgressDialogOpen, shopOpen, worldSelectOpen]);
+  }, [activeStageId, catalogOpen, eventBus, introGateStep, mode, paused, resetProgressDialogOpen, shopOpen, worldSelectOpen]);
 
   const handleCloseShop = useCallback((source: "button" | "keyboard"): void => {
     if (!shopOpen) return;
@@ -274,26 +292,35 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
     eventBus.emit("pause-requested", { paused: false });
   }, [eventBus, shopOpen]);
 
+  const handleOpenCatalog = useCallback((): void => {
+    if (mode !== "play" || introGateStep !== "ready" || paused || shopOpen || catalogOpen || worldSelectOpen || resetProgressDialogOpen ||
+        !(activeStageId.startsWith("world-01-") || activeStageId.startsWith("world-02-"))) return;
+    setStatusOpen(false);
+    setCatalogOpen(true);
+    eventBus.emit("catalog-state-changed", { open: true, closeViaEscape: false });
+    eventBus.emit("pause-requested", { paused: true });
+  }, [activeStageId, catalogOpen, eventBus, introGateStep, mode, paused, resetProgressDialogOpen, shopOpen, worldSelectOpen]);
+
+  const handleCloseCatalog = useCallback((source: "button" | "keyboard"): void => {
+    if (!catalogOpen) return;
+    setCatalogOpen(false);
+    eventBus.emit("catalog-state-changed", { open: false, closeViaEscape: source === "keyboard" });
+    eventBus.emit("pause-requested", { paused: false });
+  }, [catalogOpen, eventBus]);
+
   const handleMarketEquip = useCallback((id: string): void => {
     if (!shopOpen || mode !== "play") return;
     const product = getMarketProduct(id);
     if (!product) return;
-    if (product.cosmeticId !== undefined) {
-      if (!progressRef.current.ownedCosmeticIds.includes(product.cosmeticId)) return;
-      if (product.category === "outfit") progressRef.current.equippedOutfitId = product.cosmeticId;
-      else progressRef.current.equippedAccessoryId = product.cosmeticId;
-      eventBus.emit("cosmetic-change-requested", product.category === "outfit"
-        ? { outfitId: product.cosmeticId } : { accessoryId: product.cosmeticId });
-    } else {
-      if (!progressRef.current.ownedToolIds.includes(product.toolId)) return;
-      if (product.category === "weapon") progressRef.current.equippedAttackToolId = product.toolId;
-      else progressRef.current.equippedDefenseToolId = product.toolId;
-      eventBus.emit("equipment-change-requested", product.category === "weapon"
-        ? { attackToolId: product.toolId } : { defenseToolId: product.toolId });
-    }
-    setProgress(cloneProgress(progressRef.current));
-    autoSaveRef.current?.flush();
-  }, [eventBus, mode, shopOpen]);
+    const entry = getOwnedCatalogEntries(progressRef.current).find((item) => item.id === product.id && item.category === product.category);
+    if (entry) equipOwnedEntry(entry);
+  }, [equipOwnedEntry, mode, shopOpen]);
+
+  const handleCatalogEquip = useCallback((id: string): void => {
+    if (!catalogOpen || mode !== "play") return;
+    const entry = getOwnedCatalogEntries(progressRef.current).find((item) => item.id === id);
+    if (entry) equipOwnedEntry(entry);
+  }, [catalogOpen, equipOwnedEntry, mode]);
 
   const unequipCosmetic = useCallback((category: "outfit" | "accessory"): void => {
     const current = progressRef.current;
@@ -313,6 +340,11 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
     if (!shopOpen || mode !== "play") return;
     unequipCosmetic(category);
   }, [mode, shopOpen, unequipCosmetic]);
+
+  const handleCatalogUnequip = useCallback((category: "outfit" | "accessory"): void => {
+    if (!catalogOpen || mode !== "play") return;
+    unequipCosmetic(category);
+  }, [catalogOpen, mode, unequipCosmetic]);
 
   const handleMarketPurchase = useCallback((id: string): PurchaseResult => {
     if (!shopOpen || mode !== "play") return { ok: false, reason: "unknown-item" };
@@ -348,10 +380,12 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
         <GameEventBridge eventBus={eventBus} onEvent={handleEvent} />
         <CutsceneOverlay eventBus={eventBus} onSkip={() => eventBus.emit("cutscene-skip-requested", {})} />
         {introGateStep === "title" && <IntroTitleOverlay initialName={progress.playerName} onConfirm={handleNameConfirm} />}
-        {introGateStep === "ready" && mode !== "stage-clear" && !world02EntranceActive && <GameOverlay stageTitle={stage.title} runtime={runtime} progress={progress} skills={SKILL_DEFINITIONS} tools={TOOL_DEFINITIONS} cooldowns={{}} bossHearts={activeStageId === "world-01-stage-boss" ? bossHearts : undefined} alive={mode !== "dead" && mode !== "cutscene"} statusOpen={statusOpen} onEquip={handleEquip} onKeybindChange={handleKeybindChange} onToggleStatus={() => setStatusOpen((open) => !open)} paused={paused} onTogglePause={() => eventBus.emit("pause-requested", { paused: !paused })} onResetProgress={() => setResetProgressDialogOpen(true)} worldSelectUnlocked={worldSelectUnlocked} onOpenWorldSelect={handleOpenWorldSelect} onOpenShop={handleOpenShop} />}
-        {paused && introGateStep === "ready" && !worldSelectOpen && !shopOpen && <PauseOverlay onResume={() => eventBus.emit("pause-requested", { paused: false })} />}
+        {introGateStep === "ready" && mode !== "stage-clear" && !world02EntranceActive && <GameOverlay stageTitle={stage.title} runtime={runtime} progress={progress} skills={SKILL_DEFINITIONS} tools={TOOL_DEFINITIONS} cooldowns={{}} bossHearts={activeStageId === "world-01-stage-boss" ? bossHearts : undefined} alive={mode !== "dead" && mode !== "cutscene"} statusOpen={statusOpen} onEquip={handleEquip} onKeybindChange={handleKeybindChange} onToggleStatus={() => setStatusOpen((open) => !open)} paused={paused} onTogglePause={() => eventBus.emit("pause-requested", { paused: !paused })} onResetProgress={() => setResetProgressDialogOpen(true)} worldSelectUnlocked={worldSelectUnlocked} onOpenWorldSelect={handleOpenWorldSelect} onOpenShop={handleOpenShop} onOpenCatalog={handleOpenCatalog} />}
+        {paused && introGateStep === "ready" && !worldSelectOpen && !shopOpen && !catalogOpen && <PauseOverlay onResume={() => eventBus.emit("pause-requested", { paused: false })} />}
         {shopOpen && <ShopPanel bankedCoins={progress.bankedCoins} products={MARKET_PRODUCTS} progress={progress}
           onPurchase={handleMarketPurchase} onEquip={handleMarketEquip} onUnequip={handleMarketUnequip} onClose={handleCloseShop} />}
+        {catalogOpen && <OwnedItemCatalogDialog progress={progress} entries={getOwnedCatalogEntries(progress)}
+          onEquip={handleCatalogEquip} onUnequip={handleCatalogUnequip} onClose={handleCloseCatalog} />}
         {worldSelectOpen && (
           <WorldSelectDialog
             currentWorldId={currentWorldId}

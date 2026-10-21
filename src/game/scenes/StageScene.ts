@@ -115,7 +115,8 @@ export class StageScene extends Phaser.Scene {
   private overviewKey?: Phaser.Input.Keyboard.Key;
   private mapOverview = false;
   private shopOpen = false;
-  private shopPauseGuard = false;
+  private catalogOpen = false;
+  private menuPauseGuard = false;
   private stageId: StageId = "world-01-stage-1";
   private stageDefinition?: StageDefinition;
   private activeSectionId?: string;
@@ -130,7 +131,8 @@ export class StageScene extends Phaser.Scene {
     this.stageTransitionStarted = false;
     this.mapOverview = false;
     this.shopOpen = false;
-    this.shopPauseGuard = false;
+    this.catalogOpen = false;
+    this.menuPauseGuard = false;
     this.activeSectionId = undefined;
     const stage = getStageDefinition(this.stageId);
     this.stageDefinition = stage;
@@ -452,7 +454,11 @@ export class StageScene extends Phaser.Scene {
     }));
     this.eventUnsubscribers.push(this.eventBus.on("shop-state-changed", ({ open }) => {
       this.shopOpen = open;
-      this.shopPauseGuard = true;
+      this.menuPauseGuard = true;
+    }));
+    this.eventUnsubscribers.push(this.eventBus.on("catalog-state-changed", ({ open }) => {
+      this.catalogOpen = open;
+      this.menuPauseGuard = true;
     }));
     this.eventUnsubscribers.push(this.eventBus.on("cosmetic-change-requested", (selection) => {
       const status = this.runtime?.getStatus();
@@ -657,10 +663,10 @@ export class StageScene extends Phaser.Scene {
 
   public update(time: number, delta: number): void {
     const input = this.inputManager?.getSnapshot();
-    if (input?.pausePressed && !this.shopOpen && !this.shopPauseGuard) {
+    if (input?.pausePressed && !this.shopOpen && !this.catalogOpen && !this.menuPauseGuard) {
       this.setPaused(this.runtime?.getStatus() !== "paused");
     }
-    if (this.shopPauseGuard && !input?.pauseHeld) this.shopPauseGuard = false;
+    if (this.menuPauseGuard && !input?.pauseHeld) this.menuPauseGuard = false;
     if (this.runtime?.getStatus() !== "play") {
       this.equipmentVisual?.setEnabled(this.runtime?.getStatus() === "paused");
       if (this.runtime?.getStatus() !== "paused") {

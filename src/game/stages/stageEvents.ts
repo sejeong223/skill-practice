@@ -86,6 +86,10 @@ export interface StageEventMap {
     open: boolean;
     closeViaEscape: boolean;
   };
+  "catalog-state-changed": {
+    open: boolean;
+    closeViaEscape: boolean;
+  };
   "player-name-confirmed": {
     playerName: string;
   };

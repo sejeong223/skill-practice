@@ -21,12 +21,13 @@ export interface GameOverlayProps {
   readonly worldSelectUnlocked: boolean;
   readonly onOpenWorldSelect: () => void;
   readonly onOpenShop: () => void;
+  readonly onOpenCatalog: () => void;
   readonly onEquip: (tool: ToolDefinition) => void;
   readonly onKeybindChange: (action: InputAction, key: string) => void;
   readonly onToggleStatus: () => void;
 }
 
-export function GameOverlay({ stageTitle, runtime, progress, skills, tools, cooldowns, bossHearts, alive, statusOpen, paused, onTogglePause, onResetProgress, worldSelectUnlocked, onOpenWorldSelect, onOpenShop, onEquip, onKeybindChange, onToggleStatus }: GameOverlayProps): ReactElement {
+export function GameOverlay({ stageTitle, runtime, progress, skills, tools, cooldowns, bossHearts, alive, statusOpen, paused, onTogglePause, onResetProgress, worldSelectUnlocked, onOpenWorldSelect, onOpenShop, onOpenCatalog, onEquip, onKeybindChange, onToggleStatus }: GameOverlayProps): ReactElement {
   const attackTool = tools.find((tool) => tool.id === progress.equippedAttackToolId);
   const defenseTool = tools.find((tool) => tool.id === progress.equippedDefenseToolId);
   return (
@@ -47,6 +48,7 @@ export function GameOverlay({ stageTitle, runtime, progress, skills, tools, cool
         worldSelectUnlocked={worldSelectUnlocked}
         onOpenWorldSelect={onOpenWorldSelect}
         onOpenShop={onOpenShop}
+        onOpenCatalog={onOpenCatalog}
       />
       {statusOpen && (
         <div className="overlay-columns">

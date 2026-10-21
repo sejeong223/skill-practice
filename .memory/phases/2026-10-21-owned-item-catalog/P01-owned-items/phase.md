@@ -5,8 +5,8 @@
 | Task | Status | Summary | Blueprint |
 | :--- | :--- | :--- | :--- |
 | T01 | `done ✅` | 보유품 모델·상점 외형 벗기·저장 검증 | [T01](./T01-owned-list-and-unequip.md) |
-| T02 | `in_progress 🔵` | 상단 카탈로그·장비 교체·화면/브라우저 검증 | [T02](./T02-catalog-menu.md) |
+| T02 | `done ✅` | 상단 카탈로그·장비 교체·화면/브라우저 검증 | [T02](./T02-catalog-menu.md) |
 
 ## Progress
 
-- done: 1/2 (active: T02)
+- done: 2/2 (active: 없음)

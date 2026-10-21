@@ -12,7 +12,7 @@
 
 | Phase | Status | Summary | Blueprint |
 | :--- | :--- | :--- | :--- |
-| P01 | `in_progress` | 보유품 목록·외형 벗기, 상단 카탈로그 메뉴, 저장·전투·모바일 검증 | [P01](../phases/2026-10-21-owned-item-catalog/P01-owned-items/phase.md) |
+| P01 | `done ✅` | 보유품 목록·외형 벗기, 상단 카탈로그 메뉴, 저장·전투·모바일 검증 | [P01](../phases/2026-10-21-owned-item-catalog/P01-owned-items/phase.md) |
 
 ## Task Order
 
