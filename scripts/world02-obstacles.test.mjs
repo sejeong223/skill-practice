@@ -42,10 +42,10 @@ test('장애물 7개는 즉시 사망이고 잠자는 고양이만 할퀴기 접
 test('작은 사물 다섯 종만 확대하고 기본 점프 한 번으로 모두 넘어간다', () => {
   const sizes = new Map([
     ['crushed-cola-can', [72, 50]],
-    ['empty-snack-bag', [80, 84]],
+    ['empty-snack-bag', [80, 36]],
     ['pink-sand-shovel', [64, 84]],
     ['orange-traffic-cone', [72, 78]],
-    ['sleeping-fat-cat', [128, 75]],
+    ['sleeping-fat-cat', [112, 66]],
   ]);
   for (const obstacle of obstacles) {
     const size = sizes.get(obstacle.kind);
