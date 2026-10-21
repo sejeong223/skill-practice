@@ -13,6 +13,7 @@ import { ShopAudioController } from "@/game/audio/ShopAudioController";
 import { ProgressStore } from "@/game/persistence/ProgressStore";
 import { EconomySystem, type PurchaseResult } from "@/game/systems/EconomySystem";
 import { isWorldSelectionUnlocked } from "@/game/systems/worldSelection";
+import { prepareDevelopmentWorld02Progress } from "@/game/systems/developmentWorld02Start";
 import { GameEventBridge } from "./GameEventBridge";
 import { CutsceneOverlay } from "./CutsceneOverlay";
 import { GameOverlay } from "./GameOverlay";
@@ -132,7 +133,9 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
   }, [eventBus]);
 
   useEffect(() => {
-    const loaded = storeRef.current.load();
+    const loaded = prepareDevelopmentWorld02Progress(
+      storeRef.current.load(), process.env.NODE_ENV === "development",
+    );
     Object.assign(progressRef.current, cloneProgress(loaded));
     setProgress(cloneProgress(progressRef.current));
     setIntroGateStep(
