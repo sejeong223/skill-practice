@@ -70,13 +70,14 @@ test('잠자는 고양이를 점프로 피하면 연출이 없고, 닿을 때 �
   assert.equal(h.images.length, 8);
   assert.equal(h.overlaps.length, 8);
   assert.equal(h.images[5].key, 'world-02-obstacle-sleeping-fat-cat');
-  assert.deepEqual([h.images[5].displayWidth, h.images[5].displayHeight], [112, 66]);
+  assert.deepEqual([h.images[5].displayWidth, h.images[5].displayHeight], [100, 60]);
+  assert.deepEqual([h.cat.zone.width, h.cat.zone.height], [40, 26]);
   assert.equal(h.events.length, 0);
   h.cat.callback();
   h.cat.callback();
   assert.equal(h.events.filter(({ type }) => type === 'world02-cat-scratch').length, 1);
   assert.equal(h.images[5].key, 'world-02-obstacle-scratching-fat-cat');
-  assert.deepEqual([h.images[5].displayWidth, h.images[5].displayHeight], [112, 66]);
+  assert.deepEqual([h.images[5].displayWidth, h.images[5].displayHeight], [100, 60]);
   assert.deepEqual(h.player.velocity, { x: 0, y: 0 });
   assert.ok(h.locks.has('world02-cat-scratch'));
   assert.equal(h.graphics[0].rectangles.length, 18);
@@ -111,7 +112,7 @@ test('정지·재시작·종료가 고양이 연출의 시간과 수명을 정�
   assert.equal(h.events.filter(({ type }) => type === 'death-requested').length, 0);
   h.system.resetForAttempt();
   assert.equal(h.images[5].key, 'world-02-obstacle-sleeping-fat-cat');
-  assert.deepEqual([h.images[5].displayWidth, h.images[5].displayHeight], [112, 66]);
+  assert.deepEqual([h.images[5].displayWidth, h.images[5].displayHeight], [100, 60]);
   assert.equal(h.locks.size, 0);
   h.system.update(1000);
   assert.equal(h.events.filter(({ type }) => type === 'death-requested').length, 0);

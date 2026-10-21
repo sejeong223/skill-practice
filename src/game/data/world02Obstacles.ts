@@ -43,7 +43,7 @@ export const WORLD02_STAGE1_OBSTACLES: readonly World02ObstacleDefinition[] = [
   obstacle("pink-sand-shovel", 1100, 28, 44, "instant-death", { width: 64, height: 84 }),
   obstacle("orange-traffic-cone", 1460, 38, 44, "instant-death", { width: 72, height: 78 }),
   obstacle("duck-spring", 1810, 42, 44),
-  obstacle("sleeping-fat-cat", 2160, 52, 28, "cat-scratch", { width: 112, height: 66 }),
+  obstacle("sleeping-fat-cat", 2160, 40, 26, "cat-scratch", { width: 100, height: 60 }),
   obstacle("elephant-spring", 2850, 44, 44),
   obstacle("rabbit-spring", 3220, 42, 44),
 ];

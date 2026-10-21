@@ -5,8 +5,8 @@
 | Task | Status | Summary | Blueprint |
 | :--- | :--- | :--- | :--- |
 | T01 | `done` | 비둘기를 한 마리씩 1.5초 간격으로 생성 | [T01](./T01-pigeon-arrival.md) |
-| T02 | `pending` | 고양이 크기와 접촉 판정 축소 | [T02](./T02-cat-jump-clearance.md) |
+| T02 | `done` | 고양이 크기와 접촉 판정 축소 | [T02](./T02-cat-jump-clearance.md) |
 
 ## Progress
 
-- done: 1/2 (active: T02)
+- done: 2/2 (active: none)

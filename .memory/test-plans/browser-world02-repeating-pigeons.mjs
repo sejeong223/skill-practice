@@ -60,9 +60,10 @@ const state = `(() => {
   return s ? {
     stage:s.stageId, status:s.runtime?.getStatus(), deaths:s.progress?.deathsTotal,
     checkpoint:s.runtime?.runtimeState?.checkpointId,
-    player:s.player && {x:s.player.x,y:s.player.y},
+    player:s.player && {x:s.player.x,y:s.player.y,bodyBottom:s.player.body?.bottom},
     spawnTimes:window.__pigeonSpawnTimes,
     dropTimes:window.__pigeonDropTimes,
+    catContact:window.__catContact,
     flights:s.world02PigeonDrops?.flights?.map(f=>({
       bird:f.bird && {x:f.bird.x,y:f.bird.y},
       drops:f.drops.map(d=>({x:d.x,status:d.status,hasWarning:Object.hasOwn(d,'warning'),
@@ -157,8 +158,30 @@ try {
   await evaluate(`(${scene})?.eventBus.emit('pause-requested',{paused:false})`);
   await until(s => s?.status === "play" && s.spawnTimes.length >= 3, "third pigeon after resume", 5000);
 
-  await teleport(2050);
-  await sleep(120);
+  await teleport(2048, 504);
+  await evaluate(`(${scene})?.world02PigeonDrops.resetForAttempt(2048)`);
+  await evaluate(`(() => {
+    const s=${scene}; const obstacles=s.world02Obstacles;
+    const original=obstacles.handleCatContact.bind(obstacles);
+    obstacles.handleCatContact=(sprite)=>{
+      window.__catContact={x:s.player.x,y:s.player.y,bottom:s.player.body.bottom,
+        vx:s.player.body.velocity.x,vy:s.player.body.velocity.y,
+        zone:{x:sprite.zone.x,y:sprite.zone.y,width:sprite.zone.width,height:sprite.zone.height}};
+      original(sprite);
+    };
+  })()`);
+  await sleep(100);
+  const catDeathsBefore = (await getState()).deaths;
+  await call("Input.dispatchKeyEvent", {type:"keyDown",key:"ArrowRight",code:"ArrowRight",windowsVirtualKeyCode:39});
+  await until(s => s?.player?.x >= 2060 || s?.deaths > catDeathsBefore, "run up to cat", 800);
+  await call("Input.dispatchKeyEvent", {type:"keyDown",key:" ",code:"Space",windowsVirtualKeyCode:32});
+  await until(s => s?.player?.x > 2230 || s?.deaths > catDeathsBefore, "jump passes cat", 1800);
+  await call("Input.dispatchKeyEvent", {type:"keyUp",key:" ",code:"Space",windowsVirtualKeyCode:32});
+  await call("Input.dispatchKeyEvent", {type:"keyUp",key:"ArrowRight",code:"ArrowRight",windowsVirtualKeyCode:39});
+  await sleep(180);
+  const clearedCat = await getState();
+  assert(clearedCat.deaths === catDeathsBefore && !clearedCat.catContact && clearedCat.status === "play" && clearedCat.player.x > 2230 &&
+    clearedCat.player.bodyBottom >= 503, `Basic jump did not clear cat: ${JSON.stringify(clearedCat)}`);
   await screenshot("2026-10-21-world02-smaller-cat");
   await evaluate(`(${scene})?.activateCheckpoint('world-02-stage-1-checkpoint')`);
   await teleport(2496);
@@ -170,6 +193,7 @@ try {
   assert(dead.checkpoint === "world-02-stage-1-checkpoint", "Checkpoint was lost");
   assert(errors.length === 0 && missingAssets.length === 0, `Browser errors: ${JSON.stringify({errors,missingAssets})}`);
   console.log("PASS", JSON.stringify({dropXs:threeDrops.flights[0].drops.map(d => d.x), dropGaps, gap, spawns:pausedCount + 1,
+    catJumpX:clearedCat.player.x, catJumpDeaths:clearedCat.deaths - catDeathsBefore,
     deaths:dead.deaths, checkpoint:dead.checkpoint, errors, missingAssets}));
 } finally {
   await call("Emulation.clearDeviceMetricsOverride").catch(() => {});

@@ -12,7 +12,7 @@
 
 | Phase | Status | Summary | Blueprint |
 | :--- | :--- | :--- | :--- |
-| P01 | `in_progress` | 비둘기 등장 주기와 고양이 충돌 크기 | [P01](../phases/2026-10-21-world02-pigeon-arrival-cat-jump/P01-stage1-tuning/phase.md) |
+| P01 | `done` | 비둘기 등장 주기와 고양이 충돌 크기 | [P01](../phases/2026-10-21-world02-pigeon-arrival-cat-jump/P01-stage1-tuning/phase.md) |
 
 ## Task Order
 

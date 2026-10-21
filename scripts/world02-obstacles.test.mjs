@@ -45,7 +45,7 @@ test('작은 사물 다섯 종만 확대하고 기본 점프 한 번으로 모�
     ['empty-snack-bag', [175, 95]],
     ['pink-sand-shovel', [64, 84]],
     ['orange-traffic-cone', [72, 78]],
-    ['sleeping-fat-cat', [112, 66]],
+    ['sleeping-fat-cat', [100, 60]],
   ]);
   for (const obstacle of obstacles) {
     const size = sizes.get(obstacle.kind);
@@ -63,6 +63,10 @@ test('작은 사물 다섯 종만 확대하고 기본 점프 한 번으로 모�
   assert.deepEqual(obstacles.filter(({ kind }) => kind.endsWith('-spring')).map(({ hitbox }) => hitbox), [
     { width: 42, height: 44 }, { width: 44, height: 44 }, { width: 42, height: 44 },
   ]);
+  const cat = obstacles.find(({ kind }) => kind === 'sleeping-fat-cat');
+  assert.deepEqual(cat.hitbox, { width: 40, height: 26 });
+  const catClearance = 2 * Math.sqrt(460 ** 2 - 2 * 1200 * cat.hitbox.height) / 1200 * 240;
+  assert.ok(catClearance - cat.hitbox.width - 72 > 35, 'basic jump needs visible landing room beyond cat');
 });
 
 test('첫 스테이지 임시 함정·적만 사라지고 모래 발판과 후속 스테이지 요소는 남는다', () => {
