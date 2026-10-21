@@ -30,7 +30,7 @@ test('월드 2 장애물 9개를 필수 이미지로 한 번씩 등록한다', (
     assert.deepEqual(entries[0], {
       key,
       kind: 'image',
-      url: `/assets/pixel/props/world-02/${name}.png`,
+      url: `/assets/pixel/props/world-02/${name === 'empty-snack-bag' ? 'empty-snack-bag-ground' : name}.png`,
       worldId: 'world-02',
       required: true,
     });
@@ -100,3 +100,4 @@ test('과자 봉지는 흰 윗부분·빨간 로고·파란 하단·감자칩과
   assert.ok(redLogo > 350, 'the red central logo should be visible');
   assert.ok(yellowChips > 300, 'the golden potato chips should be visible');
 });
+

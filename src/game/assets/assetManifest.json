@@ -393,7 +393,7 @@
   {
     "key": "world-02-obstacle-empty-snack-bag",
     "kind": "image",
-    "url": "/assets/pixel/props/world-02/empty-snack-bag.png",
+    "url": "/assets/pixel/props/world-02/empty-snack-bag-ground.png",
     "worldId": "world-02",
     "required": true
   },

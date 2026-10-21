@@ -39,7 +39,7 @@ const obstacle = (
 
 export const WORLD02_STAGE1_OBSTACLES: readonly World02ObstacleDefinition[] = [
   obstacle("crushed-cola-can", 420, 36, 22, "instant-death", { width: 72, height: 50 }),
-  obstacle("empty-snack-bag", 760, 42, 18, "instant-death", { width: 80, height: 36 }),
+  obstacle("empty-snack-bag", 760, 42, 18, "instant-death", { width: 175, height: 95 }),
   obstacle("pink-sand-shovel", 1100, 28, 44, "instant-death", { width: 64, height: 84 }),
   obstacle("orange-traffic-cone", 1460, 38, 44, "instant-death", { width: 72, height: 78 }),
   obstacle("duck-spring", 1810, 42, 44),

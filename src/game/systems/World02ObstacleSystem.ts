@@ -43,7 +43,7 @@ export class World02ObstacleSystem {
 
     for (const definition of definitions) {
       const image = scene.add.image(definition.x, definition.groundY, definition.textureKey)
-        .setOrigin(0.5, 1)
+        .setOrigin(0.5, definition.kind === "empty-snack-bag" ? 0.88 : 1)
         .setDepth(2);
       if (definition.displaySize) {
         image.setDisplaySize(definition.displaySize.width, definition.displaySize.height);

@@ -8,7 +8,7 @@
 
 ## Decision Summary
 
-- 포카칩의 세로 글자와 디자인은 기존 PNG 그대로 유지한다. 이미지를 가로로 회전하거나 가로 봉지 그림으로 바꾸지 않는다.
+- 포카칩의 색과 세로로 읽는 글자는 유지하고, 최초 주황 봉지(`e7d9939`)의 바닥에 구겨진 자세를 적용한다.
 - 고양이의 잠든 그림과 할퀴기 그림에 동일한 표시 크기를 적용하고 충돌 영역도 함께 줄인다.
 
 ## Implementation
@@ -16,11 +16,13 @@
 ### I01. 장애물 데이터
 
 - Related Files:
-  - `src/game/data/world02Obstacles.ts` :: `WORLD02_STAGE1_OBSTACLES` — 포카칩 `displaySize: {width:80,height:36}`, `hitbox:{width:42,height:18}` 및 고양이 `displaySize:{width:112,height:66}`, `hitbox:{width:52,height:28}`; modify.
-  - `public/assets/pixel/props/world-02/empty-snack-bag.png` — 기존 세로 포카칩 디자인; read-only.
-  - `src/game/systems/World02ObstacleSystem.ts` :: 이미지 배치·할퀴기 복구 — 데이터의 크기를 그대로 사용하는지 확인; read-only.
+  - `src/game/data/world02Obstacles.ts` :: `WORLD02_STAGE1_OBSTACLES` — 포카칩 `displaySize: {width:175,height:95}`, `hitbox:{width:42,height:18}` 및 고양이 `displaySize:{width:112,height:66}`, `hitbox:{width:52,height:28}`; modify.
+  - `public/assets/pixel/props/world-02/empty-snack-bag-ground.png` — 최초 주황 봉지의 자세와 기존 포카칩 디자인을 참조한 투명 픽셀 아트; new.
+  - `public/assets/pixel/props/world-02/empty-snack-bag.png` — 기존 세로 포카칩 디자인 참조; read-only.
+  - `src/game/assets/assetManifest.json` :: `world-02-obstacle-empty-snack-bag` — 새 PNG 경로 등록; modify.
+  - `src/game/systems/World02ObstacleSystem.ts` :: 이미지 배치 — 새 PNG의 투명 여백을 고려해 포카칩 원점 y `0.88`, 다른 장애물은 `1`; modify.
 - **Signatures & Types**: `World02ObstacleDefinition.displaySize?: Readonly<{width:number;height:number}>`, `hitbox: Readonly<{width:number;height:number}>`; 새 필드 없음.
-- **Execution Flow / Logic**: 원본 이미지의 세로 방향은 유지하고 표시 높이만 줄여 바닥에 놓인 면의 화면 투영으로 만든다. 바닥 접점 `groundY:504`와 장애물 순서는 그대로다. 이미지 크기만 바꾸지 않고 실제 충돌 크기도 낮춘다.
+- **Execution Flow / Logic**: 최초 주황 봉지의 구겨진 바닥 자세와 현재 포카칩 디자인을 이미지 생성의 두 참조로 사용한다. 원본 PNG는 보존한다. 새 PNG의 투명 여백 아래쪽이 바닥 위에 떠 보이지 않도록 포카칩만 원점 y를 조절한다. 바닥 접점 `groundY:504`와 장애물 순서는 그대로다. 실제 충돌 높이도 낮춘다.
 - **Error & Exception Handling**: 고양이 할퀴기·재시작에서 이미지 크기가 원래대로 돌아가지 않아야 한다. 봉지의 충돌 높이가 보이는 모습보다 높아 허공에서 죽지 않게 한다.
 
 ### I02. 검증
@@ -39,9 +41,12 @@
 ## Validation
 
 - `node --test scripts/world02-obstacles.test.mjs scripts/world02-cat-attack.test.mjs`
+- `node --test scripts/world02-obstacle-assets.test.mjs`
+- `node scripts/validate-assets.mjs`
 - `node node_modules/typescript/bin/tsc --noEmit`
 - `npm.cmd run lint`
 - `npm.cmd run build`
+- `node .memory/test-plans/browser-world02-repeating-pigeons.mjs` — 첫 봉지 자세와 고양이 화면 캡처를 육안 확인.
 
 ## Commit Message
 
