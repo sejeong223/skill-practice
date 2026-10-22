@@ -6,6 +6,7 @@ import {
   CUSTOM_OUTFIT_CELL_COUNT, CUSTOM_OUTFIT_HEIGHT, CUSTOM_OUTFIT_PALETTE, CUSTOM_OUTFIT_WIDTH,
   eraseCell, fillRegion, paintCell, undoChange, type PaintState, type PaintTool,
 } from "@/game/data/customOutfitPaint";
+import { customOutfitPixelForCell } from "@/game/entities/customOutfitTexture";
 
 const slots: readonly CustomOutfitId[] = ["custom-outfit-1", "custom-outfit-2", "custom-outfit-3"];
 const blankCells = (): (string | null)[] => Array(CUSTOM_OUTFIT_CELL_COUNT).fill(null);
@@ -52,8 +53,7 @@ export function CustomOutfitPaintDialog({ designs, onSave, onClose }: CustomOutf
       context.drawImage(image, 0, 0);
       const pixels = context.getImageData(0, 0, source.width, source.height).data;
       setMask(Array.from({ length: CUSTOM_OUTFIT_CELL_COUNT }, (_, index) => {
-        const x = 20 + index % CUSTOM_OUTFIT_WIDTH;
-        const y = 55 + Math.floor(index / CUSTOM_OUTFIT_WIDTH);
+        const { x, y } = customOutfitPixelForCell(index % CUSTOM_OUTFIT_WIDTH, Math.floor(index / CUSTOM_OUTFIT_WIDTH));
         const pixel = (y * source.width + x) * 4;
         return pixels[pixel + 3] >= 200 && pixels[pixel] >= 200 && pixels[pixel + 1] >= 200 && pixels[pixel + 2] >= 200;
       }));

@@ -13,6 +13,8 @@ function harness() {
     scene: { time: { now: 0 }, textures: { exists: () => true }, anims: { exists: () => true } },
     texture: { key: "corgi-run" }, frame: { name: 0 }, flipX: true,
     body: { velocity: { x: 100, y: -200 }, width: 48, height: 40 }, state: "idle",
+    appearance: { run: "corgi-run", bark: "corgi-bark" },
+    getAppearanceTextures() { return this.appearance; },
     anims: { timeScale: 1, stop() {}, play() {} },
     on() {}, off() {}, setTexture(key, frame = 0) { this.texture.key = key; this.frame.name = frame; },
     alignFeetToFrame(y) { this.foot = y; }, getAnimationState() { return this.state; },
@@ -26,6 +28,15 @@ test("이동 상태가 덮어써져도 짖기는 450ms 유지되고 현재 동�
   a.update(10000, 0); assert.equal(p.texture.key, "corgi-bark");
   a.update(10001, 1); assert.equal(p.texture.key, "corgi-run");
   assert.deepEqual(p.body,body); assert.equal(p.flipX,true);
+});
+test("옷을 입고 짖어도 옷 입은 짖기 이미지에서 옷 입은 달리기 이미지로 돌아온다", () => {
+  const { player: p, animator: a } = harness();
+  p.appearance = { run: "wear-bee-bodysuit-run", bark: "wear-bee-bodysuit-bark" };
+  p.setTexture(p.appearance.run);
+  a.triggerBark();
+  assert.equal(p.texture.key, p.appearance.bark);
+  a.update(500, 450);
+  assert.equal(p.texture.key, p.appearance.run);
 });
 test("재시도·destroy는 입을 닫고 idle로 복원하며 누락된 texture는 무시한다", () => {
   const {player:p, animator:a} = harness();

@@ -4,6 +4,7 @@ import type { PlayerAnimationState } from "./playerTypes";
 const PLAYER_FRAME_HEIGHT = 128;
 const DEFAULT_PLAYER_BODY_WIDTH = 72;
 const PLAYER_BODY_HEIGHT = 40;
+export type PlayerAppearanceTextures = Readonly<{ run: string; bark: string }>;
 
 export type PlayerControlOverrideKind = "run-left" | "drift-backward" | "launch-up";
 
@@ -22,6 +23,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   private readonly escapePresses = new Map<string, number>();
   private readonly bodyOffsetX: number;
   private footAnchorY = 99;
+  private appearanceTextures: PlayerAppearanceTextures = { run: "corgi-run", bark: "corgi-bark" };
 
   public constructor(
     scene: Phaser.Scene,
@@ -54,6 +56,14 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
   public getAnimationState(): PlayerAnimationState {
     return this.animationState;
+  }
+
+  public getAppearanceTextures(): PlayerAppearanceTextures {
+    return this.appearanceTextures;
+  }
+
+  public setAppearanceTextures(textures: PlayerAppearanceTextures): void {
+    this.appearanceTextures = textures;
   }
 
   // Keep the sprite's visible paws and the unchanged bottom of its body in line.

@@ -17,7 +17,7 @@ const { MARKET_PRODUCTS } = require("../src/game/data/marketCatalog.ts");
 const manifest = JSON.parse(await readFile(path.join(root, "src/game/assets/assetManifest.json"), "utf8"));
 const cosmetics = MARKET_PRODUCTS.filter(product => product.cosmeticId !== undefined);
 
-test("의상·장신구 10종마다 코기 달리기 4프레임과 짖기 파츠가 등록된다", async () => {
+test("의상 5종은 완성된 코기이고 장신구 5종은 달리기·짖기 파츠로 등록된다", async () => {
   assert.equal(cosmetics.length, 10);
   for (const product of cosmetics) {
     const id = product.id;
@@ -33,21 +33,34 @@ test("의상·장신구 10종마다 코기 달리기 4프레임과 짖기 파츠
     for (const [asset, width] of [[run, 448], [bark, 112]]) {
       const { data, info } = await sharp(path.join(root, "public", asset.url)).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
       assert.deepEqual([info.width, info.height], [width, 128], asset.key);
+      const corgi = product.category === "outfit"
+        ? await sharp(path.join(root, "public/assets/pixel/characters/corgi", asset === run ? "corgi-run.png" : "corgi-bark.png"))
+          .ensureAlpha().raw().toBuffer() : null;
       const frames = width / 112;
       for (let frame = 0; frame < frames; frame++) {
         let opaque = 0;
+        let dressedTorsoPixels = 0;
         for (let y = 0; y < 128; y++) for (let x = frame * 112; x < (frame + 1) * 112; x++) {
-          if (data[(y * width + x) * 4 + 3] >= 160) {
+          const index = (y * width + x) * 4;
+          if (data[index + 3] >= 160) {
             opaque++;
-            if (product.category === "outfit") {
+            if (corgi) {
               const localX = x - frame * 112;
-              assert.ok(localX >= 16 && localX <= 77 && y >= 40 && y <= 101,
-                `${asset.key} frame ${frame}: pixel outside clothing silhouette at ${localX},${y}`);
+              if (localX >= 17 && localX <= 78 && y >= 59 && y <= 89 &&
+                  data[index] !== corgi[index]) dressedTorsoPixels++;
             }
           }
         }
-        assert.ok(opaque > (product.category === "outfit" ? 1_300 : 30) && opaque < 112 * 128 * 0.24,
-          `${asset.key} frame ${frame} must cover the torso while leaving the head and paws clear`);
+        assert.ok(opaque > (corgi ? 3_500 : 30) && opaque < 112 * 128 * (corgi ? 0.4 : 0.24),
+          `${asset.key} frame ${frame} must be a full dressed corgi or a head accessory`);
+        if (corgi) {
+          assert.ok(dressedTorsoPixels > 500, `${asset.key} frame ${frame}: body still has bare fur`);
+          for (const [localX, y] of [[91, 49], [20, 96]]) {
+            const index = (y * width + frame * 112 + localX) * 4;
+            assert.deepEqual([...data.subarray(index, index + 4)], [...corgi.subarray(index, index + 4)],
+              `${asset.key} frame ${frame}: face or paw changed`);
+          }
+        }
       }
     }
   }
@@ -82,12 +95,12 @@ test("흰 옷 템플릿은 모든 자세의 코기 몸에 맞고 그림판 밖�
         if (outfit.data[index] < 128) continue;
         opaque++;
         const frameRise = asset === run ? [0, 2, 0, 8][frame] : 3;
-        assert.ok(x >= 18 && x <= 74 && y >= 53 + frameRise && y <= 89 + frameRise,
+        assert.ok(x >= 11 && x <= 82 && y >= 51 + frameRise && y <= 92 + frameRise,
           `${asset.key} frame ${frame}: pixel outside torso at ${x},${y}`);
         if (corgi.data[index] >= 128) onCorgi++;
       }
       assert.ok(opaque > 1_300, `${asset.key} frame ${frame} must cover the whole side of the torso`);
-      assert.ok(onCorgi / opaque > 0.97, `${asset.key} frame ${frame} must follow corgi body`);
+      assert.ok(onCorgi / opaque > 0.9, `${asset.key} frame ${frame} must follow corgi body`);
     }
   }
 });

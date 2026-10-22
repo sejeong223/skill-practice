@@ -1,26 +1,35 @@
 import assert from "node:assert/strict";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { readFileSync } from "node:fs";
+import { createRequire } from "node:module";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import sharp from "sharp";
+import ts from "typescript";
+
+const require = createRequire(import.meta.url);
+require.extensions[".ts"] = (module, filename) => module._compile(ts.transpileModule(readFileSync(filename, "utf8"), {
+  compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 }, fileName: filename,
+}).outputText, filename);
+const { composeDressedCorgiPixels } = require("../src/game/entities/dressedCorgiPixels.ts");
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const outputDir = path.join(root, "public/assets/pixel/characters/corgi/equipment");
 const outline = "#37162e";
-// Follow the whole side of the torso, from the shoulder to just above the paws.
+// A sewn suit follows the rump, belly and shoulder. Its pixels are baked into the corgi below.
 // The fourth run frame sits eight pixels lower; outfitBody applies that offset.
 const torsoPaths = [
-  "M20 65 Q22 60 28 59 L42 59 Q48 57 51 56 Q57 56 61 60 Q68 61 72 66 Q75 72 71 79 Q68 86 61 88 L48 86 Q43 84 38 86 L28 86 Q21 85 20 79 Q18 73 20 65Z",
-  "M20 65 Q23 60 29 58 L42 58 Q48 56 51 56 Q58 57 62 61 Q69 62 72 67 Q74 73 70 80 Q67 86 60 88 L49 85 Q44 83 39 85 L27 85 Q20 84 20 78 Q18 72 20 65Z",
-  "M20 65 Q23 60 29 59 L43 58 Q49 56 52 56 Q59 58 63 61 Q70 62 73 68 Q75 74 71 81 Q68 87 61 89 L48 87 Q42 84 37 87 L27 87 Q20 86 19 80 Q18 72 20 65Z",
-  "M22 65 Q25 60 30 59 L44 58 Q50 57 53 56 Q60 58 64 61 Q70 63 73 69 Q75 75 71 81 Q68 87 61 89 L48 87 Q43 85 38 87 L28 87 Q21 86 21 80 Q20 72 22 65Z",
+  "M14 64 Q15 58 23 57 L41 57 Q47 53 52 53 Q59 54 65 60 Q73 63 78 69 Q81 76 77 83 Q73 89 66 90 L57 87 Q51 90 46 88 L36 87 Q29 90 22 88 Q15 85 14 78Z",
+  "M14 64 Q16 58 24 57 L42 56 Q48 52 53 53 Q60 54 66 60 Q74 64 79 70 Q81 77 77 84 Q72 90 65 90 L57 86 Q51 88 45 87 L35 86 Q28 89 21 87 Q15 84 14 78Z",
+  "M14 64 Q16 58 24 58 L43 56 Q49 53 54 54 Q61 55 67 61 Q75 65 80 71 Q82 78 78 85 Q73 91 66 91 L56 88 Q51 90 45 89 L35 88 Q28 90 21 88 Q15 85 14 78Z",
+  "M15 63 Q17 57 25 57 L43 56 Q49 52 54 53 Q61 55 67 61 Q75 65 80 71 Q82 78 78 85 Q73 91 66 91 L56 88 Q51 90 45 89 L35 88 Q28 90 22 88 Q15 84 15 77Z",
 ];
-const barkTorsoPath = "M20 65 Q23 59 29 58 L43 58 Q49 56 52 55 Q59 56 64 59 Q71 62 73 68 Q75 74 71 81 Q68 87 61 89 L48 87 Q42 84 37 87 L27 87 Q20 86 19 80 Q18 72 20 65Z";
+const barkTorsoPath = "M14 64 Q16 58 24 57 L43 56 Q49 52 54 53 Q61 55 67 60 Q75 64 80 70 Q82 77 78 84 Q73 90 66 90 L56 87 Q50 89 44 88 L34 87 Q27 89 21 87 Q15 84 14 77Z";
 const caterpillarPaths = [
-  "M19 67 Q19 60 26 59 Q30 55 38 57 Q45 53 51 56 Q58 55 63 60 Q71 61 74 68 Q76 75 72 80 Q72 87 64 88 Q60 92 53 89 Q47 92 41 89 Q35 92 29 89 Q21 90 18 84 Q16 78 19 74Z",
-  "M19 67 Q20 60 27 58 Q31 54 39 56 Q46 53 52 56 Q59 56 64 61 Q72 62 74 69 Q76 76 71 81 Q70 88 63 88 Q59 92 52 88 Q46 91 40 88 Q34 91 28 88 Q20 89 18 83 Q16 76 19 73Z",
-  "M19 67 Q20 60 27 59 Q31 55 39 57 Q46 53 52 56 Q60 56 65 62 Q72 63 75 70 Q77 77 72 82 Q71 89 64 90 Q59 94 52 90 Q46 93 40 90 Q34 93 27 90 Q19 90 17 84 Q16 77 19 74Z",
-  "M21 67 Q22 60 29 59 Q33 55 41 57 Q48 54 54 56 Q61 57 66 62 Q73 64 75 71 Q77 77 72 83 Q71 90 64 90 Q59 94 52 91 Q46 94 40 91 Q34 94 28 90 Q20 90 19 84 Q18 77 21 74Z",
+  "M13 65 Q13 57 21 57 Q26 52 34 55 Q40 51 47 54 Q54 51 61 57 Q70 57 76 65 Q82 70 79 79 Q78 86 71 88 Q67 93 59 90 Q53 94 46 90 Q39 94 32 90 Q23 92 18 87 Q12 82 13 74Z",
+  "M13 65 Q14 57 22 57 Q27 52 35 55 Q41 51 48 54 Q55 52 62 58 Q71 58 77 66 Q82 72 79 80 Q77 87 70 89 Q65 93 58 89 Q52 93 45 89 Q38 92 31 89 Q22 91 17 86 Q12 81 13 73Z",
+  "M13 65 Q14 57 22 57 Q28 52 36 55 Q42 51 49 55 Q56 52 63 58 Q72 59 78 67 Q83 73 80 81 Q78 88 71 90 Q66 94 59 91 Q52 95 45 91 Q38 94 30 91 Q21 93 17 87 Q12 82 13 74Z",
+  "M14 65 Q15 57 23 57 Q29 52 37 55 Q43 51 50 55 Q57 52 64 58 Q73 59 79 67 Q83 73 80 81 Q78 88 71 90 Q66 94 59 91 Q52 95 45 91 Q38 94 30 91 Q21 93 18 87 Q13 82 14 74Z",
 ];
 const torsoPath = (frameIndex, pose) => pose === "bark" ? barkTorsoPath : torsoPaths[frameIndex];
 
@@ -29,11 +38,12 @@ function outfitBody(frameIndex, pose, baseColor, details = "", extras = "", shap
   assert.ok(pathData, `unknown outfit frame: ${frameIndex}/${pose}`);
   const stride = pose === "bark" ? 0 : [0, 1, -1, 1][frameIndex];
   const rise = pose === "run" ? [0, 2, 0, 8][frameIndex] : 3;
+  const seamColor = shape === "caterpillar" ? "#cc7199" : "#6b4448";
   return `<g transform="translate(0 ${rise})"><defs><clipPath id="torso"><path d="${pathData}"/></clipPath></defs>
     ${extras}
-    <path d="${pathData}" fill="${baseColor}" stroke="${outline}" stroke-width="2" stroke-linejoin="miter"/>
+    <path d="${pathData}" fill="${baseColor}" stroke="${seamColor}" stroke-width="1.5" stroke-linejoin="round"/>
     <g clip-path="url(#torso)" transform="translate(${stride} 0)">${details}</g>
-    <path d="M57 58 Q65 61 69 66M21 78 Q24 83 31 84" fill="none" stroke="${outline}" stroke-width="1"/></g>`;
+    <path d="M60 58 Q70 62 75 71M16 79 Q23 88 31 88" fill="none" stroke="${seamColor}" stroke-width="1.5"/></g>`;
 }
 
 const outfitArt = {
@@ -114,9 +124,21 @@ async function saveOrCheck(file, bytes) {
 
 for (const id of ids) {
   const frames = await Promise.all([0, 1, 2, 3].map((index) => sharp(frameSvg(id, index, "run")).png().toBuffer()));
-  const run = await sharp({ create: { width: 448, height: 128, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } } })
+  const runOverlay = await sharp({ create: { width: 448, height: 128, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } } })
     .composite(frames.map((input, index) => ({ input, left: index * 112, top: 0 }))).png().toBuffer();
-  const bark = await sharp(frameSvg(id, 0, "bark")).png().toBuffer();
+  const barkOverlay = await sharp(frameSvg(id, 0, "bark")).png().toBuffer();
+  const composeOutfit = async (overlay, pose) => {
+    const width = pose === "run" ? 448 : 112;
+    const source = path.join(root, `public/assets/pixel/characters/corgi/corgi-${pose}.png`);
+    const [basePixels, outfitPixels] = await Promise.all([
+      sharp(source).ensureAlpha().raw().toBuffer(),
+      sharp(overlay).ensureAlpha().raw().toBuffer(),
+    ]);
+    const dressed = composeDressedCorgiPixels(basePixels, outfitPixels, width, 128, id === "pink-caterpillar-suit");
+    return sharp(Buffer.from(dressed), { raw: { width, height: 128, channels: 4 } }).png().toBuffer();
+  };
+  const run = id in outfitArt && id !== "custom-outfit-template" ? await composeOutfit(runOverlay, "run") : runOverlay;
+  const bark = id in outfitArt && id !== "custom-outfit-template" ? await composeOutfit(barkOverlay, "bark") : barkOverlay;
   await saveOrCheck(path.join(outputDir, `${id}-run.png`), run);
   await saveOrCheck(path.join(outputDir, `${id}-bark.png`), bark);
 }

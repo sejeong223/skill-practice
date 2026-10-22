@@ -2,10 +2,8 @@ import type * as Phaser from "phaser";
 import { Player } from "./Player";
 import { DEFAULT_PLAYER_TUNING } from "./playerTypes";
 
-const RUN_ANIMATION_KEY = "corgi-run";
 const RUN_FRAME_RATE = 10;
 export const BARK_PRESENTATION_MS = 450;
-const BARK_TEXTURE_KEY = "corgi-bark";
 const BARK_FOOT_ANCHOR = 99;
 const SLIPPER_SWING_MS = 220;
 // Opaque paw rows in corgi-run.png, measured per animation frame.
@@ -36,19 +34,20 @@ export class PlayerAnimator {
   }
 
   public triggerBark(): void {
-    if (!this.player.scene.textures.exists(BARK_TEXTURE_KEY)) return;
+    const barkTextureKey = this.player.getAppearanceTextures().bark;
+    if (!this.player.scene.textures.exists(barkTextureKey)) return;
     this.barkRemainingMs = BARK_PRESENTATION_MS;
     this.player.anims.stop();
     this.player.anims.timeScale = 1;
     this.activeAnimationKey = null;
-    this.player.setTexture(BARK_TEXTURE_KEY);
+    this.player.setTexture(barkTextureKey);
     this.player.alignFeetToFrame(BARK_FOOT_ANCHOR);
   }
 
   public stopBark(): void {
     this.barkRemainingMs = 0;
-    if (!this.player.scene || this.player.texture?.key !== BARK_TEXTURE_KEY) return;
-    this.player.setTexture(RUN_ANIMATION_KEY, 0);
+    if (!this.player.scene || this.player.texture?.key !== this.player.getAppearanceTextures().bark) return;
+    this.player.setTexture(this.player.getAppearanceTextures().run, 0);
     this.player.alignFeetToFrame(RUN_FRAME_FOOT_ANCHORS[0]);
     this.player.anims.timeScale = 1;
     this.activeAnimationKey = null;
@@ -74,7 +73,7 @@ export class PlayerAnimator {
       this.player.anims.stop();
       this.player.anims.timeScale = 1;
       this.activeAnimationKey = null;
-      this.player.setTexture(RUN_ANIMATION_KEY, 0);
+      this.player.setTexture(this.player.getAppearanceTextures().run, 0);
     }
 
     this.player.alignFeetToFrame(RUN_FRAME_FOOT_ANCHORS[0]);
@@ -92,7 +91,7 @@ export class PlayerAnimator {
   }
 
   private syncRunFootAnchor(): void {
-    if (this.player.texture.key !== RUN_ANIMATION_KEY) return;
+    if (this.player.texture.key !== this.player.getAppearanceTextures().run) return;
     const frameIndex = Number(this.player.frame.name);
     this.player.alignFeetToFrame(RUN_FRAME_FOOT_ANCHORS[frameIndex] ?? RUN_FRAME_FOOT_ANCHORS[0]);
   }
@@ -117,10 +116,11 @@ export class PlayerAnimator {
 
   private playRunAnimation(): void {
     const scene = this.player.scene;
-    if (!scene.anims.exists(RUN_ANIMATION_KEY)) {
+    const runAnimationKey = this.player.getAppearanceTextures().run;
+    if (!scene.anims.exists(runAnimationKey)) {
       scene.anims.create({
-        key: RUN_ANIMATION_KEY,
-        frames: scene.anims.generateFrameNumbers(RUN_ANIMATION_KEY, {
+        key: runAnimationKey,
+        frames: scene.anims.generateFrameNumbers(runAnimationKey, {
           start: 0,
           end: -1,
         }),
@@ -129,10 +129,10 @@ export class PlayerAnimator {
       });
     }
 
-    if (this.activeAnimationKey !== RUN_ANIMATION_KEY) {
-      this.player.setTexture(RUN_ANIMATION_KEY, 0);
-      this.player.anims.play(RUN_ANIMATION_KEY, true);
-      this.activeAnimationKey = RUN_ANIMATION_KEY;
+    if (this.activeAnimationKey !== runAnimationKey) {
+      this.player.setTexture(runAnimationKey, 0);
+      this.player.anims.play(runAnimationKey, true);
+      this.activeAnimationKey = runAnimationKey;
     }
   }
 }

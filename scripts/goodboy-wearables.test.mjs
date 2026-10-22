@@ -43,29 +43,35 @@ function harness(missing = new Set()) {
   };
   const player = { scene, x: 100, y: 200, originX: 0.5, originY: 99 / 128,
     scaleX: 1, scaleY: 1, flipX: false, visible: true, active: true, depth: 10,
-    texture: { key: "corgi-run" }, frame: { name: 0 }, body: { width: 72, height: 40 } };
+    texture: { key: "corgi-run" }, frame: { name: 0 }, body: { width: 72, height: 40 },
+    appearance: { run: "corgi-run", bark: "corgi-bark" },
+    getAppearanceTextures() { return this.appearance; },
+    setAppearanceTextures(value) { this.appearance = value; },
+    setTexture(key, frame = 0) { this.texture.key = key; this.frame.name = frame; return this; },
+  };
   const emitPostupdate = () => listeners.get("postupdate")?.callback.call(listeners.get("postupdate").context);
   return { scene, player, images, listeners, emitPostupdate };
 }
 
-test("의상·장신구가 코기 4프레임·방향·정지·짖기 포즈에 붙는다", () => {
+test("의상은 코기 자체 이미지로 바뀌고 장신구는 달리기·짖기 자세에 맞는다", () => {
   const h = harness();
   const wearables = new PlayerWearables(h.scene, h.player);
   wearables.setEquipment("bee-bodysuit", "prince-crown");
-  assert.equal(h.images.length, 2);
-  assert.deepEqual(h.images.map(image => image.texture.key), ["wear-bee-bodysuit-run", "wear-prince-crown-run"]);
-  assert.deepEqual(h.images.map(image => image.depth), [11, 12]);
+  assert.equal(h.player.texture.key, "wear-bee-bodysuit-run");
+  assert.equal(h.images.length, 1);
+  assert.deepEqual(h.images.map(image => image.texture.key), ["wear-prince-crown-run"]);
+  assert.deepEqual(h.images.map(image => image.depth), [11]);
   const body = { ...h.player.body };
   h.player.x = 240; h.player.y = 504; h.player.flipX = true;
   h.player.originY = 104 / 128; h.player.frame.name = 3;
   h.emitPostupdate();
   assert.ok(h.images.every(image => image.x === 240 && image.y === 504 && image.flipX && image.frame.name === 3));
   assert.ok(h.images.every(image => image.originY === 104 / 128));
-  assert.deepEqual(h.player.body, body, "wearable layers must not change collisions");
-  h.player.texture.key = "corgi-bark"; h.player.frame.name = "__BASE";
+  assert.deepEqual(h.player.body, body, "dressed sprites must not change collisions");
+  h.player.setTexture("wear-bee-bodysuit-bark");
   h.emitPostupdate();
-  assert.deepEqual(h.images.map(image => image.texture.key), ["wear-bee-bodysuit-bark", "wear-prince-crown-bark"]);
-  h.player.texture.key = "corgi-run"; h.player.frame.name = 0; h.player.visible = false;
+  assert.deepEqual(h.images.map(image => image.texture.key), ["wear-prince-crown-bark"]);
+  h.player.setTexture("wear-bee-bodysuit-run", 0); h.player.visible = false;
   h.emitPostupdate();
   assert.ok(h.images.every(image => image.visible === false && image.frame.name === 0));
   wearables.destroy();
@@ -73,18 +79,18 @@ test("의상·장신구가 코기 4프레임·방향·정지·짖기 포즈에 �
   assert.ok(h.images.every(image => image.destroyed));
 });
 
-test("즉시 교체·벗기기·없는 에셋은 기존 코기 표시를 방해하지 않는다", () => {
+test("의상 즉시 교체·벗기기·없는 에셋은 기본 코기 이미지로 복귀한다", () => {
   const h = harness(new Set(["wear-banana-peel-suit-run"]));
   const wearables = new PlayerWearables(h.scene, h.player);
   wearables.setEquipment("bee-bodysuit", "prince-crown");
-  const firstBody = h.images[0];
   wearables.setEquipment("banana-peel-suit", "prince-crown");
-  assert.equal(firstBody.destroyed, true);
-  assert.equal(h.images.length, 2, "missing outfit asset should be skipped");
+  assert.equal(h.player.texture.key, "corgi-run");
+  assert.equal(h.images.length, 1, "missing outfit asset should fall back to bare corgi");
   wearables.setEquipment("pink-caterpillar-suit", null);
-  assert.equal(h.images.length, 3);
-  assert.equal(h.images[1].destroyed, true);
-  assert.equal(h.images[2].texture.key, "wear-pink-caterpillar-suit-run");
+  assert.equal(h.player.texture.key, "wear-pink-caterpillar-suit-run");
+  assert.equal(h.images[0].destroyed, true);
+  wearables.setEquipment(null, null);
+  assert.equal(h.player.texture.key, "corgi-run");
   wearables.destroy();
 });
 
@@ -134,7 +140,7 @@ test("사용자 옷 교체·재저장·파괴 때 해당 장면의 동적 텍스
   const dynamic = new Set();
   const removed = [];
   h.scene.textures = {
-    exists: key => dynamic.has(key) || key.startsWith("custom-outfit-template"),
+    exists: key => dynamic.has(key) || key.startsWith("custom-outfit-template") || key.startsWith("corgi-"),
     get: () => ({ getSourceImage: () => ({}) }),
     addCanvas: key => {
       dynamic.add(key);
@@ -145,7 +151,7 @@ test("사용자 옷 교체·재저장·파괴 때 해당 장면의 동적 텍스
   const originalDocument = global.document;
   global.document = { createElement: () => ({
     width: 0, height: 0,
-    getContext: () => ({ drawImage() {}, getImageData(x, y, width, height) {
+    getContext: () => ({ drawImage() {}, clearRect() {}, getImageData(x, y, width, height) {
       const data = new Uint8ClampedArray(width * height * 4); data.fill(255); return { data };
     }, putImageData() {} }),
   }) };
@@ -154,16 +160,15 @@ test("사용자 옷 교체·재저장·파괴 때 해당 장면의 동적 텍스
     const design = { id: "custom-outfit-1", cells: Array(56 * 32).fill("#123456"), updatedAt: "2026-10-22T00:00:00.000Z" };
     wearables.setEquipment(null, null, design);
     assert.equal(dynamic.size, 2);
-    assert.ok(h.images[0].texture.key.includes("wear-custom-custom-outfit-1"));
+    assert.ok(h.player.texture.key.includes("wear-custom-custom-outfit-1"));
     h.player.frame.name = 3; h.player.flipX = true; h.emitPostupdate();
-    assert.equal(h.images[0].frame.name, 3);
-    assert.equal(h.images[0].flipX, true);
-    h.player.texture.key = "corgi-bark"; h.emitPostupdate();
-    assert.ok(h.images[0].texture.key.endsWith("-bark"));
+    assert.equal(h.player.frame.name, 3);
+    h.player.setTexture(h.player.getAppearanceTextures().bark); h.emitPostupdate();
+    assert.ok(h.player.texture.key.endsWith("-bark"));
     wearables.setEquipment(null, null, { ...design, updatedAt: "2026-10-22T00:00:01.000Z" });
     assert.equal(dynamic.size, 2);
     assert.equal(removed.length, 2);
-    assert.equal(h.images[0].destroyed, true);
+    assert.ok(h.player.texture.key.endsWith("-bark"));
     wearables.destroy();
     assert.equal(dynamic.size, 0);
     assert.equal(removed.length, 4);

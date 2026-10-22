@@ -2,6 +2,7 @@ import type * as Phaser from "phaser";
 import type { CosmeticId, CustomOutfitDesign } from "../core/types";
 import { MARKET_PRODUCTS } from "../data/marketCatalog";
 import { colorizeCustomOutfitPixels, type OutfitPose } from "./customOutfitTexture";
+import { composeDressedCorgiPixels } from "./dressedCorgiPixels";
 import type { Player } from "./Player";
 
 const categories = new Map(MARKET_PRODUCTS
@@ -9,17 +10,16 @@ const categories = new Map(MARKET_PRODUCTS
   .map((product) => [product.cosmeticId!, product.category]));
 let nextWearableInstanceId = 1;
 type TexturePair = { run: string; bark: string };
+const BARE_CORGI: TexturePair = { run: "corgi-run", bark: "corgi-bark" };
 
 export class PlayerWearables {
   private readonly scene: Phaser.Scene;
   private readonly player: Player;
   private outfitId: CosmeticId | null = null;
   private customSignature: string | null = null;
-  private outfitTextures?: TexturePair;
   private readonly ownedTextureKeys: string[] = [];
   private readonly instanceId = nextWearableInstanceId++;
   private accessoryId: CosmeticId | null = null;
-  private outfitImage?: Phaser.GameObjects.Image;
   private accessoryImage?: Phaser.GameObjects.Image;
   private destroyed = false;
 
@@ -36,42 +36,52 @@ export class PlayerWearables {
     const safeOutfit = !safeCustom && outfitId && categories.get(outfitId) === "outfit" ? outfitId : null;
     const safeAccessory = accessoryId && categories.get(accessoryId) === "accessory" ? accessoryId : null;
     if (safeOutfit !== this.outfitId || signature !== this.customSignature) {
-      this.outfitImage?.destroy();
+      const current = this.player.getAppearanceTextures();
+      const wasBarking = this.player.texture.key === current.bark;
+      const frame = Number(this.player.frame.name);
+      this.player.anims?.stop();
+      this.player.setAppearanceTextures(BARE_CORGI);
+      this.player.setTexture(wasBarking ? BARE_CORGI.bark : BARE_CORGI.run, wasBarking ? undefined : 0);
       this.removeCustomTextures();
       this.outfitId = safeOutfit;
       this.customSignature = signature;
-      this.outfitTextures = safeCustom
-        ? this.createCustomTextures(safeCustom) ?? { run: "custom-outfit-template-run", bark: "custom-outfit-template-bark" }
+      const requested = safeCustom
+        ? this.createCustomTextures(safeCustom)
         : safeOutfit ? { run: `wear-${safeOutfit}-run`, bark: `wear-${safeOutfit}-bark` } : undefined;
-      this.outfitImage = this.createLayer(this.outfitTextures?.run, 1);
+      const appearance = requested && this.scene.textures.exists(requested.run) && this.scene.textures.exists(requested.bark)
+        ? requested : BARE_CORGI;
+      this.player.setAppearanceTextures(appearance);
+      this.player.setTexture(wasBarking ? appearance.bark : appearance.run,
+        wasBarking ? undefined : Number.isInteger(frame) && frame >= 0 && frame < 4 ? frame : 0);
     }
     if (safeAccessory !== this.accessoryId) {
       this.accessoryImage?.destroy();
       this.accessoryId = safeAccessory;
-      this.accessoryImage = this.createLayer(safeAccessory ? `wear-${safeAccessory}-run` : undefined, 2);
+      this.accessoryImage = this.createLayer(safeAccessory ? `wear-${safeAccessory}-run` : undefined, 1);
     }
     this.sync();
   }
 
   public sync(): void {
     if (this.destroyed || !this.player.scene) return;
-    const bark = this.player.texture.key === "corgi-bark";
+    const bark = this.player.texture.key === this.player.getAppearanceTextures().bark;
     const numericFrame = Number(this.player.frame.name);
     const frame = Number.isInteger(numericFrame) && numericFrame >= 0 && numericFrame < 4 ? numericFrame : 0;
-    this.syncLayer(this.outfitImage, this.outfitTextures, bark, frame, 1);
     this.syncLayer(this.accessoryImage, this.accessoryId ? {
       run: `wear-${this.accessoryId}-run`, bark: `wear-${this.accessoryId}-bark`,
-    } : undefined, bark, frame, 2);
+    } : undefined, bark, frame, 1);
   }
 
   public destroy(): void {
     if (this.destroyed) return;
     this.destroyed = true;
     this.scene.events.off("postupdate", this.sync, this);
-    this.outfitImage?.destroy();
     this.accessoryImage?.destroy();
+    if (this.player.scene && this.ownedTextureKeys.includes(this.player.texture.key)) {
+      this.player.setTexture(BARE_CORGI.run, 0);
+    }
+    this.player.setAppearanceTextures(BARE_CORGI);
     this.removeCustomTextures();
-    this.outfitImage = undefined;
     this.accessoryImage = undefined;
   }
 
@@ -88,15 +98,20 @@ export class PlayerWearables {
       for (const pose of ["run", "bark"] as const) {
         const templateKey = `custom-outfit-template-${pose}`;
         const source = this.scene.textures.get(templateKey).getSourceImage() as CanvasImageSource;
+        const base = this.scene.textures.get(`corgi-${pose}`).getSourceImage() as CanvasImageSource;
         const canvas = document.createElement("canvas");
         canvas.width = pose === "run" ? 448 : 112;
         canvas.height = 128;
         const context = canvas.getContext("2d", { willReadFrequently: true });
         if (!context) throw new Error("Canvas 2D context unavailable");
+        context.drawImage(base, 0, 0);
+        const corgiPixels = context.getImageData(0, 0, canvas.width, canvas.height);
+        context.clearRect(0, 0, canvas.width, canvas.height);
         context.drawImage(source, 0, 0);
-        const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-        imageData.data.set(colorizeCustomOutfitPixels(imageData.data, canvas.width, canvas.height, pose as OutfitPose, design));
-        context.putImageData(imageData, 0, 0);
+        const templatePixels = context.getImageData(0, 0, canvas.width, canvas.height);
+        const colored = colorizeCustomOutfitPixels(templatePixels.data, canvas.width, canvas.height, pose as OutfitPose, design);
+        corgiPixels.data.set(composeDressedCorgiPixels(corgiPixels.data, colored, canvas.width, canvas.height));
+        context.putImageData(corgiPixels, 0, 0);
         const texture = this.scene.textures.addCanvas(keys[pose], canvas);
         if (!texture) throw new Error(`Could not create custom outfit texture: ${pose}`);
         this.ownedTextureKeys.push(keys[pose]);
@@ -109,7 +124,7 @@ export class PlayerWearables {
       }
       return keys;
     } catch (error) {
-      console.warn("[PlayerWearables] custom outfit texture failed; using white template", error);
+      console.warn("[PlayerWearables] custom dressed corgi texture failed; using bare corgi", error);
       this.removeCustomTextures();
       return null;
     }
@@ -117,6 +132,7 @@ export class PlayerWearables {
 
   private removeCustomTextures(): void {
     for (const key of this.ownedTextureKeys.splice(0)) {
+      if (this.scene.anims?.exists(key)) this.scene.anims.remove(key);
       if (this.scene.textures.exists(key)) this.scene.textures.remove(key);
     }
   }
