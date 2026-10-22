@@ -41,12 +41,13 @@ test("의상·장신구 10종마다 코기 달리기 4프레임과 짖기 파츠
             opaque++;
             if (product.category === "outfit") {
               const localX = x - frame * 112;
-              assert.ok(localX >= 18 && localX <= 74 && y >= 40 && y <= 89,
+              assert.ok(localX >= 16 && localX <= 77 && y >= 40 && y <= 101,
                 `${asset.key} frame ${frame}: pixel outside clothing silhouette at ${localX},${y}`);
             }
           }
         }
-        assert.ok(opaque > 30 && opaque < 112 * 128 * 0.24, `${asset.key} frame ${frame} needs a small transparent part`);
+        assert.ok(opaque > (product.category === "outfit" ? 1_300 : 30) && opaque < 112 * 128 * 0.24,
+          `${asset.key} frame ${frame} must cover the torso while leaving the head and paws clear`);
       }
     }
   }
@@ -80,11 +81,13 @@ test("흰 옷 템플릿은 모든 자세의 코기 몸에 맞고 그림판 밖�
         const index = (y * outfit.info.width + frame * 112 + x) * 4 + 3;
         if (outfit.data[index] < 128) continue;
         opaque++;
-        assert.ok(x >= 18 && x <= 74 && y >= 53 && y <= 88, `${asset.key} frame ${frame}: pixel outside torso at ${x},${y}`);
+        const frameRise = asset === run ? [0, 2, 0, 8][frame] : 3;
+        assert.ok(x >= 18 && x <= 74 && y >= 53 + frameRise && y <= 89 + frameRise,
+          `${asset.key} frame ${frame}: pixel outside torso at ${x},${y}`);
         if (corgi.data[index] >= 128) onCorgi++;
       }
-      assert.ok(opaque > 300, `${asset.key} frame ${frame} must not be empty`);
-      assert.ok(onCorgi / opaque > 0.94, `${asset.key} frame ${frame} must follow corgi body`);
+      assert.ok(opaque > 1_300, `${asset.key} frame ${frame} must cover the whole side of the torso`);
+      assert.ok(onCorgi / opaque > 0.97, `${asset.key} frame ${frame} must follow corgi body`);
     }
   }
 });
