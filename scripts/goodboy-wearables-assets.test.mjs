@@ -88,3 +88,22 @@ test("흰 옷 템플릿은 모든 자세의 코기 몸에 맞고 그림판 밖�
     }
   }
 });
+
+test("생일 고깔모자는 다섯 자세의 두 귀를 덮고 얼굴은 드러낸다", async () => {
+  for (const [pose, frames] of [["run", 4], ["bark", 1]]) {
+    const { data, info } = await sharp(path.join(root,
+      `public/assets/pixel/characters/corgi/equipment/birthday-party-hat-${pose}.png`))
+      .ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+    const alpha = (frame, x, y) => data[(y * info.width + frame * 112 + x) * 4 + 3];
+    for (let frame = 0; frame < frames; frame++) {
+      const earY = frame === 3 ? 35 : 25;
+      const earBaseY = frame === 3 ? 50 : 42;
+      for (const earX of [64, 78]) {
+        assert.ok(alpha(frame, earX, earY) >= 200, `${pose}/${frame}: ear tip uncovered`);
+        assert.ok(alpha(frame, earX, earBaseY) >= 200, `${pose}/${frame}: ear base uncovered`);
+      }
+      assert.equal(alpha(frame, 96, frame === 3 ? 59 : 49), 0,
+        `${pose}/${frame}: nose and expression must remain visible`);
+    }
+  }
+});

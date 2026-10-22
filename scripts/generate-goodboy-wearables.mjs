@@ -51,29 +51,47 @@ const outfitArt = {
     <path d="M25 65 32 61 47 59 60 61" fill="none" stroke="#ffffff" stroke-width="2"/>`),
 };
 
+function onHead(frameIndex, pose, art) {
+  const shift = pose === "bark" ? { x: -2, y: 0 } : [
+    { x: 0, y: 0 }, { x: 0, y: 1 }, { x: -1, y: 0 }, { x: -1, y: 10 },
+  ][frameIndex];
+  assert.ok(shift, `unknown accessory frame: ${frameIndex}/${pose}`);
+  return `<g transform="translate(${shift.x} ${shift.y})">${art}</g>`;
+}
+
 const accessoryArt = {
-  "shinchan-eyebrow-sticker": () => `<path d="M76 42q5-4 10-1v4q-5-2-10 2ZM88 40q4-2 8 1v3q-4-1-8 2Z" fill="${outline}" stroke="none"/>`,
-  "birthday-party-hat": () => `<path d="M72 31 84 4 96 31Z" fill="#ea8eae"/><path d="M77 20 91 23m-10-11 8 3" stroke="#f6d968" fill="none" stroke-width="3"/>
-    <circle cx="84" cy="5" r="3" fill="#79d0e9"/><path d="M70 31h27" stroke="${outline}" stroke-width="2"/>`,
-  "strawberry-headpiece": () => `<path d="M68 55 66 38q-1-17 13-19h10q12 5 11 20l-2 18-5-3V38q-9-9-21 2v14Z" fill="#e95f68"/>
-    <path d="M70 25 76 18l7 3 7-4 8 8-9 2-6-4-6 5Z" fill="#82b956"/>
-    <path d="m69 44 2 2m24-4 2 2m-17-20 1 2m10 2 1 2" stroke="#fff1b5" stroke-width="1"/>`,
-  "propeller-hat": () => `<path d="M69 29q2-13 15-13t15 13l-4 4H73Z" fill="#7ccce4"/>
-    <path d="M71 29h26" stroke="#f1de92" stroke-width="3"/><path d="M84 16v-6" stroke="${outline}"/>
-    <path d="M68 9 79 6l5 3 5-3 11 3-10 4-6-2-6 2Z" fill="#f5c86c"/><circle cx="84" cy="9" r="2" fill="#e96e62"/>`,
-  "prince-crown": () => `<path d="M70 30 69 12 75 18 82 8 89 18 97 12 95 30Z" fill="#f4be5e"/>
-    <path d="M71 25h24v5H71Z" fill="#ffe693"/><circle cx="83" cy="25" r="2" fill="#ed7188"/>`,
+  "shinchan-eyebrow-sticker": (frame, pose) => onHead(frame, pose, `
+    <path d="M76 42 82 40 87 42 87 46 83 44 77 47Z" fill="${outline}" stroke="none"/>
+    <path d="M88 40 93 42 96 45 95 48 90 45Z" fill="${outline}" stroke="none"/>`),
+  "birthday-party-hat": (frame, pose) => onHead(frame, pose, `
+    <path d="M58 42 61 30 69 19 79 8 84 4 88 16 91 28 93 43 87 47 64 47Z" fill="#ea8eae"/>
+    <path d="M64 39 68 30 73 27 79 16 84 11 87 22 86 37 90 42 85 44 65 44Z" fill="#f6b1c9" stroke="none"/>
+    <path d="M61 42 69 40 79 43 91 42 92 46 85 48 65 47Z" fill="#bd6288"/>
+    <path d="M72 26 78 28M77 18 83 20M67 35 73 37" fill="none" stroke="#f6d968" stroke-width="2"/>
+    <circle cx="84" cy="5" r="3" fill="#79d0e9"/>`),
+  "strawberry-headpiece": (frame, pose) => onHead(frame, pose, `
+    <path d="M58 46 60 31 67 22 75 19 84 23 91 30 92 44 87 47 86 36 79 32 72 36 69 46 64 54 59 52Z" fill="#e95f68"/>
+    <path d="M65 23 70 17 76 20 81 15 88 20 92 25 83 25 77 23 72 27Z" fill="#82b956"/>
+    <path d="m64 36 2 2m17-11 2 2m-10-6 1 2m-11 22 2 2" stroke="#fff1b5" stroke-width="1"/>`),
+  "propeller-hat": (frame, pose) => onHead(frame, pose, `
+    <path d="M60 39 63 28 69 22 78 21 87 25 91 34 91 41 84 44 65 44Z" fill="#7ccce4"/>
+    <path d="M64 39 89 39 91 43 84 46 65 44Z" fill="#f1de92"/>
+    <path d="M76 22 76 14" fill="none" stroke="${outline}" stroke-width="2"/>
+    <path d="M59 14 70 10 76 13 84 9 93 13 82 18 76 16 68 19Z" fill="#f5c86c"/>
+    <circle cx="76" cy="14" r="2" fill="#e96e62"/>`),
+  "prince-crown": (frame, pose) => onHead(frame, pose, `
+    <path d="M60 38 60 18 66 25 72 12 79 23 85 13 91 24 91 40 84 43 65 43Z" fill="#f4be5e"/>
+    <path d="M61 35 90 35 91 41 83 44 65 43Z" fill="#ffe693"/>
+    <path d="M67 29 72 18M79 27 84 19" fill="none" stroke="#fff3af" stroke-width="2"/>
+    <circle cx="76" cy="38" r="2" fill="#ed7188"/>`),
 };
 
 const ids = [...Object.keys(outfitArt), ...Object.keys(accessoryArt)];
-const offsets = [{ x: 0, y: 0 }, { x: 1, y: 0 }, { x: -1, y: 1 }, { x: 0, y: 5 }];
-
 function frameSvg(id, frameIndex, pose) {
   const art = outfitArt[id] ?? accessoryArt[id];
   assert.ok(art, `unknown wearable: ${id}`);
-  const offset = outfitArt[id] || pose === "bark" ? { x: 0, y: 0 } : offsets[frameIndex];
   return Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="112" height="128" viewBox="0 0 112 128" shape-rendering="crispEdges">
-    <g transform="translate(${offset.x} ${offset.y})" stroke="${outline}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${art(frameIndex, pose)}</g>
+    <g stroke="${outline}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${art(frameIndex, pose)}</g>
   </svg>`);
 }
 

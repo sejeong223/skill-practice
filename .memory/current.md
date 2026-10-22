@@ -6,21 +6,21 @@
 
 ## Active Phase
 
-[P01 코기 몸에 맞는 착용 아트](./phases/2026-10-22-corgi-wardrobe-paint-boss-campaign/P01-fitted-wearables/phase.md)
+[P02 픽셀 그림판과 사용자 옷](./phases/2026-10-22-corgi-wardrobe-paint-boss-campaign/P02-pixel-outfit-editor/phase.md)
 
 ## Active Task
 
-[T02 코기 얼굴과 귀에 맞는 장신구](./phases/2026-10-22-corgi-wardrobe-paint-boss-campaign/P01-fitted-wearables/T02-accessory-silhouettes.md)
+[T01 사용자 의상 저장 모델](./phases/2026-10-22-corgi-wardrobe-paint-boss-campaign/P02-pixel-outfit-editor/T01-custom-outfit-save.md)
 
 ## Status
 
-- 코기 맞춤 의상·픽셀 그림판·월드 2~5 보스 계획 13개 Task 중 1개 완료. P01-T01의 의상 5종과 흰 옷 템플릿을 구현·검증했다.
+- 코기 맞춤 의상·픽셀 그림판·월드 2~5 보스 계획 13개 Task 중 2개 완료. P01의 의상 5종·장신구 5종을 코기 자세별로 다시 그리고 검증했다.
 - 월드 2 치즈 태비 보스 디자인 계획 2/2 완료. T01에서 삐딱한 놀이터 대장과 작은 호루라기의 네 자세 픽셀 아트를 제작·검증했다(`a19cf28`). T02에서 에셋 등록과 보스 스테이지 표시를 연결하고 Chrome에서 씬 재시작·방향·크기·누락 에셋을 확인했다. 전투 구현은 기존 별도 계획의 범위다.
 - 로컬 실행 첫 인트로 복원 계획은 1/1 완료. 미실행 월드 2 놀이터 맵 1~3 계획은 아래 기록에 보존한다.
 
 ## Next Step (IMPORTANT)
 
-P01-T02 청사진을 읽고 장신구 5종의 프레임별 얼굴·귀 핏을 구현한다.
+P02-T01 청사진을 읽고 사용자 의상 세 벌의 저장 모델과 복원 규칙을 구현한다.
 
 ## 이전 작업 포인터와 기록
 
