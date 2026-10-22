@@ -98,7 +98,7 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
       setCatalogOpen(false);
       setPaintOpen(false);
       setActiveStageId(stageId);
-      setBossHearts(stageId === "world-01-stage-boss" ? 3 : undefined);
+      setBossHearts(getStageDefinition(stageId).kind === "boss" ? 3 : undefined);
       if (progressRef.current.selectedWorldId !== null) {
         const stageWorldId = stageId.startsWith("world-01-") ? "world-01"
           : stageId.startsWith("world-02-") ? "world-02" : null;
@@ -426,7 +426,7 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
         <GameEventBridge eventBus={eventBus} onEvent={handleEvent} />
         <CutsceneOverlay eventBus={eventBus} onSkip={() => eventBus.emit("cutscene-skip-requested", {})} />
         {introGateStep === "title" && <IntroTitleOverlay initialName={progress.playerName} onConfirm={handleNameConfirm} />}
-        {introGateStep === "ready" && mode !== "stage-clear" && !world02EntranceActive && <GameOverlay stageTitle={stage.title} runtime={runtime} progress={progress} skills={SKILL_DEFINITIONS} tools={TOOL_DEFINITIONS} cooldowns={{}} bossHearts={activeStageId === "world-01-stage-boss" ? bossHearts : undefined} alive={mode !== "dead" && mode !== "cutscene"} statusOpen={statusOpen} onEquip={handleEquip} onKeybindChange={handleKeybindChange} onToggleStatus={() => setStatusOpen((open) => !open)} paused={paused} onTogglePause={() => eventBus.emit("pause-requested", { paused: !paused })} onResetProgress={() => setResetProgressDialogOpen(true)} worldSelectUnlocked={worldSelectUnlocked} onOpenWorldSelect={handleOpenWorldSelect} onOpenShop={handleOpenShop} onOpenCatalog={handleOpenCatalog} onOpenPaint={handleOpenPaint} />}
+        {introGateStep === "ready" && mode !== "stage-clear" && !world02EntranceActive && <GameOverlay stageTitle={stage.title} runtime={runtime} progress={progress} skills={SKILL_DEFINITIONS} tools={TOOL_DEFINITIONS} cooldowns={{}} bossHearts={stage.kind === "boss" ? bossHearts : undefined} alive={mode !== "dead" && mode !== "cutscene"} statusOpen={statusOpen} onEquip={handleEquip} onKeybindChange={handleKeybindChange} onToggleStatus={() => setStatusOpen((open) => !open)} paused={paused} onTogglePause={() => eventBus.emit("pause-requested", { paused: !paused })} onResetProgress={() => setResetProgressDialogOpen(true)} worldSelectUnlocked={worldSelectUnlocked} onOpenWorldSelect={handleOpenWorldSelect} onOpenShop={handleOpenShop} onOpenCatalog={handleOpenCatalog} onOpenPaint={handleOpenPaint} />}
         {paused && introGateStep === "ready" && !worldSelectOpen && !shopOpen && !catalogOpen && !paintOpen && <PauseOverlay onResume={() => eventBus.emit("pause-requested", { paused: false })} />}
         {shopOpen && <ShopPanel bankedCoins={progress.bankedCoins} products={MARKET_PRODUCTS} progress={progress}
           onPurchase={handleMarketPurchase} onEquip={handleMarketEquip} onUnequip={handleMarketUnequip} onClose={handleCloseShop} />}

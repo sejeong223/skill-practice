@@ -4,6 +4,7 @@ import type { GameplayEventBus } from "../core/events";
 import type { SlipperAttackResult } from "./SlipperAttack";
 import type { AttackContact } from "./WeaponAttack";
 import { WeaponHitTracker } from "./weaponHitbox";
+import { getBossDamage } from "../data/bossCombat";
 import { DefenseToolSystem } from "./DefenseToolSystem";
 import { StrayDogEvent } from "./StrayDogEvent";
 import { isCalicoInSlipperReach } from "./calicoMeleeHitbox";
@@ -190,16 +191,16 @@ export class World01CalicoBoss {
     if (this.state.phase === "intro" || this.state.phase === "defeated") return false;
     const boss = this.sprite.getBounds();
     if (!this.weaponHits.accept(contact, boss)) return false;
-    this.applyDamage();
+    this.applyDamage(getBossDamage(contact.toolId));
     this.eventBus.emit("weapon-hit", {
       attackId: contact.attackId, toolId: contact.toolId, remainingHealth: this.state.health, now: contact.now,
     });
     return true;
   }
 
-  private applyDamage(): boolean {
+  private applyDamage(damage = 1): boolean {
     this.facePlayer();
-    const health = this.state.health - 1;
+    const health = Math.max(0, this.state.health - damage);
     this.state = { ...this.state, health };
     this.sprite.setTintFill(0xffffff);
     this.flashUntil = this.elapsed + 140;
