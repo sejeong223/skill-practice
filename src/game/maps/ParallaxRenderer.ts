@@ -92,7 +92,7 @@ export class ParallaxRenderer {
         .setOrigin(0)
         .setDepth(depth)
         .setScrollFactor(scrollFactorX, scrollFactorY);
-      if (assetKey.startsWith("world-02-")) {
+      if (assetKey.startsWith("world-02-") || assetKey.startsWith("world-03-")) {
         const textureHeight = this.scene.textures.get(assetKey).getSourceImage().height;
         sprite.setTileScale(mapHeight / textureHeight);
       }

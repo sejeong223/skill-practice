@@ -64,21 +64,21 @@ const WORLD_BLUEPRINTS: readonly WorldBlueprint[] = [
   },
   {
     id: "world-03",
-    title: "뒷산",
-    subtitle: "왕갈비뼈 냄새가 바람을 타고 올라오는 뒷산",
+    title: "공사장",
+    subtitle: "철근과 레미콘 사이로 이어진 냥아치의 흔적",
     stageTitles: [
-      "뒷산 입구",
-      "돌무더기 오르막",
-      "족제비 굴목",
-      "정상 직전 비탈길",
+      "공사장 진입로",
+      "레미콘 구역",
+      "비계 통로",
+      "자재 야적장",
     ],
-    bossTitle: "품질관리실",
-    bossName: "공장장",
+    bossTitle: "공사장 감독실",
+    bossName: "고등어",
     rewardSkill: "dash",
   },
   {
     id: "world-04",
-    title: "냥아치 아지트",
+    title: "냥아치 아지트 (고물상)",
     subtitle: "버려진 고물상에 모인 냥아치들의 본거지",
     stageTitles: [
       "냥아치 아지트 외곽",
@@ -86,8 +86,8 @@ const WORLD_BLUEPRINTS: readonly WorldBlueprint[] = [
       "고철 압축장",
       "우두머리 경비 통로",
     ],
-    bossTitle: "폭풍 관제탑",
-    bossName: "번개",
+    bossTitle: "고물상 집결지",
+    bossName: "턱시도",
     rewardSkill: "double-jump",
   },
   {
@@ -101,7 +101,7 @@ const WORLD_BLUEPRINTS: readonly WorldBlueprint[] = [
       "왕좌 직통 승강로",
     ],
     bossTitle: "우두머리의 옥좌",
-    bossName: "은회색 우두머리",
+    bossName: "메인쿤",
     rewardSkill: "tail-rotor",
   },
 ];
@@ -114,7 +114,8 @@ function createSegment(
 ): StageSegment {
   const segmentId = stageId + "-segment-" + segmentNumber;
   const isSafeSection = !isBoss && (segmentNumber === 1 || segmentNumber === 5);
-  const platforms = stageId === "world-02-stage-1"
+  const continuousFloor = stageId === "world-02-stage-1" || /^world-03-stage-[1-4]$/.test(stageId);
+  const platforms = continuousFloor
     ? segmentNumber === 1 ? [{
         id: segmentId + "-platform",
         x: NORMAL_MAP_WIDTH / 2,
@@ -134,7 +135,7 @@ function createSegment(
     id: segmentId,
     length,
     platforms,
-    traps: stageId === "world-02-stage-1" || isBoss || isSafeSection
+    traps: continuousFloor || isBoss || isSafeSection
       ? []
       : [
           {
@@ -151,7 +152,7 @@ function createSegment(
             effect: "knockback-and-reset",
           },
         ],
-    enemies: stageId === "world-02-stage-1" || isBoss || isSafeSection
+    enemies: continuousFloor || isBoss || isSafeSection
       ? []
       : [
           {

@@ -29,6 +29,20 @@ export function getWorld01StageTheme(
   };
 }
 
+export function getWorld03StageTheme(
+  stageId: StageId,
+  base: WorldMapThemeDefinition,
+): WorldMapThemeDefinition {
+  const match = /^world-03-stage-([1-4])$/.exec(stageId);
+  if (!match) return base;
+  return {
+    ...base,
+    layers: base.layers.map((layer) => layer.kind === "background-mid"
+      ? { ...layer, assetKey: `world-03-background-mid-${match[1]}` }
+      : layer),
+  };
+}
+
 export const WORLD_MAP_THEMES: readonly WorldMapThemeDefinition[] = [
   createTheme(
     "world-01",
@@ -61,12 +75,12 @@ export const WORLD_MAP_THEMES: readonly WorldMapThemeDefinition[] = [
     foreground: "#442b56",
     accent: "#e96b9a",
   }),
-  createTheme("world-03", "world-03-tileset", ["rock", "log", "grass", "cave"], {
-    far: "#9dbb87",
-    mid: "#66835f",
-    gameplay: "#6e5746",
-    foreground: "#34433a",
-    accent: "#d69b5f",
+  createTheme("world-03", "world-03-tileset", ["world-03-traffic-cone", "world-03-brick-stack", "world-03-cement-bag", "world-03-steel-pipe"], {
+    far: "#b9d2d3",
+    mid: "#b5a996",
+    gameplay: "#71645d",
+    foreground: "#4a4544",
+    accent: "#eeb849",
   }),
   createTheme("world-04", "world-04-tileset", ["scrap", "crane", "camera", "compressor"], {
     far: "#77747a",

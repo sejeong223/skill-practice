@@ -4,9 +4,9 @@
 
 | Task | Status | Summary | Blueprint |
 | :--- | :--- | :--- | :--- |
-| T01 | `in_progress` | 공사장 세계관·배경·바닥·장애물 에셋 | [T01](./T01-construction-assets.md) |
-| T02 | `pending` | 네 스테이지 지형·충돌·체크포인트·출구 | [T02](./T02-construction-stages.md) |
+| T01 | `done` | 공사장 세계관·배경·바닥·장애물 에셋 | [T01](./T01-construction-assets.md) |
+| T02 | `in_progress` | 네 스테이지 지형·충돌·체크포인트·출구 | [T02](./T02-construction-stages.md) |
 
 ## Progress
 
-- done: 0/2 (active: T01)
+- done: 1/2 (active: T02)

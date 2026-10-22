@@ -74,9 +74,13 @@ export const WORLD02_ENTRANCE_CUTSCENE: CutsceneScript = {
 export const WORLD_CUTSCENES: readonly CutsceneScript[] = [
   { id: "world-01-intro", stageId: "world-01-stage-1", beats: [{ id: "alley", durationMs: 3200, narration: "무법지대 뒷골목. 왕갈비뼈를 훔쳐간 냥아치 연합의 흔적이 골목 끝으로 이어진다.", musicKey: "world-01-peaceful", skipAllowedAfterSeen: true }] },
   WORLD02_ENTRANCE_CUTSCENE,
-  { id: "world-03-intro", stageId: "world-03-stage-1", beats: [{ id: "junkyard", durationMs: 3200, narration: "냥아치 연합 아지트, 버려진 고물상. 여기서부터 함정은 노골적으로 억까를 시작한다.", musicKey: "world-03-factory", skipAllowedAfterSeen: true }] },
-  { id: "world-04-intro", stageId: "world-04-stage-1", beats: [{ id: "rooftop", durationMs: 3200, narration: "바람이 몰아치는 옥상 지대. 꼬리 모터가 돌기 시작하면 발밑의 상식도 함께 날아간다.", musicKey: "world-04-rooftop", skipAllowedAfterSeen: true }] },
-  { id: "world-05-intro", stageId: "world-05-stage-1", beats: [{ id: "kingdom", durationMs: 3200, narration: "냥아치 연합 본거지. 갈비뼈의 냄새가 우두머리의 왕좌 뒤에서 진하게 풍겨온다.", musicKey: "world-05-kingdom", skipAllowedAfterSeen: true }] },
+  { id: "world-03-intro", stageId: "world-03-stage-1", beats: [{ id: "junkyard", durationMs: 3200, narration: "공사장 진입로. 크레인과 레미콘 차 사이로 냥아치 고등어의 발자국이 이어진다.", musicKey: "world-03-factory", skipAllowedAfterSeen: true }] },
+  { id: "world-04-intro", stageId: "world-04-stage-1", beats: [{ id: "rooftop", durationMs: 3200, narration: "냥아치 아지트가 된 고물상. 쌓인 고철과 자석 뒤에 행동대장 턱시도가 숨어 있다.", musicKey: "world-04-rooftop", skipAllowedAfterSeen: true }] },
+  { id: "world-05-intro", stageId: "world-05-stage-1", beats: [{ id: "kingdom", durationMs: 3200, narration: "최종 캣타워 공성전. 왕갈비뼈의 냄새가 메인쿤의 왕좌 뒤에서 진하게 풍겨온다.", musicKey: "world-05-kingdom", skipAllowedAfterSeen: true }] },
+  { id: "world-02-boss-intro", stageId: "world-02-stage-boss", beats: [{ id: "cheese-tabby", durationMs: 3000, narration: "놀이터 대장 치즈 태비가 호루라기를 불고 고무공을 집어 든다.", skipAllowedAfterSeen: true }] },
+  { id: "world-03-boss-intro", stageId: "world-03-stage-boss", beats: [{ id: "mackerel", durationMs: 3000, narration: "공사장 감독 고등어가 발밑에 벽돌 조각을 쌓으며 길을 막는다.", skipAllowedAfterSeen: true }] },
+  { id: "world-04-boss-intro", stageId: "world-04-stage-boss", beats: [{ id: "tuxedo", durationMs: 3000, narration: "고물상 한가운데, 턱시도가 자석에 매단 고철을 코기 쪽으로 끌어당긴다.", skipAllowedAfterSeen: true }] },
+  { id: "world-05-boss-intro", stageId: "world-05-stage-boss", beats: [{ id: "maine-coon", durationMs: 3000, narration: "캣타워 꼭대기의 메인쿤이 생쥐를 겨누고 털뭉치를 흩뿌린다.", skipAllowedAfterSeen: true }] },
   {
     id: "world-01-boss-intro",
     stageId: "world-01-stage-boss",

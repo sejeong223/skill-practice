@@ -423,7 +423,7 @@
     "tileWidth": 16,
     "tileHeight": 16,
     "worldId": "world-03",
-    "required": false
+    "required": true
   },
   {
     "key": "world-04-tileset",
@@ -783,6 +783,83 @@
     "key": "held-yellow-pot-lid",
     "kind": "image",
     "url": "/assets/pixel/characters/corgi/equipment/yellow-pot-lid-held.png",
+    "required": true
+  },
+  {
+    "key": "world-03-background-far",
+    "kind": "image",
+    "url": "/assets/pixel/backgrounds/world-03/world-03-far.png",
+    "worldId": "world-03",
+    "required": true
+  },
+  {
+    "key": "world-03-background-mid-1",
+    "kind": "image",
+    "url": "/assets/pixel/backgrounds/world-03/world-03-mid-1.png",
+    "worldId": "world-03",
+    "required": true
+  },
+  {
+    "key": "world-03-background-mid-2",
+    "kind": "image",
+    "url": "/assets/pixel/backgrounds/world-03/world-03-mid-2.png",
+    "worldId": "world-03",
+    "required": true
+  },
+  {
+    "key": "world-03-background-mid-3",
+    "kind": "image",
+    "url": "/assets/pixel/backgrounds/world-03/world-03-mid-3.png",
+    "worldId": "world-03",
+    "required": true
+  },
+  {
+    "key": "world-03-background-mid-4",
+    "kind": "image",
+    "url": "/assets/pixel/backgrounds/world-03/world-03-mid-4.png",
+    "worldId": "world-03",
+    "required": true
+  },
+  {
+    "key": "world-03-foreground",
+    "kind": "image",
+    "url": "/assets/pixel/backgrounds/world-03/world-03-foreground.png",
+    "worldId": "world-03",
+    "required": true
+  },
+  {
+    "key": "world-03-construction-floor",
+    "kind": "image",
+    "url": "/assets/pixel/tiles/world-03/world-03-construction-floor.png",
+    "worldId": "world-03",
+    "required": true
+  },
+  {
+    "key": "world-03-traffic-cone",
+    "kind": "image",
+    "url": "/assets/pixel/objects/world-03/traffic-cone.png",
+    "worldId": "world-03",
+    "required": true
+  },
+  {
+    "key": "world-03-brick-stack",
+    "kind": "image",
+    "url": "/assets/pixel/objects/world-03/brick-stack.png",
+    "worldId": "world-03",
+    "required": true
+  },
+  {
+    "key": "world-03-cement-bag",
+    "kind": "image",
+    "url": "/assets/pixel/objects/world-03/cement-bag.png",
+    "worldId": "world-03",
+    "required": true
+  },
+  {
+    "key": "world-03-steel-pipe",
+    "kind": "image",
+    "url": "/assets/pixel/objects/world-03/steel-pipe.png",
+    "worldId": "world-03",
     "required": true
   }
 ]

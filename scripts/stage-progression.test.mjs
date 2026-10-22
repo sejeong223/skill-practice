@@ -1,6 +1,11 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { readFile } from "node:fs/promises";
 import { STAGE_IDS, getNextStageId } from "../src/game/core/constants.ts";
+
+const worlds = await readFile(new URL('../src/game/data/worlds.ts', import.meta.url), 'utf8');
+const maps = await readFile(new URL('../src/game/data/worldMaps.ts', import.meta.url), 'utf8');
+const cutscenes = await readFile(new URL('../src/game/data/cutscenes/worlds.ts', import.meta.url), 'utf8');
 
 test("normal campaign stages advance in the declared order", () => {
   assert.equal(getNextStageId("world-01-stage-1"), "world-01-stage-2");
@@ -16,4 +21,31 @@ test("unknown and final campaign stages have no next stage", () => {
   assert.equal(getNextStageId("world-05-stage-boss"), null);
   assert.equal(getNextStageId("unknown-stage"), null);
   assert.equal(getNextStageId(STAGE_IDS.at(-1)), null);
+});
+
+test("later worlds use the decided locations and bosses", () => {
+  for (const value of ["공사장", "냥아치 아지트 (고물상)", "캣타워 공성전", "고등어", "턱시도", "메인쿤", "공사장 진입로", "레미콘 구역", "비계 통로", "자재 야적장"]) {
+    assert.ok(worlds.includes(`"${value}"`), value);
+  }
+});
+
+test("construction stages select four distinct image layers without changing saved stage IDs", () => {
+  assert.match(maps, /function getWorld03StageTheme/);
+  for (let index = 1; index <= 4; index++) {
+    const stageId = `world-03-stage-${index}`;
+    assert.ok(STAGE_IDS.includes(stageId));
+  }
+  assert.match(maps, /background-mid-\$\{match\[1\]\}/);
+});
+
+test("world 3 and 4 intros and later boss intros match their locations", () => {
+  for (const [id, landmark] of [
+    ["world-03-intro", "공사장"], ["world-04-intro", "고물상"],
+    ["world-02-boss-intro", "치즈 태비"], ["world-03-boss-intro", "고등어"],
+    ["world-04-boss-intro", "턱시도"], ["world-05-boss-intro", "메인쿤"],
+  ]) {
+    const script = cutscenes.slice(cutscenes.indexOf(`id: "${id}"`));
+    assert.ok(script.startsWith(`id: "${id}"`), id);
+    assert.ok(script.slice(0, 280).includes(landmark), id);
+  }
 });
