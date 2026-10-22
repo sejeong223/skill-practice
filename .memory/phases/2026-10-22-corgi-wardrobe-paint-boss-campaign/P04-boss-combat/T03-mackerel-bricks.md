@@ -1,6 +1,6 @@
 # Task: T03 공사장 고등어와 남는 벽돌 조각
 
-## Status: pending
+## Status: done
 
 ## Goal
 
@@ -71,6 +71,6 @@ Task: T03-mackerel-bricks
 
 ## Progress
 
-- [ ] 구현 완료
-- [ ] 검증 통과
-- commit: pending
+- [x] 구현 완료
+- [x] 검증 통과: 고등어 에셋 결정성, 보스 테스트 7건, 타입·빌드, Chrome 벽돌 착지·1.4초 잔류·슬리퍼 20회·사망 재시작·대시 해금·월드 4 전환
+- commit: 이 Task의 한국어 커밋

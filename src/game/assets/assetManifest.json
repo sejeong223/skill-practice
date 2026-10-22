@@ -433,6 +433,23 @@
     "required": true
   },
   {
+    "key": "world-03-mackerel-boss",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/characters/world-03/mackerel-boss.png",
+    "frameWidth": 128,
+    "frameHeight": 128,
+    "frameCount": 4,
+    "worldId": "world-03",
+    "required": true
+  },
+  {
+    "key": "world-03-boss-brick",
+    "kind": "image",
+    "url": "/assets/pixel/objects/world-03/mackerel-brick.png",
+    "worldId": "world-03",
+    "required": true
+  },
+  {
     "key": "world-04-tileset",
     "kind": "image",
     "url": "/assets/pixel/tiles/world-04/world-04-tileset.png",

@@ -342,6 +342,16 @@ export const BOSS_DEFINITIONS: readonly BossDefinition[] =
       healthThreshold: 0.5,
       pattern: "whistle-telegraphed-rubber-ball-single-bounce-close-target",
       telegraph: "고무공을 코기 쪽으로 다시 겨눈다",
+    }] : blueprint.id === "world-03" ? [{
+      id: "world-03-phase-1",
+      healthThreshold: 1,
+      pattern: "telegraphed-brick-throw-then-temporary-wall",
+      telegraph: "고등어가 벽돌 조각이 떨어질 자리를 먼저 표시한다",
+    }, {
+      id: "world-03-phase-2",
+      healthThreshold: 0.5,
+      pattern: "overlapping-brick-flights-with-two-landed-walls",
+      telegraph: "착지한 벽돌이 잠시 길을 막는 동안 다음 조각이 날아온다",
     }] : [
       {
         id: blueprint.id + "-phase-1",

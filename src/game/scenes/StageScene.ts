@@ -37,6 +37,7 @@ import { ParallaxRenderer } from "../maps/ParallaxRenderer";
 import { World03ConstructionObstacles } from "../systems/World03ConstructionObstacles";
 import { BossEncounter } from "../systems/BossEncounter";
 import { CheeseTabbyBallPattern } from "../systems/CheeseTabbyBallPattern";
+import { MackerelBrickPattern } from "../systems/MackerelBrickPattern";
 import { BOSS_COMBAT_CONFIG } from "../data/bossCombat";
 import { MapInteractionSystem } from "../maps/MapInteractionSystem";
 import { TiledMapLoader } from "../maps/TiledMapLoader";
@@ -103,7 +104,7 @@ export class StageScene extends Phaser.Scene {
   private debugOverlay?: MapDebugOverlay;
   private cutsceneDirector?: CutsceneDirector;
   private calicoSprite?: Phaser.GameObjects.Sprite;
-  private cheeseTabbySprite?: Phaser.GameObjects.Sprite;
+  private laterBossSprite?: Phaser.GameObjects.Sprite;
   private calicoBoss?: World01CalicoBoss;
   private bossEncounter?: BossEncounter;
   private victorySequenceStarted = false;
@@ -457,18 +458,23 @@ export class StageScene extends Phaser.Scene {
         });
       }
     }
-    if (stage.id === "world-02-stage-boss") {
-      this.cheeseTabbySprite = this.add.sprite(1280, 446, "world-02-cheese-tabby-boss", 0)
+    if (stage.id === "world-02-stage-boss" || stage.id === "world-03-stage-boss") {
+      const isCheeseTabby = stage.id === "world-02-stage-boss";
+      const bossKey = isCheeseTabby ? "world-02-cheese-tabby-boss" : "world-03-mackerel-boss";
+      const bossConfig = isCheeseTabby ? BOSS_COMBAT_CONFIG["world-02"] : BOSS_COMBAT_CONFIG["world-03"];
+      const introId = isCheeseTabby ? "world-02-boss-intro" : "world-03-boss-intro";
+      this.laterBossSprite = this.add.sprite(1280, 446, bossKey, 0)
         .setDepth(10).setFlipX(true);
       this.defenseToolSystem = new DefenseToolSystem(this.gameplayEventBus, TOOL_DEFINITIONS);
       this.defenseToolSystem.resetForStage(this.progress.equippedDefenseToolId);
       this.equipmentVisual?.setShieldCharges(this.defenseToolSystem.getRemainingCharges());
       this.bowlShieldVisual = new BowlShieldVisual(this, this.player, this.defenseToolSystem, this.gameplayEventBus);
-      const pattern = new CheeseTabbyBallPattern(
-        this, this.player, this.cheeseTabbySprite, () => this.audioManager?.playSfx("boss-whistle"),
-      );
+      const pattern = isCheeseTabby
+        ? new CheeseTabbyBallPattern(this, this.player, this.laterBossSprite,
+          () => this.audioManager?.playSfx("boss-whistle"))
+        : new MackerelBrickPattern(this, this.player, this.laterBossSprite);
       this.bossEncounter = new BossEncounter(
-        this, this.player, this.cheeseTabbySprite, stage.id, BOSS_COMBAT_CONFIG["world-02"],
+        this, this.player, this.laterBossSprite, stage.id, bossConfig,
         this.defenseToolSystem, this.gameplayEventBus, pattern,
         (remaining) => this.eventBus?.emit("boss-hearts-changed", { stageId: stage.id, remaining }),
         () => { void this.handleLaterBossDefeat(stage); },
@@ -481,15 +487,15 @@ export class StageScene extends Phaser.Scene {
         this.eventBus.on("cutscene-advance-requested", () => this.cutsceneDirector?.advance()),
       );
       this.runtime.setStatus("cutscene");
-      if (!this.progress.seenCutsceneIds.includes("world-02-boss-intro")) {
-        void this.cutsceneDirector.play("world-02-boss-intro").then(() => {
+      if (!this.progress.seenCutsceneIds.includes(introId)) {
+        void this.cutsceneDirector.play(introId).then(() => {
           if (this.scene.isActive() && this.runtime?.getStatus() === "cutscene") {
             this.runtime.setStatus("play");
             this.audioManager?.playMusic(getStageMusicKey(stage.id));
           }
         });
       } else {
-        const cue = this.add.text(640, 250, "치즈 태비와 다시 대결!", {
+        const cue = this.add.text(640, 250, `${bossConfig.bossName}와 다시 대결!`, {
           color: "#f7ce69", fontFamily: "Galmuri11Pixel, monospace", fontSize: "30px",
         }).setOrigin(0.5).setScrollFactor(0).setDepth(100);
         this.time.delayedCall(900, () => {
@@ -655,8 +661,8 @@ export class StageScene extends Phaser.Scene {
       this.audioManager = undefined;
       this.calicoSprite?.destroy();
       this.calicoSprite = undefined;
-      this.cheeseTabbySprite?.destroy();
-      this.cheeseTabbySprite = undefined;
+      this.laterBossSprite?.destroy();
+      this.laterBossSprite = undefined;
       this.mapInteraction?.destroy();
       this.world02Obstacles?.destroy();
       this.world02Obstacles = undefined;
@@ -925,7 +931,7 @@ export class StageScene extends Phaser.Scene {
     this.runtime?.setStatus("cutscene");
     this.player?.setVelocity(0, 0);
     this.player?.lockControl("boss-victory");
-    this.cheeseTabbySprite?.setFrame(3);
+    this.laterBossSprite?.setFrame(3);
     await this.cutsceneDirector?.play(`${stage.worldId}-boss-clear`);
     if (!this.scene.isActive() || !this.bossEncounter?.isDefeated()) return;
     const config = stage.worldId === "world-01" ? null : BOSS_COMBAT_CONFIG[stage.worldId];
