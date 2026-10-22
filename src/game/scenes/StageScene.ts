@@ -21,7 +21,7 @@ import { BARK_COOLDOWN_MS, SKILL_DEFINITIONS } from "../data/skills";
 import { BossFeedbackController, BARK_SHAKE_DURATION_MS, BARK_SHAKE_INTENSITY, type BossFeedbackSnapshot } from "../systems/bossFeedback";
 import { GameplayEventBus } from "../core/events";
 import { getStageDefinition, getWorldMapTheme } from "../data";
-import { getWorld01StageTheme, getWorld03StageTheme } from "../data/worldMaps";
+import { getWorld01StageTheme, getWorld02StageTheme, getWorld03StageTheme } from "../data/worldMaps";
 import type { StageDefinition } from "../core/types";
 import type { EnemyDefinition } from "../core/contentTypes";
 import { MapDebugOverlay } from "../debug/MapDebugOverlay";
@@ -158,7 +158,8 @@ export class StageScene extends Phaser.Scene {
     const registeredProgress = this.registry.get("progressState") as ProgressState | undefined;
     this.progress = registeredProgress ?? createDefaultProgressState(data.playerName);
     if (data.playerName) this.progress.playerName = data.playerName;
-    const theme = getWorld03StageTheme(stage.id, getWorld01StageTheme(stage.id, getWorldMapTheme(stage.worldId)));
+    const theme = getWorld03StageTheme(stage.id, getWorld02StageTheme(stage.id,
+      getWorld01StageTheme(stage.id, getWorldMapTheme(stage.worldId))));
     const savedCheckpoint = this.registry.get(WORLD01_CHECKPOINT_SNAPSHOT_KEY) as CheckpointSnapshot | undefined;
     const seed = data.seed ?? (savedCheckpoint?.stageId === stage.id &&
       savedCheckpoint.checkpointId === data.resumeCheckpointId ? savedCheckpoint.randomSeed : undefined) ?? 1;
@@ -210,7 +211,7 @@ export class StageScene extends Phaser.Scene {
       runtimeState,
       this.loadedMap,
     );
-    if (stage.id === "world-02-stage-1" && !this.loadedMap) {
+    if (/^world-02-stage-[1-3]$/.test(stage.id) && !this.loadedMap) {
       this.createWorld02SandFloor(stage);
     }
     if (/^world-03-stage-[1-4]$/.test(stage.id) && !this.loadedMap) {
@@ -729,7 +730,7 @@ export class StageScene extends Phaser.Scene {
       ? (platforms[0].entity as Phaser.GameObjects.Rectangle).getBounds()
       : null;
     if (!bounds || bounds.left !== 0 || bounds.right !== stage.mapWidth || bounds.top !== 504) {
-      throw new Error("월드 2 첫 스테이지의 모래 바닥과 충돌 범위가 일치하지 않습니다.");
+      throw new Error("월드 2 놀이터의 모래 바닥과 충돌 범위가 일치하지 않습니다.");
     }
     // Center the small surface bumps around the flat collision plane.
     const visualTop = bounds.top - 5;

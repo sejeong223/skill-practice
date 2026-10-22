@@ -29,6 +29,24 @@ export function getWorld01StageTheme(
   };
 }
 
+export function getWorld02StageTheme(
+  stageId: StageId,
+  base: WorldMapThemeDefinition,
+): WorldMapThemeDefinition {
+  const midAssetKey = stageId === "world-02-stage-2"
+    ? "world-02-background-mid-stage-2"
+    : stageId === "world-02-stage-3"
+      ? "world-02-background-mid-stage-3"
+      : null;
+  if (!midAssetKey) return base;
+  return {
+    ...base,
+    layers: base.layers.map((layer) => layer.kind === "background-mid"
+      ? { ...layer, assetKey: midAssetKey }
+      : layer),
+  };
+}
+
 export function getWorld03StageTheme(
   stageId: StageId,
   base: WorldMapThemeDefinition,

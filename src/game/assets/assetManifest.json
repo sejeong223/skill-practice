@@ -297,6 +297,20 @@
     "required": true
   },
   {
+    "key": "world-02-background-mid-stage-2",
+    "kind": "image",
+    "url": "/assets/pixel/backgrounds/world-02/world-02-mid-stage-2.png",
+    "worldId": "world-02",
+    "required": true
+  },
+  {
+    "key": "world-02-background-mid-stage-3",
+    "kind": "image",
+    "url": "/assets/pixel/backgrounds/world-02/world-02-mid-stage-3.png",
+    "worldId": "world-02",
+    "required": true
+  },
+  {
     "key": "world-02-foreground",
     "kind": "image",
     "url": "/assets/pixel/backgrounds/world-02/world-02-foreground.png",

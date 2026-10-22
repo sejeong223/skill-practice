@@ -2,24 +2,23 @@
 
 ## Active Plan
 
-[코기 맞춤 의상·픽셀 그림판·월드 2~5 보스](./plans/2026-10-22-corgi-wardrobe-paint-boss-campaign.md)
+[월드 2 놀이터 맵 1~3과 역방향 이동](./plans/2026-10-21-world02-three-playground-maps.md)
 
 ## Active Phase
 
-[P04 보스 전투](./phases/2026-10-22-corgi-wardrobe-paint-boss-campaign/P04-boss-combat/phase.md)
+[P01 월드 2 놀이터 3개 맵](./phases/2026-10-21-world02-three-playground-maps/P01-three-playgrounds/phase.md)
 
 ## Active Task
 
-없음 — 이 계획의 Task 13개 모두 완료.
+[T02 캔·과자 봉지·고양이 외형 7장](./phases/2026-10-21-world02-three-playground-maps/P01-three-playgrounds/T02-obstacle-variants.md)
 
 ## Status
 
-- 코기 맞춤 의상·그림판·월드 2~5 보스 계획 13/13 Task 완료. 모바일 HUD 겹침을 수정하고 관련 테스트 25개, 타입 검사, 린트, 프로덕션 빌드, Chrome 수동 검증을 통과했다.
-- 별도 월드 2 놀이터 맵 2·3 계획은 pending이며 이번 계획의 범위 밖이다.
+- 월드 2 놀이터 맵 2·3 계획 P01의 T01 완료, T02 진행 중. 맵 2·3 중경과 연속 모래 바닥을 구현하고 검증했다.
 
 ## Next Step (IMPORTANT)
 
-이 계획의 다음 Task는 없다. 월드 2 맵 2·3은 별도 계획 포인터가 활성화될 때 진행한다.
+T02의 사이다·환타 캔, 치토스 봉지, 고양이 두 종류의 잠든·할퀴는 그림을 제작·등록하고 검증한다.
 
 ## 이전 작업 포인터와 기록
 

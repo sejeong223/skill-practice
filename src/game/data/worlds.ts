@@ -13,7 +13,7 @@ import type {
   StageSegment,
   WorldDefinition,
 } from "../core/contentTypes";
-import { createDefaultStageSections, WORLD_MAP_THEMES } from "./worldMaps";
+import { createDefaultStageSections, getWorld02StageTheme, WORLD_MAP_THEMES } from "./worldMaps";
 import { WORLD01_STAGE_MAPS, world01Checkpoint } from "./world01Maps";
 import { getWorld01FloorY } from "./world01Gimmicks";
 import type {
@@ -114,7 +114,7 @@ function createSegment(
 ): StageSegment {
   const segmentId = stageId + "-segment-" + segmentNumber;
   const isSafeSection = !isBoss && (segmentNumber === 1 || segmentNumber === 5);
-  const continuousFloor = stageId === "world-02-stage-1" || /^world-03-stage-[1-4]$/.test(stageId);
+  const continuousFloor = /^world-02-stage-[1-3]$/.test(stageId) || /^world-03-stage-[1-4]$/.test(stageId);
   const platforms = continuousFloor
     ? segmentNumber === 1 ? [{
         id: segmentId + "-platform",
@@ -240,7 +240,10 @@ function createStageMap(
     mapWidth,
     mapHeight: 720,
     sections: isBoss ? [] : createDefaultStageSections(stageId),
-    layers: WORLD_MAP_THEMES.find((theme) => theme.worldId === worldId)?.layers ?? [],
+    layers: (() => {
+      const theme = WORLD_MAP_THEMES.find((candidate) => candidate.worldId === worldId);
+      return theme ? getWorld02StageTheme(stageId, theme).layers : [];
+    })(),
     objectDefinitions: [...gimmickObjects, ...requiredObjects],
     gimmicks,
     chainRules: [],
