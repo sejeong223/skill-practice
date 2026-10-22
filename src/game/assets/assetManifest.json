@@ -642,6 +642,21 @@
     "required": true
   },
   {
+    "key": "custom-outfit-template-run",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/characters/corgi/equipment/custom-outfit-template-run.png",
+    "frameWidth": 112,
+    "frameHeight": 128,
+    "frameCount": 4,
+    "required": true
+  },
+  {
+    "key": "custom-outfit-template-bark",
+    "kind": "image",
+    "url": "/assets/pixel/characters/corgi/equipment/custom-outfit-template-bark.png",
+    "required": true
+  },
+  {
     "key": "wear-shinchan-eyebrow-sticker-run",
     "kind": "spritesheet",
     "url": "/assets/pixel/characters/corgi/equipment/shinchan-eyebrow-sticker-run.png",

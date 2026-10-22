@@ -7,26 +7,48 @@ import sharp from "sharp";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const outputDir = path.join(root, "public/assets/pixel/characters/corgi/equipment");
 const outline = "#37162e";
-const suitBody = "M19 61 29 55 53 54 70 58 77 69 73 82 60 86 28 85 19 77Z";
-const edge = (fill) => `<path d="${suitBody}" fill="${fill}"/>`;
+// The torso changes shape between strides. Keep the face, tail, and four paws clear.
+const torsoPaths = [
+  "M21 63 28 58 43 58 49 56 57 57 63 60 68 60 71 65 69 70 65 73 56 74 49 71 43 73 39 78 29 77 22 73Z",
+  "M21 63 29 57 42 56 51 56 58 58 64 60 69 62 71 66 68 71 62 74 53 73 48 70 40 72 36 77 27 76 21 72Z",
+  "M20 64 28 59 44 58 50 56 59 58 65 61 70 62 72 67 68 72 63 74 54 74 48 72 41 74 36 79 27 78 21 73Z",
+  "M22 65 29 60 43 59 50 58 59 59 66 62 71 63 72 68 69 73 63 76 53 75 47 72 40 74 35 79 28 78 22 74Z",
+];
+const barkTorsoPath = "M20 64 28 59 43 58 51 55 59 56 65 58 70 61 72 66 69 71 64 74 55 74 49 72 42 74 37 79 28 78 21 73Z";
+const torsoPath = (frameIndex, pose) => pose === "bark" ? barkTorsoPath : torsoPaths[frameIndex];
+
+function outfitBody(frameIndex, pose, baseColor, details = "", extras = "") {
+  const pathData = torsoPath(frameIndex, pose);
+  assert.ok(pathData, `unknown outfit frame: ${frameIndex}/${pose}`);
+  const stride = pose === "bark" ? 0 : [0, 1, -1, 1][frameIndex];
+  const rise = pose === "run" ? [0, 2, 0, 8][frameIndex] : 3;
+  return `<g transform="translate(0 ${rise})"><defs><clipPath id="torso"><path d="${pathData}"/></clipPath></defs>
+    ${extras}
+    <path d="${pathData}" fill="${baseColor}" stroke="${outline}" stroke-width="2" stroke-linejoin="miter"/>
+    <g clip-path="url(#torso)" transform="translate(${stride} 0)">${details}</g>
+    <path d="M58 58 63 61 68 61M25 72 29 75 37 76" fill="none" stroke="${outline}" stroke-width="1"/></g>`;
+}
 
 const outfitArt = {
-  "pink-caterpillar-suit": () => `${edge("#ee8eae")}
-    <path d="M34 56q-6 9 0 27M50 55q-6 12 0 29M64 57q-5 11 0 26" fill="none" stroke="#a44871" stroke-width="2"/>
-    <circle cx="27" cy="66" r="2" fill="#f8bfd0"/><circle cx="44" cy="74" r="2" fill="#f8bfd0"/><circle cx="62" cy="65" r="2" fill="#f8bfd0"/>`,
-  "banana-peel-suit": () => `${edge("#f4d460")}
-    <path d="M20 59 25 53 30 64 31 83 23 78ZM52 54 58 57 61 84 51 85ZM70 59 75 62 72 82 65 84Z" fill="#ffe78c"/>
-    <path d="M30 61q6 11 4 22m26-23q-3 12 0 23" fill="none" stroke="#bd8643" stroke-width="2"/>`,
-  "bee-bodysuit": () => `<path d="M34 57q-9-17 1-18l12 15ZM51 55q4-18 13-15l-2 21Z" fill="#e4f7ee"/>${edge("#f6ca5e")}
-    <path d="M30 57q-3 13 0 27M46 55q-2 14 1 29M63 56q-3 14 0 27" fill="none" stroke="${outline}" stroke-width="6"/>`,
-  "hotdog-outfit": () => `<path d="M18 65q10-12 28-12 18 0 30 12l-3 7-50 1Z" fill="#e9b36d"/>
-    <path d="M21 67q22-9 51 0l-1 11-45 4Z" fill="#a94e43"/>
-    <path d="M20 75q20 11 54-2l-3 10q-31 12-50-1Z" fill="#e9b36d"/>
-    <path d="M31 68q9 8 17 0 9 8 17 0" fill="none" stroke="#f5d368" stroke-width="3"/>`,
-  "diamond-armor": () => `${edge("#70c7e6")}
-    <path d="M28 57 49 55 68 60 62 77 39 82 24 75Z" fill="#b8eef0"/>
-    <path d="M49 55 39 82M49 55 62 77M24 75l15 7" fill="none" stroke="#4a8dab" stroke-width="2"/>
-    <path d="M30 60 23 69l5 11m37-20 8 9-5 12" fill="none" stroke="#e7faf1" stroke-width="2"/>`,
+  "pink-caterpillar-suit": (frame, pose) => outfitBody(frame, pose, "#ee8eae", `
+    <path d="M33 56 30 76M47 55 45 76M60 57 59 75" fill="none" stroke="#a44871" stroke-width="3"/>
+    <path d="M26 65h8m5 3h8m6-4h8" stroke="#f8bfd0" stroke-width="2"/>`),
+  "banana-peel-suit": (frame, pose) => outfitBody(frame, pose, "#f4d460", `
+    <path d="M24 58 31 60 33 77 27 76ZM44 56 51 55 54 75 47 72ZM62 59 68 62 66 73 60 75Z" fill="#ffe78c"/>
+    <path d="M32 61 36 75M54 59 57 73" fill="none" stroke="#bd8643" stroke-width="2"/>`),
+  "bee-bodysuit": (frame, pose) => outfitBody(frame, pose, "#f6ca5e", `
+    <path d="M32 56 31 77M47 55 46 75M62 59 61 75" fill="none" stroke="${outline}" stroke-width="6"/>`,
+    `<path d="M36 57 32 49 35 44 44 56ZM47 56 52 45 58 43 61 57Z" fill="#e4f7ee" stroke="${outline}" stroke-width="1"/>`),
+  "hotdog-outfit": (frame, pose) => outfitBody(frame, pose, "#e9b36d", `
+    <path d="M22 67 29 63 48 61 65 65 71 68 67 74 52 71 37 73 25 73Z" fill="#a94e43"/>
+    <path d="M27 66 36 69 45 64 54 69 64 66" fill="none" stroke="#f5d368" stroke-width="3"/>
+    <path d="M23 75 35 76 42 72 53 72 66 75" fill="none" stroke="#ffe3a1" stroke-width="3"/>`),
+  "diamond-armor": (frame, pose) => outfitBody(frame, pose, "#70c7e6", `
+    <path d="M29 59 47 57 64 62 61 72 48 70 39 75 27 72Z" fill="#b8eef0"/>
+    <path d="M47 57 48 70 39 75M48 70 61 72M28 66 48 70" fill="none" stroke="#4a8dab" stroke-width="2"/>
+    <path d="M30 61 43 59M53 61 62 64" stroke="#e7faf1" stroke-width="2"/>`),
+  "custom-outfit-template": (frame, pose) => outfitBody(frame, pose, "#fffdf1", `
+    <path d="M25 65 32 61 47 59 60 61" fill="none" stroke="#ffffff" stroke-width="2"/>`),
 };
 
 const accessoryArt = {
@@ -49,9 +71,9 @@ const offsets = [{ x: 0, y: 0 }, { x: 1, y: 0 }, { x: -1, y: 1 }, { x: 0, y: 5 }
 function frameSvg(id, frameIndex, pose) {
   const art = outfitArt[id] ?? accessoryArt[id];
   assert.ok(art, `unknown wearable: ${id}`);
-  const offset = pose === "bark" ? { x: 0, y: 0 } : offsets[frameIndex];
+  const offset = outfitArt[id] || pose === "bark" ? { x: 0, y: 0 } : offsets[frameIndex];
   return Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="112" height="128" viewBox="0 0 112 128" shape-rendering="crispEdges">
-    <g transform="translate(${offset.x} ${offset.y})" stroke="${outline}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${art()}</g>
+    <g transform="translate(${offset.x} ${offset.y})" stroke="${outline}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${art(frameIndex, pose)}</g>
   </svg>`);
 }
 

@@ -37,10 +37,54 @@ test("의상·장신구 10종마다 코기 달리기 4프레임과 짖기 파츠
       for (let frame = 0; frame < frames; frame++) {
         let opaque = 0;
         for (let y = 0; y < 128; y++) for (let x = frame * 112; x < (frame + 1) * 112; x++) {
-          if (data[(y * width + x) * 4 + 3] >= 160) opaque++;
+          if (data[(y * width + x) * 4 + 3] >= 160) {
+            opaque++;
+            if (product.category === "outfit") {
+              const localX = x - frame * 112;
+              assert.ok(localX >= 18 && localX <= 74 && y >= 40 && y <= 89,
+                `${asset.key} frame ${frame}: pixel outside clothing silhouette at ${localX},${y}`);
+            }
+          }
         }
         assert.ok(opaque > 30 && opaque < 112 * 128 * 0.24, `${asset.key} frame ${frame} needs a small transparent part`);
       }
+    }
+  }
+});
+
+test("흰 옷 템플릿은 모든 자세의 코기 몸에 맞고 그림판 밖은 투명하다", async () => {
+  const run = manifest.find(asset => asset.key === "custom-outfit-template-run");
+  const bark = manifest.find(asset => asset.key === "custom-outfit-template-bark");
+  assert.deepEqual(run, {
+    key: "custom-outfit-template-run", kind: "spritesheet",
+    url: "/assets/pixel/characters/corgi/equipment/custom-outfit-template-run.png",
+    frameWidth: 112, frameHeight: 128, frameCount: 4, required: true,
+  });
+  assert.deepEqual(bark, {
+    key: "custom-outfit-template-bark", kind: "image",
+    url: "/assets/pixel/characters/corgi/equipment/custom-outfit-template-bark.png", required: true,
+  });
+
+  for (const [asset, corgiFile, frames] of [
+    [run, "corgi-run.png", 4], [bark, "corgi-bark.png", 1],
+  ]) {
+    const [outfit, corgi] = await Promise.all([
+      sharp(path.join(root, "public", asset.url)).ensureAlpha().raw().toBuffer({ resolveWithObject: true }),
+      sharp(path.join(root, "public/assets/pixel/characters/corgi", corgiFile)).ensureAlpha().raw().toBuffer({ resolveWithObject: true }),
+    ]);
+    assert.deepEqual([outfit.info.width, outfit.info.height], [112 * frames, 128]);
+    for (let frame = 0; frame < frames; frame++) {
+      let opaque = 0;
+      let onCorgi = 0;
+      for (let y = 0; y < 128; y++) for (let x = 0; x < 112; x++) {
+        const index = (y * outfit.info.width + frame * 112 + x) * 4 + 3;
+        if (outfit.data[index] < 128) continue;
+        opaque++;
+        assert.ok(x >= 18 && x <= 74 && y >= 53 && y <= 88, `${asset.key} frame ${frame}: pixel outside torso at ${x},${y}`);
+        if (corgi.data[index] >= 128) onCorgi++;
+      }
+      assert.ok(opaque > 300, `${asset.key} frame ${frame} must not be empty`);
+      assert.ok(onCorgi / opaque > 0.94, `${asset.key} frame ${frame} must follow corgi body`);
     }
   }
 });
