@@ -429,6 +429,55 @@
     "required": true
   },
   {
+    "key": "world-02-obstacle-crushed-cider-can",
+    "kind": "image",
+    "url": "/assets/pixel/props/world-02/crushed-cider-can.png",
+    "worldId": "world-02",
+    "required": true
+  },
+  {
+    "key": "world-02-obstacle-crushed-fanta-can",
+    "kind": "image",
+    "url": "/assets/pixel/props/world-02/crushed-fanta-can.png",
+    "worldId": "world-02",
+    "required": true
+  },
+  {
+    "key": "world-02-obstacle-empty-cheetos-bag",
+    "kind": "image",
+    "url": "/assets/pixel/props/world-02/empty-cheetos-bag-ground.png",
+    "worldId": "world-02",
+    "required": true
+  },
+  {
+    "key": "world-02-obstacle-sleeping-orange-cat",
+    "kind": "image",
+    "url": "/assets/pixel/props/world-02/sleeping-orange-cat.png",
+    "worldId": "world-02",
+    "required": true
+  },
+  {
+    "key": "world-02-obstacle-scratching-orange-cat",
+    "kind": "image",
+    "url": "/assets/pixel/props/world-02/scratching-orange-cat.png",
+    "worldId": "world-02",
+    "required": true
+  },
+  {
+    "key": "world-02-obstacle-sleeping-tuxedo-cat",
+    "kind": "image",
+    "url": "/assets/pixel/props/world-02/sleeping-tuxedo-cat.png",
+    "worldId": "world-02",
+    "required": true
+  },
+  {
+    "key": "world-02-obstacle-scratching-tuxedo-cat",
+    "kind": "image",
+    "url": "/assets/pixel/props/world-02/scratching-tuxedo-cat.png",
+    "worldId": "world-02",
+    "required": true
+  },
+  {
     "key": "world-02-tileset",
     "kind": "image",
     "url": "/assets/pixel/tiles/world-02/world-02-tileset.png",

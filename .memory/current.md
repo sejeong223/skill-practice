@@ -10,15 +10,15 @@
 
 ## Active Task
 
-[T02 캔·과자 봉지·고양이 외형 7장](./phases/2026-10-21-world02-three-playground-maps/P01-three-playgrounds/T02-obstacle-variants.md)
+[T03 맵 2·3 시드 장애물·비둘기 배치](./phases/2026-10-21-world02-three-playground-maps/P01-three-playgrounds/T03-seeded-hazards.md)
 
 ## Status
 
-- 월드 2 놀이터 맵 2·3 계획 P01의 T01 완료, T02 진행 중. 맵 2·3 중경과 연속 모래 바닥을 구현하고 검증했다.
+- 월드 2 놀이터 맵 2·3 계획 P01의 T01·T02 완료, T03 진행 중. 맵 배경·모래 바닥과 새 장애물 원화 7장을 구현·검증했다.
 
 ## Next Step (IMPORTANT)
 
-T02의 사이다·환타 캔, 치토스 봉지, 고양이 두 종류의 잠든·할퀴는 그림을 제작·등록하고 검증한다.
+T03의 시드 기반 장애물·비둘기 구간과 고양이별 할퀴기 그림을 구현·검증한다.
 
 ## 이전 작업 포인터와 기록
 

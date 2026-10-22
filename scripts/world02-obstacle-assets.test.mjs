@@ -16,12 +16,18 @@ const specs = [
   ['scratching-fat-cat', 96, 56],
   ['crushed-cola-can', 40, 28],
   ['empty-snack-bag', 80, 84],
+  ['crushed-cider-can', 40, 28],
+  ['crushed-fanta-can', 40, 28],
+  ['sleeping-orange-cat', 96, 56],
+  ['scratching-orange-cat', 96, 56],
+  ['sleeping-tuxedo-cat', 96, 56],
+  ['scratching-tuxedo-cat', 96, 56],
 ];
 
 const manifest = JSON.parse(await readFile(path.join(root, 'src/game/assets/assetManifest.json'), 'utf8'));
 const manifestKeys = manifest.map(({ key }) => key);
 
-test('월드 2 장애물 9개를 필수 이미지로 한 번씩 등록한다', () => {
+test('월드 2 기존 장애물과 새 캔·고양이를 필수 이미지로 한 번씩 등록한다', () => {
   assert.equal(new Set(manifestKeys).size, manifestKeys.length);
   for (const [name] of specs) {
     const key = `world-02-obstacle-${name}`;
@@ -34,6 +40,23 @@ test('월드 2 장애물 9개를 필수 이미지로 한 번씩 등록한다', (
       worldId: 'world-02',
       required: true,
     });
+  }
+});
+
+test('치토스 봉지는 바닥에 놓인 투명 이미지로 등록한다', async () => {
+  const key = 'world-02-obstacle-empty-cheetos-bag';
+  assert.deepEqual(manifest.find((entry) => entry.key === key), {
+    key,
+    kind: 'image',
+    url: '/assets/pixel/props/world-02/empty-cheetos-bag-ground.png',
+    worldId: 'world-02',
+    required: true,
+  });
+  const { data, info } = await sharp(path.join(root, 'public/assets/pixel/props/world-02/empty-cheetos-bag-ground.png'))
+    .ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+  assert.deepEqual([info.width, info.height], [1536, 1024]);
+  for (const [x, y] of [[0, 0], [1535, 0], [0, 1023], [1535, 1023]]) {
+    assert.equal(data[(y * info.width + x) * 4 + 3], 0);
   }
 });
 
