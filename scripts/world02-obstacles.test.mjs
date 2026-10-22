@@ -69,9 +69,9 @@ test('작은 사물 다섯 종만 확대하고 기본 점프 한 번으로 모�
   assert.ok(catClearance - cat.hitbox.width - 72 > 35, 'basic jump needs visible landing room beyond cat');
 });
 
-test('첫 스테이지 임시 함정·적만 사라지고 모래 발판과 후속 스테이지 요소는 남는다', () => {
-  assert.ok(stage.segments.every(({ traps, enemies }) => traps.length === 0 && enemies.length === 0));
-  assert.equal(stage.segments.flatMap(({ platforms }) => platforms).length, 1);
-  const second = STAGE_DEFINITIONS.find(({ id }) => id === 'world-02-stage-2');
-  assert.ok(second.segments.some(({ traps, enemies }) => traps.length > 0 || enemies.length > 0));
+test('놀이터 세 스테이지에 임시 함정·적 없이 모래 발판이 이어진다', () => {
+  for (const playground of STAGE_DEFINITIONS.filter(({ id }) => /^world-02-stage-[1-3]$/.test(id))) {
+    assert.ok(playground.segments.every(({ traps, enemies }) => traps.length === 0 && enemies.length === 0));
+    assert.equal(playground.segments.flatMap(({ platforms }) => platforms).length, 1);
+  }
 });

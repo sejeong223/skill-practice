@@ -11,10 +11,10 @@ require.extensions['.ts'] = (module, filename) => module._compile(ts.transpileMo
   compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 }, fileName: filename,
 }).outputText, filename);
 
-const { WORLD02_STAGE1_OBSTACLES } = require('../src/game/data/world02Obstacles.ts');
+const { WORLD02_STAGE1_OBSTACLES, createWorld02Obstacle } = require('../src/game/data/world02Obstacles.ts');
 const { World02ObstacleSystem } = require('../src/game/systems/World02ObstacleSystem.ts');
 
-function harness() {
+function harness(definitions = WORLD02_STAGE1_OBSTACLES) {
   const images = [];
   const zones = [];
   const overlaps = [];
@@ -60,10 +60,26 @@ function harness() {
   };
   const eventBus = { emit(type, payload) { events.push({ type, payload }); } };
   const system = new World02ObstacleSystem(scene, player, eventBus, 'world-02-stage-1',
-    WORLD02_STAGE1_OBSTACLES, () => 'world-02-stage-1-checkpoint', () => playing);
+    definitions, () => 'world-02-stage-1-checkpoint', () => playing);
   return { scene, player, images, zones, overlaps, graphics, events, locks, system,
     cat: overlaps.find(({ zone }) => zone.x === 2160), setPlaying(value) { playing = value; } };
 }
+
+test('서로 다른 고양이는 자기 할퀴는 그림으로 바뀌고 재시작 때 모두 복원된다', () => {
+  const kinds = ['sleeping-fat-cat', 'sleeping-orange-cat', 'sleeping-tuxedo-cat'];
+  const definitions = kinds.map((kind, index) => createWorld02Obstacle(kind, 420 + index * 340, `cat-${index}`));
+  const h = harness(definitions);
+  for (let index = 0; index < kinds.length; index++) {
+    const cat = h.overlaps[index];
+    cat.callback();
+    assert.equal(h.images[index].key, definitions[index].scratchTextureKey);
+    assert.equal(h.events.filter(({ type }) => type === 'world02-cat-scratch').length, index + 1);
+    h.system.resetForAttempt();
+    assert.deepEqual(h.images.map(({ key }) => key), definitions.map(({ textureKey }) => textureKey));
+  }
+  h.system.destroy();
+  assert.ok(h.images.every(({ destroyed }) => destroyed));
+});
 
 test('잠자는 고양이를 점프로 피하면 연출이 없고, 닿을 때 한 번만 할퀸다', () => {
   const h = harness();

@@ -14,9 +14,8 @@ import { getStageMusicKey } from "../audio/stageMusic";
 import { CutsceneDirector } from "../cutscenes/CutsceneDirector";
 import { CUTSCENE_SCRIPTS } from "../data/cutscenes";
 import { TOOL_DEFINITIONS } from "../data/tools";
-import { WORLD02_STAGE1_OBSTACLES } from "../data/world02Obstacles";
+import { getWorld02StageHazards, type World02PlaygroundStageId } from "../data/world02StageHazards";
 import { getWorld03Obstacles } from "../data/world03Construction";
-import { WORLD02_STAGE1_PIGEON_PASSES } from "../data/world02PigeonDrops";
 import { BARK_COOLDOWN_MS, SKILL_DEFINITIONS } from "../data/skills";
 import { BossFeedbackController, BARK_SHAKE_DURATION_MS, BARK_SHAKE_INTENSITY, type BossFeedbackSnapshot } from "../systems/bossFeedback";
 import { GameplayEventBus } from "../core/events";
@@ -161,8 +160,12 @@ export class StageScene extends Phaser.Scene {
     const theme = getWorld03StageTheme(stage.id, getWorld02StageTheme(stage.id,
       getWorld01StageTheme(stage.id, getWorldMapTheme(stage.worldId))));
     const savedCheckpoint = this.registry.get(WORLD01_CHECKPOINT_SNAPSHOT_KEY) as CheckpointSnapshot | undefined;
-    const seed = data.seed ?? (savedCheckpoint?.stageId === stage.id &&
+    const world02Playground = /^world-02-stage-[1-3]$/.test(stage.id);
+    const savedWorld02Seed = this.registry.get("world02RunSeed") as number | undefined;
+    const seed = world02Playground ? data.seed ?? savedWorld02Seed ?? Phaser.Math.Between(1, 0x7fffffff)
+      : data.seed ?? (savedCheckpoint?.stageId === stage.id &&
       savedCheckpoint.checkpointId === data.resumeCheckpointId ? savedCheckpoint.randomSeed : undefined) ?? 1;
+    if (world02Playground) this.registry.set("world02RunSeed", seed);
     const sharedEventBus = this.registry.get("gameEventBus");
     this.persistenceEventBus = sharedEventBus instanceof GameEventBus
       ? sharedEventBus
@@ -318,13 +321,14 @@ export class StageScene extends Phaser.Scene {
       this.persistenceEventBus,
       () => this.runtime?.getStatus() === "play",
     );
-    if (stage.id === "world-02-stage-1" && !this.loadedMap) {
+    if (world02Playground && !this.loadedMap) {
+      const hazards = getWorld02StageHazards(stage.id as World02PlaygroundStageId, seed);
       this.world02Obstacles = new World02ObstacleSystem(
         this,
         this.player,
         this.gameplayEventBus,
         stage.id,
-        WORLD02_STAGE1_OBSTACLES,
+        hazards.obstacles,
         () => this.runtime?.runtimeState.checkpointId ?? null,
         () => this.runtime?.getStatus() === "play" && !this.stageTransitionStarted,
       );
@@ -333,7 +337,7 @@ export class StageScene extends Phaser.Scene {
         this.player,
         this.gameplayEventBus,
         stage.id,
-        WORLD02_STAGE1_PIGEON_PASSES,
+        hazards.pigeonPasses,
         () => this.runtime?.runtimeState.checkpointId ?? null,
         () => this.runtime?.getStatus() === "play" && !this.stageTransitionStarted,
       );

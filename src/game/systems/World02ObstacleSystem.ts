@@ -19,7 +19,7 @@ export class World02ObstacleSystem {
   private readonly canHandleContact: () => boolean;
   private readonly sprites: ObstacleSprite[] = [];
   private readonly colliders: Phaser.Physics.Arcade.Collider[] = [];
-  private catSprite?: ObstacleSprite;
+  private readonly catSprites: ObstacleSprite[] = [];
   private scratchMarks?: Phaser.GameObjects.Graphics;
   private attackPending = false;
   private attackRemainingMs = 0;
@@ -42,8 +42,11 @@ export class World02ObstacleSystem {
     this.canHandleContact = canHandleContact;
 
     for (const definition of definitions) {
+      if (definition.contact === "cat-scratch" && !definition.scratchTextureKey) {
+        throw new Error(`Missing scratch texture for ${definition.id}`);
+      }
       const image = scene.add.image(definition.x, definition.groundY, definition.textureKey)
-        .setOrigin(0.5, definition.kind === "empty-snack-bag" ? 0.88 : 1)
+        .setOrigin(0.5, definition.originY ?? 1)
         .setDepth(2);
       if (definition.displaySize) {
         image.setDisplaySize(definition.displaySize.width, definition.displaySize.height);
@@ -70,7 +73,7 @@ export class World02ObstacleSystem {
           });
         }));
       } else {
-        this.catSprite = sprite;
+        this.catSprites.push(sprite);
         this.colliders.push(scene.physics.add.overlap(player, zone, () => {
           this.handleCatContact(sprite);
         }));
@@ -98,12 +101,11 @@ export class World02ObstacleSystem {
   public resetForAttempt(): void {
     this.attackPending = false;
     this.attackRemainingMs = 0;
-    this.catSprite?.image.setTexture("world-02-obstacle-sleeping-fat-cat");
-    if (this.catSprite?.definition.displaySize) {
-      this.catSprite.image.setDisplaySize(
-        this.catSprite.definition.displaySize.width,
-        this.catSprite.definition.displaySize.height,
-      );
+    for (const sprite of this.catSprites) {
+      sprite.image.setTexture(sprite.definition.textureKey);
+      if (sprite.definition.displaySize) {
+        sprite.image.setDisplaySize(sprite.definition.displaySize.width, sprite.definition.displaySize.height);
+      }
     }
     this.clearScratchMarks();
     this.player.unlockControl("world02-cat-scratch");
@@ -115,7 +117,7 @@ export class World02ObstacleSystem {
     this.attackRemainingMs = 360;
     this.player.lockControl("world02-cat-scratch");
     this.player.setVelocity(0, 0);
-    sprite.image.setTexture("world-02-obstacle-scratching-fat-cat");
+    sprite.image.setTexture(sprite.definition.scratchTextureKey!);
     if (sprite.definition.displaySize) {
       sprite.image.setDisplaySize(sprite.definition.displaySize.width, sprite.definition.displaySize.height);
     }
@@ -160,6 +162,6 @@ export class World02ObstacleSystem {
     }
     this.colliders.length = 0;
     this.sprites.length = 0;
-    this.catSprite = undefined;
+    this.catSprites.length = 0;
   }
 }

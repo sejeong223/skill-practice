@@ -10,15 +10,15 @@
 
 ## Active Task
 
-[T03 맵 2·3 시드 장애물·비둘기 배치](./phases/2026-10-21-world02-three-playground-maps/P01-three-playgrounds/T03-seeded-hazards.md)
+[T04 역방향 왕복·맵 3→보스전 연결·실제 플레이 검증](./phases/2026-10-21-world02-three-playground-maps/P01-three-playgrounds/T04-backtrack-and-integration.md)
 
 ## Status
 
-- 월드 2 놀이터 맵 2·3 계획 P01의 T01·T02 완료, T03 진행 중. 맵 배경·모래 바닥과 새 장애물 원화 7장을 구현·검증했다.
+- 월드 2 놀이터 맵 2·3 계획 P01의 T01~T03 완료, T04 진행 중. 맵·원화에 이어 시드 장애물·비둘기 배치를 구현·검증했다.
 
 ## Next Step (IMPORTANT)
 
-T03의 시드 기반 장애물·비둘기 구간과 고양이별 할퀴기 그림을 구현·검증한다.
+T04의 역방향 맵 이동, 체크포인트·코인 상태 보존, 맵 3→보스 연결과 실제 플레이를 검증한다.
 
 ## 이전 작업 포인터와 기록
 
