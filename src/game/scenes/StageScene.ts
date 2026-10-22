@@ -5,7 +5,7 @@ import {
   createRuntimeStageState,
   getNextStageId,
 } from "../core/constants";
-import type { ProgressState, StageId } from "../core/types";
+import type { CustomOutfitDesign, ProgressState, StageId } from "../core/types";
 import type { CheckpointSnapshot } from "../core/runtimeTypes";
 import { GameEventBus } from "../bridge/GameEventBus";
 import { CameraDirector } from "../camera/CameraDirector";
@@ -127,6 +127,11 @@ export class StageScene extends Phaser.Scene {
     super("StageScene");
   }
 
+  private currentCustomOutfit(): CustomOutfitDesign | null {
+    const id = this.progress.equippedCustomOutfitId;
+    return id ? this.progress.customOutfits.find((design) => design.id === id) ?? null : null;
+  }
+
   public create(data: StageSceneData = {}): void {
     this.stageId = data.stageId ?? "world-01-stage-1";
     this.victorySequenceStarted = false;
@@ -166,7 +171,7 @@ export class StageScene extends Phaser.Scene {
     this.player.setDepth(10);
     this.playerAnimator = new PlayerAnimator(this.player);
     this.playerWearables = new PlayerWearables(this, this.player);
-    this.playerWearables.setEquipment(this.progress.equippedOutfitId, this.progress.equippedAccessoryId);
+    this.playerWearables.setEquipment(this.progress.equippedOutfitId, this.progress.equippedAccessoryId, this.currentCustomOutfit());
     this.equipmentVisual = new EquipmentVisual(this, this.player);
     this.equipmentVisual.setTools(this.progress.equippedAttackToolId, this.progress.equippedDefenseToolId);
     this.inputManager = new InputManager(this, toKeybindMap(this.progress.keybinds));
@@ -478,6 +483,7 @@ export class StageScene extends Phaser.Scene {
         const id = selection.outfitId;
         if (id === null || (id && this.progress.ownedCosmeticIds.includes(id) && getMarketProduct(id)?.category === "outfit")) {
           this.progress.equippedOutfitId = id;
+          if (id) this.progress.equippedCustomOutfitId = null;
         }
       }
       if ("accessoryId" in selection) {
@@ -486,7 +492,21 @@ export class StageScene extends Phaser.Scene {
           this.progress.equippedAccessoryId = id;
         }
       }
-      this.playerWearables?.setEquipment(this.progress.equippedOutfitId, this.progress.equippedAccessoryId);
+      this.playerWearables?.setEquipment(this.progress.equippedOutfitId, this.progress.equippedAccessoryId, this.currentCustomOutfit());
+    }));
+    this.eventUnsubscribers.push(this.eventBus.on("custom-outfit-change-requested", ({ id }) => {
+      const status = this.runtime?.getStatus();
+      if (status !== "play" && status !== "paused") return;
+      if (id === null) this.progress.equippedCustomOutfitId = null;
+      else if (this.progress.customOutfits.some((design) => design.id === id)) {
+        this.progress.equippedCustomOutfitId = id;
+        this.progress.equippedOutfitId = null;
+      } else return;
+      this.playerWearables?.setEquipment(this.progress.equippedOutfitId, this.progress.equippedAccessoryId, this.currentCustomOutfit());
+    }));
+    this.eventUnsubscribers.push(this.eventBus.on("custom-outfit-saved", ({ design }) => {
+      if (this.progress.equippedCustomOutfitId !== design.id) return;
+      this.playerWearables?.setEquipment(this.progress.equippedOutfitId, this.progress.equippedAccessoryId, this.currentCustomOutfit());
     }));
     this.eventUnsubscribers.push(this.eventBus.on("equipment-change-requested", (selection) => {
       const status = this.runtime?.getStatus();

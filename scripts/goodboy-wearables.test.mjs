@@ -3,12 +3,16 @@ import { createRequire } from "node:module";
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import ts from "typescript";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import sharp from "sharp";
 
 const require = createRequire(import.meta.url);
 require.extensions[".ts"] = (module, filename) => module._compile(ts.transpileModule(fs.readFileSync(filename, "utf8"), {
   compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 }, fileName: filename,
 }).outputText, filename);
 const { PlayerWearables } = require("../src/game/entities/PlayerWearables.ts");
+const { colorizeCustomOutfitPixels } = require("../src/game/entities/customOutfitTexture.ts");
 const { createDefaultProgressState } = require("../src/game/core/constants.ts");
 const { GameEventBus } = require("../src/game/bridge/GameEventBus.ts");
 const { ProgressStore } = require("../src/game/persistence/ProgressStore.ts");
@@ -100,4 +104,70 @@ test("외형 장착 이벤트는 저장에서 다시 복원된다", async () => 
   assert.equal(loaded.equippedOutfitId, "bee-bodysuit");
   assert.equal(loaded.equippedAccessoryId, "prince-crown");
   save.destroy();
+});
+
+test("직접 그린 색은 달리기 네 프레임과 짖기에만 칠하고 외곽선은 보존한다", async () => {
+  const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+  const design = { id: "custom-outfit-1", cells: Array(56 * 32).fill("#E95F68"), updatedAt: "2026-10-22T00:00:00.000Z" };
+  for (const [pose, frames] of [["run", 4], ["bark", 1]]) {
+    const { data, info } = await sharp(path.join(root, `public/assets/pixel/characters/corgi/equipment/custom-outfit-template-${pose}.png`))
+      .ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+    const source = new Uint8ClampedArray(data);
+    const colored = colorizeCustomOutfitPixels(source, info.width, info.height, pose, design);
+    for (let frame = 0; frame < frames; frame++) {
+      let redPixels = 0;
+      for (let y = 0; y < 128; y++) for (let x = frame * 112; x < (frame + 1) * 112; x++) {
+        const offset = (y * info.width + x) * 4;
+        if (colored[offset] === 0xE9 && colored[offset + 1] === 0x5F && colored[offset + 2] === 0x68) redPixels++;
+        if (source[offset + 3] === 0) assert.equal(colored[offset + 3], 0);
+        if (source[offset] < 100 && source[offset + 3] > 200) {
+          assert.deepEqual([...colored.slice(offset, offset + 3)], [...source.slice(offset, offset + 3)]);
+        }
+      }
+      assert.ok(redPixels > 350, `${pose} frame ${frame} must contain the painted garment`);
+    }
+  }
+});
+
+test("사용자 옷 교체·재저장·파괴 때 해당 장면의 동적 텍스처만 정리한다", () => {
+  const h = harness();
+  const dynamic = new Set();
+  const removed = [];
+  h.scene.textures = {
+    exists: key => dynamic.has(key) || key.startsWith("custom-outfit-template"),
+    get: () => ({ getSourceImage: () => ({}) }),
+    addCanvas: key => {
+      dynamic.add(key);
+      return { add: () => ({}), refresh: () => {} };
+    },
+    remove: key => { removed.push(key); dynamic.delete(key); },
+  };
+  const originalDocument = global.document;
+  global.document = { createElement: () => ({
+    width: 0, height: 0,
+    getContext: () => ({ drawImage() {}, getImageData(x, y, width, height) {
+      const data = new Uint8ClampedArray(width * height * 4); data.fill(255); return { data };
+    }, putImageData() {} }),
+  }) };
+  try {
+    const wearables = new PlayerWearables(h.scene, h.player);
+    const design = { id: "custom-outfit-1", cells: Array(56 * 32).fill("#123456"), updatedAt: "2026-10-22T00:00:00.000Z" };
+    wearables.setEquipment(null, null, design);
+    assert.equal(dynamic.size, 2);
+    assert.ok(h.images[0].texture.key.includes("wear-custom-custom-outfit-1"));
+    h.player.frame.name = 3; h.player.flipX = true; h.emitPostupdate();
+    assert.equal(h.images[0].frame.name, 3);
+    assert.equal(h.images[0].flipX, true);
+    h.player.texture.key = "corgi-bark"; h.emitPostupdate();
+    assert.ok(h.images[0].texture.key.endsWith("-bark"));
+    wearables.setEquipment(null, null, { ...design, updatedAt: "2026-10-22T00:00:01.000Z" });
+    assert.equal(dynamic.size, 2);
+    assert.equal(removed.length, 2);
+    assert.equal(h.images[0].destroyed, true);
+    wearables.destroy();
+    assert.equal(dynamic.size, 0);
+    assert.equal(removed.length, 4);
+  } finally {
+    global.document = originalDocument;
+  }
 });

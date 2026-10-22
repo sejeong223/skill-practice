@@ -239,8 +239,15 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
     } else if (entry.category === "shield") {
       current.equippedDefenseToolId = entry.toolId;
       eventBus.emit("equipment-change-requested", { defenseToolId: entry.toolId });
+    } else if (entry.category === "outfit" && entry.customOutfitId !== undefined) {
+      const design = current.customOutfits.find((item) => item.id === entry.customOutfitId);
+      if (!design) return;
+      current.equippedCustomOutfitId = design.id;
+      current.equippedOutfitId = null;
+      eventBus.emit("custom-outfit-change-requested", { id: design.id, design });
     } else if (entry.category === "outfit" && entry.cosmeticId !== undefined) {
       current.equippedOutfitId = entry.cosmeticId;
+      current.equippedCustomOutfitId = null;
       eventBus.emit("cosmetic-change-requested", { outfitId: entry.cosmeticId });
     } else if (entry.category === "accessory" && entry.cosmeticId !== undefined) {
       current.equippedAccessoryId = entry.cosmeticId;
@@ -341,8 +348,9 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
     if (!updated.some((design) => design.id === id)) return;
     next.customOutfits = updated;
     replaceProgress(next);
+    eventBus.emit("custom-outfit-saved", { design: updated.find((design) => design.id === id)! });
     autoSaveRef.current?.flush();
-  }, [mode, paintOpen, replaceProgress]);
+  }, [eventBus, mode, paintOpen, replaceProgress]);
 
   const handleMarketEquip = useCallback((id: string): void => {
     if (!shopOpen || mode !== "play") return;
@@ -361,8 +369,10 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
   const unequipCosmetic = useCallback((category: "outfit" | "accessory"): void => {
     const current = progressRef.current;
     if (category === "outfit") {
-      if (current.equippedOutfitId === null) return;
+      if (current.equippedOutfitId === null && current.equippedCustomOutfitId === null) return;
       current.equippedOutfitId = null;
+      current.equippedCustomOutfitId = null;
+      eventBus.emit("custom-outfit-change-requested", { id: null, design: null });
     } else {
       if (current.equippedAccessoryId === null) return;
       current.equippedAccessoryId = null;

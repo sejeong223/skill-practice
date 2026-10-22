@@ -28,8 +28,24 @@ test("보유 목록은 기본 장비와 옛 장비도 분류 순서대로 보여
 });
 
 test("미보유·알 수 없는 ID는 빠지고 빈 카테고리도 허용한다", () => {
-  assert.deepEqual(getOwnedCatalogEntries({ ownedToolIds: [], ownedCosmeticIds: [] }), []);
-  const entries = getOwnedCatalogEntries({ ownedToolIds: ["unknown"], ownedCosmeticIds: ["unknown", "birthday-party-hat"] });
+  assert.deepEqual(getOwnedCatalogEntries({ ownedToolIds: [], ownedCosmeticIds: [], customOutfits: [] }), []);
+  const entries = getOwnedCatalogEntries({ ownedToolIds: ["unknown"], ownedCosmeticIds: ["unknown", "birthday-party-hat"], customOutfits: [] });
   assert.deepEqual(entries.map(entry => entry.id), ["birthday-party-hat"]);
   assert.equal(entries[0].category, "accessory");
+});
+
+test("저장된 사용자 옷만 의상 카테고리에 슬롯 순서대로 표시한다", () => {
+  const progress = createDefaultProgressState();
+  const stamp = "2026-10-22T00:00:00.000Z";
+  progress.customOutfits = [
+    { id: "custom-outfit-1", cells: Array(56 * 32).fill(null), updatedAt: stamp },
+    { id: "custom-outfit-3", cells: Array(56 * 32).fill("#E95F68"), updatedAt: stamp },
+  ];
+  progress.ownedCosmeticIds = ["bee-bodysuit"];
+  const outfits = getOwnedCatalogEntries(progress).filter(entry => entry.category === "outfit");
+  assert.deepEqual(outfits.map(entry => entry.id), ["bee-bodysuit", "custom-outfit-1", "custom-outfit-3"]);
+  assert.equal(outfits[1].nameKo, "내가 그린 옷 1");
+  assert.equal(outfits[1].customOutfitId, "custom-outfit-1");
+  assert.equal(outfits[1].iconUrl, null);
+  assert.ok(!outfits.some(entry => entry.id === "custom-outfit-2"));
 });

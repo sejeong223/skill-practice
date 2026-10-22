@@ -1,4 +1,4 @@
-import type { CosmeticId, MarketCategory, SelectableWorldId, StageId, WorldSelectionRequest } from "../core/types";
+import type { CosmeticId, CustomOutfitDesign, CustomOutfitId, MarketCategory, SelectableWorldId, StageId, WorldSelectionRequest } from "../core/types";
 import type { CutsceneBeat } from "../cutscenes/types";
 import type { BossFeedbackSnapshot } from "../systems/bossFeedback";
 
@@ -137,5 +137,12 @@ export interface StageEventMap {
   "cosmetic-change-requested": {
     outfitId?: CosmeticId | null;
     accessoryId?: CosmeticId | null;
+  };
+  "custom-outfit-change-requested": {
+    id: CustomOutfitId | null;
+    design: CustomOutfitDesign | null;
+  };
+  "custom-outfit-saved": {
+    design: CustomOutfitDesign;
   };
 }

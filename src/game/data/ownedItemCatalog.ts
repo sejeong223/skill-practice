@@ -1,4 +1,4 @@
-import type { CosmeticId, MarketCategory, ProgressState, ToolId } from "../core/types";
+import type { CosmeticId, CustomOutfitId, MarketCategory, ProgressState, ToolId } from "../core/types";
 import { MARKET_CATEGORIES, MARKET_PRODUCTS, getMarketProduct } from "./marketCatalog";
 import { TOOL_DEFINITIONS } from "./tools";
 import { getToolPresentation } from "./toolPresentation";
@@ -9,12 +9,13 @@ export type OwnedCatalogEntry = Readonly<{
   descriptionKo: string;
   iconUrl: string | null;
 } & (
-  { category: "weapon" | "shield"; toolId: ToolId; cosmeticId?: never } |
-  { category: "outfit" | "accessory"; cosmeticId: CosmeticId; toolId?: never }
+  { category: "weapon" | "shield"; toolId: ToolId; cosmeticId?: never; customOutfitId?: never } |
+  { category: "outfit" | "accessory"; cosmeticId: CosmeticId; toolId?: never; customOutfitId?: never } |
+  { category: "outfit"; customOutfitId: CustomOutfitId; cosmeticId?: never; toolId?: never }
 )>;
 
 export function getOwnedCatalogEntries(
-  progress: Pick<ProgressState, "ownedToolIds" | "ownedCosmeticIds">,
+  progress: Pick<ProgressState, "ownedToolIds" | "ownedCosmeticIds" | "customOutfits">,
 ): readonly OwnedCatalogEntry[] {
   const ownedTools = new Set(progress.ownedToolIds);
   const ownedCosmetics = new Set(progress.ownedCosmeticIds);
@@ -45,7 +46,15 @@ export function getOwnedCatalogEntries(
       iconUrl: product.iconUrl,
     };
   });
-  const entries = [...tools, ...cosmetics];
+  const custom: OwnedCatalogEntry[] = progress.customOutfits.map((design) => ({
+    id: design.id,
+    category: "outfit",
+    customOutfitId: design.id,
+    nameKo: `내가 그린 옷 ${design.id.slice(-1)}`,
+    descriptionKo: "직접 디자인한 흰 옷 · 언제든 다시 입을 수 있어요",
+    iconUrl: null,
+  }));
+  const entries = [...tools, ...cosmetics, ...custom];
   const categoryOrder = new Map<MarketCategory, number>(MARKET_CATEGORIES.map((category, index) => [category, index]));
   return entries.sort((a, b) => (categoryOrder.get(a.category) ?? 0) - (categoryOrder.get(b.category) ?? 0));
 }

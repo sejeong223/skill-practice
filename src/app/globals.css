@@ -644,3 +644,4 @@ form { display: flex; gap: 6px; margin-top: 10px; } form input { min-width: 0; f
   .custom-paint-palette button { width: 21px; height: 21px; }
   .custom-paint-help { font-size: 9px; }
 }
+.owned-custom-outfit-preview { display: block; width: 64px; height: 48px; image-rendering: pixelated; }

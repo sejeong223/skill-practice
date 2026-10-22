@@ -6,6 +6,7 @@ import type { MarketCategory, ProgressState } from "@/game/core/types";
 import { MARKET_CATEGORIES } from "@/game/data/marketCatalog";
 import { SHOP_CATEGORY_LABELS } from "@/game/data/shopDialogue";
 import type { OwnedCatalogEntry } from "@/game/data/ownedItemCatalog";
+import { CustomOutfitPreview } from "./CustomOutfitPreview";
 
 export interface OwnedItemCatalogDialogProps {
   readonly progress: ProgressState;
@@ -74,13 +75,17 @@ export function OwnedItemCatalogDialog({ progress, entries, onEquip, onUnequip, 
           {visibleEntries.map((entry) => {
             const equipped = entry.category === "weapon" ? progress.equippedAttackToolId === entry.toolId
               : entry.category === "shield" ? progress.equippedDefenseToolId === entry.toolId
-                : entry.category === "outfit" ? progress.equippedOutfitId === entry.cosmeticId
+                : entry.category === "outfit" ? entry.customOutfitId
+                  ? progress.equippedCustomOutfitId === entry.customOutfitId
+                  : progress.equippedOutfitId === entry.cosmeticId
                   : progress.equippedAccessoryId === entry.cosmeticId;
             const canUnequip = equipped && (entry.category === "outfit" || entry.category === "accessory");
             return (
               <article className="owned-catalog-card" key={entry.id}>
                 <div className="owned-catalog-icon">
-                  {entry.iconUrl ? <Image src={entry.iconUrl} alt="" width={64} height={64} unoptimized />
+                  {entry.customOutfitId && progress.customOutfits.find((design) => design.id === entry.customOutfitId)
+                    ? <CustomOutfitPreview design={progress.customOutfits.find((design) => design.id === entry.customOutfitId)!} />
+                    : entry.iconUrl ? <Image src={entry.iconUrl} alt="" width={64} height={64} unoptimized />
                     : <span>{entry.nameKo}</span>}
                 </div>
                 <div className="owned-catalog-copy"><h3>{entry.nameKo}</h3><p>{entry.descriptionKo}</p></div>
