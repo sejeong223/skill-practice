@@ -1,6 +1,6 @@
 # Task: T05 메인쿤의 생쥐 난사·털뭉치·엔딩
 
-## Status: pending
+## Status: done
 
 ## Goal
 
@@ -80,6 +80,6 @@ Task: T05-maine-coon-finale
 
 ## Progress
 
-- [ ] 구현 완료
-- [ ] 검증 통과
-- commit: pending
+- [x] 구현 완료
+- [x] 검증 통과: 메인쿤 에셋 결정성, 궤도·보스·콘텐츠 테스트 13건, 타입·린트·빌드, Chrome 두 마리 생쥐·별도 털뭉치·일시정지·짖기·사망 재시작·슬리퍼 40회·꼬리 모터 해금·엔딩·월드 1 재진입
+- commit: 이 Task의 한국어 커밋

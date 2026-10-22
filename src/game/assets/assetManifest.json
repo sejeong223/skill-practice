@@ -492,6 +492,37 @@
     "required": false
   },
   {
+    "key": "world-05-maine-coon-boss",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/characters/world-05/maine-coon-boss.png",
+    "frameWidth": 160,
+    "frameHeight": 160,
+    "frameCount": 4,
+    "worldId": "world-05",
+    "required": true
+  },
+  {
+    "key": "world-05-boss-mouse",
+    "kind": "image",
+    "url": "/assets/pixel/objects/world-05/homing-mouse.png",
+    "worldId": "world-05",
+    "required": true
+  },
+  {
+    "key": "world-05-boss-furball",
+    "kind": "image",
+    "url": "/assets/pixel/objects/world-05/falling-furball.png",
+    "worldId": "world-05",
+    "required": true
+  },
+  {
+    "key": "world-05-boss-cat-tower",
+    "kind": "image",
+    "url": "/assets/pixel/backgrounds/world-05/boss-cat-tower.png",
+    "worldId": "world-05",
+    "required": true
+  },
+  {
     "key": "world-01-stage-1-map",
     "kind": "tilemap",
     "url": "/assets/pixel/maps/world-01/world-01-stage-1.json",

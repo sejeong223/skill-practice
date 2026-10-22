@@ -39,6 +39,7 @@ import { BossEncounter } from "../systems/BossEncounter";
 import { CheeseTabbyBallPattern } from "../systems/CheeseTabbyBallPattern";
 import { MackerelBrickPattern } from "../systems/MackerelBrickPattern";
 import { TuxedoMagnetPattern } from "../systems/TuxedoMagnetPattern";
+import { MaineCoonPattern } from "../systems/MaineCoonPattern";
 import { BOSS_COMBAT_CONFIG } from "../data/bossCombat";
 import { MapInteractionSystem } from "../maps/MapInteractionSystem";
 import { TiledMapLoader } from "../maps/TiledMapLoader";
@@ -172,12 +173,15 @@ export class StageScene extends Phaser.Scene {
       .rectangle(stage.mapWidth / 2, GAME_HEIGHT / 2, stage.mapWidth, GAME_HEIGHT, 0xf5e7c7)
       .setDepth(-40);
     this.parallaxRenderer = new ParallaxRenderer(this);
-    const backgroundTheme = stage.id === "world-04-stage-boss"
+    const finalArena = stage.id === "world-04-stage-boss" || stage.id === "world-05-stage-boss";
+    const backgroundTheme = finalArena
       ? { ...theme, layers: theme.layers.filter((layer) => layer.kind !== "foreground") }
       : theme;
     this.parallaxRenderer.render(backgroundTheme, stage.mapWidth, stage.mapHeight);
-    if (stage.id === "world-04-stage-boss") {
-      this.bossArenaBackdrop = this.add.image(0, 0, "world-04-boss-scrapyard")
+    if (finalArena) {
+      const backdropKey = stage.id === "world-04-stage-boss"
+        ? "world-04-boss-scrapyard" : "world-05-boss-cat-tower";
+      this.bossArenaBackdrop = this.add.image(0, 0, backdropKey)
         .setOrigin(0).setDisplaySize(stage.mapWidth, stage.mapHeight).setDepth(-19);
     }
 
@@ -468,15 +472,18 @@ export class StageScene extends Phaser.Scene {
       }
     }
     if (stage.id === "world-02-stage-boss" || stage.id === "world-03-stage-boss" ||
-        stage.id === "world-04-stage-boss") {
+        stage.id === "world-04-stage-boss" || stage.id === "world-05-stage-boss") {
       const isCheeseTabby = stage.id === "world-02-stage-boss";
       const isMackerel = stage.id === "world-03-stage-boss";
+      const isTuxedo = stage.id === "world-04-stage-boss";
       const bossKey = isCheeseTabby ? "world-02-cheese-tabby-boss"
-        : isMackerel ? "world-03-mackerel-boss" : "world-04-tuxedo-boss";
+        : isMackerel ? "world-03-mackerel-boss"
+          : isTuxedo ? "world-04-tuxedo-boss" : "world-05-maine-coon-boss";
       const bossConfig = isCheeseTabby ? BOSS_COMBAT_CONFIG["world-02"]
-        : isMackerel ? BOSS_COMBAT_CONFIG["world-03"] : BOSS_COMBAT_CONFIG["world-04"];
+        : isMackerel ? BOSS_COMBAT_CONFIG["world-03"]
+          : isTuxedo ? BOSS_COMBAT_CONFIG["world-04"] : BOSS_COMBAT_CONFIG["world-05"];
       const introId = `${stage.worldId}-boss-intro`;
-      this.laterBossSprite = this.add.sprite(1280, 446, bossKey, 0)
+      this.laterBossSprite = this.add.sprite(1280, stage.id === "world-05-stage-boss" ? 430 : 446, bossKey, 0)
         .setDepth(10).setFlipX(true);
       this.defenseToolSystem = new DefenseToolSystem(this.gameplayEventBus, TOOL_DEFINITIONS);
       this.defenseToolSystem.resetForStage(this.progress.equippedDefenseToolId);
@@ -486,8 +493,10 @@ export class StageScene extends Phaser.Scene {
         ? new CheeseTabbyBallPattern(this, this.player, this.laterBossSprite,
           () => this.audioManager?.playSfx("boss-whistle"))
         : isMackerel ? new MackerelBrickPattern(this, this.player, this.laterBossSprite)
-          : new TuxedoMagnetPattern(this, this.player, this.laterBossSprite,
-            () => this.audioManager?.playSfx("magnet-hum"));
+          : isTuxedo ? new TuxedoMagnetPattern(this, this.player, this.laterBossSprite,
+            () => this.audioManager?.playSfx("magnet-hum"))
+            : new MaineCoonPattern(this, this.player, this.laterBossSprite,
+              new StageRandom(seed).fork("maine-coon"));
       this.bossEncounter = new BossEncounter(
         this, this.player, this.laterBossSprite, stage.id, bossConfig,
         this.defenseToolSystem, this.gameplayEventBus, pattern,
@@ -530,7 +539,13 @@ export class StageScene extends Phaser.Scene {
       this.runtime?.setStatus("completed");
       if (stageId === "world-01-stage-boss") return;
       const nextStageId = getNextStageId(stageId);
-      if (!nextStageId) return;
+      if (!nextStageId) {
+        if (stageId === "world-05-stage-boss") {
+          this.stageTransitionStarted = true;
+          void this.playFinalEnding();
+        }
+        return;
+      }
       this.stageTransitionStarted = true;
       this.time.delayedCall(180, () => {
         if (!this.scene.isActive()) return;
@@ -606,7 +621,9 @@ export class StageScene extends Phaser.Scene {
       this.bowlShieldVisual?.update(0, false);
     }));
     this.eventUnsubscribers.push(this.eventBus.on("world-selection-requested", (selection) => {
-      if (!isWorldSelectionUnlocked(this.progress) || this.stageTransitionStarted) return;
+      const finalReplay = this.stageId === "world-05-stage-boss" &&
+        this.progress.clearedStages.includes("world-05-stage-boss");
+      if ((!isWorldSelectionUnlocked(this.progress) && !finalReplay) || this.stageTransitionStarted) return;
       this.stageTransitionStarted = true;
       this.progress.selectedWorldId = selection.worldId;
       let target: StageSceneData;
@@ -960,6 +977,17 @@ export class StageScene extends Phaser.Scene {
     }
     this.player?.unlockControl("boss-victory");
     this.runtime?.complete();
+  }
+
+  private async playFinalEnding(): Promise<void> {
+    if (!this.cutsceneDirector || !this.player) return;
+    this.runtime?.setStatus("cutscene");
+    this.player.setVelocity(0, 0);
+    await this.cutsceneDirector.play("ending-homecoming");
+    if (!this.scene.isActive() || this.stageId !== "world-05-stage-boss") return;
+    this.runtime?.setStatus("completed");
+    this.stageTransitionStarted = false;
+    this.eventBus?.emit("ending-finished", { cutsceneId: "ending-homecoming" });
   }
 
   private holdPlayerForVictoryDialogue(): void {

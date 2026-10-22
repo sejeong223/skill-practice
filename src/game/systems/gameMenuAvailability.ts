@@ -2,7 +2,7 @@ import type { StageId } from "../core/types";
 
 export interface SharedMenuState {
   stageId: StageId;
-  mode: "safe" | "play" | "cutscene" | "dead" | "stage-clear";
+  mode: "safe" | "play" | "cutscene" | "dead" | "stage-clear" | "ending";
   introReady: boolean;
   paused: boolean;
   shopOpen: boolean;

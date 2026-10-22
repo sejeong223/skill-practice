@@ -362,6 +362,16 @@ export const BOSS_DEFINITIONS: readonly BossDefinition[] =
       healthThreshold: 0.5,
       pattern: "alternating-magnet-drag-direction",
       telegraph: "착지한 고철이 자석 방향 표시를 따라 한 번 더 움직인다",
+    }] : blueprint.id === "world-05" ? [{
+      id: "world-05-phase-1",
+      healthThreshold: 1,
+      pattern: "homing-mouse-salvos-and-independent-furball-rain",
+      telegraph: "메인쿤이 생쥐 두 마리를 겨누고 털뭉치 낙하 지점이 표시된다",
+    }, {
+      id: "world-05-phase-2",
+      healthThreshold: 0.5,
+      pattern: "alternating-curved-straight-fast-mice-with-furball-rain",
+      telegraph: "생쥐의 궤도가 바뀌어도 털뭉치는 계속 떨어진다",
     }] : [
       {
         id: blueprint.id + "-phase-1",

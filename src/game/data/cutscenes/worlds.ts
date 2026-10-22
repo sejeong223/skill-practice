@@ -80,7 +80,7 @@ export const WORLD_CUTSCENES: readonly CutsceneScript[] = [
   { id: "world-02-boss-intro", stageId: "world-02-stage-boss", beats: [{ id: "cheese-tabby", durationMs: 3000, narration: "놀이터 대장 치즈 태비가 호루라기를 불고 고무공을 집어 든다.", skipAllowedAfterSeen: true }] },
   { id: "world-03-boss-intro", stageId: "world-03-stage-boss", beats: [{ id: "mackerel", durationMs: 3000, narration: "공사장 감독 고등어가 벽돌 조각을 집어 든다. 날아온 벽돌은 잠깐 바닥을 막는다!", skipAllowedAfterSeen: true }] },
   { id: "world-04-boss-intro", stageId: "world-04-stage-boss", beats: [{ id: "tuxedo", durationMs: 3000, narration: "고물상 한가운데, 턱시도가 고철을 떨어뜨린다. 자석 신호가 나면 고철이 한 번 더 움직인다!", skipAllowedAfterSeen: true }] },
-  { id: "world-05-boss-intro", stageId: "world-05-stage-boss", beats: [{ id: "maine-coon", durationMs: 3000, narration: "캣타워 꼭대기의 메인쿤이 생쥐를 겨누고 털뭉치를 흩뿌린다.", skipAllowedAfterSeen: true }] },
+  { id: "world-05-boss-intro", stageId: "world-05-stage-boss", beats: [{ id: "maine-coon", durationMs: 3000, narration: "캣타워의 메인쿤이 코기를 계속 노리는 생쥐를 난사한다. 털뭉치 낙하 지점도 살펴야 한다!", skipAllowedAfterSeen: true }] },
   {
     id: "world-01-boss-intro",
     stageId: "world-01-stage-boss",
@@ -104,5 +104,5 @@ export const WORLD_CUTSCENES: readonly CutsceneScript[] = [
   { id: "world-02-boss-clear", stageId: "world-02-stage-boss", beats: [{ id: "bite-reward", durationMs: 2400, narration: "치즈 태비를 이겼다! 코기는 새 기술 '물기'를 배웠다. 이제 간식 봉지도 긴장하겠군.", soundCue: "stage-clear", skipAllowedAfterSeen: true }] },
   { id: "world-03-boss-clear", stageId: "world-03-stage-boss", beats: [{ id: "dash-reward", durationMs: 2400, narration: "고등어를 이겼다! 코기는 새 기술 '대시'를 배웠다. 짧은 다리에도 이제 돌진의 힘이 생겼다.", soundCue: "stage-clear", skipAllowedAfterSeen: true }] },
   { id: "world-04-boss-clear", stageId: "world-04-stage-boss", beats: [{ id: "jump-reward", durationMs: 2400, narration: "턱시도를 이겼다! 코기는 새 기술 '더블 점프'를 배웠다. 다음은 최종 캣타워다.", soundCue: "stage-clear", skipAllowedAfterSeen: true }] },
-  { id: "world-05-boss-clear", stageId: "world-05-stage-boss", beats: [{ id: "rotor-reward", durationMs: 2400, narration: "마지막 우두머리가 쓰러졌다. 왕갈비뼈를 향한 마지막 꼬리 모터가 회전한다.", soundCue: "stage-clear", skipAllowedAfterSeen: true }] },
+  { id: "world-05-boss-clear", stageId: "world-05-stage-boss", beats: [{ id: "rotor-reward", durationMs: 2400, narration: "메인쿤을 이겼다! 코기는 마지막 기술 '꼬리 모터'를 배웠다. 이제 왕갈비뼈를 들고 집으로 돌아가자!", soundCue: "stage-clear", skipAllowedAfterSeen: true }] },
 ];

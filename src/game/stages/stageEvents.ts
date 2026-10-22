@@ -46,6 +46,7 @@ export interface StageEventMap {
     nextStageId: StageId | null;
     bankedCoins: number;
   };
+  "ending-finished": { cutsceneId: "ending-homecoming" };
   "stage-clear-scene-opened": {
     stageId: "world-01-stage-boss";
     nextStageId: "world-02-stage-1";
