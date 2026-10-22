@@ -26,7 +26,7 @@
 | P01 | `done` | 의상 5종·장신구 5종을 코기 프레임에 맞춰 다시 그림 | [P01](../phases/2026-10-22-corgi-wardrobe-paint-boss-campaign/P01-fitted-wearables/phase.md) |
 | P02 | `done` | 그림판 저장 모델·편집기·카탈로그·실제 착용 표시 | [P02](../phases/2026-10-22-corgi-wardrobe-paint-boss-campaign/P02-pixel-outfit-editor/phase.md) |
 | P03 | `done` | 월드 3 공사장 전체 맵과 월드 4·5 설정 정리 | [P03](../phases/2026-10-22-corgi-wardrobe-paint-boss-campaign/P03-construction-world/phase.md) |
-| P04 | `in_progress` | 공통 보스 전투·무기 피해·월드별 공격·엔딩·통합 검증 | [P04](../phases/2026-10-22-corgi-wardrobe-paint-boss-campaign/P04-boss-combat/phase.md) |
+| P04 | `done` | 공통 보스 전투·무기 피해·월드별 공격·엔딩·통합 검증 | [P04](../phases/2026-10-22-corgi-wardrobe-paint-boss-campaign/P04-boss-combat/phase.md) |
 
 ## Completion Criteria
 

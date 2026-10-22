@@ -1,6 +1,6 @@
 # Task: T06 의상·그림판·공사장·보스 통합 검증
 
-## Status: pending
+## Status: done
 
 ## Goal
 
@@ -62,6 +62,7 @@ Task: T06-campaign-qa
 
 ## Progress
 
-- [ ] 구현 완료
-- [ ] 검증 통과
-- commit: pending
+- [x] 구현 완료: 캠페인 통합 테스트와 모바일 HUD 겹침 수정.
+- [x] 검증 통과: 관련 테스트 25개, 타입 검사, 린트, 프로덕션 빌드, Chrome 메뉴·그림판·모바일 확인.
+- 수동 검증 기록: [캠페인 QA](../../../test-plans/2026-10-22-campaign-qa.md).
+- commit: 이 Task의 한국어 커밋에 포함
