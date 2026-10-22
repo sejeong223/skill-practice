@@ -8,7 +8,7 @@ const require = createRequire(import.meta.url);
 require.extensions[".ts"] = (module, filename) => module._compile(ts.transpileModule(fs.readFileSync(filename, "utf8"), {
   compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 }, fileName: filename,
 }).outputText, filename);
-const { STAGE_DEFINITIONS } = require("../src/game/data/worlds.ts");
+const { STAGE_DEFINITIONS, BOSS_DEFINITIONS } = require("../src/game/data/worlds.ts");
 const { BOSS_COMBAT_CONFIG, getBossDamage } = require("../src/game/data/bossCombat.ts");
 
 test("월드 1 보스에는 화면과 판정에 남는 기본 코인이 없다", () => {
@@ -36,4 +36,12 @@ test("무기 등급별 보스 피해량은 1·2·3이며 미확인 도구는 기
   for (const id of ["rabbit-slipper", "squeaky-ball", "unknown-tool"]) assert.equal(getBossDamage(id), 1);
   for (const id of ["rolled-newspaper", "pink-backscratcher", "cardboard-tube"]) assert.equal(getBossDamage(id), 2);
   for (const id of ["drumstick-boomerang", "plastic-frisbee"]) assert.equal(getBossDamage(id), 3);
+});
+
+test("치즈 태비 보스 데이터는 한 번 튀는 고무공과 물기 보상을 가리킨다", () => {
+  const boss = BOSS_DEFINITIONS.find(({id}) => id === 'world-02-boss');
+  assert.ok(boss);
+  assert.equal(boss.rewardSkill, 'bite');
+  assert.match(boss.phases[0].pattern, /rubber-ball-single-bounce/);
+  assert.equal(STAGE_DEFINITIONS.find(({id}) => id === 'world-02-stage-boss')?.bossId, boss.id);
 });

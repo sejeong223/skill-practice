@@ -321,6 +321,13 @@
     "required": true
   },
   {
+    "key": "world-02-boss-rubber-ball",
+    "kind": "image",
+    "url": "/assets/pixel/objects/world-02/cheese-tabby-rubber-ball.png",
+    "worldId": "world-02",
+    "required": true
+  },
+  {
     "key": "world-02-pigeon-fly",
     "kind": "spritesheet",
     "url": "/assets/pixel/props/world-02/pigeon-fly.png",

@@ -122,6 +122,10 @@ export class AudioManager {
       this.playBowlClang();
       return;
     }
+    if (key === "boss-whistle") {
+      this.playWhistle();
+      return;
+    }
     if (key === "stray-dog-rush") {
       [220, 330, 440].forEach((frequency, index) => {
         this.playTone(frequency, 0.07, 0.009, "sine", 0.12 + index * 0.065);
@@ -452,6 +456,25 @@ export class AudioManager {
       oscillator.start(startsAt);
       oscillator.stop(startsAt + 0.28);
     }
+  }
+
+  private playWhistle(): void {
+    if (!this.isAudioReady()) return;
+    const context = this.audioContext!;
+    const now = context.currentTime;
+    const oscillator = context.createOscillator();
+    const gain = context.createGain();
+    oscillator.type = "sine";
+    oscillator.frequency.setValueAtTime(950, now);
+    oscillator.frequency.linearRampToValueAtTime(1600, now + 0.09);
+    oscillator.frequency.linearRampToValueAtTime(1380, now + 0.2);
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.linearRampToValueAtTime(0.055, now + 0.015);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.23);
+    oscillator.connect(gain).connect(context.destination);
+    this.trackSource(oscillator, [gain]);
+    oscillator.start(now);
+    oscillator.stop(now + 0.24);
   }
 
   private trackSource(source: AudioScheduledSourceNode, nodes: readonly AudioNode[] = [], afterCleanup?: () => void): void {

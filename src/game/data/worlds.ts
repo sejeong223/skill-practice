@@ -332,6 +332,16 @@ export const BOSS_DEFINITIONS: readonly BossDefinition[] =
       healthThreshold: 1,
       pattern: "telegraphed-single-fishbone-throw-and-ten-slipper-hits",
       telegraph: "삼색이가 생선 가시를 들어 올린 뒤 한 번 던진다",
+    }] : blueprint.id === "world-02" ? [{
+      id: "world-02-phase-1",
+      healthThreshold: 1,
+      pattern: "whistle-telegraphed-rubber-ball-single-bounce",
+      telegraph: "치즈 태비가 호루라기를 불고 고무공을 집어 든다",
+    }, {
+      id: "world-02-phase-2",
+      healthThreshold: 0.5,
+      pattern: "whistle-telegraphed-rubber-ball-single-bounce-close-target",
+      telegraph: "고무공을 코기 쪽으로 다시 겨눈다",
     }] : [
       {
         id: blueprint.id + "-phase-1",

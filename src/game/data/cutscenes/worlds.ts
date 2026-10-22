@@ -101,7 +101,7 @@ export const WORLD_CUTSCENES: readonly CutsceneScript[] = [
       skipAllowedAfterSeen: true,
     })),
   },
-  { id: "world-02-boss-clear", stageId: "world-02-stage-boss", beats: [{ id: "bite-reward", durationMs: 2400, narration: "두 번째 승리. 이제 코기의 이빨은 간식 봉지도 긴장하게 만든다.", soundCue: "bark", skipAllowedAfterSeen: true }] },
+  { id: "world-02-boss-clear", stageId: "world-02-stage-boss", beats: [{ id: "bite-reward", durationMs: 2400, narration: "치즈 태비를 이겼다! 코기는 새 기술 '물기'를 배웠다. 이제 간식 봉지도 긴장하겠군.", soundCue: "stage-clear", skipAllowedAfterSeen: true }] },
   { id: "world-03-boss-clear", stageId: "world-03-stage-boss", beats: [{ id: "dash-reward", durationMs: 2400, narration: "세 번째 승리. 짧은 다리에서 믿을 수 없는 돌진이 튀어나온다.", soundCue: "stage-clear", skipAllowedAfterSeen: true }] },
   { id: "world-04-boss-clear", stageId: "world-04-stage-boss", beats: [{ id: "jump-reward", durationMs: 2400, narration: "네 번째 승리. 코기는 드디어 발끝이 바닥에서 멀어지는 기쁨을 알게 된다.", soundCue: "stage-clear", skipAllowedAfterSeen: true }] },
   { id: "world-05-boss-clear", stageId: "world-05-stage-boss", beats: [{ id: "rotor-reward", durationMs: 2400, narration: "마지막 우두머리가 쓰러졌다. 왕갈비뼈를 향한 마지막 꼬리 모터가 회전한다.", soundCue: "stage-clear", skipAllowedAfterSeen: true }] },

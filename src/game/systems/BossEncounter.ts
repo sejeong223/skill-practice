@@ -102,7 +102,7 @@ export class BossEncounter {
         ...this.state, phase: "telegraph", attackSerial: serial,
         nextTelegraphAtMs: Math.max(this.state.nextTelegraphAtMs + this.config.attackIntervalMs, elapsedMs + 500),
       };
-      this.warning.setVisible(true);
+      this.warning.setText(this.pattern.warningText ?? "공격 예고!").setVisible(true);
     }
     for (const hit of this.pattern.update(delta)) this.resolveHazard(hit);
   }

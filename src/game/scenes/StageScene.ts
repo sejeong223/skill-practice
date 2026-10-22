@@ -35,6 +35,9 @@ import { DEFAULT_PLAYER_TUNING } from "../entities/playerTypes";
 import { InputManager, toKeybindMap } from "../input/InputManager";
 import { ParallaxRenderer } from "../maps/ParallaxRenderer";
 import { World03ConstructionObstacles } from "../systems/World03ConstructionObstacles";
+import { BossEncounter } from "../systems/BossEncounter";
+import { CheeseTabbyBallPattern } from "../systems/CheeseTabbyBallPattern";
+import { BOSS_COMBAT_CONFIG } from "../data/bossCombat";
 import { MapInteractionSystem } from "../maps/MapInteractionSystem";
 import { TiledMapLoader } from "../maps/TiledMapLoader";
 import type { LoadedMap } from "../maps/mapTypes";
@@ -102,6 +105,7 @@ export class StageScene extends Phaser.Scene {
   private calicoSprite?: Phaser.GameObjects.Sprite;
   private cheeseTabbySprite?: Phaser.GameObjects.Sprite;
   private calicoBoss?: World01CalicoBoss;
+  private bossEncounter?: BossEncounter;
   private victorySequenceStarted = false;
   private stageTransitionStarted = false;
   private combatSystem?: CombatSystem;
@@ -219,6 +223,7 @@ export class StageScene extends Phaser.Scene {
         this.combatSystem?.resetForStage();
         this.world02Obstacles?.resetForAttempt();
         this.world03Obstacles?.resetForAttempt();
+        this.bossEncounter?.resetAttempt();
         this.world02PigeonDrops?.resetForAttempt(this.player?.x ?? stage.spawn.x);
         this.playerAnimator?.stopBark();
         this.resetBossFeedback();
@@ -455,6 +460,43 @@ export class StageScene extends Phaser.Scene {
     if (stage.id === "world-02-stage-boss") {
       this.cheeseTabbySprite = this.add.sprite(1280, 446, "world-02-cheese-tabby-boss", 0)
         .setDepth(10).setFlipX(true);
+      this.defenseToolSystem = new DefenseToolSystem(this.gameplayEventBus, TOOL_DEFINITIONS);
+      this.defenseToolSystem.resetForStage(this.progress.equippedDefenseToolId);
+      this.equipmentVisual?.setShieldCharges(this.defenseToolSystem.getRemainingCharges());
+      this.bowlShieldVisual = new BowlShieldVisual(this, this.player, this.defenseToolSystem, this.gameplayEventBus);
+      const pattern = new CheeseTabbyBallPattern(
+        this, this.player, this.cheeseTabbySprite, () => this.audioManager?.playSfx("boss-whistle"),
+      );
+      this.bossEncounter = new BossEncounter(
+        this, this.player, this.cheeseTabbySprite, stage.id, BOSS_COMBAT_CONFIG["world-02"],
+        this.defenseToolSystem, this.gameplayEventBus, pattern,
+        (remaining) => this.eventBus?.emit("boss-hearts-changed", { stageId: stage.id, remaining }),
+        () => { void this.handleLaterBossDefeat(stage); },
+      );
+      this.cutsceneDirector = new CutsceneDirector(
+        this, this.player, this.progress, CUTSCENE_SCRIPTS, this.eventBus, this.cameraDirector, this.audioManager,
+      );
+      this.eventUnsubscribers.push(
+        this.eventBus.on("cutscene-skip-requested", () => this.cutsceneDirector?.skip()),
+        this.eventBus.on("cutscene-advance-requested", () => this.cutsceneDirector?.advance()),
+      );
+      this.runtime.setStatus("cutscene");
+      if (!this.progress.seenCutsceneIds.includes("world-02-boss-intro")) {
+        void this.cutsceneDirector.play("world-02-boss-intro").then(() => {
+          if (this.scene.isActive() && this.runtime?.getStatus() === "cutscene") {
+            this.runtime.setStatus("play");
+            this.audioManager?.playMusic(getStageMusicKey(stage.id));
+          }
+        });
+      } else {
+        const cue = this.add.text(640, 250, "치즈 태비와 다시 대결!", {
+          color: "#f7ce69", fontFamily: "Galmuri11Pixel, monospace", fontSize: "30px",
+        }).setOrigin(0.5).setScrollFactor(0).setDepth(100);
+        this.time.delayedCall(900, () => {
+          cue.destroy();
+          if (this.scene.isActive() && this.runtime?.getStatus() === "cutscene") this.runtime.setStatus("play");
+        });
+      }
     }
     this.runtime.getEventBus().on("map-state-restored", () => {
       const snapshot = this.runtime?.getMapSnapshot() ?? null;
@@ -595,6 +637,8 @@ export class StageScene extends Phaser.Scene {
       this.debugOverlay?.destroy();
       this.calicoBoss?.destroy();
       this.calicoBoss = undefined;
+      this.bossEncounter?.destroy();
+      this.bossEncounter = undefined;
       this.strayDogEvent?.destroy();
       this.strayDogEvent = undefined;
       this.combatSystem?.destroy();
@@ -770,17 +814,19 @@ export class StageScene extends Phaser.Scene {
       if (result?.accepted) {
         this.playerAnimator?.triggerBark();
         this.calicoBoss?.tryBarkStun(time);
+        this.bossEncounter?.tryBarkStun(time);
         if (!this.stageTransitionStarted &&
-            !this.calicoBoss?.isDefeated() && this.bossFeedback.recordBarkUse()) {
+            !this.calicoBoss?.isDefeated() && !this.bossEncounter?.isDefeated() && this.bossFeedback.recordBarkUse()) {
           this.cameras.main.shake(BARK_SHAKE_DURATION_MS, BARK_SHAKE_INTENSITY, true);
         }
         this.publishBossFeedback(true);
       }
     }
     this.calicoBoss?.start(time);
+    this.bossEncounter?.start();
     if (input?.attackPressed && this.combatSystem && this.player) {
       const result = this.combatSystem.tryAttack(time);
-      if (result.accepted && result.kind === "slipper-hit" && this.calicoBoss) {
+      if (result.accepted && result.kind === "slipper-hit" && (this.calicoBoss || this.bossEncounter)) {
         this.playerAnimator?.triggerSlipperSwing(time);
       } else if (result.accepted && result.kind === "tool-preview") {
         this.equipmentVisual?.showAttack(time, result.weaponKind ?? "melee");
@@ -789,8 +835,11 @@ export class StageScene extends Phaser.Scene {
       }
       if (this.calicoBoss) {
         this.calicoBoss.acceptMeleeHit(result, this.player);
-        for (const contact of result.contacts ?? []) {
-          if (this.calicoBoss.acceptToolHit(contact)) this.combatSystem.registerHit(contact);
+      }
+      this.bossEncounter?.acceptSlipperHit(result, this.player);
+      for (const contact of result.contacts ?? []) {
+        if (this.calicoBoss?.acceptToolHit(contact) || this.bossEncounter?.acceptToolHit(contact)) {
+          this.combatSystem.registerHit(contact);
         }
       }
       if (this.runtime.getStatus() !== "play") {
@@ -799,12 +848,15 @@ export class StageScene extends Phaser.Scene {
       }
     }
     for (const contact of this.combatSystem?.update(time, elapsed) ?? []) {
-      if (this.calicoBoss?.acceptToolHit(contact)) this.combatSystem?.registerHit(contact);
+      if (this.calicoBoss?.acceptToolHit(contact) || this.bossEncounter?.acceptToolHit(contact)) {
+        this.combatSystem?.registerHit(contact);
+      }
     }
     this.calicoBoss?.update(time, delta);
+    this.bossEncounter?.update(elapsed);
     this.equipmentVisual?.setShieldCharges(this.defenseToolSystem?.getRemainingCharges() ?? null);
     this.playerAnimator?.update(time, delta);
-    this.bowlShieldVisual?.update(delta, this.progress.equippedDefenseToolId === "upside-down-bowl" && this.runtime?.getStatus() === "play" && !this.calicoBoss?.isDefeated());
+    this.bowlShieldVisual?.update(delta, this.progress.equippedDefenseToolId === "upside-down-bowl" && this.runtime?.getStatus() === "play" && !this.calicoBoss?.isDefeated() && !this.bossEncounter?.isDefeated());
     this.gimmickSystem?.update(time, delta);
     this.mapInteraction?.update(time, delta);
     for (const enemy of this.mapEnemies.values()) enemy.updateMovement(time);
@@ -865,6 +917,26 @@ export class StageScene extends Phaser.Scene {
       nextStageId: "world-02-stage-1",
       skillId: "bark",
     });
+  }
+
+  private async handleLaterBossDefeat(stage: StageDefinition): Promise<void> {
+    if (this.victorySequenceStarted || !this.bossEncounter?.isDefeated()) return;
+    this.victorySequenceStarted = true;
+    this.runtime?.setStatus("cutscene");
+    this.player?.setVelocity(0, 0);
+    this.player?.lockControl("boss-victory");
+    this.cheeseTabbySprite?.setFrame(3);
+    await this.cutsceneDirector?.play(`${stage.worldId}-boss-clear`);
+    if (!this.scene.isActive() || !this.bossEncounter?.isDefeated()) return;
+    const config = stage.worldId === "world-01" ? null : BOSS_COMBAT_CONFIG[stage.worldId];
+    if (!config) throw new Error(`후속 보스 설정이 없습니다: ${stage.id}`);
+    const skillId = config.rewardSkill;
+    if (!this.progress.unlockedSkills.includes(skillId)) {
+      this.progress.unlockedSkills.push(skillId);
+      this.skillSystem?.unlockAfterBoss(`${stage.worldId}-boss`);
+    }
+    this.player?.unlockControl("boss-victory");
+    this.runtime?.complete();
   }
 
   private holdPlayerForVictoryDialogue(): void {
