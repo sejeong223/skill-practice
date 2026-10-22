@@ -90,6 +90,10 @@ export interface StageEventMap {
     open: boolean;
     closeViaEscape: boolean;
   };
+  "paint-state-changed": {
+    open: boolean;
+    closeViaEscape: boolean;
+  };
   "player-name-confirmed": {
     playerName: string;
   };

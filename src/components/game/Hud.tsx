@@ -20,6 +20,7 @@ export interface HudProps {
   readonly onOpenWorldSelect: () => void;
   readonly onOpenShop: () => void;
   readonly onOpenCatalog: () => void;
+  readonly onOpenPaint: () => void;
 }
 
 export function Hud({
@@ -37,6 +38,7 @@ export function Hud({
   onOpenWorldSelect,
   onOpenShop,
   onOpenCatalog,
+  onOpenPaint,
 }: HudProps): ReactElement {
   return (
     <div className="game-hud" aria-label="게임 HUD">
@@ -66,6 +68,17 @@ export function Hud({
           ))}
         </div>
       )}
+      <button
+        className="paint-open-button"
+        type="button"
+        aria-label="코기 옷 그림판 열기"
+        title="코기 옷 그림판"
+        onClick={onOpenPaint}
+      >
+        <svg viewBox="0 0 16 16" shapeRendering="crispEdges" aria-hidden="true">
+          <path d="M2 1h2v2H2zM4 3h2v2H4zM6 5h2v2H6zM8 7h2v2H8zM10 9h2v2h-2zM12 11h2v2h-2zM1 13h7v2H1zM3 9h4v3H3z" />
+        </svg>
+      </button>
       <button
         className="catalog-open-button"
         type="button"

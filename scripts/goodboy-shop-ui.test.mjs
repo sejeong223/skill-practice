@@ -10,6 +10,7 @@ require.extensions[".ts"] = (module, filename) => module._compile(ts.transpileMo
 }).outputText, filename);
 const { MARKET_PRODUCTS, MARKET_CATEGORIES } = require("../src/game/data/marketCatalog.ts");
 const { SHOP_CATEGORY_LABELS, SHOP_DIALOGUE, pickShopDialogue, wrapShopIndex } = require("../src/game/data/shopDialogue.ts");
+const { canOpenSharedMenu } = require("../src/game/systems/gameMenuAvailability.ts");
 
 test("상점 네 분류에서 19개 상품을 좌우 순환하며 첫 상품으로 돌아온다", () => {
   assert.deepEqual(MARKET_CATEGORIES.map(category => SHOP_CATEGORY_LABELS[category]), ["무기류", "방패류", "의상류", "장신구류"]);
@@ -40,4 +41,22 @@ test("주인 대사는 진입·선택·구매 때 각 두 후보 중 독립 추�
     assert.equal(pickShopDialogue(kind, () => 0), SHOP_DIALOGUE[kind][0]);
     assert.equal(pickShopDialogue(kind, () => 0.999), SHOP_DIALOGUE[kind][1]);
   }
+});
+
+test("상점·카탈로그·그림판은 모든 월드의 플레이 중 열리고 메뉴가 열리면 서로 막는다", () => {
+  const state = {
+    stageId: "world-01-stage-1", mode: "play", introReady: true, paused: false,
+    shopOpen: false, catalogOpen: false, paintOpen: false,
+    worldSelectOpen: false, resetProgressDialogOpen: false,
+  };
+  for (let world = 1; world <= 5; world++) {
+    assert.equal(canOpenSharedMenu({ ...state, stageId: `world-0${world}-stage-boss` }), true);
+  }
+  for (const blocked of ["shopOpen", "catalogOpen", "paintOpen", "worldSelectOpen", "resetProgressDialogOpen", "paused"]) {
+    assert.equal(canOpenSharedMenu({ ...state, [blocked]: true }), false, blocked);
+  }
+  for (const mode of ["safe", "cutscene", "dead", "stage-clear"]) {
+    assert.equal(canOpenSharedMenu({ ...state, mode }), false, mode);
+  }
+  assert.equal(canOpenSharedMenu({ ...state, introReady: false }), false);
 });

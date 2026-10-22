@@ -117,6 +117,7 @@ export class StageScene extends Phaser.Scene {
   private mapOverview = false;
   private shopOpen = false;
   private catalogOpen = false;
+  private paintOpen = false;
   private menuPauseGuard = false;
   private stageId: StageId = "world-01-stage-1";
   private stageDefinition?: StageDefinition;
@@ -133,6 +134,7 @@ export class StageScene extends Phaser.Scene {
     this.mapOverview = false;
     this.shopOpen = false;
     this.catalogOpen = false;
+    this.paintOpen = false;
     this.menuPauseGuard = false;
     this.activeSectionId = undefined;
     const stage = getStageDefinition(this.stageId);
@@ -465,6 +467,10 @@ export class StageScene extends Phaser.Scene {
       this.catalogOpen = open;
       this.menuPauseGuard = true;
     }));
+    this.eventUnsubscribers.push(this.eventBus.on("paint-state-changed", ({ open }) => {
+      this.paintOpen = open;
+      this.menuPauseGuard = true;
+    }));
     this.eventUnsubscribers.push(this.eventBus.on("cosmetic-change-requested", (selection) => {
       const status = this.runtime?.getStatus();
       if (status !== "play" && status !== "paused") return;
@@ -670,7 +676,7 @@ export class StageScene extends Phaser.Scene {
 
   public update(time: number, delta: number): void {
     const input = this.inputManager?.getSnapshot();
-    if (input?.pausePressed && !this.shopOpen && !this.catalogOpen && !this.menuPauseGuard) {
+    if (input?.pausePressed && !this.shopOpen && !this.catalogOpen && !this.paintOpen && !this.menuPauseGuard) {
       this.setPaused(this.runtime?.getStatus() !== "paused");
     }
     if (this.menuPauseGuard && !input?.pauseHeld) this.menuPauseGuard = false;

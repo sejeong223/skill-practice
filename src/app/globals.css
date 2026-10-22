@@ -322,7 +322,8 @@ form { display: flex; gap: 6px; margin-top: 10px; } form input { min-width: 0; f
 .reset-progress-button,
 .world-select-button,
 .shop-open-button,
-.catalog-open-button {
+.catalog-open-button,
+.paint-open-button {
   position: absolute;
   top: 16px;
   z-index: 5;
@@ -343,31 +344,33 @@ form { display: flex; gap: 6px; margin-top: 10px; } form input { min-width: 0; f
 .world-select-button { right: 16px; }
 .shop-open-button { right: 100px; }
 .catalog-open-button { right: 142px; }
+.paint-open-button { right: 184px; }
 .game-overlay.has-world-select .pause-button { right: 100px; }
 .game-overlay.has-world-select .reset-progress-button { right: 58px; }
 .game-overlay.has-world-select .shop-open-button { right: 142px; }
 .game-overlay.has-world-select .catalog-open-button { right: 184px; }
-.game-overlay .game-hud { max-width: calc(100% - 184px); }
-.game-overlay.has-world-select .game-hud { max-width: calc(100% - 226px); }
+.game-overlay.has-world-select .paint-open-button { right: 226px; }
+.game-overlay .game-hud { max-width: calc(100% - 226px); }
+.game-overlay.has-world-select .game-hud { max-width: calc(100% - 268px); }
 .game-overlay.has-world-select .hud-stage,
 .game-overlay.has-world-select .hud-stats { min-width: 0; overflow: hidden; }
 .game-overlay.has-world-select .hud-stage strong { overflow: hidden; text-overflow: ellipsis; }
-.boss-hearts { position: absolute; top: 16px; right: 186px; z-index: 5; display: flex; align-items: center; gap: 5px; min-height: 32px; padding: 2px 7px; border: 2px solid #5f3942; background: rgb(255 248 229 / 95%); white-space: nowrap; }
-.game-overlay.has-world-select .boss-hearts { right: 228px; }
+.boss-hearts { position: absolute; top: 16px; right: 228px; z-index: 5; display: flex; align-items: center; gap: 5px; min-height: 32px; padding: 2px 7px; border: 2px solid #5f3942; background: rgb(255 248 229 / 95%); white-space: nowrap; }
+.game-overlay.has-world-select .boss-hearts { right: 270px; }
 .boss-hearts-face { width: 24px; height: 24px; flex: 0 0 24px; background: url("/assets/pixel/references/characters/corgi-reference-v2.png") -81.45px -23.27px / 129.02px 64.51px no-repeat; image-rendering: pixelated; }
 .boss-heart { color: #db4053; font: 900 23px monospace; line-height: 1; text-shadow: 1px 2px #5f3942; }
 .boss-heart.is-empty { color: #a7a1a0; text-shadow: none; }
 @media (max-width: 720px) {
-  .game-overlay.has-boss-hearts .game-hud { width: calc(100% - 302px); max-width: calc(100% - 302px); min-height: 32px; box-sizing: border-box; padding: 4px 5px; overflow: hidden; }
-  .game-overlay.has-boss-hearts.has-world-select .game-hud { width: calc(100% - 344px); max-width: calc(100% - 344px); }
+  .game-overlay.has-boss-hearts .game-hud { width: calc(100% - 344px); max-width: calc(100% - 344px); min-height: 32px; box-sizing: border-box; padding: 4px 5px; overflow: hidden; }
+  .game-overlay.has-boss-hearts.has-world-select .game-hud { width: calc(100% - 386px); max-width: calc(100% - 386px); }
   .game-overlay.has-boss-hearts .hud-stage { min-width: 0; overflow: hidden; }
   .game-overlay.has-boss-hearts .hud-stage strong { overflow: hidden; text-overflow: ellipsis; }
   .game-overlay.has-boss-hearts .hud-label,
   .game-overlay.has-boss-hearts .hud-subtitle,
   .game-overlay.has-boss-hearts .hud-stats { display: none; }
   .game-overlay.has-boss-hearts .status-menu-button { position: absolute; top: 56px; left: 8px; }
-  .boss-hearts { top: 16px; right: 178px; gap: 3px; padding: 1px 5px; }
-  .game-overlay.has-world-select .boss-hearts { right: 220px; }
+  .boss-hearts { top: 16px; right: 220px; gap: 3px; padding: 1px 5px; }
+  .game-overlay.has-world-select .boss-hearts { right: 262px; }
   .boss-hearts-face { width: 20px; height: 20px; flex-basis: 20px; background-position: -67.88px -19.39px; background-size: 107.52px 53.76px; }
   .boss-heart { font-size: 19px; }
 }
@@ -376,7 +379,8 @@ form { display: flex; gap: 6px; margin-top: 10px; } form input { min-width: 0; f
 .reset-progress-button svg,
 .world-select-button svg,
 .shop-open-button svg,
-.catalog-open-button svg {
+.catalog-open-button svg,
+.paint-open-button svg {
   display: block;
   width: 16px;
   height: 16px;
@@ -609,4 +613,34 @@ form { display: flex; gap: 6px; margin-top: 10px; } form input { min-width: 0; f
   width: 64px;
   height: 64px;
   image-rendering: pixelated;
+}
+.custom-paint-overlay { position: absolute; inset: 0; z-index: 24; display: grid; place-items: center; padding: 12px; background: rgb(39 35 49 / 60%); pointer-events: auto; }
+.custom-paint-dialog { position: relative; width: min(100%, 730px); max-height: 100%; overflow-y: auto; border: 4px solid #f0b95f; background: #fff8e5; color: #5f3942; box-shadow: 8px 8px 0 rgb(39 35 49 / 50%); font-family: "Galmuri11Pixel", monospace; }
+.custom-paint-header { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 14px; background: #5f3942; color: #fff8e5; }
+.custom-paint-header h2 { margin: 3px 0 0; font-size: clamp(16px, 2.6vw, 25px); }
+.custom-paint-kicker { color: #f0b95f; font-size: 9px; letter-spacing: .16em; }
+.custom-paint-header button { width: 34px; height: 34px; border: 2px solid #f0b95f; background: #e8cda0; color: #5f3942; font: 900 24px/1 monospace; cursor: pointer; }
+.custom-paint-body { display: grid; justify-items: center; gap: 9px; padding: 12px; }
+.custom-paint-slots, .custom-paint-toolbar, .custom-paint-palette, .custom-paint-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 7px; width: 100%; }
+.custom-paint-slots button, .custom-paint-toolbar button, .custom-paint-actions button, .custom-paint-confirm button { border: 2px solid #5f3942; padding: 6px 9px; background: #e8cda0; color: #5f3942; font: 11px "Galmuri11Pixel", monospace; cursor: pointer; }
+.custom-paint-slots button[aria-pressed="true"], .custom-paint-toolbar button[aria-pressed="true"] { background: #f4d460; }
+.custom-paint-help { margin: 0; font-size: 10px; line-height: 1.5; text-align: center; }
+.custom-paint-canvas { display: block; width: min(100%, 560px); height: auto; aspect-ratio: 56 / 32; border: 3px solid #5f3942; image-rendering: pixelated; touch-action: none; cursor: crosshair; background: #d8cbb6; }
+.custom-paint-canvas:focus-visible { outline: 3px solid #e95f68; outline-offset: 2px; }
+.custom-paint-toolbar button:disabled, .custom-paint-actions button:disabled { opacity: .5; cursor: not-allowed; }
+.custom-paint-palette button { width: 26px; height: 26px; padding: 0; border: 2px solid #5f3942; cursor: pointer; }
+.custom-paint-palette button[aria-pressed="true"] { outline: 3px solid #e95f68; outline-offset: 2px; }
+.custom-paint-palette label { display: inline-flex; align-items: center; gap: 6px; font-size: 10px; }
+.custom-paint-palette input { width: 32px; height: 27px; padding: 0; border: 1px solid #5f3942; background: transparent; }
+.custom-paint-actions { justify-content: space-between; font-size: 10px; }
+.custom-paint-confirm { position: absolute; inset: 0; z-index: 1; display: grid; align-content: center; justify-items: center; gap: 12px; padding: 20px; background: rgb(39 35 49 / 78%); color: #fff8e5; text-align: center; }
+.custom-paint-confirm p { margin: 0; font-size: 14px; line-height: 1.5; }
+.custom-paint-confirm > div { display: flex; gap: 10px; }
+@media (max-width: 720px) {
+  .custom-paint-overlay { position: fixed; inset: 0; z-index: 50; padding: 8px; }
+  .custom-paint-dialog { width: 100%; max-height: calc(100dvh - 16px); }
+  .custom-paint-body { padding: 8px; gap: 6px; }
+  .custom-paint-slots button, .custom-paint-toolbar button { padding: 5px; font-size: 9px; }
+  .custom-paint-palette button { width: 21px; height: 21px; }
+  .custom-paint-help { font-size: 9px; }
 }
