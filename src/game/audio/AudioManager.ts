@@ -14,6 +14,7 @@ const SOUND_PATTERNS: Readonly<Partial<Record<SoundKey, readonly number[]>>> = {
   "slipper-scrape": [330, 247],
   "escape-door": [392, 523, 659],
   "slipper-hit": [392, 262],
+  "magnet-hum": [220, 180],
   sneeze: [494, 622, 330],
   "death-cartoon": [220, 147],
   "stage-clear": [523, 659, 784],

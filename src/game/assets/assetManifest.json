@@ -459,6 +459,30 @@
     "required": false
   },
   {
+    "key": "world-04-tuxedo-boss",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/characters/world-04/tuxedo-boss.png",
+    "frameWidth": 128,
+    "frameHeight": 128,
+    "frameCount": 4,
+    "worldId": "world-04",
+    "required": true
+  },
+  {
+    "key": "world-04-boss-magnet-scrap",
+    "kind": "image",
+    "url": "/assets/pixel/objects/world-04/magnet-scrap.png",
+    "worldId": "world-04",
+    "required": true
+  },
+  {
+    "key": "world-04-boss-scrapyard",
+    "kind": "image",
+    "url": "/assets/pixel/backgrounds/world-04/boss-scrapyard.png",
+    "worldId": "world-04",
+    "required": true
+  },
+  {
     "key": "world-05-tileset",
     "kind": "image",
     "url": "/assets/pixel/tiles/world-05/world-05-tileset.png",

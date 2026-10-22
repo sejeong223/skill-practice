@@ -1,6 +1,6 @@
 # Task: T04 고물상 턱시도의 자석 고철
 
-## Status: pending
+## Status: done
 
 ## Goal
 
@@ -72,6 +72,6 @@ Task: T04-tuxedo-magnet
 
 ## Progress
 
-- [ ] 구현 완료
-- [ ] 검증 통과
-- commit: pending
+- [x] 구현 완료
+- [x] 검증 통과: 픽셀 아트 결정성, 패턴·보스 테스트 7건, 타입·린트·빌드, Chrome 낙하·자석 신호·재이동·사망 재시작·슬리퍼 25회·더블 점프 해금·월드 5 전환
+- commit: 이 Task의 한국어 커밋

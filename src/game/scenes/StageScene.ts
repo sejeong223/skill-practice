@@ -38,6 +38,7 @@ import { World03ConstructionObstacles } from "../systems/World03ConstructionObst
 import { BossEncounter } from "../systems/BossEncounter";
 import { CheeseTabbyBallPattern } from "../systems/CheeseTabbyBallPattern";
 import { MackerelBrickPattern } from "../systems/MackerelBrickPattern";
+import { TuxedoMagnetPattern } from "../systems/TuxedoMagnetPattern";
 import { BOSS_COMBAT_CONFIG } from "../data/bossCombat";
 import { MapInteractionSystem } from "../maps/MapInteractionSystem";
 import { TiledMapLoader } from "../maps/TiledMapLoader";
@@ -120,6 +121,7 @@ export class StageScene extends Phaser.Scene {
   private audioManager?: AudioManager;
   private strayDogEvent?: StrayDogEvent;
   private stageBackdrop?: Phaser.GameObjects.Rectangle;
+  private bossArenaBackdrop?: Phaser.GameObjects.Image;
   private stageReviewKey?: Phaser.Input.Keyboard.Key;
   private overviewKey?: Phaser.Input.Keyboard.Key;
   private mapOverview = false;
@@ -170,7 +172,14 @@ export class StageScene extends Phaser.Scene {
       .rectangle(stage.mapWidth / 2, GAME_HEIGHT / 2, stage.mapWidth, GAME_HEIGHT, 0xf5e7c7)
       .setDepth(-40);
     this.parallaxRenderer = new ParallaxRenderer(this);
-    this.parallaxRenderer.render(theme, stage.mapWidth, stage.mapHeight);
+    const backgroundTheme = stage.id === "world-04-stage-boss"
+      ? { ...theme, layers: theme.layers.filter((layer) => layer.kind !== "foreground") }
+      : theme;
+    this.parallaxRenderer.render(backgroundTheme, stage.mapWidth, stage.mapHeight);
+    if (stage.id === "world-04-stage-boss") {
+      this.bossArenaBackdrop = this.add.image(0, 0, "world-04-boss-scrapyard")
+        .setOrigin(0).setDisplaySize(stage.mapWidth, stage.mapHeight).setDepth(-19);
+    }
 
     this.player = new Player(
       this, stage.spawn.x, stage.spawn.y, "corgi-run",
@@ -458,11 +467,15 @@ export class StageScene extends Phaser.Scene {
         });
       }
     }
-    if (stage.id === "world-02-stage-boss" || stage.id === "world-03-stage-boss") {
+    if (stage.id === "world-02-stage-boss" || stage.id === "world-03-stage-boss" ||
+        stage.id === "world-04-stage-boss") {
       const isCheeseTabby = stage.id === "world-02-stage-boss";
-      const bossKey = isCheeseTabby ? "world-02-cheese-tabby-boss" : "world-03-mackerel-boss";
-      const bossConfig = isCheeseTabby ? BOSS_COMBAT_CONFIG["world-02"] : BOSS_COMBAT_CONFIG["world-03"];
-      const introId = isCheeseTabby ? "world-02-boss-intro" : "world-03-boss-intro";
+      const isMackerel = stage.id === "world-03-stage-boss";
+      const bossKey = isCheeseTabby ? "world-02-cheese-tabby-boss"
+        : isMackerel ? "world-03-mackerel-boss" : "world-04-tuxedo-boss";
+      const bossConfig = isCheeseTabby ? BOSS_COMBAT_CONFIG["world-02"]
+        : isMackerel ? BOSS_COMBAT_CONFIG["world-03"] : BOSS_COMBAT_CONFIG["world-04"];
+      const introId = `${stage.worldId}-boss-intro`;
       this.laterBossSprite = this.add.sprite(1280, 446, bossKey, 0)
         .setDepth(10).setFlipX(true);
       this.defenseToolSystem = new DefenseToolSystem(this.gameplayEventBus, TOOL_DEFINITIONS);
@@ -472,7 +485,9 @@ export class StageScene extends Phaser.Scene {
       const pattern = isCheeseTabby
         ? new CheeseTabbyBallPattern(this, this.player, this.laterBossSprite,
           () => this.audioManager?.playSfx("boss-whistle"))
-        : new MackerelBrickPattern(this, this.player, this.laterBossSprite);
+        : isMackerel ? new MackerelBrickPattern(this, this.player, this.laterBossSprite)
+          : new TuxedoMagnetPattern(this, this.player, this.laterBossSprite,
+            () => this.audioManager?.playSfx("magnet-hum"));
       this.bossEncounter = new BossEncounter(
         this, this.player, this.laterBossSprite, stage.id, bossConfig,
         this.defenseToolSystem, this.gameplayEventBus, pattern,
@@ -663,6 +678,8 @@ export class StageScene extends Phaser.Scene {
       this.calicoSprite = undefined;
       this.laterBossSprite?.destroy();
       this.laterBossSprite = undefined;
+      this.bossArenaBackdrop?.destroy();
+      this.bossArenaBackdrop = undefined;
       this.mapInteraction?.destroy();
       this.world02Obstacles?.destroy();
       this.world02Obstacles = undefined;

@@ -352,6 +352,16 @@ export const BOSS_DEFINITIONS: readonly BossDefinition[] =
       healthThreshold: 0.5,
       pattern: "overlapping-brick-flights-with-two-landed-walls",
       telegraph: "착지한 벽돌이 잠시 길을 막는 동안 다음 조각이 날아온다",
+    }] : blueprint.id === "world-04" ? [{
+      id: "world-04-phase-1",
+      healthThreshold: 1,
+      pattern: "telegraphed-scrap-fall-magnet-drag",
+      telegraph: "턱시도가 고철의 낙하 위치를 표시한다",
+    }, {
+      id: "world-04-phase-2",
+      healthThreshold: 0.5,
+      pattern: "alternating-magnet-drag-direction",
+      telegraph: "착지한 고철이 자석 방향 표시를 따라 한 번 더 움직인다",
     }] : [
       {
         id: blueprint.id + "-phase-1",
