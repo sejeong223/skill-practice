@@ -15,6 +15,7 @@ import { CutsceneDirector } from "../cutscenes/CutsceneDirector";
 import { CUTSCENE_SCRIPTS } from "../data/cutscenes";
 import { TOOL_DEFINITIONS } from "../data/tools";
 import { WORLD02_STAGE1_OBSTACLES } from "../data/world02Obstacles";
+import { getWorld03Obstacles } from "../data/world03Construction";
 import { WORLD02_STAGE1_PIGEON_PASSES } from "../data/world02PigeonDrops";
 import { BARK_COOLDOWN_MS, SKILL_DEFINITIONS } from "../data/skills";
 import { BossFeedbackController, BARK_SHAKE_DURATION_MS, BARK_SHAKE_INTENSITY, type BossFeedbackSnapshot } from "../systems/bossFeedback";
@@ -33,6 +34,7 @@ import { BowlShieldVisual } from "../entities/BowlShieldVisual";
 import { DEFAULT_PLAYER_TUNING } from "../entities/playerTypes";
 import { InputManager, toKeybindMap } from "../input/InputManager";
 import { ParallaxRenderer } from "../maps/ParallaxRenderer";
+import { World03ConstructionObstacles } from "../systems/World03ConstructionObstacles";
 import { MapInteractionSystem } from "../maps/MapInteractionSystem";
 import { TiledMapLoader } from "../maps/TiledMapLoader";
 import type { LoadedMap } from "../maps/mapTypes";
@@ -79,6 +81,7 @@ export class StageScene extends Phaser.Scene {
   private bossGround?: Phaser.Tilemaps.Tilemap;
   private sandFloor?: Phaser.GameObjects.TileSprite;
   private world02Obstacles?: World02ObstacleSystem;
+  private world03Obstacles?: World03ConstructionObstacles;
   private world02PigeonDrops?: World02PigeonDropSystem;
   private exitFloor?: Phaser.GameObjects.Rectangle;
   private parallaxRenderer?: ParallaxRenderer;
@@ -215,6 +218,7 @@ export class StageScene extends Phaser.Scene {
       this.gameplayEventBus.on("restart", () => {
         this.combatSystem?.resetForStage();
         this.world02Obstacles?.resetForAttempt();
+        this.world03Obstacles?.resetForAttempt();
         this.world02PigeonDrops?.resetForAttempt(this.player?.x ?? stage.spawn.x);
         this.playerAnimator?.stopBark();
         this.resetBossFeedback();
@@ -310,6 +314,16 @@ export class StageScene extends Phaser.Scene {
         this.gameplayEventBus,
         stage.id,
         WORLD02_STAGE1_PIGEON_PASSES,
+        () => this.runtime?.runtimeState.checkpointId ?? null,
+        () => this.runtime?.getStatus() === "play" && !this.stageTransitionStarted,
+      );
+    }
+    if (getWorld03Obstacles(stage.id).length > 0 && !this.loadedMap) {
+      this.world03Obstacles = new World03ConstructionObstacles(
+        this,
+        this.player,
+        stage.id,
+        this.gameplayEventBus,
         () => this.runtime?.runtimeState.checkpointId ?? null,
         () => this.runtime?.getStatus() === "play" && !this.stageTransitionStarted,
       );
@@ -602,6 +616,8 @@ export class StageScene extends Phaser.Scene {
       this.mapInteraction?.destroy();
       this.world02Obstacles?.destroy();
       this.world02Obstacles = undefined;
+      this.world03Obstacles?.destroy();
+      this.world03Obstacles = undefined;
       this.world02PigeonDrops?.destroy();
       this.world02PigeonDrops = undefined;
       this.gimmickSystem?.destroy();
