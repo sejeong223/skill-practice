@@ -12,7 +12,7 @@ require.extensions[".ts"] = (module, filename) => module._compile(ts.transpileMo
 const { MARKET_CATEGORIES, MARKET_PRODUCTS, getMarketProduct } = require("../src/game/data/marketCatalog.ts");
 const { TOOL_DEFINITIONS } = require("../src/game/data/tools.ts");
 const { createDefaultProgressState } = require("../src/game/core/constants.ts");
-const { migrateSave } = require("../src/game/persistence/migrations.ts");
+const { migrateSave, sanitizeCustomOutfits } = require("../src/game/persistence/migrations.ts");
 const { ProgressStore } = require("../src/game/persistence/ProgressStore.ts");
 const { SAVE_SCHEMA_VERSION, PROGRESS_STORAGE_KEY } = require("../src/game/persistence/saveTypes.ts");
 
@@ -51,7 +51,7 @@ test("스키마 2 저장은 코인·월드·체크포인트·과거 도구를 �
   delete progress.equippedOutfitId;
   delete progress.equippedAccessoryId;
   const loaded = migrateSave({ schemaVersion: 2, progress });
-  assert.equal(loaded.version, 3);
+  assert.equal(loaded.version, 4);
   assert.equal(loaded.bankedCoins, 37);
   assert.equal(loaded.selectedWorldId, "world-01");
   assert.equal(loaded.world01CheckpointStageId, "world-01-stage-4");
@@ -63,6 +63,8 @@ test("스키마 2 저장은 코인·월드·체크포인트·과거 도구를 �
   assert.deepEqual(loaded.ownedCosmeticIds, []);
   assert.equal(loaded.equippedOutfitId, null);
   assert.equal(loaded.equippedAccessoryId, null);
+  assert.deepEqual(loaded.customOutfits, []);
+  assert.equal(loaded.equippedCustomOutfitId, null);
 });
 
 test("스키마 3은 외형 소유·장착을 복원하고 잘못된 분류·미소유 ID를 버린다", () => {
@@ -79,7 +81,7 @@ test("스키마 3은 외형 소유·장착을 복원하고 잘못된 분류·미
   assert.deepEqual(migrateSave({ schemaVersion: 3, progress: { ...progress, ownedCosmeticIds: [12] } }).ownedCosmeticIds, []);
 });
 
-test("저장 키를 유지하며 스키마 3 envelope로 왕복하고 미래 버전은 거부한다", () => {
+test("저장 키를 유지하며 스키마 4 envelope로 왕복하고 미래 버전은 거부한다", () => {
   const data = new Map();
   const storage = { getItem: key => data.get(key) ?? null, setItem: (key, value) => data.set(key, value), removeItem: key => data.delete(key) };
   const store = new ProgressStore(storage);
@@ -87,10 +89,74 @@ test("저장 키를 유지하며 스키마 3 envelope로 왕복하고 미래 버
   progress.ownedCosmeticIds.push("banana-peel-suit");
   progress.equippedOutfitId = "banana-peel-suit";
   store.save(progress);
-  assert.equal(SAVE_SCHEMA_VERSION, 3);
-  assert.equal(JSON.parse(data.get(PROGRESS_STORAGE_KEY)).schemaVersion, 3);
+  assert.equal(SAVE_SCHEMA_VERSION, 4);
+  assert.equal(JSON.parse(data.get(PROGRESS_STORAGE_KEY)).schemaVersion, 4);
   assert.equal(store.load().equippedOutfitId, "banana-peel-suit");
-  assert.deepEqual(migrateSave({ schemaVersion: 4, progress }).ownedCosmeticIds, []);
+  assert.deepEqual(migrateSave({ schemaVersion: 5, progress }).ownedCosmeticIds, []);
+});
+
+test("구버전 저장의 코인·장비·체크포인트를 유지하며 사용자 옷은 새로 시작한다", () => {
+  const progress = createDefaultProgressState("옛날 코기");
+  progress.bankedCoins = 42;
+  progress.clearedStages = ["world-01-stage-1"];
+  progress.world01CheckpointStageId = "world-01-stage-4";
+  progress.ownedToolIds.push("squeaky-ball");
+  progress.ownedCosmeticIds.push("bee-bodysuit");
+  progress.equippedOutfitId = "bee-bodysuit";
+  progress.seenCutsceneIds.push("intro-home");
+  progress.customOutfits = [{ id: "custom-outfit-1", cells: Array(56 * 32).fill("#ff0000"), updatedAt: new Date().toISOString() }];
+  progress.equippedCustomOutfitId = "custom-outfit-1";
+  const loaded = migrateSave({ schemaVersion: 3, progress });
+  assert.equal(loaded.version, 4);
+  assert.equal(loaded.bankedCoins, 42);
+  assert.deepEqual(loaded.clearedStages, ["world-01-stage-1"]);
+  assert.equal(loaded.world01CheckpointStageId, "world-01-stage-4");
+  assert.ok(loaded.ownedToolIds.includes("squeaky-ball"));
+  assert.equal(loaded.equippedOutfitId, "bee-bodysuit");
+  assert.deepEqual(loaded.seenCutsceneIds, ["intro-home"]);
+  assert.deepEqual(loaded.customOutfits, []);
+  assert.equal(loaded.equippedCustomOutfitId, null);
+});
+
+test("사용자 옷은 세 슬롯만 남기고 잘못된 개별 디자인만 제외한다", () => {
+  const stamp = "2026-10-22T00:00:00.000Z";
+  const design = (id, color = "#A1b2C3") => ({ id, cells: Array(56 * 32).fill(color), updatedAt: stamp });
+  const safe = sanitizeCustomOutfits([
+    design("custom-outfit-1", "#123456"), design("custom-outfit-2"),
+    design("custom-outfit-3"), design("custom-outfit-4"),
+    design("custom-outfit-1", "#ABCDEF"),
+    { ...design("custom-outfit-2"), cells: ["#ABCDEF"] },
+    design("custom-outfit-3", "red"),
+    { ...design("custom-outfit-2"), updatedAt: "yesterday" },
+  ]);
+  assert.deepEqual(safe.map(item => item.id), ["custom-outfit-1", "custom-outfit-2", "custom-outfit-3"]);
+  assert.equal(safe[0].cells[0], "#ABCDEF");
+  const progress = createDefaultProgressState();
+  progress.ownedCosmeticIds.push("bee-bodysuit");
+  progress.equippedOutfitId = "bee-bodysuit";
+  progress.customOutfits = [...safe, design("custom-outfit-4")];
+  progress.equippedCustomOutfitId = "custom-outfit-2";
+  const restored = migrateSave({ schemaVersion: 4, progress });
+  assert.equal(restored.customOutfits.length, 3);
+  assert.equal(restored.equippedCustomOutfitId, "custom-outfit-2");
+  assert.equal(restored.equippedOutfitId, null);
+  assert.equal(migrateSave({ schemaVersion: 4, progress: { ...progress, equippedCustomOutfitId: "custom-outfit-4" } }).equippedCustomOutfitId, null);
+  assert.equal(migrateSave({ schemaVersion: 4, progress: { ...progress, customOutfits: [design("custom-outfit-3", "not-a-color")] } }).bankedCoins, progress.bankedCoins);
+});
+
+test("사용자 옷 픽셀과 장착 상태가 저장 후 다시 복원된다", () => {
+  const data = new Map();
+  const storage = { getItem: key => data.get(key) ?? null, setItem: (key, value) => data.set(key, value), removeItem: key => data.delete(key) };
+  const store = new ProgressStore(storage);
+  const progress = createDefaultProgressState();
+  progress.customOutfits = [{ id: "custom-outfit-3", cells: Array(56 * 32).fill(null), updatedAt: "2026-10-22T00:00:00.000Z" }];
+  progress.customOutfits[0].cells[10] = "#fF0066";
+  progress.equippedCustomOutfitId = "custom-outfit-3";
+  store.save(progress);
+  const restored = store.load();
+  assert.equal(restored.customOutfits[0].cells[10], "#fF0066");
+  assert.equal(restored.equippedCustomOutfitId, "custom-outfit-3");
+  assert.equal(restored.equippedOutfitId, null);
 });
 
 test("외형을 벗고 저장해도 소유권과 코인은 남아 다시 착용할 수 있다", () => {

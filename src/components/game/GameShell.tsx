@@ -42,6 +42,7 @@ function cloneProgress(progress: ProgressState): ProgressState {
     unlockedSkills: [...progress.unlockedSkills],
     ownedToolIds: [...progress.ownedToolIds],
     ownedCosmeticIds: [...progress.ownedCosmeticIds],
+    customOutfits: progress.customOutfits.map((design) => ({ ...design, cells: [...design.cells] })),
     collectedCoinIds: [...progress.collectedCoinIds],
     collectedItems: [...progress.collectedItems],
     deathsByStage: { ...progress.deathsByStage },

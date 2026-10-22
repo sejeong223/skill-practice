@@ -4,10 +4,10 @@
 
 | Task | Status | Summary | Blueprint |
 | :--- | :--- | :--- | :--- |
-| T01 | `in_progress` | 저장 모델 v4·세 벌 제한·구버전 이행 | [T01](./T01-custom-outfit-save.md) |
-| T02 | `pending` | 픽셀 도구와 상단 그림판 메뉴·편집 화면 | [T02](./T02-paint-menu.md) |
+| T01 | `done` | 저장 모델 v4·세 벌 제한·구버전 이행 | [T01](./T01-custom-outfit-save.md) |
+| T02 | `in_progress` | 픽셀 도구와 상단 그림판 메뉴·편집 화면 | [T02](./T02-paint-menu.md) |
 | T03 | `pending` | 카탈로그 재장착과 코기 스프라이트 동적 출력 | [T03](./T03-custom-outfit-render.md) |
 
 ## Progress
 
-- done: 0/3 (active: T01)
+- done: 1/3 (active: T02)

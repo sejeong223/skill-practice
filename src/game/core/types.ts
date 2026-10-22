@@ -26,6 +26,12 @@ export type CosmeticId =
   | "pink-caterpillar-suit" | "banana-peel-suit" | "bee-bodysuit"
   | "hotdog-outfit" | "diamond-armor" | "shinchan-eyebrow-sticker"
   | "birthday-party-hat" | "strawberry-headpiece" | "propeller-hat" | "prince-crown";
+export type CustomOutfitId = "custom-outfit-1" | "custom-outfit-2" | "custom-outfit-3";
+export interface CustomOutfitDesign {
+  id: CustomOutfitId;
+  cells: (string | null)[];
+  updatedAt: string;
+}
 export type MarketCategory = "weapon" | "shield" | "outfit" | "accessory";
 export type MarketProduct = Readonly<{
   id: string;
@@ -69,6 +75,8 @@ export interface ProgressState {
   equippedAttackToolId: ToolId;
   equippedDefenseToolId: ToolId;
   equippedOutfitId: CosmeticId | null;
+  customOutfits: CustomOutfitDesign[];
+  equippedCustomOutfitId: CustomOutfitId | null;
   equippedAccessoryId: CosmeticId | null;
   bankedCoins: number;
   collectedCoinIds: string[];
