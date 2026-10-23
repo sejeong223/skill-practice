@@ -75,7 +75,9 @@ test("월드 2는 선택 직후 1스테이지로 가고 새로고침은 첫 미�
   progress.selectedWorldId = "world-02";
   assert.equal(getWorldStartStageId("world-02"), "world-02-stage-1");
   assert.deepEqual(getSelectedWorldResume(progress), { stageId: "world-02-stage-2" });
-  progress.clearedStages.push("world-02-stage-2", "world-02-stage-3", "world-02-stage-4", "world-02-stage-boss");
+  progress.clearedStages.push("world-02-stage-2", "world-02-stage-3");
+  assert.deepEqual(getSelectedWorldResume(progress), { stageId: "world-02-stage-boss" });
+  progress.clearedStages.push("world-02-stage-4", "world-02-stage-boss");
   assert.deepEqual(getSelectedWorldResume(progress), { stageId: "world-02-stage-1" });
 });
 

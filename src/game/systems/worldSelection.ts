@@ -1,4 +1,4 @@
-import { STAGE_IDS } from "../core/constants";
+import { WORLD02_PLAYABLE_STAGE_IDS } from "../core/constants";
 import type { ProgressState, SelectableWorldId, StageId, World01CheckpointStageId, World01ReplayPoint } from "../core/types";
 import { getWorld01Respawn } from "./world01Respawn";
 
@@ -51,8 +51,8 @@ export function getSelectedWorldResume(
   }
   if (progress.selectedWorldId === "world-02") {
     return {
-      stageId: STAGE_IDS.find((stageId) =>
-        stageId.startsWith("world-02-") && !progress.clearedStages.includes(stageId),
+      stageId: WORLD02_PLAYABLE_STAGE_IDS.find((stageId) =>
+        !progress.clearedStages.includes(stageId),
       ) ?? "world-02-stage-1",
     };
   }

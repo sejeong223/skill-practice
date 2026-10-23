@@ -39,9 +39,21 @@ export const STAGE_IDS: readonly StageId[] = WORLD_IDS.flatMap((worldId) =>
   STAGE_SUFFIXES.map((stageNumber) => stageIdFor(worldId, stageNumber)),
 );
 
+export const WORLD02_PLAYABLE_STAGE_IDS = [
+  "world-02-stage-1", "world-02-stage-2", "world-02-stage-3", "world-02-stage-boss",
+] as const satisfies readonly StageId[];
+export type World02PlayableStageId = typeof WORLD02_PLAYABLE_STAGE_IDS[number];
+
 export function getNextStageId(stageId: StageId): StageId | null {
+  if (stageId === "world-02-stage-3") return "world-02-stage-boss";
   const index = STAGE_IDS.indexOf(stageId);
   return index < 0 ? null : STAGE_IDS[index + 1] ?? null;
+}
+
+export function getPreviousWorld02StageId(stageId: StageId): "world-02-stage-1" | "world-02-stage-2" | null {
+  if (stageId === "world-02-stage-2") return "world-02-stage-1";
+  if (stageId === "world-02-stage-3") return "world-02-stage-2";
+  return null;
 }
 
 export const BOSS_STAGE_IDS: readonly StageId[] = WORLD_IDS.map((worldId) =>

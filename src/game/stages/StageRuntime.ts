@@ -1,5 +1,5 @@
 import * as Phaser from "phaser";
-import { STAGE_IDS, createRuntimeStageState } from "../core/constants";
+import { createRuntimeStageState, getNextStageId } from "../core/constants";
 import type {
   EnemyDefinition,
   MapObjectDefinition,
@@ -364,8 +364,7 @@ export class StageRuntime {
     this.status = "completed";
     if (this.economy) this.economy.commitStageClear();
     else this.runtimeState.currentStageCoins = 0;
-    const nextIndex = STAGE_IDS.indexOf(this.definition.id) + 1;
-    const nextStageId = STAGE_IDS[nextIndex] ?? null;
+    const nextStageId = getNextStageId(this.definition.id);
     this.eventBus.emit("stage-completed", {
       stageId: this.definition.id,
       nextStageId,

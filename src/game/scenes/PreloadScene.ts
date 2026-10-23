@@ -79,7 +79,7 @@ export class PreloadScene extends Phaser.Scene {
         });
         return;
       }
-      const firstUncleared = STAGE_IDS.find(
+      const firstUncleared = STAGE_IDS.filter((stageId) => stageId !== "world-02-stage-4").find(
         (stageId) => !progress.clearedStages.includes(stageId),
       );
       const world01Complete = STAGE_IDS.slice(0, 5).every(

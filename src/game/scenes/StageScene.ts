@@ -4,6 +4,7 @@ import {
   createDefaultProgressState,
   createRuntimeStageState,
   getNextStageId,
+  getPreviousWorld02StageId,
 } from "../core/constants";
 import type { CustomOutfitDesign, ProgressState, StageId } from "../core/types";
 import type { CheckpointSnapshot } from "../core/runtimeTypes";
@@ -14,7 +15,16 @@ import { getStageMusicKey } from "../audio/stageMusic";
 import { CutsceneDirector } from "../cutscenes/CutsceneDirector";
 import { CUTSCENE_SCRIPTS } from "../data/cutscenes";
 import { TOOL_DEFINITIONS } from "../data/tools";
-import { getWorld02StageHazards, type World02PlaygroundStageId } from "../data/world02StageHazards";
+import { getWorld02StageHazards } from "../data/world02StageHazards";
+import {
+  canBacktrackWorld02,
+  getWorld02EntryPosition,
+  isWorld02PlaygroundStageId,
+  readWorld02TravelState,
+  saveWorld02Visit,
+  validWorld02Seed,
+  type World02EntrySide,
+} from "../data/world02Travel";
 import { getWorld03Obstacles } from "../data/world03Construction";
 import { BARK_COOLDOWN_MS, SKILL_DEFINITIONS } from "../data/skills";
 import { BossFeedbackController, BARK_SHAKE_DURATION_MS, BARK_SHAKE_INTENSITY, type BossFeedbackSnapshot } from "../systems/bossFeedback";
@@ -71,6 +81,7 @@ export interface StageSceneData {
   readonly seed?: number;
   readonly playerName?: string;
   readonly resumeCheckpointId?: string;
+  readonly entrySide?: World02EntrySide;
 }
 
 export class StageScene extends Phaser.Scene {
@@ -160,9 +171,14 @@ export class StageScene extends Phaser.Scene {
     const theme = getWorld03StageTheme(stage.id, getWorld02StageTheme(stage.id,
       getWorld01StageTheme(stage.id, getWorldMapTheme(stage.worldId))));
     const savedCheckpoint = this.registry.get(WORLD01_CHECKPOINT_SNAPSHOT_KEY) as CheckpointSnapshot | undefined;
-    const world02Playground = /^world-02-stage-[1-3]$/.test(stage.id);
-    const savedWorld02Seed = this.registry.get("world02RunSeed") as number | undefined;
-    const seed = world02Playground ? data.seed ?? savedWorld02Seed ?? Phaser.Math.Between(1, 0x7fffffff)
+    const world02StageId = isWorld02PlaygroundStageId(stage.id) ? stage.id : null;
+    const world02Playground = world02StageId !== null;
+    const travelState = readWorld02TravelState(this.registry.get("world02TravelState"));
+    const visit = world02StageId ? travelState[world02StageId] : undefined;
+    const savedWorld02Seed = this.registry.get("world02RunSeed");
+    const seed = world02Playground ? visit?.seed ??
+      (validWorld02Seed(data.seed) ? data.seed : undefined) ??
+      (validWorld02Seed(savedWorld02Seed) ? savedWorld02Seed : undefined) ?? Phaser.Math.Between(1, 0x7fffffff)
       : data.seed ?? (savedCheckpoint?.stageId === stage.id &&
       savedCheckpoint.checkpointId === data.resumeCheckpointId ? savedCheckpoint.randomSeed : undefined) ?? 1;
     if (world02Playground) this.registry.set("world02RunSeed", seed);
@@ -193,6 +209,12 @@ export class StageScene extends Phaser.Scene {
       this, stage.spawn.x, stage.spawn.y, "corgi-run",
       stage.worldId === "world-01" ? 48 : 72,
     );
+    if (world02Playground && data.entrySide === "right") {
+      const entry = getWorld02EntryPosition("right", stage.mapWidth, stage.spawn);
+      this.player.resetTo(new Phaser.Math.Vector2(entry.x, entry.y));
+      this.player.setFlipX(true);
+      this.player.setVelocity(0, 0);
+    }
     this.player.setDepth(10);
     this.playerAnimator = new PlayerAnimator(this.player);
     this.playerWearables = new PlayerWearables(this, this.player);
@@ -321,8 +343,8 @@ export class StageScene extends Phaser.Scene {
       this.persistenceEventBus,
       () => this.runtime?.getStatus() === "play",
     );
-    if (world02Playground && !this.loadedMap) {
-      const hazards = getWorld02StageHazards(stage.id as World02PlaygroundStageId, seed);
+    if (world02StageId && !this.loadedMap) {
+      const hazards = getWorld02StageHazards(world02StageId, seed);
       this.world02Obstacles = new World02ObstacleSystem(
         this,
         this.player,
@@ -411,6 +433,15 @@ export class StageScene extends Phaser.Scene {
     this.cameraDirector = new CameraDirector(this, this.player, stage);
     this.cameraDirector.followPlayer();
     this.syncSectionCamera();
+    if (world02Playground && visit?.checkpointSnapshot &&
+        this.checkpointSystem.restore(visit.checkpointSnapshot)) {
+      const snapshot = visit.checkpointSnapshot.mapSnapshot ?? null;
+      this.runtime.setMapSnapshot(snapshot);
+      this.mapInteraction?.reset(snapshot);
+      this.gimmickSystem?.reset(snapshot);
+      this.runtime.resetCoins();
+      this.world02PigeonDrops?.resetForAttempt(this.player.x);
+    }
     if (data.resumeCheckpointId) {
       this.restoreCheckpoint(data.resumeCheckpointId);
       this.world02PigeonDrops?.resetForAttempt(this.player.x);
@@ -541,6 +572,7 @@ export class StageScene extends Phaser.Scene {
     });
     this.eventUnsubscribers.push(this.eventBus.on("stage-completed", ({ stageId }) => {
       if (stageId !== this.stageId || this.stageTransitionStarted) return;
+      this.rememberWorld02Visit();
       this.runtime?.setStatus("completed");
       if (stageId === "world-01-stage-boss") return;
       const nextStageId = getNextStageId(stageId);
@@ -558,6 +590,7 @@ export class StageScene extends Phaser.Scene {
           stageId: nextStageId,
           seed: this.runtime?.runtimeState.randomSeed ?? 1,
           playerName: this.progress.playerName,
+          ...(isWorld02PlaygroundStageId(nextStageId) ? { entrySide: "left" as const } : {}),
         } satisfies StageSceneData);
       });
     }));
@@ -644,6 +677,10 @@ export class StageScene extends Phaser.Scene {
         };
       } else {
         this.progress.world01BossReplayActive = false;
+        if (selection.worldId === "world-02") {
+          this.registry.remove("world02RunSeed");
+          this.registry.remove("world02TravelState");
+        }
         target = {
           stageId: getWorldStartStageId(selection.worldId),
           playerName: this.progress.playerName,
@@ -846,6 +883,29 @@ export class StageScene extends Phaser.Scene {
     this.playerController?.update(time, delta);
     this.world02Obstacles?.update(elapsed);
     this.world02PigeonDrops?.update(elapsed);
+    if (this.player && input && canBacktrackWorld02({
+      stageId: this.stageId,
+      status: this.runtime.getStatus(),
+      left: input.left,
+      playerLeft: this.player.getBounds().left,
+      controlLocked: this.player.isControlLocked(),
+      controlOverridden: Boolean(this.player.getControlOverride()),
+      transitionStarted: this.stageTransitionStarted,
+      menuOpen: this.shopOpen || this.catalogOpen || this.paintOpen || this.menuPauseGuard,
+    })) {
+      const previousStageId = getPreviousWorld02StageId(this.stageId);
+      if (previousStageId) {
+        this.rememberWorld02Visit();
+        this.stageTransitionStarted = true;
+        this.scene.start("StageScene", {
+          stageId: previousStageId,
+          seed: this.registry.get("world02RunSeed") as number,
+          playerName: this.progress.playerName,
+          entrySide: "right",
+        } satisfies StageSceneData);
+        return;
+      }
+    }
     if (this.stageDefinition?.kind === "normal" && this.player &&
         !this.player.isControlLocked() && this.player.getBounds().left >= this.stageDefinition.mapWidth &&
         this.player.body.bottom < this.stageDefinition.mapHeight - 1) {
@@ -1108,6 +1168,16 @@ export class StageScene extends Phaser.Scene {
       stageId: this.stageId,
       checkpointId,
     });
+  }
+
+  private rememberWorld02Visit(): void {
+    if (!isWorld02PlaygroundStageId(this.stageId) || !this.runtime) return;
+    const current = readWorld02TravelState(this.registry.get("world02TravelState"));
+    const snapshot = this.checkpointSystem?.getSnapshot() ?? null;
+    this.registry.set("world02TravelState", saveWorld02Visit(
+      current, this.stageId, this.runtime.runtimeState.randomSeed,
+      snapshot?.stageId === this.stageId ? snapshot : null,
+    ));
   }
 
   private getCheckpointSpawn(checkpointId: string): { x: number; y: number } | undefined {

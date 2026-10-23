@@ -12,7 +12,7 @@
 
 | Phase | Status | Summary | Blueprint |
 | :--- | :--- | :--- | :--- |
-| P01 | `pending` | 맵 2·3 배경·바닥, 장애물 그림, 시드 배치, 비둘기, 역방향 이동과 검증 | [P01](../phases/2026-10-21-world02-three-playground-maps/P01-three-playgrounds/phase.md) |
+| P01 | `done ✅` | 맵 2·3 배경·바닥, 장애물 그림, 시드 배치, 비둘기, 역방향 이동과 검증 | [P01](../phases/2026-10-21-world02-three-playground-maps/P01-three-playgrounds/phase.md) |
 
 ## Task Order
 

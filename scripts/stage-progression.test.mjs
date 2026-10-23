@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { readFile } from "node:fs/promises";
-import { STAGE_IDS, getNextStageId } from "../src/game/core/constants.ts";
+import { STAGE_IDS, WORLD02_PLAYABLE_STAGE_IDS, getNextStageId, getPreviousWorld02StageId } from "../src/game/core/constants.ts";
 
 const worlds = await readFile(new URL('../src/game/data/worlds.ts', import.meta.url), 'utf8');
 const maps = await readFile(new URL('../src/game/data/worldMaps.ts', import.meta.url), 'utf8');
@@ -11,6 +11,15 @@ test("normal campaign stages advance in the declared order", () => {
   assert.equal(getNextStageId("world-01-stage-1"), "world-01-stage-2");
   assert.equal(getNextStageId("world-01-stage-4"), "world-01-stage-boss");
   assert.equal(getNextStageId("world-02-stage-1"), "world-02-stage-2");
+  assert.equal(getNextStageId("world-02-stage-2"), "world-02-stage-3");
+  assert.equal(getNextStageId("world-02-stage-3"), "world-02-stage-boss");
+  assert.equal(getNextStageId("world-02-stage-4"), "world-02-stage-boss");
+  assert.deepEqual(WORLD02_PLAYABLE_STAGE_IDS, ["world-02-stage-1", "world-02-stage-2", "world-02-stage-3", "world-02-stage-boss"]);
+  assert.ok(STAGE_IDS.includes("world-02-stage-4"));
+  assert.equal(getPreviousWorld02StageId("world-02-stage-2"), "world-02-stage-1");
+  assert.equal(getPreviousWorld02StageId("world-02-stage-3"), "world-02-stage-2");
+  assert.equal(getPreviousWorld02StageId("world-02-stage-1"), null);
+  assert.equal(getPreviousWorld02StageId("world-02-stage-boss"), null);
 });
 
 test("world-one boss route points to the manual World 2 handoff", () => {
