@@ -16,7 +16,7 @@ import { sanitizeCustomOutfits } from "@/game/persistence/migrations";
 import { EconomySystem, type PurchaseResult } from "@/game/systems/EconomySystem";
 import { isWorldSelectionUnlocked } from "@/game/systems/worldSelection";
 import { canOpenSharedMenu } from "@/game/systems/gameMenuAvailability";
-import { prepareDevelopmentIntroProgress } from "@/game/systems/developmentIntroStart";
+import { prepareDevelopmentWorld02Progress } from "@/game/systems/developmentWorld02Start";
 import { GameEventBridge } from "./GameEventBridge";
 import { CutsceneOverlay } from "./CutsceneOverlay";
 import { GameOverlay } from "./GameOverlay";
@@ -148,7 +148,7 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
   }, [eventBus]);
 
   useEffect(() => {
-    const loaded = prepareDevelopmentIntroProgress(
+    const loaded = prepareDevelopmentWorld02Progress(
       storeRef.current.load(), process.env.NODE_ENV === "development",
     );
     Object.assign(progressRef.current, cloneProgress(loaded));
