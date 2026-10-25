@@ -2,7 +2,6 @@ import type * as Phaser from "phaser";
 import type { CosmeticId, CustomOutfitDesign } from "../core/types";
 import { MARKET_PRODUCTS } from "../data/marketCatalog";
 import { colorizeCustomOutfitPixels, type OutfitPose } from "./customOutfitTexture";
-import { composeDressedCorgiPixels } from "./dressedCorgiPixels";
 import type { Player } from "./Player";
 
 const categories = new Map(MARKET_PRODUCTS
@@ -98,20 +97,16 @@ export class PlayerWearables {
       for (const pose of ["run", "bark"] as const) {
         const templateKey = `custom-outfit-template-${pose}`;
         const source = this.scene.textures.get(templateKey).getSourceImage() as CanvasImageSource;
-        const base = this.scene.textures.get(`corgi-${pose}`).getSourceImage() as CanvasImageSource;
         const canvas = document.createElement("canvas");
         canvas.width = pose === "run" ? 448 : 112;
         canvas.height = 128;
         const context = canvas.getContext("2d", { willReadFrequently: true });
         if (!context) throw new Error("Canvas 2D context unavailable");
-        context.drawImage(base, 0, 0);
-        const corgiPixels = context.getImageData(0, 0, canvas.width, canvas.height);
-        context.clearRect(0, 0, canvas.width, canvas.height);
         context.drawImage(source, 0, 0);
         const templatePixels = context.getImageData(0, 0, canvas.width, canvas.height);
         const colored = colorizeCustomOutfitPixels(templatePixels.data, canvas.width, canvas.height, pose as OutfitPose, design);
-        corgiPixels.data.set(composeDressedCorgiPixels(corgiPixels.data, colored, canvas.width, canvas.height));
-        context.putImageData(corgiPixels, 0, 0);
+        templatePixels.data.set(colored);
+        context.putImageData(templatePixels, 0, 0);
         const texture = this.scene.textures.addCanvas(keys[pose], canvas);
         if (!texture) throw new Error(`Could not create custom outfit texture: ${pose}`);
         this.ownedTextureKeys.push(keys[pose]);

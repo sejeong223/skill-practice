@@ -46,3 +46,30 @@ test("재시도·destroy는 입을 닫고 idle로 복원하며 누락된 texture
   p.scene.textures.exists = () => false;
   a.triggerBark(); assert.equal(p.texture.key,"corgi-run");
 });
+
+test("every outfit stays equipped through strides, jumps, attacks, and barking", () => {
+  for (const id of [
+    "pink-caterpillar-suit", "banana-peel-suit", "bee-bodysuit",
+    "hotdog-outfit", "diamond-armor", "custom-outfit-1",
+  ]) {
+    const { player, animator } = harness();
+    player.appearance = { run: `wear-${id}-run`, bark: `wear-${id}-bark` };
+    player.setTexture(player.appearance.run);
+    player.state = "run";
+    animator.update(0, 16);
+    assert.equal(player.texture.key, player.appearance.run, `${id}: running`);
+    player.frame.name = 3;
+    animator.update(16, 16);
+    assert.equal(player.frame.name, 3, `${id}: fourth stride`);
+    for (const state of ["jump", "double-jump", "fall", "dash", "attack-bite", "attack-slipper", "hurt", "idle"]) {
+      player.state = state;
+      animator.update(32, 16);
+      assert.equal(player.texture.key, player.appearance.run, `${id}: ${state}`);
+    }
+    animator.triggerBark();
+    assert.equal(player.texture.key, player.appearance.bark, `${id}: bark`);
+    animator.update(500, 450);
+    assert.equal(player.texture.key, player.appearance.run, `${id}: after bark`);
+    animator.destroy();
+  }
+});

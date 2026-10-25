@@ -12,7 +12,7 @@ require.extensions[".ts"] = (module, filename) => module._compile(ts.transpileMo
   compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 }, fileName: filename,
 }).outputText, filename);
 const { PlayerWearables } = require("../src/game/entities/PlayerWearables.ts");
-const { colorizeCustomOutfitPixels } = require("../src/game/entities/customOutfitTexture.ts");
+const { colorizeCustomOutfitPixels, isWhiteSuitPixel } = require("../src/game/entities/customOutfitTexture.ts");
 const { createDefaultProgressState } = require("../src/game/core/constants.ts");
 const { GameEventBus } = require("../src/game/bridge/GameEventBus.ts");
 const { ProgressStore } = require("../src/game/persistence/ProgressStore.ts");
@@ -174,5 +174,31 @@ test("사용자 옷 교체·재저장·파괴 때 해당 장면의 동적 텍스
     assert.equal(removed.length, 4);
   } finally {
     global.document = originalDocument;
+  }
+});
+
+test("painted white suit remains fitted in every running and barking frame", async () => {
+  const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+  const design = { id: "custom-outfit-1", cells: Array(56 * 32).fill("#E95F68"), updatedAt: "2026-10-22T00:00:00.000Z" };
+  for (const [pose, frames] of [["run", 4], ["bark", 1]]) {
+    const width = frames * 112;
+    const template = await sharp(path.join(root, `public/assets/pixel/characters/corgi/equipment/custom-outfit-template-${pose}.png`))
+      .ensureAlpha().raw().toBuffer();
+    const source = new Uint8ClampedArray(template);
+    const colored = colorizeCustomOutfitPixels(source, width, 128, pose, design);
+    for (let frame = 0; frame < frames; frame++) {
+      let painted = 0;
+      for (let y = 0; y < 128; y++) for (let x = 0; x < 112; x++) {
+        const index = (y * width + frame * 112 + x) * 4;
+        if (isWhiteSuitPixel(source, width, frame * 112 + x, y)) {
+          assert.deepEqual([...colored.subarray(index, index + 3)], [0xE9, 0x5F, 0x68]);
+          painted++;
+        } else {
+          assert.deepEqual([...colored.subarray(index, index + 4)], [...template.subarray(index, index + 4)],
+            `${pose}/${frame}: non-fabric pixels changed`);
+        }
+      }
+      assert.ok(painted > 900, `${pose}/${frame}: painted suit disappeared`);
+    }
   }
 });

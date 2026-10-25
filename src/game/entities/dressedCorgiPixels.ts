@@ -1,49 +1,37 @@
-/** Bake clothing into the corgi's own pixels so torso fur cannot show between layers. */
-export function composeDressedCorgiPixels(
+/** Bake a fitted suit around each corgi pose while keeping its face, tail, and paws. */
+export function composeCostumePixels(
   corgi: Uint8Array | Uint8ClampedArray,
-  garment: Uint8Array | Uint8ClampedArray,
+  costume: Uint8Array | Uint8ClampedArray,
   width: number,
   height: number,
-  puffed = false,
+  legCoverage: "body" | "sleeves" = "body",
 ): Uint8ClampedArray {
-  if (width % 112 !== 0 || height !== 128 || corgi.length !== width * height * 4 || garment.length !== corgi.length) {
-    throw new Error("Invalid dressed corgi sprite dimensions");
+  if ((width !== 112 && width !== 448) || height !== 128 ||
+      corgi.length !== width * height * 4 || costume.length !== corgi.length) {
+    throw new Error("Invalid costume sprite dimensions");
   }
   const result = new Uint8ClampedArray(corgi);
-  const baseVisible = (x: number, y: number): boolean => corgi[(y * width + x) * 4 + 3] >= 128;
   for (let y = 0; y < height; y++) for (let x = 0; x < width; x++) {
     const index = (y * width + x) * 4;
-    const garmentAlpha = garment[index + 3] / 255;
-    if (garmentAlpha === 0) continue;
+    if (costume[index + 3] < 128) continue;
     const localX = x % 112;
-    const outsideBody = !baseVisible(x, y);
-    if (outsideBody) {
-      if (!puffed || localX < 11 || localX > 78 || y < 54 || y > 93) continue;
-      let closeToBody = false;
-      for (let dy = -2; dy <= 2 && !closeToBody; dy++) for (let dx = -2; dx <= 2; dx++) {
-        const px = x + dx;
-        const py = y + dy;
-        if (px >= 0 && px < width && py >= 0 && py < height && Math.floor(px / 112) === Math.floor(x / 112) && baseVisible(px, py)) {
-          closeToBody = true;
-          break;
-        }
-      }
-      if (!closeToBody) continue;
-    } else {
-      // Keep the corgi's own pixel outline, face, tail, and paws in front of the sewn suit.
-      const darkOutline = corgi[index] < 77 && corgi[index + 1] < 67 && corgi[index + 2] < 68;
-      if (darkOutline || localX >= 83 || (y >= 90 && (localX < 36 || localX > 63))) continue;
-    }
-    if (outsideBody) {
-      result[index] = garment[index];
-      result[index + 1] = garment[index + 1];
-      result[index + 2] = garment[index + 2];
-      result[index + 3] = garment[index + 3];
-    } else {
-      result[index] = Math.round(garment[index] * garmentAlpha + corgi[index] * (1 - garmentAlpha));
-      result[index + 1] = Math.round(garment[index + 1] * garmentAlpha + corgi[index + 1] * (1 - garmentAlpha));
-      result[index + 2] = Math.round(garment[index + 2] * garmentAlpha + corgi[index + 2] * (1 - garmentAlpha));
-    }
+    const frame = Math.floor(x / 112);
+    const rise = width === 112 ? 3 : [0, 2, 0, 8][frame];
+    const visibleDog = corgi[index + 3] >= 128;
+    const paleFur = corgi[index] >= 200 && corgi[index + 1] >= 175 && corgi[index + 2] >= 145;
+    const darkOutline = corgi[index] < 90 && corgi[index + 1] < 80 && corgi[index + 2] < 80;
+    const head = visibleDog && (localX >= 83 || (legCoverage === "sleeves"
+      ? localX >= 51 && y < 54 + rise || localX >= 68 && y < 63 + rise || localX >= 76 && y < 68 + rise
+      : localX >= 51 && y < 55 + rise || localX >= 68 && y < 66 + rise || localX >= 76 && y < 72 + rise));
+    const tail = visibleDog && localX < 21 && (legCoverage === "body" || y < 78 + rise);
+    const paws = visibleDog && (legCoverage === "sleeves"
+      ? (paleFur || darkOutline) && (localX < 36 && y >= 82 + rise || y >= 87 + rise)
+      : y >= 92 + rise || localX < 34 && y >= 85 + rise || localX >= 60 && y >= 88 + rise);
+    if (head || tail || paws || localX < 16 || localX > 90 || y < 22 || y > 100 + rise) continue;
+    result[index] = costume[index];
+    result[index + 1] = costume[index + 1];
+    result[index + 2] = costume[index + 2];
+    result[index + 3] = 255;
   }
   return result;
 }

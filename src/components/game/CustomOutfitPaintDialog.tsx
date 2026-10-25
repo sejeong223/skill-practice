@@ -6,7 +6,7 @@ import {
   CUSTOM_OUTFIT_CELL_COUNT, CUSTOM_OUTFIT_HEIGHT, CUSTOM_OUTFIT_PALETTE, CUSTOM_OUTFIT_WIDTH,
   eraseCell, fillRegion, paintCell, undoChange, type PaintState, type PaintTool,
 } from "@/game/data/customOutfitPaint";
-import { customOutfitPixelForCell } from "@/game/entities/customOutfitTexture";
+import { colorizeCustomOutfitPixels, customOutfitCellForPixel, customOutfitPixelForCell, isWhiteSuitPixel } from "@/game/entities/customOutfitTexture";
 
 const slots: readonly CustomOutfitId[] = ["custom-outfit-1", "custom-outfit-2", "custom-outfit-3"];
 const blankCells = (): (string | null)[] => Array(CUSTOM_OUTFIT_CELL_COUNT).fill(null);
@@ -25,6 +25,7 @@ export function CustomOutfitPaintDialog({ designs, onSave, onClose }: CustomOutf
   const paintRef = useRef(paint);
   const [savedCells, setSavedCells] = useState<(string | null)[]>(() => [...paint.cells]);
   const [mask, setMask] = useState<boolean[] | null>(null);
+  const [template, setTemplate] = useState<Uint8ClampedArray | null>(null);
   const [maskError, setMaskError] = useState(false);
   const [tool, setTool] = useState<PaintTool>("pen");
   const [color, setColor] = useState("#E95F68");
@@ -52,11 +53,14 @@ export function CustomOutfitPaintDialog({ designs, onSave, onClose }: CustomOutf
       if (!context) { setMaskError(true); return; }
       context.drawImage(image, 0, 0);
       const pixels = context.getImageData(0, 0, source.width, source.height).data;
-      setMask(Array.from({ length: CUSTOM_OUTFIT_CELL_COUNT }, (_, index) => {
-        const { x, y } = customOutfitPixelForCell(index % CUSTOM_OUTFIT_WIDTH, Math.floor(index / CUSTOM_OUTFIT_WIDTH));
-        const pixel = (y * source.width + x) * 4;
-        return pixels[pixel + 3] >= 200 && pixels[pixel] >= 200 && pixels[pixel + 1] >= 200 && pixels[pixel + 2] >= 200;
-      }));
+      const nextMask = Array<boolean>(CUSTOM_OUTFIT_CELL_COUNT).fill(false);
+      for (let y = 0; y < 128; y++) for (let x = 0; x < 112; x++) {
+        if (!isWhiteSuitPixel(pixels, source.width, x, y)) continue;
+        const cell = customOutfitCellForPixel(x, y);
+        if (cell >= 0) nextMask[cell] = true;
+      }
+      setTemplate(new Uint8ClampedArray(pixels));
+      setMask(nextMask);
     };
     image.onerror = () => setMaskError(true);
     image.src = "/assets/pixel/characters/corgi/equipment/custom-outfit-template-run.png";
@@ -66,17 +70,20 @@ export function CustomOutfitPaintDialog({ designs, onSave, onClose }: CustomOutf
   useEffect(() => {
     const canvas = canvasRef.current;
     const context = canvas?.getContext("2d");
-    if (!context || !mask) return;
-    context.clearRect(0, 0, CUSTOM_OUTFIT_WIDTH, CUSTOM_OUTFIT_HEIGHT);
-    for (let index = 0; index < CUSTOM_OUTFIT_CELL_COUNT; index++) {
-      context.fillStyle = mask[index] ? paint.cells[index] ?? "#FFFDF1" : "#D8CBB6";
-      context.fillRect(index % CUSTOM_OUTFIT_WIDTH, Math.floor(index / CUSTOM_OUTFIT_WIDTH), 1, 1);
-    }
+    if (!context || !mask || !template) return;
+    const colored = colorizeCustomOutfitPixels(template, 448, 128, "run", {
+      id: slot, cells: paint.cells, updatedAt: "",
+    });
+    const frame = context.createImageData(448, 128);
+    frame.data.set(colored);
+    context.clearRect(0, 0, 112, 128);
+    context.putImageData(frame, 0, 0);
     if (canvasFocused) {
+      const { x, y } = customOutfitPixelForCell(cursor % CUSTOM_OUTFIT_WIDTH, Math.floor(cursor / CUSTOM_OUTFIT_WIDTH));
       context.fillStyle = "#37162E";
-      context.fillRect(cursor % CUSTOM_OUTFIT_WIDTH, Math.floor(cursor / CUSTOM_OUTFIT_WIDTH), 1, 1);
+      context.fillRect(x, y, 1, 1);
     }
-  }, [canvasFocused, cursor, mask, paint.cells]);
+  }, [canvasFocused, cursor, mask, paint.cells, slot, template]);
 
   useEffect(() => {
     closeButtonRef.current?.focus();
@@ -168,9 +175,9 @@ export function CustomOutfitPaintDialog({ designs, onSave, onClose }: CustomOutf
 
   const indexFromPointer = (event: ReactPointerEvent<HTMLCanvasElement>): number => {
     const bounds = event.currentTarget.getBoundingClientRect();
-    const x = Math.floor((event.clientX - bounds.left) / bounds.width * CUSTOM_OUTFIT_WIDTH);
-    const y = Math.floor((event.clientY - bounds.top) / bounds.height * CUSTOM_OUTFIT_HEIGHT);
-    return x >= 0 && x < CUSTOM_OUTFIT_WIDTH && y >= 0 && y < CUSTOM_OUTFIT_HEIGHT ? y * CUSTOM_OUTFIT_WIDTH + x : -1;
+    const x = Math.floor((event.clientX - bounds.left) / bounds.width * 112);
+    const y = Math.floor((event.clientY - bounds.top) / bounds.height * 128);
+    return x >= 0 && x < 112 && y >= 0 && y < 128 ? customOutfitCellForPixel(x, y) : -1;
   };
 
   const save = (): void => {
@@ -207,7 +214,7 @@ export function CustomOutfitPaintDialog({ designs, onSave, onClose }: CustomOutf
               }}>{index + 1}번 옷 {designs.some((design) => design.id === id) ? "✓" : "빈 슬롯"}</button>)}
           </nav>
           <p className="custom-paint-help">흰 옷 부분만 칠할 수 있어요. 그림은 저장한 뒤 카탈로그에서 입힐 수 있어요.</p>
-          <canvas ref={canvasRef} width={CUSTOM_OUTFIT_WIDTH} height={CUSTOM_OUTFIT_HEIGHT} tabIndex={0}
+          <canvas ref={canvasRef} width={112} height={128} tabIndex={0}
             className="custom-paint-canvas" aria-label="픽셀 옷 그리기 영역. 방향키로 이동, Enter 또는 Space로 칠하기"
             onFocus={() => setCanvasFocused(true)} onBlur={() => setCanvasFocused(false)}
             onPointerDown={(event) => {

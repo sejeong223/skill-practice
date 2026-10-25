@@ -644,7 +644,7 @@ form { display: flex; gap: 6px; margin-top: 10px; } form input { min-width: 0; f
 .custom-paint-slots button, .custom-paint-toolbar button, .custom-paint-actions button, .custom-paint-confirm button { border: 2px solid #5f3942; padding: 6px 9px; background: #e8cda0; color: #5f3942; font: 11px "Galmuri11Pixel", monospace; cursor: pointer; }
 .custom-paint-slots button[aria-pressed="true"], .custom-paint-toolbar button[aria-pressed="true"] { background: #f4d460; }
 .custom-paint-help { margin: 0; font-size: 10px; line-height: 1.5; text-align: center; }
-.custom-paint-canvas { display: block; width: min(100%, 560px); height: auto; aspect-ratio: 56 / 32; border: 3px solid #5f3942; image-rendering: pixelated; touch-action: none; cursor: crosshair; background: #d8cbb6; }
+.custom-paint-canvas { display: block; width: min(100%, 336px); height: auto; aspect-ratio: 112 / 128; border: 3px solid #5f3942; image-rendering: pixelated; touch-action: none; cursor: crosshair; background: #1b1b1b; }
 .custom-paint-canvas:focus-visible { outline: 3px solid #e95f68; outline-offset: 2px; }
 .custom-paint-toolbar button:disabled, .custom-paint-actions button:disabled { opacity: .5; cursor: not-allowed; }
 .custom-paint-palette button { width: 26px; height: 26px; padding: 0; border: 2px solid #5f3942; cursor: pointer; }
