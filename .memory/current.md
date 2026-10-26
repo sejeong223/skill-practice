@@ -1,5 +1,27 @@
 # Current Context
 
+## Active Plan
+
+[월드 2 치즈 태비 레퍼런스 기반 전면 재작화](./plans/2026-10-26-world02-cheese-tabby-reference-redraw.md)
+
+## Active Phase
+
+[P01 레퍼런스 기반 치즈 태비 전면 재작화](./phases/2026-10-26-world02-cheese-tabby-reference-redraw/P01-reference-art-rebuild/phase.md)
+
+## Active Task
+
+[T01 레퍼런스 기반 치즈 태비 래스터 원화](./phases/2026-10-26-world02-cheese-tabby-reference-redraw/P01-reference-art-rebuild/T01-reference-raster-art.md)
+
+## Status
+
+- T01 구현 시작 준비 완료. 코기·턱시도·삼색이 실제 PNG만 시각 레퍼런스로 사용하며, 이전 치즈 태비 디자인 문서는 배제한다.
+
+## Next Step (IMPORTANT)
+
+T01 청사진을 읽고 `assets/character-source/world-02/cheese-tabby-boss-source.png` 제작부터 시작한다.
+
+## Previous Work Context
+
 ## Last Completed Plan
 
 [개발 서버에서 월드2부터 시작](./plans/2026-10-26-dev-start-world02.md)
@@ -7,18 +29,6 @@
 ## Completed Phase
 
 [P01 개발용 월드2 시작 복원](./phases/2026-10-26-dev-start-world02/P01-development-bootstrap/phase.md)
-
-## Active Task
-
-없음
-
-## Status
-
-- 개발 모드에서 인트로·이름 입력·월드2 입구 컷신을 건너뛰고 월드2 첫 스테이지 플레이로 시작하도록 완료했다. 기존 진행 값과 프로덕션 경로를 보존했으며 관련 테스트 18개, 린트, 타입 검사, 빌드가 통과했다.
-
-## Next Step (IMPORTANT)
-
-활성 Task 없음. 다음 작업 요청을 기다린다.
 
 ## 이전 작업 포인터와 기록
 
