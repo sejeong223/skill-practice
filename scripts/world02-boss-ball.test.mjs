@@ -22,7 +22,7 @@ test('rubber ball asset is a required transparent 32px pixel image', async () =>
 });
 
 test('ball arcs toward the ground, bounces once, then disappears on the next ground contact', () => {
-  let motion = {x: 1230, y: 402, vx: -330, vy: -280, bounces: 0, ageMs: 0};
+  let motion = {x: 1238, y: 484, vx: -330, vy: -420, bounces: 0, ageMs: 0};
   let bounceCount = 0;
   let frames = 0;
   while (motion && frames++ < 190) {

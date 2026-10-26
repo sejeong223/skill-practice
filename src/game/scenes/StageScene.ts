@@ -519,7 +519,7 @@ export class StageScene extends Phaser.Scene {
         : isMackerel ? BOSS_COMBAT_CONFIG["world-03"]
           : isTuxedo ? BOSS_COMBAT_CONFIG["world-04"] : BOSS_COMBAT_CONFIG["world-05"];
       const introId = `${stage.worldId}-boss-intro`;
-      this.laterBossSprite = this.add.sprite(1280, stage.id === "world-05-stage-boss" ? 430 : 446, bossKey, 0)
+      this.laterBossSprite = this.add.sprite(1280, isCheeseTabby ? 472 : stage.id === "world-05-stage-boss" ? 430 : 446, bossKey, 0)
         .setDepth(10).setFlipX(true);
       this.defenseToolSystem = new DefenseToolSystem(this.gameplayEventBus, TOOL_DEFINITIONS);
       this.defenseToolSystem.resetForStage(this.progress.equippedDefenseToolId);

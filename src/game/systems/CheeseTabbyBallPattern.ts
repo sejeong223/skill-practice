@@ -32,15 +32,15 @@ export class CheeseTabbyBallPattern implements BossPattern {
   public launch(targetX: number, serial: number): void {
     if (this.destroyed) return;
     const direction = targetX < this.bossSprite.x ? -1 : 1;
-    const x = this.bossSprite.x + direction * 50;
-    const y = this.bossSprite.y - 44;
+    const x = this.bossSprite.x + direction * 42;
+    const y = this.bossSprite.y + 12;
     const image = this.scene.add.image(x, y, "world-02-boss-rubber-ball")
       .setDisplaySize(32, 32).setDepth(11);
     const speed = Math.max(330, Math.min(440, Math.abs(targetX - x) / 2.65));
     this.balls.push({
       id: `cheese-ball-${serial}`,
       image,
-      motion: { x, y, vx: direction * speed, vy: -280, bounces: 0, ageMs: 0 },
+      motion: { x, y, vx: direction * speed, vy: -420, bounces: 0, ageMs: 0 },
     });
     this.bossSprite.setFrame(2);
     this.throwPoseMs = 180;

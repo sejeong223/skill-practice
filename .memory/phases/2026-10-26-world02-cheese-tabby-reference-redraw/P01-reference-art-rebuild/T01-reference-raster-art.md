@@ -124,4 +124,4 @@ Task: T01-reference-raster-art
 
 - [x] 구현 완료
 - [x] 검증 통과
-- commit: 이 Task의 Plan/Phase/Task 헤더가 있는 Git 커밋
+- commit: `e1e2b8d`

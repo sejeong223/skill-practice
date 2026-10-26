@@ -17,7 +17,7 @@ const { createDefaultProgressState } = require(path.join(root, 'src/game/core/co
 const { PROGRESS_STORAGE_KEY } = require(path.join(root, 'src/game/persistence/saveTypes.ts'));
 const serverUrl = 'http://127.0.0.1:3100';
 const chromePath = process.env.CHROME_PATH ?? 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
-const imagePath = path.join(root, '.memory/reviews/2026-10-21-cheese-tabby-in-game.png');
+const imagePath = path.join(root, '.memory/reviews/2026-10-26-cheese-tabby-in-game.png');
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 async function until(read, predicate, label, timeout = 15000) {
@@ -72,17 +72,26 @@ const gameExpression = findGameExpression();
 const stateExpression = `(() => {
   const game = ${gameExpression};
   const scene = game?.scene?.getScene('StageScene');
-  const cat = scene?.cheeseTabbySprite;
+  const cat = scene?.laterBossSprite;
   const matches = scene?.children.list.filter(child => child.texture?.key === 'world-02-cheese-tabby-boss');
+  const hitBounds = scene?.bossEncounter?.getHitBounds?.();
+  const balls = scene?.children.list.filter(child => child.texture?.key === 'world-02-boss-rubber-ball');
   return {
     url: location.href,
     body: document.body?.innerText?.slice(0, 300),
+    gameFound: !!game,
+    sceneNames: game?.scene?.scenes?.map(item => item.scene.key),
+    canvasParentKeys: Object.keys(document.querySelector('canvas')?.parentElement ?? {}).filter(name => name.startsWith('__react')).slice(0, 5),
     loaded: !!game?.textures?.exists('world-02-cheese-tabby-boss'),
     active: !!scene?.scene?.isActive(),
     stage: scene?.stageId,
     canvas: { width: document.querySelector('canvas')?.width, height: document.querySelector('canvas')?.height },
     cat: cat && { active: cat.active, visible: cat.visible, x: cat.x, y: cat.y,
+      frameWidth: cat.frame.width, frameHeight: cat.frame.height,
       flipX: cat.flipX, frame: cat.frame.name, texture: cat.texture.key, depth: cat.depth },
+    hitBounds: hitBounds && { x: hitBounds.x, y: hitBounds.y,
+      width: hitBounds.width, height: hitBounds.height },
+    balls: balls?.map(ball => ({ x: ball.x, y: ball.y, active: ball.active })),
     count: matches?.length,
     calico: !!scene?.calicoSprite?.active,
     introOverlay: !!document.querySelector('.cutscene-overlay, .intro-title-card, .intro-name-card'),
@@ -162,7 +171,7 @@ async function main() {
     progress.onboardingCompleted = true;
     progress.selectedWorldId = 'world-02';
     progress.clearedStages = ['world-01-stage-boss'];
-    progress.seenCutsceneIds = ['intro-home', 'world-02-intro'];
+    progress.seenCutsceneIds = ['intro-home', 'world-02-intro', 'world-02-boss-intro'];
     const envelope = { schemaVersion: 3, updatedAt: new Date().toISOString(), progress };
     const injection = await call('Page.addScriptToEvaluateOnNewDocument', {
       source: `if (location.hostname === '127.0.0.1') localStorage.setItem(${JSON.stringify(PROGRESS_STORAGE_KEY)}, ${JSON.stringify(JSON.stringify(envelope))})`,
@@ -183,24 +192,34 @@ async function main() {
       await evaluate(`(() => { const scene = ${gameExpression}.scene.getScene('StageScene');
         scene.player.resetTo({ x: 1000, y: 460 }); scene.player.setVelocity(0, 0);
       })()`);
-      await sleep(350);
+      await sleep(1000);
       const snapshot = await state();
       assert.deepEqual(snapshot.canvas, { width: 1280, height: 720 });
       assert.deepEqual(snapshot.cat, {
-        active: true, visible: true, x: 1280, y: 446,
+        active: true, visible: true, x: 1280, y: 472, frameWidth: 96, frameHeight: 96,
         flipX: true, frame: 0, texture: 'world-02-cheese-tabby-boss', depth: 10,
       }, JSON.stringify(snapshot));
       assert.equal(snapshot.count, 1, 'one boss sprite after scene restart');
+      assert.deepEqual(snapshot.hitBounds, { x: 1236, y: 442, width: 88, height: 62 });
       assert.equal(snapshot.calico, false, 'world 1 boss should not appear');
       assert.equal(snapshot.introOverlay, false, 'intro UI should not cover the boss');
       assert.ok(snapshot.camera.scrollX <= 1280 && snapshot.camera.scrollX + snapshot.camera.width >= 1280,
         'the cat must be inside the visible camera');
     }
 
-    assert.deepEqual(errors, [], 'browser errors and missing assets');
     const screenshot = await call('Page.captureScreenshot', { format: 'png', captureBeyondViewport: false });
     await writeFile(imagePath, Buffer.from(screenshot.data, 'base64'));
-    console.log('월드 2 보스 맵 브라우저 검증 통과: 왼쪽을 보는 치즈 태비 1마리, 1280×720, 에셋 오류 없음');
+
+    for (const frame of [1, 2, 3]) {
+      await evaluate(`(() => { ${gameExpression}.scene.getScene('StageScene').laterBossSprite.setFrame(${frame}); })()`);
+      assert.equal((await state()).cat.frame, frame, `boss pose ${frame} loads`);
+    }
+    await evaluate(`(() => { ${gameExpression}.scene.getScene('StageScene').laterBossSprite.setFrame(0); })()`);
+    await until(state, value => value?.cat?.frame === 1, 'automatic telegraph pose', 4000);
+    const launch = await until(state, value => value?.balls?.length > 0, 'rubber ball appears', 4000);
+    assert.ok(launch.balls[0].x < 1238 && launch.balls[0].x > 1100, 'ball leaves the raised paw');
+    assert.deepEqual(errors, [], 'browser errors and missing assets');
+    console.log('월드 2 보스 맵 브라우저 검증 통과: 96픽셀 네 자세·명중 범위·고무공·에셋 오류 없음');
   } finally {
     ws?.close();
     chrome?.kill();

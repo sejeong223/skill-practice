@@ -1,6 +1,6 @@
 # Task: T02 보스 장면 정렬과 실제 화면 검증
 
-## Status: pending
+## Status: done
 
 ## Goal
 
@@ -52,12 +52,13 @@ T01에서 새로 그린 치즈 태비가 월드 2 보스 장면에서 코기와 
 
 - **Signatures & Types**:
   ```typescript
-  BossEncounter.getHitBounds(): Phaser.Geom.Rectangle
+  BossEncounter.getHitBounds(): Pick<Phaser.Geom.Rectangle, "x" | "y" | "width" | "height" | "centerX" | "centerY">
   CheeseTabbyBallPattern.launch(targetX: number, serial: number): void
   advanceCheeseBall(state: CheeseBallMotion, deltaMs: number, floorY?: number): CheeseBallMotion | null
   ```
 - **Data & Schema Fields**:
   - 월드 2 전용 명중 직사각형: `x=sprite.x-44`, `y=sprite.y-30`, `width=88`, `height=62`. 나머지 보스는 `sprite.getBounds()` 그대로. T01 원화의 본체·머리와 겹치는지 실제 화면에서 확인한다.
+  - 월드 2 판정은 위 숫자로 새 구조체를 반환한다. 테스트의 `sprite.getBounds()`는 메서드가 없는 단순 객체일 수 있으므로 `setTo()` 같은 Phaser 인스턴스 메서드를 호출하지 않는다. 중심은 `centerX=sprite.x`, `centerY=sprite.y+1`이다.
   - 월드 2 HUD: 이름 `sprite.y-90`, 경고 `sprite.y-119`, 체력 막대 `sprite.y-68`. 다른 월드 오프셋은 이름 `-112`, 경고 `-143`, 막대 `-89`를 유지한다.
   - 공 시작 위치와 속도: `x=sprite.x + direction*42`, `y=sprite.y+12`, `vy=-420`; `direction`은 코기 위치가 보스보다 왼쪽이면 `-1`, 아니면 `1`. 왼쪽 첫 등장에서 공 시작은 `(1238, 484)`이고, 바닥은 `504`다.
 - **Execution Flow / Logic**:
@@ -127,6 +128,6 @@ Task: T02-runtime-alignment-and-browser-review
 
 ## Progress
 
-- [ ] 구현 완료
-- [ ] 검증 통과
-- commit: pending
+- [x] 구현 완료
+- [x] 검증 통과
+- commit: 이 Task의 Plan/Phase/Task 헤더가 있는 Git 커밋

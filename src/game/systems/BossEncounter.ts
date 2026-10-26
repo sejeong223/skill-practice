@@ -55,11 +55,12 @@ export class BossEncounter {
     }
     this.state = this.initialState();
     this.bar = scene.add.graphics().setDepth(12);
-    this.name = scene.add.text(sprite.x, sprite.y - 112, "", {
+    const cheeseTabby = stageId === "world-02-stage-boss";
+    this.name = scene.add.text(sprite.x, sprite.y - (cheeseTabby ? 90 : 112), "", {
       color: "#fff5d8", fontFamily: "Galmuri11Pixel, monospace", fontSize: "17px",
       stroke: "#423039", strokeThickness: 4,
     }).setOrigin(0.5).setDepth(12);
-    this.warning = scene.add.text(sprite.x, sprite.y - 143, "공격 예고!", {
+    this.warning = scene.add.text(sprite.x, sprite.y - (cheeseTabby ? 119 : 143), "공격 예고!", {
       color: "#ffde70", fontFamily: "Galmuri11Pixel, monospace", fontSize: "20px",
       stroke: "#423039", strokeThickness: 4,
     }).setOrigin(0.5).setDepth(12).setVisible(false);
@@ -111,14 +112,14 @@ export class BossEncounter {
     if (result.kind !== "slipper-hit" || !result.accepted || !this.canFight()) return false;
     if (!isCalicoInSlipperReach(
       player.body.center.x, player.body.center.y, player.flipX ? -1 : 1,
-      this.sprite.getBounds(),
+      this.getHitBounds(),
     )) return false;
     this.damageBoss(1);
     return true;
   }
 
   public acceptToolHit(contact: AttackContact): boolean {
-    if (!this.canFight() || !this.weaponHits.accept(contact, this.sprite.getBounds())) return false;
+    if (!this.canFight() || !this.weaponHits.accept(contact, this.getHitBounds())) return false;
     this.damageBoss(getBossDamage(contact.toolId));
     this.eventBus.emit("weapon-hit", {
       attackId: contact.attackId, toolId: contact.toolId,
@@ -129,7 +130,7 @@ export class BossEncounter {
 
   public tryBarkStun(nowMs: number): boolean {
     if (!this.canFight()) return false;
-    const boss = this.sprite.getBounds();
+    const boss = this.getHitBounds();
     const distance = Math.hypot(
       this.player.body.center.x - boss.centerX,
       this.player.body.center.y - boss.centerY,
@@ -238,13 +239,26 @@ export class BossEncounter {
     else if (this.player.x > this.sprite.x) this.sprite.setFlipX(false);
   }
 
+  private getHitBounds(): Pick<Phaser.Geom.Rectangle, "x" | "y" | "width" | "height" | "centerX" | "centerY"> {
+    if (this.stageId !== "world-02-stage-boss") return this.sprite.getBounds();
+    // The 96px cat is visible from about y=18 to y=80 in each standing frame.
+    return {
+      x: this.sprite.x - 44,
+      y: this.sprite.y - 30,
+      width: 88,
+      height: 62,
+      centerX: this.sprite.x,
+      centerY: this.sprite.y + 1,
+    };
+  }
+
   private drawHealth(): void {
     this.bar.clear();
     const width = Math.min(16, 240 / this.config.maxHealth);
     const left = this.sprite.x - width * this.config.maxHealth / 2;
     for (let index = 0; index < this.config.maxHealth; index++) {
       this.bar.fillStyle(index < this.state.health ? 0xf0b95f : 0x4a3b42, 1);
-      this.bar.fillRect(left + index * width, this.sprite.y - 89, width - 2, 12);
+      this.bar.fillRect(left + index * width, this.sprite.y - (this.stageId === "world-02-stage-boss" ? 68 : 89), width - 2, 12);
     }
     this.name.setText(`${this.config.bossName}  ${this.state.health} / ${this.config.maxHealth}`);
   }

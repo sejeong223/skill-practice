@@ -14,7 +14,7 @@
 
 | Phase | Status | Summary | Blueprint |
 | :--- | :--- | :--- | :--- |
-| P01 | `in_progress` | 원본 래스터 시트 재작화, 생성·검증 흐름 전환, 보스 장면 통합 확인 | [P01](../phases/2026-10-26-world02-cheese-tabby-reference-redraw/P01-reference-art-rebuild/phase.md) |
+| P01 | `done` | 원본 래스터 시트 재작화, 생성·검증 흐름 전환, 보스 장면 통합 확인 | [P01](../phases/2026-10-26-world02-cheese-tabby-reference-redraw/P01-reference-art-rebuild/phase.md) |
 
 ## Task Order and Boundary
 

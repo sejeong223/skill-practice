@@ -2,33 +2,33 @@
 
 ## Active Plan
 
-[월드 2 치즈 태비 레퍼런스 기반 전면 재작화](./plans/2026-10-26-world02-cheese-tabby-reference-redraw.md)
+없음
 
 ## Active Phase
 
-[P01 레퍼런스 기반 치즈 태비 전면 재작화](./phases/2026-10-26-world02-cheese-tabby-reference-redraw/P01-reference-art-rebuild/phase.md)
+없음
 
 ## Active Task
 
-[T01 레퍼런스 기반 치즈 태비 래스터 원화](./phases/2026-10-26-world02-cheese-tabby-reference-redraw/P01-reference-art-rebuild/T01-reference-raster-art.md)
+없음
 
 ## Status
 
-- T01 구현 시작 준비 완료. 코기·턱시도·삼색이 실제 PNG만 시각 레퍼런스로 사용하며, 이전 치즈 태비 디자인 문서는 배제한다.
+- 치즈 태비 레퍼런스 기반 전면 재작화 P01 T01·T02가 모두 완료됐다. 새 원화·전투 정렬·브라우저 화면을 검증했다.
 
 ## Next Step (IMPORTANT)
 
-T01 청사진을 읽고 `assets/character-source/world-02/cheese-tabby-boss-source.png` 제작부터 시작한다.
+활성 Task 없음. 다음 작업 요청을 기다린다.
 
 ## Previous Work Context
 
 ## Last Completed Plan
 
-[개발 서버에서 월드2부터 시작](./plans/2026-10-26-dev-start-world02.md)
+[월드 2 치즈 태비 레퍼런스 기반 전면 재작화](./plans/2026-10-26-world02-cheese-tabby-reference-redraw.md)
 
 ## Completed Phase
 
-[P01 개발용 월드2 시작 복원](./phases/2026-10-26-dev-start-world02/P01-development-bootstrap/phase.md)
+[P01 레퍼런스 기반 치즈 태비 전면 재작화](./phases/2026-10-26-world02-cheese-tabby-reference-redraw/P01-reference-art-rebuild/phase.md)
 
 ## 이전 작업 포인터와 기록
 

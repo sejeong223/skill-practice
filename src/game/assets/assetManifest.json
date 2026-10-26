@@ -328,8 +328,8 @@
     "key": "world-02-cheese-tabby-boss",
     "kind": "spritesheet",
     "url": "/assets/pixel/characters/world-02/cheese-tabby-boss.png",
-    "frameWidth": 128,
-    "frameHeight": 128,
+    "frameWidth": 96,
+    "frameHeight": 96,
     "frameCount": 4,
     "worldId": "world-02",
     "required": true
