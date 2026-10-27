@@ -1,6 +1,6 @@
 import type { StageId } from "../core/types";
 
-export type CutsceneSpeaker = "narrator" | "owner" | "corgi" | "cat" | "calico";
+export type CutsceneSpeaker = "narrator" | "owner" | "corgi" | "cat" | "calico" | "cheese-tabby";
 
 export interface CameraAction {
   readonly kind: "pan" | "zoom" | "shake" | "fade";

@@ -262,6 +262,7 @@ form { display: flex; gap: 6px; margin-top: 10px; } form input { min-width: 0; f
 .speaker-owner .dialogue-speaker { color: #f18a72; }
 .speaker-cat .dialogue-speaker { color: #87c8a5; }
 .speaker-corgi .dialogue-speaker { color: #e8cda0; }
+.speaker-cheese-tabby .dialogue-speaker { color: #f3b86b; }
 
 .cutscene-footer {
   display: flex;

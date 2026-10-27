@@ -22,6 +22,27 @@ const WORLD01_BOSS_CLEAR_LINES = [
   { speaker: "calico", text: "말을 마친 후 기절한다." },
 ] as const;
 
+const WORLD02_BOSS_INTRO_LINES = [
+  { speaker: "cheese-tabby", text: "뭐냥? 이 잘 구워진 인절미 같은 녀석은?" },
+  { speaker: "corgi", text: "네 녀석이 치즈 태비냐? 턱시도는 어디로 갔어!" },
+  { speaker: "cheese-tabby", text: "턱시도 형님? 이미 왕갈비뼈를 물고 '공사장'으로 가셨다냥!" },
+  { speaker: "cheese-tabby", text: "하지만 넌 절대 여기서 못 나간다냥!" },
+  { speaker: "corgi", text: "당장 길을 비키지 않으면 네 귀여운 노란 털을 몽땅 뽑아버리겠다!" },
+  { speaker: "cheese-tabby", text: "지옥의 놀이터에 온 걸 환영한다냥!" },
+  { speaker: "cheese-tabby", text: "내 얌체 탱탱볼에 머리통 깨져서 집으로 돌아가라냥! 자, 난사 개시다냥!" },
+] as const;
+
+const WORLD02_BOSS_CLEAR_LINES = [
+  { speaker: "cheese-tabby", text: "냥?! 내 무적의 탱탱볼 계산법이 틀렸단 말이냐냥...?!" },
+  { speaker: "corgi", text: "공놀이는 내가 너보다 백배는 더 많이 해봤다 멍! 이제 턱시도가 간 곳을 불어라!" },
+  { speaker: "cheese-tabby", text: "크윽... 억울하다냥! 어차피 넌 다음 구역에서 바비큐가 될 거다냥!" },
+  { speaker: "cheese-tabby", text: "턱시도 형님은 '위험천만한 공사장' 구역으로 넘어가셨다냥!" },
+  { speaker: "corgi", text: "공사장? 철근과 시멘트 가루가 날리는 그 위험한 곳 말이냐?" },
+  { speaker: "cheese-tabby", text: "그래냥! 그곳을 지키는 베테랑 간부 '고등어 태비' 형님이 널 시멘트에 반죽해 버릴 거다냥!" },
+  { speaker: "cheese-tabby", text: "네 짧은 다리로는 굳지 않은 시멘트에 발이 묶여서 평생 공사장 마스코트나 될 거다냥!" },
+  { speaker: "cheese-tabby", text: "눈이 골뱅이가 된 채 핑글핑글 돌며 기절한다." },
+] as const;
+
 export const WORLD02_ENTRANCE_CUTSCENE: CutsceneScript = {
   id: "world-02-intro",
   stageId: "world-02-stage-1",
@@ -77,7 +98,9 @@ export const WORLD_CUTSCENES: readonly CutsceneScript[] = [
   { id: "world-03-intro", stageId: "world-03-stage-1", beats: [{ id: "junkyard", durationMs: 3200, narration: "공사장 진입로. 크레인과 레미콘 차 사이로 냥아치 고등어의 발자국이 이어진다.", musicKey: "world-03-factory", skipAllowedAfterSeen: true }] },
   { id: "world-04-intro", stageId: "world-04-stage-1", beats: [{ id: "rooftop", durationMs: 3200, narration: "냥아치 아지트가 된 고물상. 쌓인 고철과 자석 뒤에 행동대장 턱시도가 숨어 있다.", musicKey: "world-04-rooftop", skipAllowedAfterSeen: true }] },
   { id: "world-05-intro", stageId: "world-05-stage-1", beats: [{ id: "kingdom", durationMs: 3200, narration: "최종 캣타워 공성전. 왕갈비뼈의 냄새가 메인쿤의 왕좌 뒤에서 진하게 풍겨온다.", musicKey: "world-05-kingdom", skipAllowedAfterSeen: true }] },
-  { id: "world-02-boss-intro", stageId: "world-02-stage-boss", beats: [{ id: "cheese-tabby", durationMs: 3000, narration: "놀이터 대장 치즈 태비가 호루라기를 불고 고무공을 집어 든다.", skipAllowedAfterSeen: true }] },
+  { id: "world-02-boss-intro", stageId: "world-02-stage-boss", beats: WORLD02_BOSS_INTRO_LINES.map((line, index) => ({
+    id: `cheese-intro-${index + 1}`, durationMs: 3000, dialogue: [line], skipAllowedAfterSeen: true,
+  })) },
   { id: "world-03-boss-intro", stageId: "world-03-stage-boss", beats: [{ id: "mackerel", durationMs: 3000, narration: "공사장 감독 고등어가 벽돌 조각을 집어 든다. 날아온 벽돌은 잠깐 바닥을 막는다!", skipAllowedAfterSeen: true }] },
   { id: "world-04-boss-intro", stageId: "world-04-stage-boss", beats: [{ id: "tuxedo", durationMs: 3000, narration: "고물상 한가운데, 턱시도가 고철을 떨어뜨린다. 자석 신호가 나면 고철이 한 번 더 움직인다!", skipAllowedAfterSeen: true }] },
   { id: "world-05-boss-intro", stageId: "world-05-stage-boss", beats: [{ id: "maine-coon", durationMs: 3000, narration: "캣타워의 메인쿤이 코기를 계속 노리는 생쥐를 난사한다. 털뭉치 낙하 지점도 살펴야 한다!", skipAllowedAfterSeen: true }] },
@@ -101,7 +124,9 @@ export const WORLD_CUTSCENES: readonly CutsceneScript[] = [
       skipAllowedAfterSeen: true,
     })),
   },
-  { id: "world-02-boss-clear", stageId: "world-02-stage-boss", beats: [{ id: "bite-reward", durationMs: 2400, narration: "치즈 태비를 이겼다! 코기는 새 기술 '물기'를 배웠다. 이제 간식 봉지도 긴장하겠군.", soundCue: "stage-clear", skipAllowedAfterSeen: true }] },
+  { id: "world-02-boss-clear", stageId: "world-02-stage-boss", beats: WORLD02_BOSS_CLEAR_LINES.map((line, index) => ({
+    id: `cheese-clear-${index + 1}`, durationMs: 3000, dialogue: [line], skipAllowedAfterSeen: true,
+  })) },
   { id: "world-03-boss-clear", stageId: "world-03-stage-boss", beats: [{ id: "dash-reward", durationMs: 2400, narration: "고등어를 이겼다! 코기는 새 기술 '대시'를 배웠다. 짧은 다리에도 이제 돌진의 힘이 생겼다.", soundCue: "stage-clear", skipAllowedAfterSeen: true }] },
   { id: "world-04-boss-clear", stageId: "world-04-stage-boss", beats: [{ id: "jump-reward", durationMs: 2400, narration: "턱시도를 이겼다! 코기는 새 기술 '더블 점프'를 배웠다. 다음은 최종 캣타워다.", soundCue: "stage-clear", skipAllowedAfterSeen: true }] },
   { id: "world-05-boss-clear", stageId: "world-05-stage-boss", beats: [{ id: "rotor-reward", durationMs: 2400, narration: "메인쿤을 이겼다! 코기는 마지막 기술 '꼬리 모터'를 배웠다. 이제 왕갈비뼈를 들고 집으로 돌아가자!", soundCue: "stage-clear", skipAllowedAfterSeen: true }] },

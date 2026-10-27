@@ -10,15 +10,15 @@
 
 ## Active Task
 
-[T02 치즈 태비 전후 대화](./phases/2026-10-27-world02-cheese-tabby-victory-story-bite/P01-boss-victory-flow/T02-dialogue-cutscenes.md)
+[T03 공용 클리어·스킬 해금 화면과 월드 3 진입](./phases/2026-10-27-world02-cheese-tabby-victory-story-bite/P01-boss-victory-flow/T03-clear-unlock-flow.md)
 
 ## Status
 
-- 신규 계획 P01 전체 1/6. T01의 치명타 tint 해제와 패배 프레임·방향 고정 및 테스트를 완료했다. T02 대화 구현이 다음 작업이다.
+- 신규 계획 P01 전체 2/6. T02의 치즈 태비 전후 대사 15줄과 수동·자동 진행, 화자 카메라 및 회귀 테스트를 완료했다. T03 결과 화면 재사용이 다음 작업이다.
 
 ## Next Step (IMPORTANT)
 
-T02 청사진을 읽고 `src/game/data/cutscenes/worlds.ts`의 월드 2 보스 전후 대사와 화자·진행·카메라를 구현한다. 기존 미커밋 작업을 보존한다.
+T03 청사진을 읽고 기존 클리어·스킬 해금 화면의 월드 2 재사용과 월드 3 진입을 구현한다. 기존 미커밋 작업을 보존한다.
 
 ## Previous Work Context
 

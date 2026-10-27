@@ -47,7 +47,7 @@ export class CutsceneDirector {
     this.canSkip = this.progress.seenCutsceneIds.includes(id);
     this.player.lockControl("cutscene");
     this.eventBus?.emit("cutscene-started", { cutsceneId: id, skipAllowed: this.canSkip });
-    const allowManualAdvance = id === "world-01-boss-intro" || id === "world-01-boss-clear";
+    const allowManualAdvance = this.isBossDialogue(id);
     const timedBeats = script.beats.map((beat) => ({ ...beat, durationMs: getBeatPlaybackMs(beat) }));
     return this.timeline.play(timedBeats, (beat, index) => this.handleBeat(script, beat, index), allowManualAdvance).then(() => this.finish(id));
   }
@@ -81,7 +81,7 @@ export class CutsceneDirector {
     this.eventBus?.emit("cutscene-beat", {
       cutsceneId: script.id, beat, index, totalBeats: script.beats.length,
       skipAllowed: this.canSkip && beat.skipAllowedAfterSeen,
-      manualAdvance: script.id === "world-01-boss-intro" || script.id === "world-01-boss-clear",
+      manualAdvance: this.isBossDialogue(script.id),
     });
     beat.camera?.forEach((action) => this.applyCameraAction(action));
   }
@@ -105,5 +105,10 @@ export class CutsceneDirector {
     this.playing = false;
     this.currentId = null;
     this.canSkip = false;
+  }
+
+  private isBossDialogue(id: string): boolean {
+    return id === "world-01-boss-intro" || id === "world-01-boss-clear" ||
+      id === "world-02-boss-intro" || id === "world-02-boss-clear";
   }
 }

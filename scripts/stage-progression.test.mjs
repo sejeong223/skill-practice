@@ -50,11 +50,12 @@ test("construction stages select four distinct image layers without changing sav
 test("world 3 and 4 intros and later boss intros match their locations", () => {
   for (const [id, landmark] of [
     ["world-03-intro", "공사장"], ["world-04-intro", "고물상"],
-    ["world-02-boss-intro", "치즈 태비"], ["world-03-boss-intro", "고등어"],
+    ["world-03-boss-intro", "고등어"],
     ["world-04-boss-intro", "턱시도"], ["world-05-boss-intro", "메인쿤"],
   ]) {
     const script = cutscenes.slice(cutscenes.indexOf(`id: "${id}"`));
     assert.ok(script.startsWith(`id: "${id}"`), id);
     assert.ok(script.slice(0, 280).includes(landmark), id);
   }
+  assert.match(cutscenes, /네 녀석이 치즈 태비냐\? 턱시도는 어디로 갔어!/);
 });

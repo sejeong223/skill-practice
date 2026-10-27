@@ -545,6 +545,13 @@ export class StageScene extends Phaser.Scene {
       this.eventUnsubscribers.push(
         this.eventBus.on("cutscene-skip-requested", () => this.cutsceneDirector?.skip()),
         this.eventBus.on("cutscene-advance-requested", () => this.cutsceneDirector?.advance()),
+        this.eventBus.on("cutscene-beat", ({ cutsceneId, beat, index }) => {
+          if (cutsceneId !== "world-02-boss-intro" && cutsceneId !== "world-02-boss-clear") return;
+          const speaker = beat.dialogue?.[0]?.speaker;
+          const actor = speaker === "cheese-tabby" ? this.laterBossSprite
+            : speaker === "corgi" ? this.player : undefined;
+          if (actor) this.cameraDirector?.focusDialogue(actor.x, stage.mapHeight / 2, index === 0);
+        }),
       );
       this.runtime.setStatus("cutscene");
       if (!this.progress.seenCutsceneIds.includes(introId)) {

@@ -1,6 +1,6 @@
 # Task: T02 치즈 태비 전후 대화
 
-## Status: pending
+## Status: done
 
 ## Goal
 
@@ -68,6 +68,7 @@
   - `src/components/game/CutsceneOverlay.tsx` :: `manualAdvance` 소비 — 현재 클릭/키 동작 확인만; read-only
   - `scripts/world02-boss-dialogue.test.mjs` :: 새 대사·화자·순서 테스트; new
   - `scripts/cutscene-auto-advance.test.mjs` :: 기존 자동/수동 컷신 회귀; read-only
+  - `scripts/stage-progression.test.mjs` :: 단발 narration에 의존하던 기존 월드 2 보스 intro 검사 갱신; modify
 
 #### Details
 
@@ -112,6 +113,6 @@ Task: T02-dialogue-cutscenes
 
 ## Progress
 
-- [ ] 구현 완료
-- [ ] 검증 통과
-- commit: pending
+- [x] 구현 완료
+- [x] 검증 통과
+- commit: T02-dialogue-cutscenes
