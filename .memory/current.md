@@ -2,33 +2,33 @@
 
 ## Active Plan
 
-[월드 2 치즈 태비 패배 연출·대화·클리어·물기](./plans/2026-10-27-world02-cheese-tabby-victory-story-bite.md)
+[우측 상단 메뉴 컬러 픽셀 아이콘](./plans/2026-10-27-hud-menu-pixel-icons.md)
 
 ## Active Phase
 
-[P01 치즈 태비 승리 흐름](./phases/2026-10-27-world02-cheese-tabby-victory-story-bite/P01-boss-victory-flow/phase.md)
+[P01 메뉴 아이콘 제작과 적용](./phases/2026-10-27-hud-menu-pixel-icons/P01-menu-icons/phase.md)
 
 ## Active Task
 
-없음 — 월드 2 치즈 태비 승리 흐름 계획 전체 완료.
+[T02 HUD 메뉴와 일시정지 화면에 컬러 아이콘 연결](./phases/2026-10-27-hud-menu-pixel-icons/P01-menu-icons/T02-hud-icon-integration.md)
 
 ## Status
 
-- 신규 계획 P01 전체 6/6 완료. 물기 4프레임 이미지와 320ms 연출을 E 스킬에 연결했다. 자동 검증과 빌드가 통과했고 브라우저의 해금 후 전투 전체 흐름은 수동 검증 기록에 남겼다.
+- 신규 계획 P01 전체 1/2. T01에서 20×20 투명 컬러 PNG 7장을 제작했고 이미지 테스트와 기존 에셋 검사가 통과했다. T02에서 실제 버튼에 연결한다.
 
 ## Next Step (IMPORTANT)
 
-활성 Task 없음. 기존 미커밋 작업은 보존한다.
+T02 청사진을 읽고 `Hud.tsx`, `PauseOverlay.tsx`, `globals.css`에 PNG를 연결하고 브라우저에서 확인한다. 기존 미커밋 작업은 보존한다.
 
 ## Previous Work Context
 
 ## Last Completed Plan
 
-[월드 2 치즈 태비 레퍼런스 기반 전면 재작화](./plans/2026-10-26-world02-cheese-tabby-reference-redraw.md)
+[월드 2 치즈 태비 패배 연출·대화·클리어·물기](./plans/2026-10-27-world02-cheese-tabby-victory-story-bite.md): 전체 6/6 완료(`545517f`~`644d772`).
 
 ## Completed Phase
 
-[P01 레퍼런스 기반 치즈 태비 전면 재작화](./phases/2026-10-26-world02-cheese-tabby-reference-redraw/P01-reference-art-rebuild/phase.md)
+[P01 치즈 태비 승리 흐름](./phases/2026-10-27-world02-cheese-tabby-victory-story-bite/P01-boss-victory-flow/phase.md)
 
 ## 이전 작업 포인터와 기록
 
