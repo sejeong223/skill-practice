@@ -2,23 +2,23 @@
 
 ## Active Plan
 
-없음
+[월드 2 치즈 태비 패배 연출·대화·클리어·물기](./plans/2026-10-27-world02-cheese-tabby-victory-story-bite.md)
 
 ## Active Phase
 
-없음
+[P01 치즈 태비 승리 흐름](./phases/2026-10-27-world02-cheese-tabby-victory-story-bite/P01-boss-victory-flow/phase.md)
 
 ## Active Task
 
-없음
+[T02 치즈 태비 전후 대화](./phases/2026-10-27-world02-cheese-tabby-victory-story-bite/P01-boss-victory-flow/T02-dialogue-cutscenes.md)
 
 ## Status
 
-- 치즈 태비 레퍼런스 기반 전면 재작화 P01 T01·T02가 모두 완료됐다. 새 원화·전투 정렬·브라우저 화면을 검증했다.
+- 신규 계획 P01 전체 1/6. T01의 치명타 tint 해제와 패배 프레임·방향 고정 및 테스트를 완료했다. T02 대화 구현이 다음 작업이다.
 
 ## Next Step (IMPORTANT)
 
-활성 Task 없음. 다음 작업 요청을 기다린다.
+T02 청사진을 읽고 `src/game/data/cutscenes/worlds.ts`의 월드 2 보스 전후 대사와 화자·진행·카메라를 구현한다. 기존 미커밋 작업을 보존한다.
 
 ## Previous Work Context
 

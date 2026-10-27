@@ -204,6 +204,10 @@ export class BossEncounter {
     this.state = { ...this.state, phase: "defeated" };
     this.warning.setVisible(false);
     this.pattern.clear();
+    this.sprite.clearTint();
+    if (this.stageId === "world-02-stage-boss") {
+      this.sprite.setFrame(3).setFlipX(true);
+    }
     this.onDefeated();
   }
 

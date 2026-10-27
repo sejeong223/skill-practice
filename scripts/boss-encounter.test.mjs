@@ -17,20 +17,23 @@ function harness(worldId = 'world-02') {
   const paint = { setDepth() { return this; }, clear() { return this; }, fillStyle() { return this; }, fillRect() { return this; }, destroy() {} };
   const text = { setOrigin() { return this; }, setDepth() { return this; }, setVisible() { return this; }, setText() { return this; }, destroy() {} };
   const scene = { textures: { exists: () => true }, add: { graphics: () => paint, text: () => text }, time: { now: 0, delayedCall() {} } };
-  const sprite = { x: 1280, y: 472, texture: { key: 'boss' },
+  const sprite = { x: 1280, y: 472, texture: { key: 'boss' }, frame: 0, flipX: false, tint: null,
     getBounds: () => ({ x: 1230, y: 420, width: 100, height: 100, centerX: 1280, centerY: 470 }),
-    setFlipX() { return this; }, setTintFill() { return this; }, clearTint() { return this; } };
+    setFrame(frame) { this.frame = frame; return this; },
+    setFlipX(value) { this.flipX = value; return this; },
+    setTintFill(value) { this.tint = value; return this; },
+    clearTint() { this.tint = null; return this; } };
   const player = { x: 1200, y: 504, flipX: false,
     body: { x: 1164, y: 464, left: 1164, right: 1236, top: 464, bottom: 504, width: 72, height: 40, center: { x: 1200, y: 484 } },
     setTintFill() { return this; }, clearTint() { return this; } };
   const pattern = { telegraph: (x, serial) => log.telegraphs.push([x, serial]),
     launch: (x, serial) => log.launches.push([x, serial]),
-    update: () => hits.splice(0), clear: () => { log.clears++; }, destroy() {} };
+    update: () => hits.splice(0), clear: () => { log.clears++; sprite.setFrame(0); }, destroy() {} };
   const defense = { block: false, tryBlock: () => ({ blocked: defense.block }), resetForStage() {}, getToolId: () => 'upside-down-bowl' };
   const events = { emit: (kind, payload) => { if (kind === 'death-requested') log.deaths.push(payload); } };
   const boss = new BossEncounter(scene, player, sprite, `${worldId}-stage-boss`, BOSS_COMBAT_CONFIG[worldId], defense, events, pattern,
     hearts => log.hearts.push(hearts), () => { log.victories++; });
-  return { boss, log, hits, defense, player, scene };
+  return { boss, log, hits, defense, player, scene, sprite };
 }
 
 const advance = (boss, total) => { for (let t = 0; t < total; t += 50) boss.update(50); };
@@ -52,7 +55,7 @@ test('첫 예고는 1.5초 뒤, 발사는 0.6초 뒤, 다음 예고는 첫 예�
 });
 
 test('고급 무기와 한 발 중복 명중 방지, 승리 콜백 한 번', () => {
-  const { boss, log } = harness();
+  const { boss, log, sprite } = harness();
   boss.start();
   assert.equal(boss.acceptToolHit(contact('one', 'rolled-newspaper')), true);
   assert.equal(boss.getState().health, 13);
@@ -63,8 +66,17 @@ test('고급 무기와 한 발 중복 명중 방지, 승리 콜백 한 번', () 
   boss.acceptToolHit(contact('finish', 'rabbit-slipper'));
   assert.equal(boss.getState().health, 0);
   assert.equal(boss.isDefeated(), true);
+  assert.ok(log.clears > 0);
+  assert.equal(sprite.tint, null);
+  assert.equal(sprite.frame, 3);
+  assert.equal(sprite.flipX, true);
+  boss.update(50);
+  assert.equal(sprite.frame, 3);
   assert.equal(boss.acceptToolHit(contact('extra', 'plastic-frisbee')), false);
   assert.equal(log.victories, 1);
+  boss.resetAttempt();
+  assert.equal(sprite.frame, 0);
+  assert.equal(sprite.tint, null);
 });
 
 test('방패, 900ms 무적, 하트 0 사망 한 번, 시도 초기화', () => {
