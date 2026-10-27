@@ -26,6 +26,7 @@ import {
   type World02EntrySide,
 } from "../data/world02Travel";
 import { getWorld03CollapseZones, getWorld03Obstacles } from "../data/world03Construction";
+import { getWorld03SteelBeamDefinitions } from "../data/world03SteelBeams";
 import { BARK_COOLDOWN_MS, BITE_COOLDOWN_MS, SKILL_DEFINITIONS } from "../data/skills";
 import { BossFeedbackController, BARK_SHAKE_DURATION_MS, BARK_SHAKE_INTENSITY, type BossFeedbackSnapshot } from "../systems/bossFeedback";
 import { GameplayEventBus } from "../core/events";
@@ -45,6 +46,7 @@ import { InputManager, toKeybindMap } from "../input/InputManager";
 import { ParallaxRenderer } from "../maps/ParallaxRenderer";
 import { World03ConstructionObstacles } from "../systems/World03ConstructionObstacles";
 import { World03CollapsingFloor } from "../systems/World03CollapsingFloor";
+import { World03SteelBeamDropSystem } from "../systems/World03SteelBeamDropSystem";
 import { BossEncounter } from "../systems/BossEncounter";
 import { CheeseTabbyBallPattern } from "../systems/CheeseTabbyBallPattern";
 import { MackerelBrickPattern } from "../systems/MackerelBrickPattern";
@@ -101,6 +103,7 @@ export class StageScene extends Phaser.Scene {
   private world02Obstacles?: World02ObstacleSystem;
   private world03Obstacles?: World03ConstructionObstacles;
   private world03CollapsingFloor?: World03CollapsingFloor;
+  private world03SteelBeamDrops?: World03SteelBeamDropSystem;
   private world02PigeonDrops?: World02PigeonDropSystem;
   private exitFloor?: Phaser.GameObjects.Rectangle;
   private parallaxRenderer?: ParallaxRenderer;
@@ -268,6 +271,7 @@ export class StageScene extends Phaser.Scene {
         this.world02Obstacles?.resetForAttempt();
         this.world03Obstacles?.resetForAttempt();
         this.world03CollapsingFloor?.resetForAttempt();
+        this.world03SteelBeamDrops?.resetForAttempt(this.player?.x ?? stage.spawn.x);
         this.bossEncounter?.resetAttempt();
         this.world02PigeonDrops?.resetForAttempt(this.player?.x ?? stage.spawn.x);
         this.playerAnimator?.stopBark();
@@ -387,6 +391,15 @@ export class StageScene extends Phaser.Scene {
         this, this.player, stage.id, floor, stage.mapWidth, stage.mapHeight,
       );
     }
+    if (getWorld03SteelBeamDefinitions(stage.id).length > 0 && !this.loadedMap) {
+      this.world03SteelBeamDrops = new World03SteelBeamDropSystem(
+        this, this.player, this.gameplayEventBus, stage.id,
+        getWorld03SteelBeamDefinitions(stage.id),
+        () => this.runtime?.runtimeState.checkpointId ?? null,
+        () => this.runtime?.getStatus() === "play" && !this.stageTransitionStarted,
+      );
+      this.world03SteelBeamDrops.resetForAttempt(this.player.x);
+    }
 
     if (process.env.NODE_ENV !== "production") {
       this.debugOverlay = new MapDebugOverlay(
@@ -458,6 +471,7 @@ export class StageScene extends Phaser.Scene {
     if (data.resumeCheckpointId) {
       this.restoreCheckpoint(data.resumeCheckpointId);
       this.world02PigeonDrops?.resetForAttempt(this.player.x);
+      this.world03SteelBeamDrops?.resetForAttempt(this.player.x);
     }
     this.runtime.start();
     this.eventBus.emit("pause-state-changed", { paused: false });
@@ -766,6 +780,8 @@ export class StageScene extends Phaser.Scene {
       this.world03Obstacles = undefined;
       this.world03CollapsingFloor?.destroy();
       this.world03CollapsingFloor = undefined;
+      this.world03SteelBeamDrops?.destroy();
+      this.world03SteelBeamDrops = undefined;
       this.world02PigeonDrops?.destroy();
       this.world02PigeonDrops = undefined;
       this.gimmickSystem?.destroy();
@@ -908,6 +924,7 @@ export class StageScene extends Phaser.Scene {
     this.playerController?.update(time, delta);
     this.world03CollapsingFloor?.update(elapsed);
     this.world03Obstacles?.update(elapsed);
+    this.world03SteelBeamDrops?.update(elapsed);
     this.world02Obstacles?.update(elapsed);
     this.world02PigeonDrops?.update(elapsed);
     if (this.player && input && canBacktrackWorld02({

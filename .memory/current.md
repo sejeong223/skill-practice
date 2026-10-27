@@ -10,15 +10,15 @@
 
 ## Active Task
 
-[T03 월드 3 철골 빔 낙하와 체크포인트](./phases/2026-10-27-world03-construction-hazards/P01-construction-hazards/T03-falling-steel-beam.md)
+[T04 공사장 자산 테스트의 낡은 기대값 수정](./phases/2026-10-27-world03-construction-hazards/P01-construction-hazards/T04-construction-assets-test.md)
 
 ## Status
 
-- 월드 3 숨은 바닥 붕괴 P00 1/1 완료. 공사장 위험물 P01 2/4 완료. T02 드럼·손수레 배치와 이동 검증 통과, T03 구현 시작 준비 완료.
+- 월드 3 숨은 바닥 붕괴 P00 1/1 완료. 공사장 위험물 P01 3/4 완료. T03 철골 빔 낙하·충돌·재시작 테스트와 타입·lint·빌드 검증 통과.
 
 ## Next Step (IMPORTANT)
 
-P01-T03 청사진을 읽고 고정 좌표 철골 빔의 낙하·연속 충돌·체크포인트 재시작을 구현한다. 기존 미커밋 작업을 보존하고 Task 변경 부분만 커밋한다.
+P01-T04 청사진을 읽고 오래된 월드 3 공사장 에셋 테스트의 배경 크기 기대값과 새 위험물 이미지 계약을 갱신한다. 기존 미커밋 작업을 보존하고 Task 변경 부분만 커밋한다.
 
 ## Previous Work Context
 
