@@ -7,6 +7,7 @@ export interface KeybindMap {
   attack: string[];
   dash: string[];
   bark: string[];
+  bite: string[];
   pause: string[];
 }
 
@@ -18,6 +19,7 @@ export interface InputSnapshot {
   attackPressed: boolean;
   dashPressed: boolean;
   barkPressed: boolean;
+  bitePressed: boolean;
   pausePressed: boolean;
   pauseHeld: boolean;
 }

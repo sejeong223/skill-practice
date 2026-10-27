@@ -88,7 +88,7 @@ test("잘못된 획득은 무변경이고 코인0개 클리어도 완료 기록�
 test("기존 v2 저장을 승계하고 상점도 같은 잔액에서 차감한다", () => {
   const s = setup(1234);
   s.store.save(s.progress);
-  assert.equal(JSON.parse(s.storage.getItem(PROGRESS_STORAGE_KEY)).schemaVersion, 3);
+  assert.equal(JSON.parse(s.storage.getItem(PROGRESS_STORAGE_KEY)).schemaVersion, 5);
   const loaded = s.store.load();
   const economy = new EconomySystem(loaded, s.runtime, s.bus);
   economy.collectCoin(s.runtime.stageId);

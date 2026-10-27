@@ -57,6 +57,7 @@ export type InputAction =
   | "attack"
   | "dash"
   | "bark"
+  | "bite"
   | "pause";
 
 export type ToolSlot = "attack" | "defense";
@@ -125,7 +126,7 @@ export interface SkillDefinition {
   displayName: string;
   unlockAfterBossId: string;
   cooldownMs: number;
-  inputAction: Extract<InputAction, "bark" | "attack" | "dash"> | "jump";
+  inputAction: Extract<InputAction, "bark" | "bite" | "attack" | "dash"> | "jump";
   description: string;
   effect: string;
 }

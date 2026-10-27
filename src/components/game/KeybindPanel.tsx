@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState, type ReactElement } from "react";
 import type { InputAction } from "@/game/core/types";
+import { DEFAULT_KEYBINDS } from "@/game/core/constants";
 import { formatKeybindLabel } from "@/game/input/keybindPresentation";
 
 const ACTION_LABELS: Record<InputAction, string> = {
@@ -12,6 +13,7 @@ const ACTION_LABELS: Record<InputAction, string> = {
   attack: "공격",
   dash: "대시",
   bark: "짖기",
+  bite: "물기",
   pause: "일시정지",
 };
 const ACTIONS = Object.keys(ACTION_LABELS) as InputAction[];
@@ -47,7 +49,7 @@ export function KeybindPanel({ keybinds, onChange }: KeybindPanelProps): ReactEl
         {ACTIONS.map((action) => (
           <div className="keybind-row" key={action}>
             <span>{ACTION_LABELS[action]}</span>
-            <code>{listening === action ? "입력 대기..." : formatKeybindLabel(keybinds[action])}</code>
+            <code>{listening === action ? "입력 대기..." : formatKeybindLabel(keybinds[action] ?? DEFAULT_KEYBINDS[action])}</code>
             <button className="tiny-button" type="button" onClick={() => { setError(null); setListening(action); }}>변경</button>
           </div>
         ))}

@@ -66,13 +66,14 @@ export const DEFAULT_KEYBINDS: Readonly<Record<InputAction, string>> = {
   up: "ArrowUp",
   down: "ArrowDown",
   jump: "Space",
-  attack: "KeyJ",
+  attack: "KeyQ",
   dash: "KeyK",
-  bark: "KeyL",
+  bark: "KeyW",
+  bite: "KeyE",
   pause: "Escape",
 };
 
-export const DEFAULT_VERSION = 4;
+export const DEFAULT_VERSION = 5;
 export const DEFAULT_ATTACK_TOOL_ID = "rabbit-slipper";
 export const DEFAULT_DEFENSE_TOOL_ID = "upside-down-bowl";
 export const DEFAULT_DEFENSE_CHARGES = 3;

@@ -1,6 +1,6 @@
 # Task: T04 공격 Q·짖기 W·물기 E와 저장 마이그레이션
 
-## Status: pending
+## Status: done
 
 ## Goal
 
@@ -53,6 +53,8 @@
   - `src/game/persistence/migrations.ts` :: `migrateSave` — 0~5 허용, 구버전 키 재배치, 기존 커스텀 의상 보존; modify
   - `scripts/keybind-migration.test.mjs` :: 새·기존 저장의 키 매핑/충돌 테스트; new
   - `scripts/goodboy-market-save.test.mjs` :: 저장 schema 기대값과 미지원 상한/의상 회귀; modify
+  - `scripts/corgi-wardrobe-campaign.integration.test.mjs` :: 저장 후 사용자 옷 버전 기대값; modify
+  - `scripts/snack-wallet.test.mjs` :: 저장 envelope 버전 기대값; modify
   - `scripts/world-selection.test.mjs` :: 기존 진행 저장 회귀; read-only
 
 #### Details
@@ -108,6 +110,6 @@ Task: T04-keybinds
 
 ## Progress
 
-- [ ] 구현 완료
-- [ ] 검증 통과
-- commit: pending
+- [x] 구현 완료
+- [x] 검증 통과
+- commit: T04-keybinds

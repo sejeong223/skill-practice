@@ -86,7 +86,7 @@ export function migrateSave(input: unknown): ProgressState {
   }
 
   const schemaVersion = input.schemaVersion === undefined ? 0 : input.schemaVersion;
-  if (typeof schemaVersion !== "number" || !Number.isInteger(schemaVersion) || schemaVersion < 0 || schemaVersion > 4) {
+  if (typeof schemaVersion !== "number" || !Number.isInteger(schemaVersion) || schemaVersion < 0 || schemaVersion > 5) {
     warn("unsupported schema version; using defaults");
     return fallback;
   }
@@ -131,10 +131,22 @@ export function migrateSave(input: unknown): ProgressState {
         keybinds[action] = key;
       }
     }
+    if (schemaVersion < 5) {
+      keybinds.attack = "KeyQ";
+      keybinds.bark = "KeyW";
+      keybinds.bite = "KeyE";
+      if (keybinds.up === "KeyW") keybinds.up = "ArrowUp";
+      for (const action of Object.keys(DEFAULT_KEYBINDS) as InputAction[]) {
+        if (action !== "attack" && action !== "bark" && action !== "bite" &&
+            ["KeyQ", "KeyW", "KeyE"].includes(keybinds[action])) {
+          keybinds[action] = DEFAULT_KEYBINDS[action];
+        }
+      }
+    }
     const safeOwnedTools = [...new Set([...fallback.ownedToolIds, ...ownedToolIds])];
     const ownedCosmeticIds = readCosmeticIds(rawProgress.ownedCosmeticIds);
-    const customOutfits = schemaVersion === 4 ? sanitizeCustomOutfits(rawProgress.customOutfits) : [];
-    const equippedCustomOutfitId = schemaVersion === 4 &&
+    const customOutfits = schemaVersion >= 4 ? sanitizeCustomOutfits(rawProgress.customOutfits) : [];
+    const equippedCustomOutfitId = schemaVersion >= 4 &&
       typeof rawProgress.equippedCustomOutfitId === "string" &&
       customOutfits.some((design) => design.id === rawProgress.equippedCustomOutfitId)
       ? rawProgress.equippedCustomOutfitId as CustomOutfitId : null;

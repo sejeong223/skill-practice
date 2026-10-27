@@ -1,6 +1,7 @@
 import type { SkillDefinition } from "../core/types";
 
 export const BARK_COOLDOWN_MS = 3_000;
+export const BITE_COOLDOWN_MS = 6_000;
 
 export const SKILL_DEFINITIONS: readonly SkillDefinition[] = [
   {
@@ -16,9 +17,9 @@ export const SKILL_DEFINITIONS: readonly SkillDefinition[] = [
     id: "bite",
     displayName: "물기",
     unlockAfterBossId: "world-02-boss",
-    cooldownMs: 600,
-    inputAction: "attack",
-    description: "눈앞의 적과 장애물을 앙 물어뜯는다.",
+    cooldownMs: BITE_COOLDOWN_MS,
+    inputAction: "bite",
+    description: "코기의 날카로운 이빨로 적을 앙숙처럼 물어뜯어 큰 피해를 줍니다.",
     effect: "close-range-bite",
   },
   {

@@ -4,12 +4,13 @@ import type { InputSnapshot, KeybindMap } from "./inputTypes";
 export const DEFAULT_KEYBINDS: KeybindMap = {
   left: ["A", "LEFT"],
   right: ["D", "RIGHT"],
-  up: ["W", "UP"],
+  up: ["UP"],
   down: ["S", "DOWN"],
   jump: ["SPACE"],
-  attack: ["J"],
+  attack: ["Q"],
   dash: ["K"],
-  bark: ["L"],
+  bark: ["W"],
+  bite: ["E"],
   pause: ["ESC"],
 };
 
@@ -26,8 +27,8 @@ export function toKeybindMap(keybinds: Readonly<Record<string, string>>): Keybin
   };
   const get = (action: keyof KeybindMap, fallback: string): string[] => [normalize(keybinds[action] ?? fallback)];
   return {
-    left: get("left", "A"), right: get("right", "D"), up: get("up", "W"), down: get("down", "S"),
-    jump: get("jump", "SPACE"), attack: get("attack", "J"), dash: get("dash", "K"), bark: get("bark", "L"), pause: get("pause", "ESC"),
+    left: get("left", "A"), right: get("right", "D"), up: get("up", "UP"), down: get("down", "S"),
+    jump: get("jump", "SPACE"), attack: get("attack", "Q"), dash: get("dash", "K"), bark: get("bark", "W"), bite: get("bite", "E"), pause: get("pause", "ESC"),
   };
 }
 
@@ -68,6 +69,7 @@ export class InputManager {
       attackPressed: this.wasPressed("attack"),
       dashPressed: this.wasPressed("dash"),
       barkPressed: this.wasPressed("bark"),
+      bitePressed: this.wasPressed("bite"),
       pausePressed: this.wasPressed("pause"),
       pauseHeld: this.isHeld("pause"),
     };

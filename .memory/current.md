@@ -10,15 +10,15 @@
 
 ## Active Task
 
-[T04 공격 Q·짖기 W·물기 E와 저장 마이그레이션](./phases/2026-10-27-world02-cheese-tabby-victory-story-bite/P01-boss-victory-flow/T04-keybinds.md)
+[T05 E 물기 공격과 6초 쿨타임·피해 2](./phases/2026-10-27-world02-cheese-tabby-victory-story-bite/P01-boss-victory-flow/T05-bite-damage.md)
 
 ## Status
 
-- 신규 계획 P01 전체 3/6. T03의 공용 클리어·해금 화면, 월드 2 결과 순서와 진행 저장을 연결했다. T04 키 배치와 저장 마이그레이션이 다음 작업이다.
+- 신규 계획 P01 전체 4/6. T04의 Q/W/E 기본키, 6초 물기 정의와 v4→v5 저장 마이그레이션 및 조작 설정을 완료했다. T05 실제 물기 피해가 다음 작업이다.
 
 ## Next Step (IMPORTANT)
 
-T04 청사진을 읽고 공격 Q·짖기 W·물기 E와 6초 정의, 기존 저장의 키 설정 갱신을 구현한다. 기존 미커밋 작업을 보존한다.
+T05 청사진을 읽고 E 물기의 실제 피해 2, Q 공격 분리와 보스 HUD 쿨타임을 구현한다. 기존 미커밋 작업을 보존한다.
 
 ## Previous Work Context
 

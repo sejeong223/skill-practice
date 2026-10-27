@@ -40,7 +40,7 @@ test('v3 save becomes a reusable three-slot wardrobe without losing coins or equ
   values.set(PROGRESS_STORAGE_KEY, JSON.stringify({ schemaVersion: 3, progress: old }));
   const store = new ProgressStore(storage);
   const migrated = store.load();
-  assert.equal(migrated.version, 4);
+  assert.equal(migrated.version, 5);
   assert.equal(migrated.bankedCoins, 35);
   assert.equal(migrated.equippedOutfitId, 'bee-bodysuit');
 

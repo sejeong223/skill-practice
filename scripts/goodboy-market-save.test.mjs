@@ -51,7 +51,7 @@ test("스키마 2 저장은 코인·월드·체크포인트·과거 도구를 �
   delete progress.equippedOutfitId;
   delete progress.equippedAccessoryId;
   const loaded = migrateSave({ schemaVersion: 2, progress });
-  assert.equal(loaded.version, 4);
+  assert.equal(loaded.version, 5);
   assert.equal(loaded.bankedCoins, 37);
   assert.equal(loaded.selectedWorldId, "world-01");
   assert.equal(loaded.world01CheckpointStageId, "world-01-stage-4");
@@ -81,7 +81,7 @@ test("스키마 3은 외형 소유·장착을 복원하고 잘못된 분류·미
   assert.deepEqual(migrateSave({ schemaVersion: 3, progress: { ...progress, ownedCosmeticIds: [12] } }).ownedCosmeticIds, []);
 });
 
-test("저장 키를 유지하며 스키마 4 envelope로 왕복하고 미래 버전은 거부한다", () => {
+test("저장 키를 유지하며 스키마 5 envelope로 왕복하고 미래 버전은 거부한다", () => {
   const data = new Map();
   const storage = { getItem: key => data.get(key) ?? null, setItem: (key, value) => data.set(key, value), removeItem: key => data.delete(key) };
   const store = new ProgressStore(storage);
@@ -89,10 +89,10 @@ test("저장 키를 유지하며 스키마 4 envelope로 왕복하고 미래 버
   progress.ownedCosmeticIds.push("banana-peel-suit");
   progress.equippedOutfitId = "banana-peel-suit";
   store.save(progress);
-  assert.equal(SAVE_SCHEMA_VERSION, 4);
-  assert.equal(JSON.parse(data.get(PROGRESS_STORAGE_KEY)).schemaVersion, 4);
+  assert.equal(SAVE_SCHEMA_VERSION, 5);
+  assert.equal(JSON.parse(data.get(PROGRESS_STORAGE_KEY)).schemaVersion, 5);
   assert.equal(store.load().equippedOutfitId, "banana-peel-suit");
-  assert.deepEqual(migrateSave({ schemaVersion: 5, progress }).ownedCosmeticIds, []);
+  assert.deepEqual(migrateSave({ schemaVersion: 6, progress }).ownedCosmeticIds, []);
 });
 
 test("구버전 저장의 코인·장비·체크포인트를 유지하며 사용자 옷은 새로 시작한다", () => {
@@ -107,7 +107,7 @@ test("구버전 저장의 코인·장비·체크포인트를 유지하며 사용
   progress.customOutfits = [{ id: "custom-outfit-1", cells: Array(56 * 32).fill("#ff0000"), updatedAt: new Date().toISOString() }];
   progress.equippedCustomOutfitId = "custom-outfit-1";
   const loaded = migrateSave({ schemaVersion: 3, progress });
-  assert.equal(loaded.version, 4);
+  assert.equal(loaded.version, 5);
   assert.equal(loaded.bankedCoins, 42);
   assert.deepEqual(loaded.clearedStages, ["world-01-stage-1"]);
   assert.equal(loaded.world01CheckpointStageId, "world-01-stage-4");
