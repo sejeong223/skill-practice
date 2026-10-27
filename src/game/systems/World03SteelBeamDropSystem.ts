@@ -8,6 +8,7 @@ import {
   type World03SteelBeamDefinition,
 } from "../data/world03SteelBeams";
 import type { Player } from "../entities/Player";
+import { DEFAULT_PLAYER_TUNING } from "../entities/playerTypes";
 import { sweptAabbOverlap, type AxisAlignedBounds } from "./world03SteelBeamCollision";
 
 type BeamStatus = "armed" | "falling" | "landed" | "finished" | "skipped";
@@ -20,11 +21,10 @@ interface BeamRuntime {
   landedRemainingMs: number;
 }
 
-const SPAWN_CENTER_Y = -32;
+const SPAWN_CENTER_Y = -128;
 const FLOOR_TOP_Y = 504;
 const LANDED_CENTER_Y = FLOOR_TOP_Y - WORLD03_STEEL_BEAM_HITBOX_HEIGHT / 2;
 const LANDED_LIFETIME_MS = 300;
-const CENTER_TRIGGER_TOLERANCE = 6;
 
 function playerBodyBounds(player: Player): AxisAlignedBounds | null {
   const body = player.body;
@@ -60,6 +60,7 @@ export class World03SteelBeamDropSystem {
     definitions: readonly World03SteelBeamDefinition[],
     private readonly getCheckpointId: () => string | null,
     private readonly canHandleContact: () => boolean,
+    private readonly isBackpedaling: () => boolean,
   ) {
     this.beams = definitions.map((definition) => ({
       definition,
@@ -76,22 +77,25 @@ export class World03SteelBeamDropSystem {
     if (!currentPlayerBounds) return;
     const previousPlayerBounds = this.previousPlayerBounds ?? currentPlayerBounds;
     const elapsed = Number.isFinite(deltaMs) ? Math.min(50, Math.max(0, deltaMs)) : 0;
-    const previousCenter = centerX(previousPlayerBounds);
     const currentCenter = centerX(currentPlayerBounds);
 
     for (const beam of this.beams) {
+      const beamLeft = beam.definition.x - WORLD03_STEEL_BEAM_HITBOX_WIDTH / 2;
       if (beam.status === "armed" &&
-          ((previousCenter < beam.definition.x && currentCenter >= beam.definition.x) ||
-            Math.abs(currentCenter - beam.definition.x) <= CENTER_TRIGGER_TOLERANCE)) {
+          currentPlayerBounds.right >= beamLeft &&
+          (currentCenter <= beam.definition.x || previousPlayerBounds.right < beamLeft)) {
         beam.sprite = this.scene.add.image(beam.definition.x, SPAWN_CENTER_Y, "world-03-falling-steel-beam")
           .setOrigin(0.5).setDepth(11);
         beam.previousY = SPAWN_CENTER_Y;
         beam.status = "falling";
-        // The trigger is observed at the end of this frame. Begin falling next frame
-        // so a corgi that keeps running has the full reaction distance.
+        // Begin falling next frame so the corgi has time for a quick backward turn.
         continue;
       }
       if (beam.status === "falling" && beam.sprite) {
+        if (this.isBackpedaling()) {
+          // A quick turn must overcome the normal run acceleration before impact.
+          this.player.setVelocityX(-DEFAULT_PLAYER_TUNING.runSpeed);
+        }
         const nextY = Math.min(
           LANDED_CENTER_Y,
           beam.previousY + WORLD03_STEEL_BEAM_SPEED_PX_PER_SECOND * elapsed / 1000,

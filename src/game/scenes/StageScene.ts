@@ -397,6 +397,11 @@ export class StageScene extends Phaser.Scene {
         getWorld03SteelBeamDefinitions(stage.id),
         () => this.runtime?.runtimeState.checkpointId ?? null,
         () => this.runtime?.getStatus() === "play" && !this.stageTransitionStarted,
+        () => {
+          const movement = this.inputManager?.getSnapshot();
+          return Boolean(movement?.left && !movement.right &&
+            !this.player?.isControlLocked() && !this.player?.getControlOverride());
+        },
       );
       this.world03SteelBeamDrops.resetForAttempt(this.player.x);
     }

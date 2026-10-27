@@ -25,8 +25,12 @@ const { World03SteelBeamDropSystem } = require('../src/game/systems/World03Steel
 function createHarness(stageId = 'world-03-stage-3') {
   const images = [];
   const events = [];
-  const player = { body: { left: 60, right: 132, top: 464, bottom: 504 } };
+  const player = {
+    body: { left: 60, right: 132, top: 464, bottom: 504, velocity: { x: 0 } },
+    setVelocityX(value) { this.body.velocity.x = value; },
+  };
   let canHandleContact = true;
+  let backpedaling = false;
   const scene = {
     time: { now: 4321 },
     add: {
@@ -46,11 +50,13 @@ function createHarness(stageId = 'world-03-stage-3') {
   const system = new World03SteelBeamDropSystem(
     scene, player, { emit: (name, payload) => events.push({ name, payload }) }, stageId,
     getWorld03SteelBeamDefinitions(stageId), () => 'checkpoint-1', () => canHandleContact,
+    () => backpedaling,
   );
   return {
     system, player, images, events,
     setPlayerCenter(x) { player.body.left = x - 36; player.body.right = x + 36; },
     setContactAllowed(value) { canHandleContact = value; },
+    setBackpedaling(value) { backpedaling = value; },
   };
 }
 
@@ -97,13 +103,13 @@ test('swept AABB catches a fast pass between frames without false envelope colli
 test('a direct hit kills once; restart re-arms ahead and skips sites behind the checkpoint', () => {
   const harness = createHarness();
   const { system, images, events, setPlayerCenter } = harness;
-  setPlayerCenter(1600);
+  setPlayerCenter(1550);
   system.update(50);
   assert.equal(images.length, 0);
-  setPlayerCenter(1640);
+  setPlayerCenter(1576);
   system.update(50);
   assert.equal(images.length, 1);
-  assert.deepEqual([images[0].x, images[0].y, images[0].depth], [1640, -32, 11]);
+  assert.deepEqual([images[0].x, images[0].y, images[0].depth], [1640, -128, 11]);
   for (let index = 0; index < 10; index++) system.update(50);
   assert.equal(events.length, 1);
   assert.deepEqual(events[0], {
@@ -139,13 +145,13 @@ test('landing is harmless and vanishes after 300ms; pausing freezes the beam', (
   setPlayerCenter(1640);
   system.update(50);
   const beam = images[0];
-  assert.equal(beam.y, -32);
+  assert.equal(beam.y, -128);
   setPlayerCenter(1800);
   setContactAllowed(false);
   system.update(50);
-  assert.equal(beam.y, -32);
+  assert.equal(beam.y, -128);
   setContactAllowed(true);
-  for (let index = 0; index < 7; index++) system.update(50);
+  for (let index = 0; index < 8; index++) system.update(50);
   assert.equal(beam.y, 494);
   assert.equal(events.length, 0);
   setPlayerCenter(1640);
@@ -159,19 +165,43 @@ test('landing is harmless and vanishes after 300ms; pausing freezes the beam', (
   system.destroy();
 });
 
-test('continuous 240px/s running can clear the unannounced first drop', () => {
+test('running forward into the beam footprint is hit instead of passing beneath it', () => {
   const harness = createHarness('world-03-stage-1');
   const { system, images, events, setPlayerCenter } = harness;
-  setPlayerCenter(1628);
+  setPlayerCenter(1564);
   system.update(50);
-  setPlayerCenter(1640);
+  assert.equal(images.length, 0);
+  setPlayerCenter(1576);
   system.update(50);
-  assert.equal(images[0].y, -32);
-  for (let step = 1; step <= 7; step++) {
-    setPlayerCenter(1640 + step * 12);
+  assert.equal(images[0].y, -128);
+  for (let step = 1; step <= 8; step++) {
+    setPlayerCenter(1576 + step * 12);
     system.update(50);
+  }
+  assert.equal(events.length, 1);
+  system.destroy();
+});
+
+test('a fast backward turn after the beam appears clears its landing path', () => {
+  const harness = createHarness('world-03-stage-1');
+  const { system, player, images, events, setPlayerCenter, setBackpedaling } = harness;
+  let center = 1576;
+  setPlayerCenter(center);
+  player.body.velocity.x = 240;
+  system.update(50);
+  assert.equal(images[0].y, -128);
+  for (let step = 1; step <= 8; step++) {
+    if (step > 3) setBackpedaling(true);
+    player.body.velocity.x = step > 3
+      ? Math.max(-240, player.body.velocity.x - 90)
+      : 240;
+    system.update(50);
+    if (step > 3) assert.equal(player.body.velocity.x, -240);
+    center += player.body.velocity.x * 0.05;
+    setPlayerCenter(center);
   }
   assert.equal(images[0].y, 494);
   assert.equal(events.length, 0);
+  assert.ok(center < 1640 - 28 - 36);
   system.destroy();
 });
