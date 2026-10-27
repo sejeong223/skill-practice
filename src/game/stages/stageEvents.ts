@@ -1,6 +1,7 @@
 import type { CosmeticId, CustomOutfitDesign, CustomOutfitId, MarketCategory, SelectableWorldId, StageId, WorldSelectionRequest } from "../core/types";
 import type { CutsceneBeat } from "../cutscenes/types";
 import type { BossFeedbackSnapshot } from "../systems/bossFeedback";
+import type { BossVictoryStageId } from "../data/bossVictoryPresentation";
 
 export interface StageEventMap {
   "boss-feedback-changed": BossFeedbackSnapshot;
@@ -48,12 +49,12 @@ export interface StageEventMap {
   };
   "ending-finished": { cutsceneId: "ending-homecoming" };
   "stage-clear-scene-opened": {
-    stageId: "world-01-stage-boss";
-    nextStageId: "world-02-stage-1";
+    stageId: BossVictoryStageId;
+    nextStageId: "world-02-stage-1" | "world-03-stage-1";
   };
   "skill-unlock-scene-opened": {
-    stageId: "world-01-stage-boss";
-    skillId: "bark";
+    stageId: BossVictoryStageId;
+    skillId: "bark" | "bite";
   };
   "cutscene-requested": {
     stageId: StageId;

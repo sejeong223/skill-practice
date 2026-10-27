@@ -1,11 +1,12 @@
 import * as Phaser from "phaser";
 import { GameEventBus } from "../bridge/GameEventBus";
 import type { ProgressState } from "../core/types";
+import { getBossVictoryPresentation, type BossVictoryStageId } from "../data/bossVictoryPresentation";
 
 export interface World01SkillUnlockSceneData {
-  readonly stageId: "world-01-stage-boss";
-  readonly nextStageId: "world-02-stage-1";
-  readonly skillId: "bark";
+  readonly stageId: BossVictoryStageId;
+  readonly nextStageId: "world-02-stage-1" | "world-03-stage-1";
+  readonly skillId: "bark" | "bite";
 }
 
 export class World01SkillUnlockScene extends Phaser.Scene {
@@ -28,16 +29,17 @@ export class World01SkillUnlockScene extends Phaser.Scene {
 
     const eventBus = this.registry.get("gameEventBus");
     const progress = this.registry.get("progressState") as ProgressState | undefined;
+    const presentation = getBossVictoryPresentation(data?.stageId);
     if (
-      data?.stageId !== "world-01-stage-boss" ||
-      data.nextStageId !== "world-02-stage-1" ||
-      data.skillId !== "bark" ||
+      !data?.stageId || !presentation ||
+      data.nextStageId !== presentation.nextStageId ||
+      data.skillId !== presentation.skillId ||
       !(eventBus instanceof GameEventBus) ||
-      !progress?.unlockedSkills.includes("bark") ||
-      !progress.clearedStages.includes("world-01-stage-boss")
+      !progress?.unlockedSkills.includes(data.skillId) ||
+      !progress.clearedStages.includes(data.stageId)
     ) {
       this.add.rectangle(640, 360, 1280, 720, 0x221d29);
-      this.add.text(640, 360, "짖기 해금 안내 데이터를 불러오지 못했습니다.", {
+      this.add.text(640, 360, "스킬 해금 안내 데이터를 불러오지 못했습니다.", {
         fontFamily: "Galmuri11Pixel, monospace",
         fontSize: "28px",
         color: "#ffdddd",
@@ -50,13 +52,13 @@ export class World01SkillUnlockScene extends Phaser.Scene {
       skillId: data.skillId,
     };
 
-    if (this.textures.exists("world-01-roof-day-mid")) {
-      this.add.image(640, 360, "world-01-roof-day-mid").setDisplaySize(1280, 720);
+    if (this.textures.exists(presentation.backgroundKey)) {
+      this.add.image(640, 360, presentation.backgroundKey).setDisplaySize(1280, 720);
     }
     this.add.rectangle(640, 360, 1280, 720, 0x16212b, 0.7);
-    if (this.textures.exists("world-01-calico-boss")) {
-      this.add.sprite(990, 555, "world-01-calico-boss", 2)
-        .setScale(1.4).setAlpha(0.65);
+    if (this.textures.exists(presentation.bossTextureKey)) {
+      this.add.sprite(990, 555, presentation.bossTextureKey, presentation.defeatedFrame)
+        .setFlipX(presentation.defeatedFlipX).setScale(1.4).setAlpha(0.65);
     }
     this.add.rectangle(640, 350, 960, 440, 0x1b2630, 0.94)
       .setStrokeStyle(5, 0xb17b2a);
@@ -68,19 +70,19 @@ export class World01SkillUnlockScene extends Phaser.Scene {
       strokeThickness: 6,
       shadow: { offsetX: 4, offsetY: 5, color: "#0b0f17", blur: 3, fill: true },
     }).setOrigin(0.5);
-    this.add.text(640, 303, "짖기", {
+    this.add.text(640, 303, presentation.skillName, {
       fontFamily: "Galmuri11Pixel, monospace",
       fontSize: "43px",
       color: "#fff5d8",
     }).setOrigin(0.5);
-    this.add.text(640, 382, "맹렬한 멍멍 소리로 보스 고양이를 순간 당황시킵니다", {
+    this.add.text(640, 382, presentation.skillDescription, {
       fontFamily: "Galmuri11Pixel, monospace",
       fontSize: "23px",
       color: "#fff5d8",
       align: "center",
       wordWrap: { width: 870 },
     }).setOrigin(0.5);
-    this.add.text(640, 438, "(※ 보스 공격 패턴을 잠시 멈출 수 있습니다.)", {
+    this.add.text(640, 438, presentation.skillEffectNote, {
       fontFamily: "Galmuri11Pixel, monospace",
       fontSize: "20px",
       color: "#f0b95f",
@@ -107,10 +109,17 @@ export class World01SkillUnlockScene extends Phaser.Scene {
   private continueToStageClear(): void {
     if (!this.canContinue || this.transitioning || !this.stageData) return;
     this.transitioning = true;
-    this.scene.start("World01StageClearScene", {
-      stageId: this.stageData.stageId,
-      nextStageId: this.stageData.nextStageId,
-    });
+    if (this.stageData.stageId === "world-02-stage-boss") {
+      this.scene.start("StageScene", {
+        stageId: "world-03-stage-1",
+        playerName: (this.registry.get("progressState") as ProgressState).playerName,
+      });
+    } else {
+      this.scene.start("World01StageClearScene", {
+        stageId: this.stageData.stageId,
+        nextStageId: this.stageData.nextStageId,
+      });
+    }
   }
 
   private cleanup(): void {

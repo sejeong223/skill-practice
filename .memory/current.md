@@ -10,15 +10,15 @@
 
 ## Active Task
 
-[T03 공용 클리어·스킬 해금 화면과 월드 3 진입](./phases/2026-10-27-world02-cheese-tabby-victory-story-bite/P01-boss-victory-flow/T03-clear-unlock-flow.md)
+[T04 공격 Q·짖기 W·물기 E와 저장 마이그레이션](./phases/2026-10-27-world02-cheese-tabby-victory-story-bite/P01-boss-victory-flow/T04-keybinds.md)
 
 ## Status
 
-- 신규 계획 P01 전체 2/6. T02의 치즈 태비 전후 대사 15줄과 수동·자동 진행, 화자 카메라 및 회귀 테스트를 완료했다. T03 결과 화면 재사용이 다음 작업이다.
+- 신규 계획 P01 전체 3/6. T03의 공용 클리어·해금 화면, 월드 2 결과 순서와 진행 저장을 연결했다. T04 키 배치와 저장 마이그레이션이 다음 작업이다.
 
 ## Next Step (IMPORTANT)
 
-T03 청사진을 읽고 기존 클리어·스킬 해금 화면의 월드 2 재사용과 월드 3 진입을 구현한다. 기존 미커밋 작업을 보존한다.
+T04 청사진을 읽고 공격 Q·짖기 W·물기 E와 6초 정의, 기존 저장의 키 설정 갱신을 구현한다. 기존 미커밋 작업을 보존한다.
 
 ## Previous Work Context
 

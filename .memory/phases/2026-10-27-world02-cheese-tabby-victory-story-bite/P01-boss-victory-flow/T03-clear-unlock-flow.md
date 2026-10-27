@@ -1,6 +1,6 @@
 # Task: T03 공용 클리어·스킬 해금 화면과 월드 3 진입
 
-## Status: pending
+## Status: done
 
 ## Goal
 
@@ -123,6 +123,6 @@ Task: T03-clear-unlock-flow
 
 ## Progress
 
-- [ ] 구현 완료
-- [ ] 검증 통과
-- commit: pending
+- [x] 구현 완료
+- [x] 검증 통과
+- commit: T03-clear-unlock-flow

@@ -581,7 +581,7 @@ export class StageScene extends Phaser.Scene {
       if (stageId !== this.stageId || this.stageTransitionStarted) return;
       this.rememberWorld02Visit();
       this.runtime?.setStatus("completed");
-      if (stageId === "world-01-stage-boss") return;
+      if (stageId === "world-01-stage-boss" || stageId === "world-02-stage-boss") return;
       const nextStageId = getNextStageId(stageId);
       if (!nextStageId) {
         if (stageId === "world-05-stage-boss") {
@@ -1047,8 +1047,15 @@ export class StageScene extends Phaser.Scene {
       this.progress.unlockedSkills.push(skillId);
       this.skillSystem?.unlockAfterBoss(`${stage.worldId}-boss`);
     }
+    if (stage.id === "world-02-stage-boss") this.progress.selectedWorldId = null;
     this.player?.unlockControl("boss-victory");
     this.runtime?.complete();
+    if (stage.id === "world-02-stage-boss") {
+      this.scene.start("World01StageClearScene", {
+        stageId: "world-02-stage-boss",
+        nextStageId: "world-03-stage-1",
+      });
+    }
   }
 
   private async playFinalEnding(): Promise<void> {
