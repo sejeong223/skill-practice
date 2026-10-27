@@ -10,15 +10,15 @@
 
 ## Active Task
 
-[T06 무는 코기 이미지 제작과 물기 연출](./phases/2026-10-27-world02-cheese-tabby-victory-story-bite/P01-boss-victory-flow/T06-corgi-bite-art.md)
+없음 — 월드 2 치즈 태비 승리 흐름 계획 전체 완료.
 
 ## Status
 
-- 신규 계획 P01 전체 5/6. T05의 독립 E 물기 피해 2, 6초 쿨타임 HUD와 Q의 낡은 물기 연계 제거를 완료했다. T06 코기 이미지 제작·표시가 다음 작업이다.
+- 신규 계획 P01 전체 6/6 완료. 물기 4프레임 이미지와 320ms 연출을 E 스킬에 연결했다. 자동 검증과 빌드가 통과했고 브라우저의 해금 후 전투 전체 흐름은 수동 검증 기록에 남겼다.
 
 ## Next Step (IMPORTANT)
 
-T06 청사진을 읽고 `corgi-bite.png` 4프레임 이미지를 제작하고 E 물기 중 게임 화면에 표시한다. 기존 미커밋 작업을 보존한다.
+활성 Task 없음. 기존 미커밋 작업은 보존한다.
 
 ## Previous Work Context
 

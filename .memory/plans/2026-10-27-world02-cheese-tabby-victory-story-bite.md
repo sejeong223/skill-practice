@@ -16,7 +16,7 @@
 
 | Phase | Status | Summary | Blueprint |
 | :--- | :--- | :--- | :--- |
-| P01 | `in_progress` | 치즈 태비 패배 자세, 전후 대화, 공용 결과 화면, 물기 피해와 새 코기 물기 이미지를 단계별 연결 | [P01](../phases/2026-10-27-world02-cheese-tabby-victory-story-bite/P01-boss-victory-flow/phase.md) |
+| P01 | `done` | 치즈 태비 패배 자세, 전후 대화, 공용 결과 화면, 물기 피해와 새 코기 물기 이미지를 단계별 연결 | [P01](../phases/2026-10-27-world02-cheese-tabby-victory-story-bite/P01-boss-victory-flow/phase.md) |
 
 ## Baseline & Boundaries
 

@@ -4,6 +4,7 @@ import { DEFAULT_PLAYER_TUNING } from "./playerTypes";
 
 const RUN_FRAME_RATE = 10;
 export const BARK_PRESENTATION_MS = 450;
+export const BITE_PRESENTATION_MS = 320;
 const BARK_FOOT_ANCHOR = 99;
 const SLIPPER_SWING_MS = 220;
 // Opaque paw rows in corgi-run.png, measured per animation frame.
@@ -13,6 +14,9 @@ export class PlayerAnimator {
   private readonly player: Player;
   private activeAnimationKey: string | null = null;
   private barkRemainingMs = 0;
+  private biteImage?: Phaser.GameObjects.Sprite;
+  private biteStartedAt = 0;
+  private biteUntil = 0;
   private slipperImage?: Phaser.GameObjects.Image;
   private slipperSwingStartedAt = 0;
   private slipperSwingUntil = 0;
@@ -36,6 +40,7 @@ export class PlayerAnimator {
   public triggerBark(): void {
     const barkTextureKey = this.player.getAppearanceTextures().bark;
     if (!this.player.scene.textures.exists(barkTextureKey)) return;
+    this.stopBite();
     this.barkRemainingMs = BARK_PRESENTATION_MS;
     this.player.anims.stop();
     this.player.anims.timeScale = 1;
@@ -53,8 +58,25 @@ export class PlayerAnimator {
     this.activeAnimationKey = null;
   }
 
+  public triggerBite(now: number): void {
+    if (!this.player.scene.textures.exists("corgi-bite")) return;
+    this.stopBark();
+    this.biteImage ??= this.player.scene.add.sprite(this.player.x, this.player.y, "corgi-bite", 0)
+      .setDepth(this.player.depth + 0.5);
+    this.biteStartedAt = now;
+    this.biteUntil = now + BITE_PRESENTATION_MS;
+    this.biteImage.setFrame(0).setVisible(true);
+    this.updateBite(now);
+  }
+
+  public stopBite(): void {
+    this.biteUntil = 0;
+    this.biteImage?.setVisible(false);
+  }
+
   public update(now = this.player.scene.time.now, deltaMs = 0): void {
     this.updateSlipperSwing(now);
+    this.updateBite(now);
     if (this.barkRemainingMs > 0) {
       this.barkRemainingMs = Math.max(0, this.barkRemainingMs - (Number.isFinite(deltaMs) ? Math.max(0, deltaMs) : 0));
       if (this.barkRemainingMs > 0) return;
@@ -81,7 +103,10 @@ export class PlayerAnimator {
 
   public destroy(): void {
     this.stopBark();
+    this.stopBite();
     this.player.off("animationupdate", this.syncRunFootAnchor, this);
+    this.biteImage?.destroy();
+    this.biteImage = undefined;
     this.slipperImage?.destroy();
     this.slipperImage = undefined;
   }
@@ -112,6 +137,25 @@ export class PlayerAnimator {
       .setDisplaySize(size, size)
       .setAngle(this.slipperFacing * (-40 + progress * 85))
       .setAlpha(1 - Math.max(0, progress - 0.7) / 0.3);
+  }
+
+  private updateBite(now: number): void {
+    const image = this.biteImage;
+    if (!image?.visible) return;
+    if (now >= this.biteUntil) {
+      this.stopBite();
+      return;
+    }
+    image
+      .setFrame(Math.min(3, Math.floor(Math.max(0, now - this.biteStartedAt) / 80)))
+      .setPosition(this.player.x, this.player.y)
+      .setOrigin(this.player.originX, this.player.originY)
+      .setScale(this.player.scaleX, this.player.scaleY)
+      .setAngle(this.player.angle)
+      .setFlipX(this.player.flipX)
+      .setFlipY(this.player.flipY)
+      .setAlpha(this.player.alpha)
+      .setDepth(this.player.depth + 0.5);
   }
 
   private playRunAnimation(): void {

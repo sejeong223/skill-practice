@@ -257,6 +257,7 @@ export class StageScene extends Phaser.Scene {
       this.gameplayEventBus.on("death", () => {
         this.combatSystem?.resetForStage();
         this.playerAnimator?.stopBark();
+        this.playerAnimator?.stopBite();
         this.resetBossFeedback();
         this.publishBossFeedback(true, true);
       }),
@@ -267,6 +268,7 @@ export class StageScene extends Phaser.Scene {
         this.bossEncounter?.resetAttempt();
         this.world02PigeonDrops?.resetForAttempt(this.player?.x ?? stage.spawn.x);
         this.playerAnimator?.stopBark();
+        this.playerAnimator?.stopBite();
         this.resetBossFeedback();
         this.publishBossFeedback(true);
       }),
@@ -876,6 +878,7 @@ export class StageScene extends Phaser.Scene {
       this.equipmentVisual?.setEnabled(this.runtime?.getStatus() === "paused");
       if (this.runtime?.getStatus() !== "paused") {
         this.playerAnimator?.stopBark();
+        this.playerAnimator?.stopBite();
         this.bossFeedback.clearWarning();
         this.cameras.main?.shakeEffect.reset();
       }
@@ -963,6 +966,7 @@ export class StageScene extends Phaser.Scene {
     if (input?.bitePressed && this.player && !this.stageTransitionStarted && this.runtime.getStatus() === "play") {
       const result = this.skillSystem?.use("bite", this.skillElapsedMs);
       if (result?.accepted) {
+        this.playerAnimator?.triggerBite(time);
         this.gameplayEventBus?.emit("bite-hit", { now: time });
         this.calicoBoss?.acceptBiteHit(this.player);
         this.bossEncounter?.acceptBiteHit(this.player);
@@ -1098,6 +1102,7 @@ export class StageScene extends Phaser.Scene {
     this.player.disableBody(false, false);
     this.player.setAnimationState("idle");
     this.playerAnimator?.stopBark();
+    this.playerAnimator?.stopBite();
     this.playerAnimator?.stopSlipperSwing();
     this.playerAnimator?.update(this.time.now);
     this.bowlShieldVisual?.update(0, false);

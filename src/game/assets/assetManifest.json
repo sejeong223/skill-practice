@@ -57,10 +57,10 @@
     "key": "corgi-bite",
     "kind": "spritesheet",
     "url": "/assets/pixel/characters/corgi/corgi-bite.png",
-    "frameWidth": 32,
-    "frameHeight": 48,
+    "frameWidth": 112,
+    "frameHeight": 128,
     "frameCount": 4,
-    "required": false
+    "required": true
   },
   {
     "key": "corgi-dash",

@@ -1,6 +1,6 @@
 # Task: T06 무는 코기 이미지 제작과 물기 연출
 
-## Status: pending
+## Status: done
 
 ## Goal
 
@@ -112,6 +112,6 @@ Task: T06-corgi-bite-art
 
 ## Progress
 
-- [ ] 구현 완료
-- [ ] 검증 통과
-- commit: pending
+- [x] 구현 완료
+- [x] 검증 통과
+- commit: T06 완료 커밋

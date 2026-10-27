@@ -226,12 +226,14 @@ export class PrototypeScene extends Phaser.Scene {
     });
     this.eventBus.on("death", (payload) => {
       this.playerAnimator?.stopBark();
+      this.playerAnimator?.stopBite();
       this.eventLogText?.setText(
         "event: death  " + payload.cause + "  retrying",
       );
     });
     this.eventBus.on("restart", (payload) => {
       this.playerAnimator?.stopBark();
+      this.playerAnimator?.stopBite();
       this.eventLogText?.setText(
         "event: restart  attempt " + payload.attempt,
       );
@@ -305,6 +307,7 @@ export class PrototypeScene extends Phaser.Scene {
       if (this.skillSystem?.use("bark", time).accepted) this.playerAnimator?.triggerBark();
     }
     if (snapshot?.bitePressed && this.skillSystem?.use("bite", time).accepted) {
+      this.playerAnimator?.triggerBite(time);
       this.eventBus?.emit("bite-hit", { now: time });
     }
 
