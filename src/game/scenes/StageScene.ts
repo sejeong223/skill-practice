@@ -907,6 +907,7 @@ export class StageScene extends Phaser.Scene {
     this.bossFeedback.update(elapsed);
     this.playerController?.update(time, delta);
     this.world03CollapsingFloor?.update(elapsed);
+    this.world03Obstacles?.update(elapsed);
     this.world02Obstacles?.update(elapsed);
     this.world02PigeonDrops?.update(elapsed);
     if (this.player && input && canBacktrackWorld02({

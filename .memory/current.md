@@ -10,15 +10,15 @@
 
 ## Active Task
 
-[T02 케이블 드럼·손수레 배치와 드럼 이동](./phases/2026-10-27-world03-construction-hazards/P01-construction-hazards/T02-rolling-drum-and-wheelbarrow.md)
+[T03 월드 3 철골 빔 낙하와 체크포인트](./phases/2026-10-27-world03-construction-hazards/P01-construction-hazards/T03-falling-steel-beam.md)
 
 ## Status
 
-- 월드 3 숨은 바닥 붕괴 P00 1/1 완료. 공사장 위험물 P01 1/4 완료. T01 이미지·에셋 등록 검증 통과, T02 구현 시작 준비 완료.
+- 월드 3 숨은 바닥 붕괴 P00 1/1 완료. 공사장 위험물 P01 2/4 완료. T02 드럼·손수레 배치와 이동 검증 통과, T03 구현 시작 준비 완료.
 
 ## Next Step (IMPORTANT)
 
-P01-T02 청사진을 읽고 기존 8자리 장애물 배치·코인 간격·드럼 이동과 재시작을 구현한다. 기존 미커밋 작업을 보존하고 Task 변경 부분만 커밋한다.
+P01-T03 청사진을 읽고 고정 좌표 철골 빔의 낙하·연속 충돌·체크포인트 재시작을 구현한다. 기존 미커밋 작업을 보존하고 Task 변경 부분만 커밋한다.
 
 ## Previous Work Context
 
