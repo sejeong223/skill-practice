@@ -2,23 +2,23 @@
 
 ## Active Plan
 
-[월드 3 오후 공사장 맵 아트 개선](./plans/2026-10-27-world03-afternoon-construction-art.md)
+[월드 3 공사장 장애물과 철골 빔 낙하](./plans/2026-10-27-world03-construction-hazards.md)
 
 ## Active Phase
 
-없음 — [P01 월드 3 오후 공사장 시각 개선](./phases/2026-10-27-world03-afternoon-construction-art/P01-world03-visuals/phase.md) 완료.
+[P01 월드 3 공사장 위험물](./phases/2026-10-27-world03-construction-hazards/P01-construction-hazards/phase.md)
 
 ## Active Task
 
-없음 — [T03 공사장 장애물 소품과 전 구간 QA](./phases/2026-10-27-world03-afternoon-construction-art/P01-world03-visuals/T03-construction-props-and-qa.md) 완료.
+[T01 공사장 위험물 픽셀 이미지와 에셋 등록](./phases/2026-10-27-world03-construction-hazards/P01-construction-hazards/T01-hazard-art-and-assets.md)
 
 ## Status
 
-- 월드 3 오후 공사장 시각 개선 계획 P01 3/3 완료. T01 공통 하늘·전경·바닥, T02 다섯 구역 중경·라우팅, T03 네 장애물 아트와 브라우저 QA를 마쳤다.
+- 월드 3 숨은 바닥 붕괴 P00 1/1 완료. 공사장 장애물·철골 빔·자산 테스트 P01 0/4, T01 구현 시작 준비 완료.
 
 ## Next Step (IMPORTANT)
 
-현재 계획의 남은 Task는 없다. 새 작업은 별도 계획/포인터로 시작한다. 기존 미커밋 작업은 보존한다.
+P01-T01 청사진을 읽고 위험물 이미지 3개와 manifest·월드 3 미술 카탈로그·시각 자산 테스트를 구현한다. 기존 미커밋 작업을 보존하고 Task 변경 부분만 커밋한다.
 
 ## Previous Work Context
 

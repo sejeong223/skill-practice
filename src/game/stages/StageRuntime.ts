@@ -15,6 +15,7 @@ import type { LoadedMap } from "../maps/mapTypes";
 import { EconomySystem } from "../systems/EconomySystem";
 import { hasCollectedCoin } from "../systems/coinLedger";
 import { segmentCoinPresentation } from "./segmentCoinPresentation";
+import { getWorld03CoinPositions } from "../data/world03Construction";
 
 interface RuntimeEntityRecord {
   readonly kind: StageEntityKind;
@@ -78,6 +79,8 @@ export class StageRuntime {
   private buildFromSegments(): void {
     const random = new StageRandom(this.runtimeState.randomSeed);
     let segmentOffset = 0;
+    const world03CoinPositions = getWorld03CoinPositions(this.definition.id);
+    let coinIndex = 0;
 
     for (const segment of this.definition.segments) {
       for (const platform of segment.platforms) {
@@ -104,11 +107,12 @@ export class StageRuntime {
       }
 
       segment.coins.forEach((coinId, index) => {
+        const x = world03CoinPositions[coinIndex++] ?? segmentOffset + 180 + index * 72;
         this.add("coin", coinId, this.factory.create(this.scene, {
           kind: "coin",
           id: coinId,
           ...segmentCoinPresentation(this.definition.worldId),
-          x: segmentOffset + 180 + index * 72,
+          x,
         }));
       });
 

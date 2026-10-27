@@ -25,7 +25,7 @@ import {
   validWorld02Seed,
   type World02EntrySide,
 } from "../data/world02Travel";
-import { getWorld03Obstacles } from "../data/world03Construction";
+import { getWorld03CollapseZones, getWorld03Obstacles } from "../data/world03Construction";
 import { BARK_COOLDOWN_MS, BITE_COOLDOWN_MS, SKILL_DEFINITIONS } from "../data/skills";
 import { BossFeedbackController, BARK_SHAKE_DURATION_MS, BARK_SHAKE_INTENSITY, type BossFeedbackSnapshot } from "../systems/bossFeedback";
 import { GameplayEventBus } from "../core/events";
@@ -44,6 +44,7 @@ import { DEFAULT_PLAYER_TUNING } from "../entities/playerTypes";
 import { InputManager, toKeybindMap } from "../input/InputManager";
 import { ParallaxRenderer } from "../maps/ParallaxRenderer";
 import { World03ConstructionObstacles } from "../systems/World03ConstructionObstacles";
+import { World03CollapsingFloor } from "../systems/World03CollapsingFloor";
 import { BossEncounter } from "../systems/BossEncounter";
 import { CheeseTabbyBallPattern } from "../systems/CheeseTabbyBallPattern";
 import { MackerelBrickPattern } from "../systems/MackerelBrickPattern";
@@ -99,6 +100,7 @@ export class StageScene extends Phaser.Scene {
   private sandFloor?: Phaser.GameObjects.TileSprite;
   private world02Obstacles?: World02ObstacleSystem;
   private world03Obstacles?: World03ConstructionObstacles;
+  private world03CollapsingFloor?: World03CollapsingFloor;
   private world02PigeonDrops?: World02PigeonDropSystem;
   private exitFloor?: Phaser.GameObjects.Rectangle;
   private parallaxRenderer?: ParallaxRenderer;
@@ -265,6 +267,7 @@ export class StageScene extends Phaser.Scene {
         this.combatSystem?.resetForStage();
         this.world02Obstacles?.resetForAttempt();
         this.world03Obstacles?.resetForAttempt();
+        this.world03CollapsingFloor?.resetForAttempt();
         this.bossEncounter?.resetAttempt();
         this.world02PigeonDrops?.resetForAttempt(this.player?.x ?? stage.spawn.x);
         this.playerAnimator?.stopBark();
@@ -375,6 +378,13 @@ export class StageScene extends Phaser.Scene {
         this.gameplayEventBus,
         () => this.runtime?.runtimeState.checkpointId ?? null,
         () => this.runtime?.getStatus() === "play" && !this.stageTransitionStarted,
+      );
+    }
+    if (getWorld03CollapseZones(stage.id).length > 0 && !this.loadedMap) {
+      const floor = this.runtime.getEntities("platform")[0]?.entity as Phaser.GameObjects.Rectangle | undefined;
+      if (!floor) throw new Error("World 3 construction floor is missing.");
+      this.world03CollapsingFloor = new World03CollapsingFloor(
+        this, this.player, stage.id, floor, stage.mapWidth, stage.mapHeight,
       );
     }
 
@@ -754,6 +764,8 @@ export class StageScene extends Phaser.Scene {
       this.world02Obstacles = undefined;
       this.world03Obstacles?.destroy();
       this.world03Obstacles = undefined;
+      this.world03CollapsingFloor?.destroy();
+      this.world03CollapsingFloor = undefined;
       this.world02PigeonDrops?.destroy();
       this.world02PigeonDrops = undefined;
       this.gimmickSystem?.destroy();
@@ -894,6 +906,7 @@ export class StageScene extends Phaser.Scene {
     this.skillElapsedMs += elapsed;
     this.bossFeedback.update(elapsed);
     this.playerController?.update(time, delta);
+    this.world03CollapsingFloor?.update(elapsed);
     this.world02Obstacles?.update(elapsed);
     this.world02PigeonDrops?.update(elapsed);
     if (this.player && input && canBacktrackWorld02({
