@@ -10,15 +10,15 @@
 
 ## Active Task
 
-[T01 공사장 위험물 픽셀 이미지와 에셋 등록](./phases/2026-10-27-world03-construction-hazards/P01-construction-hazards/T01-hazard-art-and-assets.md)
+[T02 케이블 드럼·손수레 배치와 드럼 이동](./phases/2026-10-27-world03-construction-hazards/P01-construction-hazards/T02-rolling-drum-and-wheelbarrow.md)
 
 ## Status
 
-- 월드 3 숨은 바닥 붕괴 P00 1/1 완료. 공사장 장애물·철골 빔·자산 테스트 P01 0/4, T01 구현 시작 준비 완료.
+- 월드 3 숨은 바닥 붕괴 P00 1/1 완료. 공사장 위험물 P01 1/4 완료. T01 이미지·에셋 등록 검증 통과, T02 구현 시작 준비 완료.
 
 ## Next Step (IMPORTANT)
 
-P01-T01 청사진을 읽고 위험물 이미지 3개와 manifest·월드 3 미술 카탈로그·시각 자산 테스트를 구현한다. 기존 미커밋 작업을 보존하고 Task 변경 부분만 커밋한다.
+P01-T02 청사진을 읽고 기존 8자리 장애물 배치·코인 간격·드럼 이동과 재시작을 구현한다. 기존 미커밋 작업을 보존하고 Task 변경 부분만 커밋한다.
 
 ## Previous Work Context
 

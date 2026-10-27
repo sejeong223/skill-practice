@@ -98,6 +98,37 @@ test('월드 3 장애물 네 종류는 기존 판정 안에 보이는 그림과 
   }
 });
 
+test('월드 3 새 위험물 세 종류는 투명 여백과 판정 크기를 지킨다', async () => {
+  const contracts = [
+    ['cable-drum', 48, 48, 42, 42],
+    ['wheelbarrow', 56, 44, 52, 40],
+    ['falling-steel-beam', 64, 28, 56, 20],
+  ];
+  for (const [kind, width, height, hitboxWidth, hitboxHeight] of contracts) {
+    const artwork = await imageData(`objects/world-03/${kind}.png`);
+    assert.deepEqual([artwork.width, artwork.height], [width, height], kind);
+    assert.equal(pixel(artwork, 0, 0)[3], 0, `${kind} transparent corner`);
+    assert.equal(pixel(artwork, width - 1, height - 1)[3], 0, `${kind} transparent corner`);
+    let left = width, right = -1, top = height, bottom = -1;
+    const colors = new Set();
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        const [red, green, blue, alpha] = pixel(artwork, x, y);
+        if (alpha < 128) continue;
+        left = Math.min(left, x); right = Math.max(right, x);
+        top = Math.min(top, y); bottom = Math.max(bottom, y);
+        colors.add(`${red},${green},${blue}`);
+      }
+    }
+    assert.ok(right >= left && bottom >= top, `${kind} visible`);
+    assert.ok(right - left + 1 <= hitboxWidth, `${kind} hitbox width`);
+    assert.ok(bottom - top + 1 <= hitboxHeight, `${kind} hitbox height`);
+    assert.ok(Math.abs((left + right) / 2 - (width - 1) / 2) <= 1, `${kind} centered`);
+    if (kind === 'wheelbarrow') assert.ok(bottom >= height - 2, 'wheel touches ground');
+    assert.ok(colors.size >= 8, `${kind} color detail`);
+  }
+});
+
 test('월드 3 공통 이미지의 기존 manifest 키와 필수 로드 계약을 유지한다', async () => {
   const manifest = JSON.parse(await readFile(path.join(root, 'src/game/assets/assetManifest.json'), 'utf8'));
   const expected = new Map([
@@ -115,4 +146,25 @@ test('월드 3 공통 이미지의 기존 manifest 키와 필수 로드 계약�
     assert.equal(asset.url, url);
     assert.equal(asset.required, true);
   }
+});
+
+test('월드 3 새 위험물 키는 필수 PNG이고 지상 카탈로그에는 두 장애물만 포함된다', async () => {
+  const manifest = JSON.parse(await readFile(path.join(root, 'src/game/assets/assetManifest.json'), 'utf8'));
+  for (const kind of ['cable-drum', 'wheelbarrow', 'falling-steel-beam']) {
+    const key = `world-03-${kind}`;
+    const entries = manifest.filter((entry) => entry.key === key);
+    assert.equal(entries.length, 1, key);
+    assert.deepEqual(entries[0], {
+      key,
+      kind: 'image',
+      url: `/assets/pixel/objects/world-03/${kind}.png`,
+      worldId: 'world-03',
+      required: true,
+    });
+  }
+  const themes = await readFile(path.join(root, 'src/game/data/worldMaps.ts'), 'utf8');
+  const catalog = themes.match(/createTheme\("world-03", "world-03-tileset", \[([^\]]+)\]/)?.[1] ?? '';
+  assert.match(catalog, /world-03-cable-drum/);
+  assert.match(catalog, /world-03-wheelbarrow/);
+  assert.doesNotMatch(catalog, /world-03-falling-steel-beam/);
 });

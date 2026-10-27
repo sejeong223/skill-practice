@@ -1010,5 +1010,26 @@
     "url": "/assets/pixel/objects/world-03/steel-pipe.png",
     "worldId": "world-03",
     "required": true
+  },
+  {
+    "key": "world-03-cable-drum",
+    "kind": "image",
+    "url": "/assets/pixel/objects/world-03/cable-drum.png",
+    "worldId": "world-03",
+    "required": true
+  },
+  {
+    "key": "world-03-wheelbarrow",
+    "kind": "image",
+    "url": "/assets/pixel/objects/world-03/wheelbarrow.png",
+    "worldId": "world-03",
+    "required": true
+  },
+  {
+    "key": "world-03-falling-steel-beam",
+    "kind": "image",
+    "url": "/assets/pixel/objects/world-03/falling-steel-beam.png",
+    "worldId": "world-03",
+    "required": true
   }
 ]
