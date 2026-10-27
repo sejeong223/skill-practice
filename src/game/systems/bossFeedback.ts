@@ -11,6 +11,9 @@ export interface BossFeedbackSnapshot {
   readonly barkUnlocked: boolean;
   readonly barkRemainingMs: number;
   readonly barkCooldownMs: number;
+  readonly biteUnlocked: boolean;
+  readonly biteRemainingMs: number;
+  readonly biteCooldownMs: number;
   readonly warning: BossWarningView | null;
 }
 export const BOSS_WARNING_DURATION_MS = 2500;

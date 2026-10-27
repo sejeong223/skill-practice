@@ -187,6 +187,14 @@ export class World01CalicoBoss {
     return this.applyDamage();
   }
 
+  public acceptBiteHit(player: Player): boolean {
+    if (this.state.phase === "intro" || this.state.phase === "defeated" || !isCalicoInSlipperReach(
+      player.body.center.x, player.body.center.y, player.flipX ? -1 : 1,
+      this.sprite.getBounds(),
+    )) return false;
+    return this.applyDamage(2);
+  }
+
   public acceptToolHit(contact: AttackContact): boolean {
     if (this.state.phase === "intro" || this.state.phase === "defeated") return false;
     const boss = this.sprite.getBounds();

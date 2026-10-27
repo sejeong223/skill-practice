@@ -10,15 +10,15 @@
 
 ## Active Task
 
-[T05 E 물기 공격과 6초 쿨타임·피해 2](./phases/2026-10-27-world02-cheese-tabby-victory-story-bite/P01-boss-victory-flow/T05-bite-damage.md)
+[T06 무는 코기 이미지 제작과 물기 연출](./phases/2026-10-27-world02-cheese-tabby-victory-story-bite/P01-boss-victory-flow/T06-corgi-bite-art.md)
 
 ## Status
 
-- 신규 계획 P01 전체 4/6. T04의 Q/W/E 기본키, 6초 물기 정의와 v4→v5 저장 마이그레이션 및 조작 설정을 완료했다. T05 실제 물기 피해가 다음 작업이다.
+- 신규 계획 P01 전체 5/6. T05의 독립 E 물기 피해 2, 6초 쿨타임 HUD와 Q의 낡은 물기 연계 제거를 완료했다. T06 코기 이미지 제작·표시가 다음 작업이다.
 
 ## Next Step (IMPORTANT)
 
-T05 청사진을 읽고 E 물기의 실제 피해 2, Q 공격 분리와 보스 HUD 쿨타임을 구현한다. 기존 미커밋 작업을 보존한다.
+T06 청사진을 읽고 `corgi-bite.png` 4프레임 이미지를 제작하고 E 물기 중 게임 화면에 표시한다. 기존 미커밋 작업을 보존한다.
 
 ## Previous Work Context
 

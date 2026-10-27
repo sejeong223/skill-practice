@@ -10,7 +10,7 @@ export interface ToolPresentation {
 export const TOOL_PRESENTATIONS: Readonly<Record<ToolId, ToolPresentation>> = {
   "rabbit-slipper": {
     nameKo: "토끼 슬리퍼",
-    effectKo: "근접 3연타와 물어뜯기 기회",
+    effectKo: "근접 3연타 후 재채기로 잠시 밀려남",
     drawbackKo: "재채기 반동",
     slotKo: "공격 도구",
   },

@@ -1,6 +1,6 @@
 # Task: T05 E 물기 공격과 6초 쿨타임·피해 2
 
-## Status: pending
+## Status: done
 
 ## Goal
 
@@ -55,6 +55,7 @@
   - `src/game/systems/CombatSystem.ts` :: `tryAttack` — 새 반환 타입과 Q 무기 경로 적용 확인; modify only if needed
   - `src/game/scenes/PrototypeScene.ts` :: `update` — 프로토타입에서도 E만 `skillSystem.use("bite")`를 호출하도록 연결; modify
   - `scripts/bite-skill.test.mjs` :: 입력·쿨타임·피해 회귀; new
+  - `src/game/data/tools.ts`, `src/game/data/toolPresentation.ts` :: Q에서 제거한 낡은 물기 보너스 설명 갱신; modify
 
 #### Details
 
@@ -140,6 +141,6 @@ Task: T05-bite-damage
 
 ## Progress
 
-- [ ] 구현 완료
-- [ ] 검증 통과
-- commit: pending
+- [x] 구현 완료
+- [x] 검증 통과
+- commit: T05-bite-damage

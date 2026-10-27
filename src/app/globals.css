@@ -6,13 +6,14 @@
 .boss-warning-text strong { font-size: clamp(16px, 3vw, 32px); }
 .boss-warning-text svg { display: inline-block; width: 1em; height: 1em; margin-right: .4em; vertical-align: -.1em; }
 .boss-warning-text p { margin: 12px 0 0; font-size: clamp(11px, 1.7vw, 20px); }
-.boss-bark-cooldown { position: absolute; left: 16px; bottom: 16px; width: 150px; max-width: 45%; padding: 10px 12px; border: 2px solid #926256; background: #fff5db; color: #603c3f; box-shadow: 3px 3px 0 #603c3f33; font-size: 12px; }
-.boss-bark-cooldown > div:first-child { display: flex; justify-content: space-between; gap: 8px; }
-.boss-bark-cooldown kbd { font: inherit; opacity: .75; }
-.boss-bark-cooldown > span { display: block; margin: 5px 0; font-variant-numeric: tabular-nums; }
-.boss-bark-track { height: 5px; background: #dec6a5; }
-.boss-bark-track > div { height: 100%; background: #a26051; }
-@media (max-width: 600px) { .boss-bark-cooldown { left: 4px; bottom: 4px; padding: 4px 6px; width: 96px; font-size: 10px; } }
+.boss-skill-cooldowns { position: absolute; left: 16px; bottom: 16px; display: flex; flex-wrap: wrap; gap: 8px; max-width: calc(100% - 32px); }
+.boss-skill-cooldown { width: 150px; padding: 10px 12px; border: 2px solid #926256; background: #fff5db; color: #603c3f; box-shadow: 3px 3px 0 #603c3f33; font-size: 12px; }
+.boss-skill-cooldown > div:first-child { display: flex; justify-content: space-between; gap: 8px; }
+.boss-skill-cooldown kbd { font: inherit; opacity: .75; }
+.boss-skill-cooldown > span { display: block; margin: 5px 0; font-variant-numeric: tabular-nums; }
+.boss-skill-track { height: 5px; background: #dec6a5; }
+.boss-skill-track > div { height: 100%; background: #a26051; }
+@media (max-width: 600px) { .boss-skill-cooldowns { left: 4px; bottom: 4px; gap: 4px; max-width: calc(100% - 8px); } .boss-skill-cooldown { padding: 4px 6px; width: 96px; font-size: 10px; } }
 
 :root {
   --background: #f5e7c7;

@@ -6,7 +6,7 @@ export const TOOL_DEFINITIONS: readonly ToolDefinition[] = [
     slot: "attack",
     price: 0,
     effectId: "slipper-combo",
-    passiveEffect: "three-hit-melee-with-bite-window",
+    passiveEffect: "three-hit-melee-with-sneeze-recoil",
     charges: null,
     hiddenDrawbackId: "slipper-sneeze-recoil",
     discoverOnTrigger: true,

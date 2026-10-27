@@ -5,12 +5,14 @@ import type { GameEventBus } from "@/game/bridge/GameEventBus";
 import type { StageId } from "@/game/core/types";
 import { formatKeybindLabel } from "@/game/input/keybindPresentation";
 import type { BossFeedbackSnapshot } from "@/game/systems/bossFeedback";
+import { DEFAULT_KEYBINDS } from "@/game/core/constants";
 
 export interface BossCombatOverlayProps {
   readonly eventBus: GameEventBus;
   readonly stageId: StageId;
   readonly visible: boolean;
   readonly barkKeybind: string;
+  readonly biteKeybind: string;
 }
 
 const WARNINGS = {
@@ -18,7 +20,7 @@ const WARNINGS = {
   "bowl-alarm": ["밥그릇 소리 경보!", "밥 소리인 줄 알고 동네 강아지들이 정모하러 왔습니다!"],
 } as const;
 
-export function BossCombatOverlay({ eventBus, stageId, visible, barkKeybind }: BossCombatOverlayProps): ReactElement | null {
+export function BossCombatOverlay({ eventBus, stageId, visible, barkKeybind, biteKeybind }: BossCombatOverlayProps): ReactElement | null {
   const [snapshot, setSnapshot] = useState<BossFeedbackSnapshot | null>(null);
   useEffect(() => {
     const offFeedback = eventBus.on("boss-feedback-changed", setSnapshot);
@@ -29,6 +31,7 @@ export function BossCombatOverlay({ eventBus, stageId, visible, barkKeybind }: B
   if (!visible || !snapshot?.active || snapshot.stageId !== stageId) return null;
   const warning = snapshot.warning && WARNINGS[snapshot.warning.kind];
   const readyRatio = Math.max(0, Math.min(1, 1 - snapshot.barkRemainingMs / snapshot.barkCooldownMs));
+  const biteReadyRatio = Math.max(0, Math.min(1, 1 - snapshot.biteRemainingMs / snapshot.biteCooldownMs));
   return (
     <div className="boss-combat-overlay">
       {warning && (
@@ -39,13 +42,22 @@ export function BossCombatOverlay({ eventBus, stageId, visible, barkKeybind }: B
           </div>
         </div>
       )}
-      {snapshot.barkUnlocked && (
-        <div className="boss-bark-cooldown" aria-label="짖기 쿨타임">
-          <div><strong>짖기</strong><kbd>{formatKeybindLabel(barkKeybind)}</kbd></div>
-          <span>{snapshot.barkRemainingMs > 0 ? (Math.ceil(snapshot.barkRemainingMs / 100) / 10).toFixed(1) + "초" : "준비"}</span>
-          <div className="boss-bark-track" aria-hidden="true"><div style={{ width: `${readyRatio * 100}%` }} /></div>
-        </div>
-      )}
+      <div className="boss-skill-cooldowns">
+        {snapshot.barkUnlocked && (
+          <div className="boss-skill-cooldown boss-bark-cooldown" aria-label="짖기 쿨타임">
+            <div><strong>짖기</strong><kbd>{formatKeybindLabel(barkKeybind ?? DEFAULT_KEYBINDS.bark)}</kbd></div>
+            <span>{snapshot.barkRemainingMs > 0 ? (Math.ceil(snapshot.barkRemainingMs / 100) / 10).toFixed(1) + "초" : "준비"}</span>
+            <div className="boss-skill-track" aria-hidden="true"><div style={{ width: `${readyRatio * 100}%` }} /></div>
+          </div>
+        )}
+        {snapshot.biteUnlocked && (
+          <div className="boss-skill-cooldown boss-bite-cooldown" aria-label="물기 쿨타임">
+            <div><strong>물기</strong><kbd>{formatKeybindLabel(biteKeybind ?? DEFAULT_KEYBINDS.bite)}</kbd></div>
+            <span>{snapshot.biteRemainingMs > 0 ? (Math.ceil(snapshot.biteRemainingMs / 100) / 10).toFixed(1) + "초" : "준비"}</span>
+            <div className="boss-skill-track" aria-hidden="true"><div style={{ width: `${biteReadyRatio * 100}%` }} /></div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

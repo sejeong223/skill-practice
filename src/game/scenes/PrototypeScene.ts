@@ -304,6 +304,9 @@ export class PrototypeScene extends Phaser.Scene {
     if (snapshot?.barkPressed) {
       if (this.skillSystem?.use("bark", time).accepted) this.playerAnimator?.triggerBark();
     }
+    if (snapshot?.bitePressed && this.skillSystem?.use("bite", time).accepted) {
+      this.eventBus?.emit("bite-hit", { now: time });
+    }
 
     this.combatSystem?.update(time);
     this.enemySystem?.update(time);

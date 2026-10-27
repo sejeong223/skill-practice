@@ -422,6 +422,7 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
     <div className="game-shell">
       <div className="game-content-frame">
         <BossCombatOverlay eventBus={eventBus} stageId={activeStageId} barkKeybind={progress.keybinds.bark}
+          biteKeybind={progress.keybinds.bite}
           visible={progressLoaded && introGateStep === "ready" && mode === "play" && !paused && !world02EntranceActive} />
         {progressLoaded && introGateStep === "ready" && !world02EntranceActive && <SnackCoinCounter balance={progress.bankedCoins} />}
         {progressLoaded && <PhaserGame className="phaser-viewport" gameEventBus={eventBus} progressState={sharedProgressState} />}

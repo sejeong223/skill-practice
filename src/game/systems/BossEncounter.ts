@@ -118,6 +118,15 @@ export class BossEncounter {
     return true;
   }
 
+  public acceptBiteHit(player: Player): boolean {
+    if (!this.canFight() || !isCalicoInSlipperReach(
+      player.body.center.x, player.body.center.y, player.flipX ? -1 : 1,
+      this.getHitBounds(),
+    )) return false;
+    this.damageBoss(2);
+    return true;
+  }
+
   public acceptToolHit(contact: AttackContact): boolean {
     if (!this.canFight() || !this.weaponHits.accept(contact, this.getHitBounds())) return false;
     this.damageBoss(getBossDamage(contact.toolId));

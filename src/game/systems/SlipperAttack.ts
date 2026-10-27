@@ -6,9 +6,7 @@ export interface SlipperAttackResult {
   kind:
     | "slipper-hit"
     | "slipper-sneeze"
-    | "bite-hit"
     | "cooldown"
-    | "bite-window-expired"
     | "tool-preview";
   comboCount: number;
   knockbackX: number;
@@ -16,7 +14,6 @@ export interface SlipperAttackResult {
 
 const SLIPPER_HIT_COOLDOWN_MS = 150;
 const SLIPPER_COMBO_WINDOW_MS = 700;
-const BITE_WINDOW_MS = 500;
 const SNEEZE_KNOCKBACK_X = 360;
 
 export class SlipperAttackController {
@@ -25,7 +22,6 @@ export class SlipperAttackController {
   private nextAttackAt = 0;
   private lastHitAt = -Infinity;
   private comboCount = 0;
-  private biteWindowUntil = 0;
   private sneezeUnlockAt = 0;
   private holdingSlipper = true;
 
@@ -46,31 +42,7 @@ export class SlipperAttackController {
 
     this.nextAttackAt = now + SLIPPER_HIT_COOLDOWN_MS;
 
-    if (!this.holdingSlipper) {
-      if (now > this.biteWindowUntil) {
-        this.holdingSlipper = true;
-        this.comboCount = 0;
-        return {
-          accepted: false,
-          kind: "bite-window-expired",
-          comboCount: this.comboCount,
-          knockbackX: 0,
-        };
-      }
-
-      this.comboCount = 0;
-      this.biteWindowUntil = 0;
-      this.holdingSlipper = true;
-      this.player.setAnimationState("attack-bite");
-      this.eventBus.emit("bite-hit", { now });
-
-      return {
-        accepted: true,
-        kind: "bite-hit",
-        comboCount: 0,
-        knockbackX: 0,
-      };
-    }
+    this.holdingSlipper = true;
 
     this.comboCount =
       now - this.lastHitAt <= SLIPPER_COMBO_WINDOW_MS
@@ -97,7 +69,8 @@ export class SlipperAttackController {
       (this.player.flipX ? 1 : -1) * SNEEZE_KNOCKBACK_X;
 
     this.holdingSlipper = false;
-    this.biteWindowUntil = now + BITE_WINDOW_MS;
+    this.comboCount = 0;
+    this.lastHitAt = -Infinity;
     this.sneezeUnlockAt = now + 350;
     this.player.lockControl("slipper-sneeze");
     this.player.setAnimationState("hurt");
@@ -117,7 +90,7 @@ export class SlipperAttackController {
     return {
       accepted: true,
       kind: "slipper-sneeze",
-      comboCount: this.comboCount,
+      comboCount: 3,
       knockbackX,
     };
   }
@@ -125,6 +98,7 @@ export class SlipperAttackController {
   public update(now: number): void {
     if (now >= this.sneezeUnlockAt) {
       this.player.unlockControl("slipper-sneeze");
+      this.holdingSlipper = true;
     }
   }
 
@@ -132,7 +106,6 @@ export class SlipperAttackController {
     this.nextAttackAt = 0;
     this.lastHitAt = -Infinity;
     this.comboCount = 0;
-    this.biteWindowUntil = 0;
     this.sneezeUnlockAt = 0;
     this.holdingSlipper = true;
     this.player.unlockControl("slipper-sneeze");

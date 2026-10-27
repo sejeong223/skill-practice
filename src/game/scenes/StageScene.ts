@@ -26,7 +26,7 @@ import {
   type World02EntrySide,
 } from "../data/world02Travel";
 import { getWorld03Obstacles } from "../data/world03Construction";
-import { BARK_COOLDOWN_MS, SKILL_DEFINITIONS } from "../data/skills";
+import { BARK_COOLDOWN_MS, BITE_COOLDOWN_MS, SKILL_DEFINITIONS } from "../data/skills";
 import { BossFeedbackController, BARK_SHAKE_DURATION_MS, BARK_SHAKE_INTENSITY, type BossFeedbackSnapshot } from "../systems/bossFeedback";
 import { GameplayEventBus } from "../core/events";
 import { getStageDefinition, getWorldMapTheme } from "../data";
@@ -67,6 +67,7 @@ import { RestartController } from "../systems/RestartController";
 import { SkillSystem } from "../systems/SkillSystem";
 import { StrayDogEvent } from "../systems/StrayDogEvent";
 import { World01CalicoBoss } from "../systems/World01CalicoBoss";
+import { isCalicoInSlipperReach } from "../systems/calicoMeleeHitbox";
 import { World02ObstacleSystem } from "../systems/World02ObstacleSystem";
 import { World02PigeonDropSystem } from "../systems/World02PigeonDropSystem";
 import { getWorld01Respawn, isWorld01CheckpointStageId } from "../systems/world01Respawn";
@@ -959,6 +960,22 @@ export class StageScene extends Phaser.Scene {
         return;
       }
     }
+    if (input?.bitePressed && this.player && !this.stageTransitionStarted && this.runtime.getStatus() === "play") {
+      const result = this.skillSystem?.use("bite", this.skillElapsedMs);
+      if (result?.accepted) {
+        this.gameplayEventBus?.emit("bite-hit", { now: time });
+        this.calicoBoss?.acceptBiteHit(this.player);
+        this.bossEncounter?.acceptBiteHit(this.player);
+        for (const enemy of this.mapEnemies.values()) {
+          if (enemy.active && isCalicoInSlipperReach(
+            this.player.body.center.x, this.player.body.center.y, this.player.flipX ? -1 : 1,
+            enemy.getBounds(),
+          )) enemy.takeDamage(2, time);
+        }
+        this.publishBossFeedback(true);
+        if (this.runtime.getStatus() !== "play") return;
+      }
+    }
     for (const contact of this.combatSystem?.update(time, elapsed) ?? []) {
       if (this.calicoBoss?.acceptToolHit(contact) || this.bossEncounter?.acceptToolHit(contact)) {
         this.combatSystem?.registerHit(contact);
@@ -989,16 +1006,22 @@ export class StageScene extends Phaser.Scene {
     const active = !forceInactive && this.runtime?.getStatus() === "play" &&
       !this.stageTransitionStarted && !this.victorySequenceStarted;
     const barkUnlocked = this.progress.unlockedSkills.includes("bark");
+    const biteUnlocked = this.progress.unlockedSkills.includes("bite");
     const snapshot: BossFeedbackSnapshot = {
       stageId: this.stageId, active, barkUnlocked,
       barkRemainingMs: barkUnlocked
         ? Math.ceil((this.skillSystem?.getRemainingCooldown("bark", this.skillElapsedMs) ?? 0) / 100) * 100 : 0,
       barkCooldownMs: BARK_COOLDOWN_MS,
+      biteUnlocked,
+      biteRemainingMs: biteUnlocked
+        ? Math.ceil((this.skillSystem?.getRemainingCooldown("bite", this.skillElapsedMs) ?? 0) / 100) * 100 : 0,
+      biteCooldownMs: BITE_COOLDOWN_MS,
       warning: active ? this.bossFeedback.getWarning() : null,
     };
     const last = this.lastBossFeedbackSnapshot;
     if (!force && last && last.stageId === snapshot.stageId && last.active === snapshot.active &&
         last.barkUnlocked === snapshot.barkUnlocked && last.barkRemainingMs === snapshot.barkRemainingMs &&
+        last.biteUnlocked === snapshot.biteUnlocked && last.biteRemainingMs === snapshot.biteRemainingMs &&
         last.warning?.kind === snapshot.warning?.kind && last.warning?.sequence === snapshot.warning?.sequence) return;
     this.lastBossFeedbackSnapshot = snapshot;
     this.eventBus?.emit("boss-feedback-changed", snapshot);

@@ -42,3 +42,16 @@ test("새 경고가 이전 경고를 대체하고 플레이 시간 2500ms 뒤 �
   f.reset(); assert.equal(f.getWarning(), null);
   assert.equal(f.recordBarkUse(), false);
 });
+
+test("해금된 물기는 6000ms가 끝날 때 다시 사용할 수 있고 재시도에서 초기화된다", () => {
+  const player = { setAnimationState() {} };
+  const locked = new SkillSystem(player, SKILL_DEFINITIONS);
+  assert.equal(locked.use("bite", 0).reason, "locked");
+  const skills = new SkillSystem(player, SKILL_DEFINITIONS, undefined, undefined, ["bite"]);
+  assert.equal(skills.use("bite", 0).accepted, true);
+  assert.equal(skills.getRemainingCooldown("bite", 1), 5999);
+  assert.equal(skills.use("bite", 5999).reason, "cooldown");
+  assert.equal(skills.use("bite", 6000).accepted, true);
+  skills.resetCooldowns();
+  assert.equal(skills.use("bite", 0).accepted, true);
+});
