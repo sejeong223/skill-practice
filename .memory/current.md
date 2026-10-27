@@ -2,23 +2,23 @@
 
 ## Active Plan
 
-[우측 상단 메뉴 컬러 픽셀 아이콘](./plans/2026-10-27-hud-menu-pixel-icons.md)
+[월드 3 오후 공사장 맵 아트 개선](./plans/2026-10-27-world03-afternoon-construction-art.md)
 
 ## Active Phase
 
-[P01 메뉴 아이콘 제작과 적용](./phases/2026-10-27-hud-menu-pixel-icons/P01-menu-icons/phase.md)
+[P01 월드 3 오후 공사장 시각 개선](./phases/2026-10-27-world03-afternoon-construction-art/P01-world03-visuals/phase.md)
 
 ## Active Task
 
-없음 — 우측 상단 메뉴 컬러 픽셀 아이콘 계획 전체 완료.
+[T02 구역별 중경과 고등어 보스 배경](./phases/2026-10-27-world03-afternoon-construction-art/P01-world03-visuals/T02-stage-and-boss-backgrounds.md)
 
 ## Status
 
-- 신규 계획 P01 전체 2/2 완료. 20×20 컬러 PNG 7장을 HUD와 일시정지 화면에 연결했고 테스트 11건·타입·린트·빌드 및 실제 브라우저 메뉴 동작이 통과했다.
+- 월드 3 시각 개선 계획 P01 1/3. T01 오후 하늘·공통 전경·바닥 완료, T02 진행 준비.
 
 ## Next Step (IMPORTANT)
 
-활성 Task 없음. 기존 미커밋 작업은 보존한다.
+T02 청사진을 읽고 `public/assets/pixel/backgrounds/world-03/world-03-mid-{1,2,3,4}.png` 및 새 보스 중경을 제작한 뒤 `getWorld03StageTheme`, `createStageMap`, `StageScene.createWorld03ConstructionFloor` 연결을 검증한다. 기존 미커밋 작업은 보존한다.
 
 ## Previous Work Context
 

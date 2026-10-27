@@ -94,11 +94,11 @@ export const WORLD_MAP_THEMES: readonly WorldMapThemeDefinition[] = [
     accent: "#e96b9a",
   }),
   createTheme("world-03", "world-03-tileset", ["world-03-traffic-cone", "world-03-brick-stack", "world-03-cement-bag", "world-03-steel-pipe"], {
-    far: "#b9d2d3",
-    mid: "#b5a996",
-    gameplay: "#71645d",
-    foreground: "#4a4544",
-    accent: "#eeb849",
+    far: "#67aee5",
+    mid: "#b8b0a2",
+    gameplay: "#8f8377",
+    foreground: "#4a4950",
+    accent: "#eab34d",
   }),
   createTheme("world-04", "world-04-tileset", ["scrap", "crane", "camera", "compressor"], {
     far: "#77747a",
