@@ -98,7 +98,7 @@ export const WORLD_MAP_THEMES: readonly WorldMapThemeDefinition[] = [
     foreground: "#442b56",
     accent: "#e96b9a",
   }),
-  createTheme("world-03", "world-03-tileset", ["world-03-traffic-cone", "world-03-brick-stack", "world-03-cement-bag", "world-03-steel-pipe", "world-03-cable-drum", "world-03-wheelbarrow"], {
+  createTheme("world-03", "world-03-tileset", ["world-03-traffic-cone", "world-03-brick-stack", "world-03-cement-bag", "world-03-steel-pipe", "world-03-drum-barrel", "world-03-wheelbarrow"], {
     far: "#67aee5",
     mid: "#b8b0a2",
     gameplay: "#8f8377",

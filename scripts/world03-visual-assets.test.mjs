@@ -100,7 +100,7 @@ test('월드 3 장애물 네 종류는 기존 판정 안에 보이는 그림과 
 
 test('월드 3 새 위험물 세 종류는 투명 여백과 판정 크기를 지킨다', async () => {
   const contracts = [
-    ['cable-drum', 48, 48, 42, 42],
+    ['drum-barrel', 48, 48, 42, 30],
     ['wheelbarrow', 56, 44, 52, 40],
     ['falling-steel-beam', 64, 28, 56, 20],
   ];
@@ -150,7 +150,7 @@ test('월드 3 공통 이미지의 기존 manifest 키와 필수 로드 계약�
 
 test('월드 3 새 위험물 키는 필수 PNG이고 지상 카탈로그에는 두 장애물만 포함된다', async () => {
   const manifest = JSON.parse(await readFile(path.join(root, 'src/game/assets/assetManifest.json'), 'utf8'));
-  for (const kind of ['cable-drum', 'wheelbarrow', 'falling-steel-beam']) {
+  for (const kind of ['drum-barrel', 'wheelbarrow', 'falling-steel-beam']) {
     const key = `world-03-${kind}`;
     const entries = manifest.filter((entry) => entry.key === key);
     assert.equal(entries.length, 1, key);
@@ -164,7 +164,7 @@ test('월드 3 새 위험물 키는 필수 PNG이고 지상 카탈로그에는 �
   }
   const themes = await readFile(path.join(root, 'src/game/data/worldMaps.ts'), 'utf8');
   const catalog = themes.match(/createTheme\("world-03", "world-03-tileset", \[([^\]]+)\]/)?.[1] ?? '';
-  assert.match(catalog, /world-03-cable-drum/);
+  assert.match(catalog, /world-03-drum-barrel/);
   assert.match(catalog, /world-03-wheelbarrow/);
   assert.doesNotMatch(catalog, /world-03-falling-steel-beam/);
 });

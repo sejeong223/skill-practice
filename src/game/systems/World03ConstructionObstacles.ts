@@ -37,7 +37,7 @@ export class World03ConstructionObstacles {
     private readonly canHandleContact: () => boolean,
   ) {
     for (const obstacle of getWorld03Obstacles(stageId)) {
-      const drum = obstacle.kind === "cable-drum";
+      const drum = obstacle.kind === "drum-barrel";
       const image = scene.add.image(
         obstacle.x,
         drum ? FLOOR_Y - obstacle.height / 2 : FLOOR_Y,

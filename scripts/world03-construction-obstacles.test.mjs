@@ -68,12 +68,12 @@ function createHarness(stageId = 'world-03-stage-3') {
 test('drum waits until 240px ahead, then image and static body roll together for 160px', () => {
   const harness = createHarness();
   const { system, player, images, zones } = harness;
-  const drum = images.find(image => image.key === 'world-03-cable-drum');
+  const drum = images.find(image => image.key === 'world-03-drum-barrel');
   const zone = zones[images.indexOf(drum)];
   assert.equal(images.length, 8);
   assert.deepEqual(drum.origin, [0.5, 0.5]);
   assert.equal(drum.scale, 1.25);
-  assert.equal(drum.y, 504 - 52.5 / 2);
+  assert.equal(drum.y, 504 - 37.5 / 2);
   player.x = 1101;
   system.update(50);
   assert.equal(drum.x, 1100);
@@ -89,7 +89,7 @@ test('drum waits until 240px ahead, then image and static body roll together for
   for (let index = 0; index < 30; index++) system.update(50);
   assert.equal(drum.x, 940);
   assert.equal(zone.x, 940);
-  assert.equal(drum.angle, -160 / (52.5 / 2));
+  assert.equal(drum.angle, -160 / (37.5 / 2));
   system.update(50);
   assert.equal(drum.x, 940);
   system.destroy();
@@ -98,7 +98,7 @@ test('drum waits until 240px ahead, then image and static body roll together for
 test('wheelbarrow stays put and drum resets after death, pausing, and scene shutdown', () => {
   const harness = createHarness('world-03-stage-1');
   const { system, player, images, zones, colliders, events, setContactAllowed } = harness;
-  const drum = images.find(image => image.key === 'world-03-cable-drum');
+  const drum = images.find(image => image.key === 'world-03-drum-barrel');
   const drumZone = zones[images.indexOf(drum)];
   const wheelbarrow = images.find(image => image.key === 'world-03-wheelbarrow');
   const wheelZone = zones[images.indexOf(wheelbarrow)];

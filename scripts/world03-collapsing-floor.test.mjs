@@ -31,7 +31,7 @@ test('every construction stage has four hidden, jumpable gaps clear of props and
       assert.ok(Math.abs(gap.x - 2496) > 150);
       if (index > 0) assert.ok(gap.x - (gaps[index - 1].x + gaps[index - 1].width) >= 300);
       for (const obstacle of getWorld03Obstacles(stageId)) {
-        const obstacleLeft = obstacle.x - obstacle.width / 2 - (obstacle.kind === 'cable-drum' ? 160 : 0);
+        const obstacleLeft = obstacle.x - obstacle.width / 2 - (obstacle.kind === 'drum-barrel' ? 160 : 0);
         const obstacleRight = obstacle.x + obstacle.width / 2;
         assert.ok(gap.x - obstacleRight >= 60 || obstacleLeft - (gap.x + gap.width) >= 60,
           `${gap.id} too close to ${obstacle.id}`);

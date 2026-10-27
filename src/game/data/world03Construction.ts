@@ -1,6 +1,6 @@
 import type { StageId } from "../core/types";
 
-export type World03ObstacleKind = "traffic-cone" | "brick-stack" | "cement-bag" | "steel-pipe" | "cable-drum" | "wheelbarrow";
+export type World03ObstacleKind = "traffic-cone" | "brick-stack" | "cement-bag" | "steel-pipe" | "drum-barrel" | "wheelbarrow";
 
 export interface World03ObstaclePlacement {
   readonly id: string;
@@ -31,17 +31,17 @@ export interface World03CollapseZone {
   readonly width: number;
 }
 const KINDS: readonly (readonly World03ObstacleKind[])[] = [
-  ["traffic-cone", "cement-bag", "cable-drum", "brick-stack", "wheelbarrow", "steel-pipe", "traffic-cone", "brick-stack"],
-  ["cement-bag", "steel-pipe", "cable-drum", "traffic-cone", "wheelbarrow", "brick-stack", "cable-drum", "cement-bag"],
-  ["steel-pipe", "brick-stack", "cable-drum", "traffic-cone", "wheelbarrow", "cement-bag", "cable-drum", "wheelbarrow"],
-  ["brick-stack", "traffic-cone", "cable-drum", "cement-bag", "wheelbarrow", "steel-pipe", "cable-drum", "wheelbarrow"],
+  ["traffic-cone", "cement-bag", "drum-barrel", "brick-stack", "wheelbarrow", "steel-pipe", "traffic-cone", "brick-stack"],
+  ["cement-bag", "steel-pipe", "drum-barrel", "traffic-cone", "wheelbarrow", "brick-stack", "drum-barrel", "cement-bag"],
+  ["steel-pipe", "brick-stack", "drum-barrel", "traffic-cone", "wheelbarrow", "cement-bag", "drum-barrel", "wheelbarrow"],
+  ["brick-stack", "traffic-cone", "drum-barrel", "cement-bag", "wheelbarrow", "steel-pipe", "drum-barrel", "wheelbarrow"],
 ];
 const HITBOX: Readonly<Record<World03ObstacleKind, { width: number; height: number }>> = {
   "traffic-cone": { width: 23, height: 34 },
   "brick-stack": { width: 34, height: 29 },
   "cement-bag": { width: 29, height: 32 },
   "steel-pipe": { width: 37, height: 23 },
-  "cable-drum": { width: 42, height: 42 },
+  "drum-barrel": { width: 42, height: 30 },
   "wheelbarrow": { width: 52, height: 40 },
 };
 

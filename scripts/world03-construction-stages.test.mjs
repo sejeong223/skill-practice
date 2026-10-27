@@ -12,7 +12,7 @@ test('four construction stages each have eight stable, jumpable obstacles', () =
     assert.equal(placements.length, 8);
     assert.deepEqual(getWorld03Obstacles(stageId), placements);
     assert.equal(new Set(placements.map(({id}) => id)).size, 8);
-    assert.equal(placements.filter(({kind}) => kind === 'cable-drum').length, number === 1 ? 1 : 2);
+    assert.equal(placements.filter(({kind}) => kind === 'drum-barrel').length, number === 1 ? 1 : 2);
     assert.equal(placements.filter(({kind}) => kind === 'wheelbarrow').length, number >= 3 ? 2 : 1);
     assert.equal(new Set(placements.map(({kind}) => kind)).size, 6);
     assert.ok(placements[0].x >= 300);
@@ -41,7 +41,7 @@ test('construction stages use bone coin positions clear of enlarged obstacles', 
     for (const [index, coinX] of coins.entries()) {
       if (index > 0) assert.ok(coinX - coins[index - 1] >= 80);
       for (const obstacle of obstacles) {
-        const left = obstacle.x - obstacle.width / 2 - (obstacle.kind === 'cable-drum' ? 160 : 0);
+        const left = obstacle.x - obstacle.width / 2 - (obstacle.kind === 'drum-barrel' ? 160 : 0);
         const right = obstacle.x + obstacle.width / 2;
         assert.ok(coinX + 17 + 8 < left || coinX - 17 - 8 > right,
           `${stageId} coin ${index + 1} near ${obstacle.id}`);
@@ -49,7 +49,7 @@ test('construction stages use bone coin positions clear of enlarged obstacles', 
     }
     for (const gap of getWorld03CollapseZones(stageId)) {
       for (const obstacle of obstacles) {
-        const left = obstacle.x - obstacle.width / 2 - (obstacle.kind === 'cable-drum' ? 160 : 0);
+        const left = obstacle.x - obstacle.width / 2 - (obstacle.kind === 'drum-barrel' ? 160 : 0);
         const right = obstacle.x + obstacle.width / 2;
         assert.ok(right + 40 < gap.x || left - 40 > gap.x + gap.width,
           `${stageId} ${obstacle.id} too close to ${gap.id}`);

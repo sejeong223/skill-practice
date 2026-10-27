@@ -72,7 +72,7 @@ test('fixed beam sites grow 1/2/3/3 and avoid coins, holes, props, drum routes a
         assert.ok(beam.x + 28 < gap.x || beam.x - 28 > gap.x + gap.width, `${beam.id} near ${gap.id}`);
       }
       for (const obstacle of getWorld03Obstacles(stageId)) {
-        const left = obstacle.x - obstacle.width / 2 - (obstacle.kind === 'cable-drum' ? 160 : 0);
+        const left = obstacle.x - obstacle.width / 2 - (obstacle.kind === 'drum-barrel' ? 160 : 0);
         const right = obstacle.x + obstacle.width / 2;
         assert.ok(beam.x + 28 < left || beam.x - 28 > right, `${beam.id} near ${obstacle.id}`);
       }

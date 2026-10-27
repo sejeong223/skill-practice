@@ -1012,9 +1012,9 @@
     "required": true
   },
   {
-    "key": "world-03-cable-drum",
+    "key": "world-03-drum-barrel",
     "kind": "image",
-    "url": "/assets/pixel/objects/world-03/cable-drum.png",
+    "url": "/assets/pixel/objects/world-03/drum-barrel.png",
     "worldId": "world-03",
     "required": true
   },

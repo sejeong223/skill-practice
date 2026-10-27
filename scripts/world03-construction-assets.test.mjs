@@ -17,7 +17,7 @@ const expected = [
   ['world-03-brick-stack', 36, 35],
   ['world-03-cement-bag', 34, 36],
   ['world-03-steel-pipe', 40, 30],
-  ['world-03-cable-drum', 48, 48],
+  ['world-03-drum-barrel', 48, 48],
   ['world-03-wheelbarrow', 56, 44],
   ['world-03-falling-steel-beam', 64, 28],
 ];
@@ -42,7 +42,7 @@ test('construction art is registered once as real required PNG assets', async ()
 test('each construction area has different pixels and every obstacle has a visible silhouette', async () => {
   const images = await Promise.all([1, 2, 3, 4].map(index => readFile(path.join(root, `public/assets/pixel/backgrounds/world-03/world-03-mid-${index}.png`))));
   assert.equal(new Set(images.map(bytes => bytes.toString('base64'))).size, 4);
-  for (const name of ['traffic-cone', 'brick-stack', 'cement-bag', 'steel-pipe', 'cable-drum', 'wheelbarrow', 'falling-steel-beam']) {
+  for (const name of ['traffic-cone', 'brick-stack', 'cement-bag', 'steel-pipe', 'drum-barrel', 'wheelbarrow', 'falling-steel-beam']) {
     const file = path.join(root, `public/assets/pixel/objects/world-03/${name}.png`);
     const {data, info} = await sharp(await readFile(file)).ensureAlpha().raw().toBuffer({resolveWithObject:true});
     let visible = 0;
