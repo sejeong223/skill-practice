@@ -6,29 +6,29 @@
 
 ## Active Phase
 
-[P01 월드 3 오후 공사장 시각 개선](./phases/2026-10-27-world03-afternoon-construction-art/P01-world03-visuals/phase.md)
+없음 — [P01 월드 3 오후 공사장 시각 개선](./phases/2026-10-27-world03-afternoon-construction-art/P01-world03-visuals/phase.md) 완료.
 
 ## Active Task
 
-[T03 공사장 장애물 소품과 전 구간 QA](./phases/2026-10-27-world03-afternoon-construction-art/P01-world03-visuals/T03-construction-props-and-qa.md)
+없음 — [T03 공사장 장애물 소품과 전 구간 QA](./phases/2026-10-27-world03-afternoon-construction-art/P01-world03-visuals/T03-construction-props-and-qa.md) 완료.
 
 ## Status
 
-- 월드 3 시각 개선 계획 P01 2/3. T01 공통 배경·바닥과 T02 다섯 구역 중경·라우팅 완료, T03 진행 준비.
+- 월드 3 오후 공사장 시각 개선 계획 P01 3/3 완료. T01 공통 하늘·전경·바닥, T02 다섯 구역 중경·라우팅, T03 네 장애물 아트와 브라우저 QA를 마쳤다.
 
 ## Next Step (IMPORTANT)
 
-T03 청사진을 읽고 월드 3 장애물 네 종류의 픽셀 아트를 교체한다. 전체 구역의 플레이 화면과 충돌·가독성을 확인하고 계획을 마무리한다. 기존 미커밋 작업은 보존한다.
+현재 계획의 남은 Task는 없다. 새 작업은 별도 계획/포인터로 시작한다. 기존 미커밋 작업은 보존한다.
 
 ## Previous Work Context
 
 ## Last Completed Plan
 
-[우측 상단 메뉴 컬러 픽셀 아이콘](./plans/2026-10-27-hud-menu-pixel-icons.md): 전체 2/2 완료.
+[월드 3 오후 공사장 맵 아트 개선](./plans/2026-10-27-world03-afternoon-construction-art.md): 전체 3/3 완료.
 
 ## Completed Phase
 
-[P01 메뉴 아이콘 제작과 적용](./phases/2026-10-27-hud-menu-pixel-icons/P01-menu-icons/phase.md)
+[P01 월드 3 오후 공사장 시각 개선](./phases/2026-10-27-world03-afternoon-construction-art/P01-world03-visuals/phase.md)
 
 ## 이전 작업 포인터와 기록
 

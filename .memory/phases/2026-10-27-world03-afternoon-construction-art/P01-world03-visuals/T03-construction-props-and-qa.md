@@ -1,6 +1,6 @@
 # Task: T03 공사장 장애물 외형과 전 구간 시각 검증
 
-## Status: pending
+## Status: done
 
 ## Goal
 
@@ -80,9 +80,9 @@
 
 ## Acceptance Criteria
 
-- [ ] 네 장애물이 작은 실제 플레이 크기에서도 각각 무엇인지 식별된다. 색·외곽·햇빛 방향이 새 배경과 맞는다.
-- [ ] 장애물 4×8 배치, 체크포인트/출구, 점프 가능 간격 및 충돌 범위가 기존과 같다.
-- [ ] stage 1~4와 boss의 시작/중간/출구에서 오후 하늘·중경·지면이 끊기지 않고, 코기·코인·적이 선명하게 보인다. 월드 1·2 대표 화면은 회귀가 없다.
+- [x] 네 장애물이 작은 실제 플레이 크기에서도 각각 무엇인지 식별된다. 색·외곽·햇빛 방향이 새 배경과 맞는다.
+- [x] 장애물 4×8 배치, 체크포인트/출구, 점프 가능 간격 및 충돌 범위가 기존과 같다.
+- [x] stage 1~4와 boss의 시작/중간/출구에서 오후 하늘·중경·지면이 끊기지 않고, 코기·코인·적이 선명하게 보인다. 월드 1·2 대표 화면은 회귀가 없다.
 
 ## Validation
 
@@ -108,6 +108,13 @@ Task: T03-construction-props-and-qa
 
 ## Progress
 
-- [ ] 구현 완료
-- [ ] 검증 통과
-- commit: pending
+- [x] 구현 완료
+- [x] 검증 통과
+- commit: 완료 (Plan/Phase/Task footer로 추적)
+
+## Validation Results
+
+- 내장 이미지 생성 도구로 원본 네 스프라이트를 각각 편집했다. 최종 저장 경로는 `public/assets/pixel/objects/world-03/{traffic-cone,brick-stack,cement-bag,steel-pipe}.png`이다. 프롬프트 핵심은 “orange/cream reflective cone with blue-purple outline”, “three staggered courses of reddish clay bricks”, “folded off-white cement sack”, “blue-gray steel tubes with visible circular ends”이며 모두 오후 왼쪽 위 광원·투명 배경·큰 픽셀 덩어리를 요구했다.
+- 각 생성물의 불투명 외곽을 기존 `HITBOX`의 23×34, 34×29, 29×32, 37×23에 맞춰 규격화했다. 좌표·판정 코드는 수정하지 않았다.
+- 실제 1280×720 화면에서 stage 1~4의 시작·x≈1280·출구 근처 x≈3560과 stage 1 x≈2560, 보스 시작·전투 화면을 확인했다. 비계 구역의 원경 녹색 띠를 중경 세로 위치로 수정하고, 다섯 중경의 반복 경계를 펜스 이음부로 보정했다. 월드 1·2 대표 화면도 비교했다. QA용 임시 시작 스테이지·스폰 변경은 원본 SHA-256 해시 확인 후 복구했다.
+- `node --test scripts/world03-visual-assets.test.mjs scripts/world03-background-routing.test.mjs scripts/world03-construction-stages.test.mjs`: 11/11 통과. 에셋 검사: 136개 엔트리/117개 필수 파일 통과. 타입 검사, 지정 ESLint, 프로덕션 빌드 통과.

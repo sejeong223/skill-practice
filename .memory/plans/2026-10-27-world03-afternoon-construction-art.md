@@ -25,7 +25,7 @@
 
 | Phase | Status | Summary | Blueprint |
 | :--- | :--- | :--- | :--- |
-| P01 | `in_progress` | 공통 오후 배경·구역별 공사장·소품 및 검증 | [P01](../phases/2026-10-27-world03-afternoon-construction-art/P01-world03-visuals/phase.md) |
+| P01 | `done ✅` | 공통 오후 배경·구역별 공사장·소품 및 검증 | [P01](../phases/2026-10-27-world03-afternoon-construction-art/P01-world03-visuals/phase.md) |
 
 ## Task Order
 

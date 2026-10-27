@@ -58,9 +58,43 @@ test('월드 3 구역과 보스 중경은 같은 크기와 투명 하늘, 반복
     assert.deepEqual([image.width, image.height], [1672, 941], stage);
     assert.equal(pixel(image, 800, 0)[3], 0, `${stage} sky`);
     assert.ok(pixel(image, 800, 610)[3] > 0, `${stage} site structures`);
+    for (const x of [100, 800, 1500]) {
+      assert.ok(pixel(image, x, 660)[3] >= 128, `${stage} floor overlap at x=${x}`);
+    }
+    assert.ok(pixel(image, 0, 660)[3] >= 128, `${stage} repeated fence joint`);
     for (let y = 0; y < image.height; y++) {
       assert.deepEqual(pixel(image, 0, y), pixel(image, image.width - 1, y), `${stage} seam at y=${y}`);
     }
+  }
+});
+
+test('월드 3 장애물 네 종류는 기존 판정 안에 보이는 그림과 바닥 접점을 가진다', async () => {
+  const contracts = [
+    ['traffic-cone', 32, 40, 23, 34],
+    ['brick-stack', 36, 35, 34, 29],
+    ['cement-bag', 34, 36, 29, 32],
+    ['steel-pipe', 40, 30, 37, 23],
+  ];
+  for (const [kind, width, height, hitboxWidth, hitboxHeight] of contracts) {
+    const image = await imageData(`objects/world-03/${kind}.png`);
+    assert.deepEqual([image.width, image.height], [width, height], kind);
+    let left = width, right = -1, top = height, bottom = -1;
+    const colors = new Set();
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        const [red, green, blue, alpha] = pixel(image, x, y);
+        if (alpha < 128) continue;
+        left = Math.min(left, x); right = Math.max(right, x);
+        top = Math.min(top, y); bottom = Math.max(bottom, y);
+        colors.add(`${red},${green},${blue}`);
+      }
+    }
+    assert.ok(right >= left && bottom >= top, `${kind} visible`);
+    assert.ok(right - left + 1 <= hitboxWidth, `${kind} width`);
+    assert.ok(bottom - top + 1 <= hitboxHeight, `${kind} height`);
+    assert.ok(Math.abs((left + right) / 2 - (width - 1) / 2) <= 1, `${kind} centered`);
+    assert.ok(bottom >= height - 2, `${kind} ground contact`);
+    assert.ok(colors.size >= 8, `${kind} color detail`);
   }
 });
 
