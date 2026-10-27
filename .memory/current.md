@@ -2,38 +2,39 @@
 
 ## Active Plan
 
-[월드 3 공사장 장애물과 철골 빔 낙하](./plans/2026-10-27-world03-construction-hazards.md)
+없음
 
 ## Active Phase
 
-[P01 월드 3 공사장 위험물](./phases/2026-10-27-world03-construction-hazards/P01-construction-hazards/phase.md)
+없음
 
 ## Active Task
 
-[T04 공사장 자산 테스트의 낡은 기대값 수정](./phases/2026-10-27-world03-construction-hazards/P01-construction-hazards/T04-construction-assets-test.md)
+없음
 
 ## Status
 
-- 월드 3 숨은 바닥 붕괴 P00 1/1 완료. 공사장 위험물 P01 3/4 완료. T03 철골 빔 낙하·충돌·재시작 테스트와 타입·lint·빌드 검증 통과.
+- 월드 3 숨은 바닥 붕괴 P00 1/1, 공사장 위험물 P01 4/4 완료. 활성 작업 없음.
 
 ## Next Step (IMPORTANT)
 
-P01-T04 청사진을 읽고 오래된 월드 3 공사장 에셋 테스트의 배경 크기 기대값과 새 위험물 이미지 계약을 갱신한다. 기존 미커밋 작업을 보존하고 Task 변경 부분만 커밋한다.
+새 계획이 등록되면 해당 계획의 첫 Task부터 진행한다.
 
 ## Previous Work Context
 
 ## Last Completed Plan
 
-[월드 3 오후 공사장 맵 아트 개선](./plans/2026-10-27-world03-afternoon-construction-art.md): 전체 3/3 완료.
+[월드 3 공사장 장애물과 철골 빔 낙하](./plans/2026-10-27-world03-construction-hazards.md): P00 1/1, P01 4/4 완료.
 
 ## Completed Phase
 
-[P01 월드 3 오후 공사장 시각 개선](./phases/2026-10-27-world03-afternoon-construction-art/P01-world03-visuals/phase.md)
+[P01 월드 3 공사장 위험물](./phases/2026-10-27-world03-construction-hazards/P01-construction-hazards/phase.md)
 
 ## 이전 작업 포인터와 기록
 
 ### 최근 완료 계획
 
+- [월드 3 오후 공사장 맵 아트 개선](./plans/2026-10-27-world03-afternoon-construction-art.md): 전체 3/3 완료.
 - [개발 서버에서 월드2부터 시작](./plans/2026-10-26-dev-start-world02.md): P01 T01 1/1 완료. 개발 모드에서 월드1 인트로·이름 입력·월드2 진입 컷신을 건너뛰고 첫 스테이지 플레이를 시작한다. 기존 진행 값과 프로덕션 분기를 보존했다. 관련 테스트 18개, 린트, 타입 검사, 빌드 통과.
 - [월드 2 놀이터 맵 1~3과 역방향 이동](./plans/2026-10-21-world02-three-playground-maps.md): P01 4/4 완료(T01~T04 각각 커밋). 맵 3에서 맵 4를 건너뛰어 보스전에 연결한다. 단위 37건, 에셋·타입·린트·빌드 검증 통과. Chrome에서 1→2→3→2→1→2→3→보스 왕복, 두 맵 비둘기 약 3016ms 주기, 사망·체크포인트·코인·시드 유지, 새 월드 시작 상태 초기화를 확인했다.
 

@@ -14,7 +14,7 @@
 | Phase | Status | Summary | Blueprint |
 | :--- | :--- | :--- | :--- |
 | P00 | `done` | 기존 미완료 월드 3 바닥 붕괴를 먼저 완성·검증 | [P00](../phases/2026-10-27-world03-construction-hazards/P00-collapsing-floor/phase.md) |
-| P01 | `in_progress` | 공사장 위험물 그림, 지상 장애물 이동, 철골 빔 낙하와 검증 | [P01](../phases/2026-10-27-world03-construction-hazards/P01-construction-hazards/phase.md) |
+| P01 | `done` | 공사장 위험물 그림, 지상 장애물 이동, 철골 빔 낙하와 검증 | [P01](../phases/2026-10-27-world03-construction-hazards/P01-construction-hazards/phase.md) |
 
 ## Sequence and dependencies
 

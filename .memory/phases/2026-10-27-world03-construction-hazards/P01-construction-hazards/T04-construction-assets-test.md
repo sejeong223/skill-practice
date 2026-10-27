@@ -1,6 +1,6 @@
 # Task: T04 공사장 자산 테스트의 낡은 기대값 수정
 
-## Status: pending
+## Status: done
 
 ## Goal
 
@@ -46,9 +46,9 @@
 
 ## Acceptance Criteria
 
-- [ ] `world03-construction-assets.test.mjs`가 현행 월드 3 이미지와 새 위험물 모두에 통과한다.
-- [ ] 네 일반 중경의 차별화, 기존 네 장애물의 투명 실루엣 검사, manifest 유일성 검사가 유지된다.
-- [ ] 오래된 크기 기대값을 고치기 위해 프로덕션 자산을 되돌리거나 다른 테스트를 약화하지 않는다.
+- [x] `world03-construction-assets.test.mjs`가 현행 월드 3 이미지와 새 위험물 모두에 통과한다.
+- [x] 네 일반 중경의 차별화, 기존 네 장애물의 투명 실루엣 검사, manifest 유일성 검사가 유지된다.
+- [x] 오래된 크기 기대값을 고치기 위해 프로덕션 자산을 되돌리거나 다른 테스트를 약화하지 않는다.
 
 ## Validation
 
@@ -72,6 +72,6 @@ Task: T04-construction-assets-test
 
 ## Progress
 
-- [ ] 구현 완료
-- [ ] 검증 통과
-- commit: pending
+- [x] 구현 완료
+- [x] 검증 통과
+- commit: 이 Task의 한국어 커밋에 포함

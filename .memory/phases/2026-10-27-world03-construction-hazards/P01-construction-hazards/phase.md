@@ -11,11 +11,11 @@
 | T01 | `done ✅` | 위험물 픽셀 이미지 3개와 에셋 로드·시각 계약 | [T01](./T01-hazard-art-and-assets.md) |
 | T02 | `done ✅` | 8자리 지상 장애물 배치, 드럼 이동, 코인 간격과 재시작 | [T02](./T02-rolling-drum-and-wheelbarrow.md) |
 | T03 | `done ✅` | 고정 위치 철골 빔 낙하, 연속 충돌 판정, 체크포인트와 플레이 QA | [T03](./T03-falling-steel-beam.md) |
-| T04 | `in_progress 🔵` | 오래된 공사장 에셋 테스트를 현재 이미지·새 위험물에 맞춤 | [T04](./T04-construction-assets-test.md) |
+| T04 | `done ✅` | 오래된 공사장 에셋 테스트를 현재 이미지·새 위험물에 맞춤 | [T04](./T04-construction-assets-test.md) |
 
 ## Progress
 
-- done: 3/4 (active: T04)
+- done: 4/4
 
 ## Shared constraints
 
