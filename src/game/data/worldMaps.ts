@@ -52,11 +52,16 @@ export function getWorld03StageTheme(
   base: WorldMapThemeDefinition,
 ): WorldMapThemeDefinition {
   const match = /^world-03-stage-([1-4])$/.exec(stageId);
-  if (!match) return base;
+  const midAssetKey = match
+    ? `world-03-background-mid-${match[1]}`
+    : stageId === "world-03-stage-boss"
+      ? "world-03-background-mid-boss"
+      : null;
+  if (!midAssetKey) return base;
   return {
     ...base,
     layers: base.layers.map((layer) => layer.kind === "background-mid"
-      ? { ...layer, assetKey: `world-03-background-mid-${match[1]}` }
+      ? { ...layer, assetKey: midAssetKey }
       : layer),
   };
 }

@@ -13,7 +13,7 @@ import type {
   StageSegment,
   WorldDefinition,
 } from "../core/contentTypes";
-import { createDefaultStageSections, getWorld02StageTheme, WORLD_MAP_THEMES } from "./worldMaps";
+import { createDefaultStageSections, getWorld02StageTheme, getWorld03StageTheme, WORLD_MAP_THEMES } from "./worldMaps";
 import { WORLD01_STAGE_MAPS, world01Checkpoint } from "./world01Maps";
 import { getWorld01FloorY } from "./world01Gimmicks";
 import type {
@@ -242,7 +242,7 @@ function createStageMap(
     sections: isBoss ? [] : createDefaultStageSections(stageId),
     layers: (() => {
       const theme = WORLD_MAP_THEMES.find((candidate) => candidate.worldId === worldId);
-      return theme ? getWorld02StageTheme(stageId, theme).layers : [];
+      return theme ? getWorld03StageTheme(stageId, getWorld02StageTheme(stageId, theme)).layers : [];
     })(),
     objectDefinitions: [...gimmickObjects, ...requiredObjects],
     gimmicks,

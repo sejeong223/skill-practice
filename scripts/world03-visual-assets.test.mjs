@@ -52,12 +52,28 @@ test('월드 3 바닥 텍스처는 충돌 표면에 맞는 크기로 이어진�
   assert.ok(pixel(image, 64, 10)[3] > 0);
 });
 
+test('월드 3 구역과 보스 중경은 같은 크기와 투명 하늘, 반복 경계를 가진다', async () => {
+  for (const stage of ['1', '2', '3', '4', 'boss']) {
+    const image = await imageData(`backgrounds/world-03/world-03-mid-${stage}.png`);
+    assert.deepEqual([image.width, image.height], [1672, 941], stage);
+    assert.equal(pixel(image, 800, 0)[3], 0, `${stage} sky`);
+    assert.ok(pixel(image, 800, 610)[3] > 0, `${stage} site structures`);
+    for (let y = 0; y < image.height; y++) {
+      assert.deepEqual(pixel(image, 0, y), pixel(image, image.width - 1, y), `${stage} seam at y=${y}`);
+    }
+  }
+});
+
 test('월드 3 공통 이미지의 기존 manifest 키와 필수 로드 계약을 유지한다', async () => {
   const manifest = JSON.parse(await readFile(path.join(root, 'src/game/assets/assetManifest.json'), 'utf8'));
   const expected = new Map([
     ['world-03-background-far', '/assets/pixel/backgrounds/world-03/world-03-far.png'],
     ['world-03-foreground', '/assets/pixel/backgrounds/world-03/world-03-foreground.png'],
     ['world-03-construction-floor', '/assets/pixel/tiles/world-03/world-03-construction-floor.png'],
+    ...['1', '2', '3', '4', 'boss'].map((stage) => [
+      `world-03-background-mid-${stage}`,
+      `/assets/pixel/backgrounds/world-03/world-03-mid-${stage}.png`,
+    ]),
   ]);
   for (const [key, url] of expected) {
     const asset = manifest.find((entry) => entry.key === key);

@@ -240,7 +240,7 @@ export class StageScene extends Phaser.Scene {
     if (/^world-02-stage-[1-3]$/.test(stage.id) && !this.loadedMap) {
       this.createWorld02SandFloor(stage);
     }
-    if (/^world-03-stage-[1-4]$/.test(stage.id) && !this.loadedMap) {
+    if ((/^world-03-stage-[1-4]$/.test(stage.id) || stage.id === "world-03-stage-boss") && !this.loadedMap) {
       this.createWorld03ConstructionFloor(stage);
     }
     this.gameplayEventBus = new GameplayEventBus();
@@ -800,14 +800,16 @@ export class StageScene extends Phaser.Scene {
     const bounds = platforms.length === 1
       ? (platforms[0].entity as Phaser.GameObjects.Rectangle).getBounds()
       : null;
-    if (!bounds || bounds.left !== 0 || bounds.right !== stage.mapWidth || bounds.top !== 504) {
+    const expectedInset = stage.kind === "boss" ? 16 : 0;
+    if (!bounds || bounds.left !== expectedInset ||
+        bounds.right !== stage.mapWidth - expectedInset || bounds.top !== 504) {
       throw new Error("월드 3 공사장 바닥과 충돌 범위가 일치하지 않습니다.");
     }
     const visualTop = bounds.top - 5;
     const height = stage.mapHeight - visualTop;
     const textureHeight = this.textures.get("world-03-construction-floor").getSourceImage().height;
     this.sandFloor = this.add
-      .tileSprite(0, visualTop, stage.mapWidth, height, "world-03-construction-floor")
+      .tileSprite(bounds.left, visualTop, bounds.width, height, "world-03-construction-floor")
       .setOrigin(0)
       .setDepth(-2)
       .setScrollFactor(1)

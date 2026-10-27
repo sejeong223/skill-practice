@@ -963,6 +963,13 @@
     "required": true
   },
   {
+    "key": "world-03-background-mid-boss",
+    "kind": "image",
+    "url": "/assets/pixel/backgrounds/world-03/world-03-mid-boss.png",
+    "worldId": "world-03",
+    "required": true
+  },
+  {
     "key": "world-03-foreground",
     "kind": "image",
     "url": "/assets/pixel/backgrounds/world-03/world-03-foreground.png",

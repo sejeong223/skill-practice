@@ -10,15 +10,15 @@
 
 ## Active Task
 
-[T02 구역별 중경과 고등어 보스 배경](./phases/2026-10-27-world03-afternoon-construction-art/P01-world03-visuals/T02-stage-and-boss-backgrounds.md)
+[T03 공사장 장애물 소품과 전 구간 QA](./phases/2026-10-27-world03-afternoon-construction-art/P01-world03-visuals/T03-construction-props-and-qa.md)
 
 ## Status
 
-- 월드 3 시각 개선 계획 P01 1/3. T01 오후 하늘·공통 전경·바닥 완료, T02 진행 준비.
+- 월드 3 시각 개선 계획 P01 2/3. T01 공통 배경·바닥과 T02 다섯 구역 중경·라우팅 완료, T03 진행 준비.
 
 ## Next Step (IMPORTANT)
 
-T02 청사진을 읽고 `public/assets/pixel/backgrounds/world-03/world-03-mid-{1,2,3,4}.png` 및 새 보스 중경을 제작한 뒤 `getWorld03StageTheme`, `createStageMap`, `StageScene.createWorld03ConstructionFloor` 연결을 검증한다. 기존 미커밋 작업은 보존한다.
+T03 청사진을 읽고 월드 3 장애물 네 종류의 픽셀 아트를 교체한다. 전체 구역의 플레이 화면과 충돌·가독성을 확인하고 계획을 마무리한다. 기존 미커밋 작업은 보존한다.
 
 ## Previous Work Context
 

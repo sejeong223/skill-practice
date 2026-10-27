@@ -1,6 +1,6 @@
 # Task: T02 구역별 중경과 고등어 보스 배경
 
-## Status: pending
+## Status: done
 
 ## Goal
 
@@ -110,6 +110,13 @@ Task: T02-stage-and-boss-backgrounds
 
 ## Progress
 
-- [ ] 구현 완료
-- [ ] 검증 통과
-- commit: pending
+- [x] 구현 완료
+- [x] 검증 통과
+- commit: 완료 (Plan/Phase/Task footer로 추적)
+
+## Validation Results
+
+- 내장 이미지 생성 도구로 진입로, 레미콘, 비계 통로, 야적장, 감독실 아레나를 각각 제작했다. 핵심 프롬프트는 “transparent 3–4 PM pixel-art construction entrance with blue fencing and tower crane”, “ready-mix trucks and batching silo”, “blue safety-mesh scaffolding passage”, “rebar and lumber material yard”, “construction supervisor office boss arena”이며 월드 2 중경을 스타일 기준으로 삼았다.
+- 생성 이미지를 각각 1672×941 RGBA 레이어에 맞춰 정규화하고 하늘 알파와 좌우 반복 경계를 확인했다. 다섯 구역 합성 미리보기에서 서로 다른 구조물과 T01 오후 하늘이 보인다.
+- 자동 테스트 10/10, 필수 에셋 검사 136개 엔트리/117개 필수 파일, 타입 검사, 지정 ESLint, 프로덕션 빌드가 통과했다.
+- 개발 브라우저 1280×720에서 stage 1의 하늘·크레인·출입구·코기·코인·장애물 및 y=499 시각 바닥 접점을 확인했다. 나머지 구역과 보스의 실제 플레이 화면은 T03 전 구간 QA에서 이어서 확인한다.
