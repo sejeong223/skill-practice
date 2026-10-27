@@ -384,16 +384,11 @@ form { display: flex; gap: 6px; margin-top: 10px; } form input { min-width: 0; f
   .game-overlay.has-boss-hearts .status-menu-button { top: 96px; left: 8px; }
 }
 
-.pause-button svg,
-.reset-progress-button svg,
-.world-select-button svg,
-.shop-open-button svg,
-.catalog-open-button svg,
-.paint-open-button svg {
+.hud-menu-icon {
   display: block;
-  width: 16px;
-  height: 16px;
-  fill: currentColor;
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
   image-rendering: pixelated;
 }
 
@@ -554,6 +549,9 @@ form { display: flex; gap: 6px; margin-top: 10px; } form input { min-width: 0; f
   text-shadow: 3px 3px #272331;
 }
 .pause-resume-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   min-height: 44px;
   padding: 10px 22px;
   border: 3px solid #5f3942;

@@ -1,6 +1,6 @@
 # Task: T02 HUD 메뉴와 일시정지 화면에 컬러 아이콘 연결
 
-## Status: pending
+## Status: done
 
 ## Goal
 
@@ -117,6 +117,13 @@ Task: T02-hud-icon-integration
 
 ## Progress
 
-- [ ] 구현 완료
-- [ ] 검증 통과
-- commit: pending
+- [x] 구현 완료
+- [x] 검증 통과
+- commit: T02-hud-icon-integration
+
+## Validation Results (2026-10-27)
+
+- 에셋·메뉴 조건 테스트 11건, TypeScript 검사, 지정 파일 ESLint, Next 프로덕션 빌드 통과.
+- 실제 1280×720 화면에서 여섯 PNG가 모두 naturalWidth/Height 20×20으로 로드되고 각 버튼이 32×32인 것을 확인했다.
+- 그림판·카탈로그·상점 열기/닫기, 일시정지 후 중앙 재생 그림의 `계속하기`, 초기화 확인 대화상자의 취소, 월드 선택 열기/취소를 확인했다. 초기화 확정은 실행하지 않았다.
+- 480px 브라우저 폭에서도 여섯 이미지 로드와 32×32 버튼 크기, 한국어 접근성 이름을 확인했다. 사용자 결정대로 터치 영역과 기존 배치는 변경하지 않았다.

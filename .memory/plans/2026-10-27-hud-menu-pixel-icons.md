@@ -15,7 +15,7 @@
 
 | Phase | Status | Summary | Blueprint |
 | :--- | :--- | :--- | :--- |
-| P01 | `in_progress` | 7개 컬러 PNG 제작·검증 후 HUD와 일시정지 화면에 연결 | [P01](../phases/2026-10-27-hud-menu-pixel-icons/P01-menu-icons/phase.md) |
+| P01 | `done` | 7개 컬러 PNG 제작·검증 후 HUD와 일시정지 화면에 연결 | [P01](../phases/2026-10-27-hud-menu-pixel-icons/P01-menu-icons/phase.md) |
 
 ## Baseline & Boundaries
 

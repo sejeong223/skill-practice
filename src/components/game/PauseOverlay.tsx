@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useRef, type ReactElement } from "react";
 
 interface PauseOverlayProps {
@@ -26,6 +27,7 @@ export function PauseOverlay({ onResume }: PauseOverlayProps): ReactElement {
           일시정지
         </h2>
         <button ref={resumeButton} className="pause-resume-button" type="button" onClick={onResume}>
+          <Image className="hud-menu-icon" src="/assets/pixel/ui/menu-play.png" width={20} height={20} alt="" aria-hidden="true" draggable={false} unoptimized />
           계속하기
         </button>
       </section>
