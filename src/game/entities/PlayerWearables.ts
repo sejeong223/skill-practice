@@ -2,15 +2,18 @@ import type * as Phaser from "phaser";
 import type { CosmeticId, CustomOutfitDesign } from "../core/types";
 import { MARKET_PRODUCTS } from "../data/marketCatalog";
 import { colorizeCustomOutfitPixels, type OutfitPose } from "./customOutfitTexture";
-import type { Player } from "./Player";
+import type { Player, PlayerAppearanceTextures } from "./Player";
 
 const categories = new Map(MARKET_PRODUCTS
   .filter((product) => product.cosmeticId !== undefined)
   .map((product) => [product.cosmeticId!, product.category]));
 let nextWearableInstanceId = 1;
-type TexturePair = { run: string; bark: string };
-type TextureSet = TexturePair & { bite: string | null };
-const BARE_CORGI: TextureSet = { run: "corgi-run", bark: "corgi-bark", bite: "corgi-bite" };
+type AccessoryTextures = { run: string; bark: string; pirouette: string; pirouetteMirror: string };
+type TextureSet = PlayerAppearanceTextures;
+const BARE_CORGI: TextureSet = {
+  run: "corgi-run", bark: "corgi-bark", bite: "corgi-bite",
+  pirouette: "corgi-pirouette", pirouetteMirror: "corgi-pirouette-mirror",
+};
 
 export class PlayerWearables {
   private readonly scene: Phaser.Scene;
@@ -39,6 +42,9 @@ export class PlayerWearables {
       const current = this.player.getAppearanceTextures();
       const wasBarking = this.player.texture.key === current.bark;
       const wasBiting = current.bite !== null && this.player.texture.key === current.bite;
+      const wasSpinning = this.player.texture.key === current.pirouette ||
+        this.player.texture.key === current.pirouetteMirror;
+      const wasMirrored = this.player.texture.key === current.pirouetteMirror;
       const frame = Number(this.player.frame.name);
       this.player.anims?.stop();
       this.player.setAppearanceTextures(BARE_CORGI);
@@ -49,17 +55,22 @@ export class PlayerWearables {
       const requested = safeCustom
         ? this.createCustomTextures(safeCustom)
         : safeOutfit ? { run: `wear-${safeOutfit}-run`, bark: `wear-${safeOutfit}-bark`,
-          bite: `wear-${safeOutfit}-bite` } : undefined;
+          bite: `wear-${safeOutfit}-bite`, pirouette: `wear-${safeOutfit}-pirouette`,
+          pirouetteMirror: `wear-${safeOutfit}-pirouette-mirror` } : undefined;
       const appearance: TextureSet = requested && this.scene.textures.exists(requested.run) &&
-          this.scene.textures.exists(requested.bark)
+          this.scene.textures.exists(requested.bark) && this.scene.textures.exists(requested.pirouette) &&
+          this.scene.textures.exists(requested.pirouetteMirror)
         ? { ...requested, bite: requested.bite && this.scene.textures.exists(requested.bite)
           ? requested.bite : null }
         : BARE_CORGI;
       this.player.setAppearanceTextures(appearance);
-      const nextPose = wasBarking ? appearance.bark : wasBiting && appearance.bite
-        ? appearance.bite : appearance.run;
+      const nextPose = wasSpinning
+        ? wasMirrored ? appearance.pirouetteMirror : appearance.pirouette
+        : wasBarking ? appearance.bark : wasBiting && appearance.bite
+          ? appearance.bite : appearance.run;
+      const frameLimit = wasSpinning ? 8 : 4;
       this.player.setTexture(nextPose, wasBarking ? undefined :
-        Number.isInteger(frame) && frame >= 0 && frame < 4 ? frame : 0);
+        Number.isInteger(frame) && frame >= 0 && frame < frameLimit ? frame : 0);
     }
     if (safeAccessory !== this.accessoryId) {
       this.accessoryImage?.destroy();
@@ -71,12 +82,18 @@ export class PlayerWearables {
 
   public sync(): void {
     if (this.destroyed || !this.player.scene) return;
-    const bark = this.player.texture.key === this.player.getAppearanceTextures().bark;
+    const appearance = this.player.getAppearanceTextures();
+    const pose = this.player.texture.key === appearance.bark ? "bark"
+      : this.player.texture.key === appearance.pirouette ? "pirouette"
+      : this.player.texture.key === appearance.pirouetteMirror ? "pirouetteMirror" : "run";
     const numericFrame = Number(this.player.frame.name);
-    const frame = Number.isInteger(numericFrame) && numericFrame >= 0 && numericFrame < 4 ? numericFrame : 0;
+    const frameLimit = pose === "pirouette" || pose === "pirouetteMirror" ? 8 : 4;
+    const frame = Number.isInteger(numericFrame) && numericFrame >= 0 && numericFrame < frameLimit ? numericFrame : 0;
     this.syncLayer(this.accessoryImage, this.accessoryId ? {
       run: `wear-${this.accessoryId}-run`, bark: `wear-${this.accessoryId}-bark`,
-    } : undefined, bark, frame, 1);
+      pirouette: `wear-${this.accessoryId}-pirouette`,
+      pirouetteMirror: `wear-${this.accessoryId}-pirouette-mirror`,
+    } : undefined, pose, frame, 1);
   }
 
   public destroy(): void {
@@ -100,26 +117,45 @@ export class PlayerWearables {
   private createCustomTextures(design: CustomOutfitDesign): TextureSet | null {
     const version = design.updatedAt.replace(/[^0-9]/g, "");
     const prefix = `wear-custom-${design.id}-${version}-${this.instanceId}`;
-    const keys = { run: `${prefix}-run`, bark: `${prefix}-bark`, bite: `${prefix}-bite` };
+    const keys = {
+      run: `${prefix}-run`, bark: `${prefix}-bark`, bite: `${prefix}-bite`,
+      pirouette: `${prefix}-pirouette`, pirouetteMirror: `${prefix}-pirouette-mirror`,
+    };
     try {
-      for (const pose of ["run", "bark", "bite"] as const) {
-        const templateKey = `custom-outfit-template-${pose}`;
+      for (const pose of ["run", "bark", "bite", "pirouette", "pirouetteMirror"] as const) {
+        const templateKey = pose === "pirouetteMirror"
+          ? "custom-outfit-template-pirouette-mirror" : `custom-outfit-template-${pose}`;
         const source = this.scene.textures.get(templateKey).getSourceImage() as CanvasImageSource;
         const canvas = document.createElement("canvas");
-        canvas.width = pose === "bark" ? 112 : 448;
+        const frames = pose === "bark" ? 1 : pose === "pirouette" || pose === "pirouetteMirror" ? 8 : 4;
+        canvas.width = frames * 112;
         canvas.height = 128;
         const context = canvas.getContext("2d", { willReadFrequently: true });
         if (!context) throw new Error("Canvas 2D context unavailable");
         context.drawImage(source, 0, 0);
         const templatePixels = context.getImageData(0, 0, canvas.width, canvas.height);
-        const colored = colorizeCustomOutfitPixels(templatePixels.data, canvas.width, canvas.height, pose as OutfitPose, design);
+        let uv: Uint8ClampedArray | undefined;
+        if (pose === "pirouette" || pose === "pirouetteMirror") {
+          const uvKey = pose === "pirouette"
+            ? "custom-outfit-template-pirouette-uv" : "custom-outfit-template-pirouette-mirror-uv";
+          const uvSource = this.scene.textures.get(uvKey).getSourceImage() as CanvasImageSource;
+          const uvCanvas = document.createElement("canvas");
+          uvCanvas.width = canvas.width;
+          uvCanvas.height = canvas.height;
+          const uvContext = uvCanvas.getContext("2d", { willReadFrequently: true });
+          if (!uvContext) throw new Error("Canvas 2D context unavailable for pirouette UV");
+          uvContext.drawImage(uvSource, 0, 0);
+          uv = uvContext.getImageData(0, 0, canvas.width, canvas.height).data;
+        }
+        const colored = colorizeCustomOutfitPixels(templatePixels.data, canvas.width, canvas.height,
+          pose as OutfitPose, design, uv);
         templatePixels.data.set(colored);
         context.putImageData(templatePixels, 0, 0);
         const texture = this.scene.textures.addCanvas(keys[pose], canvas);
         if (!texture) throw new Error(`Could not create custom outfit texture: ${pose}`);
         this.ownedTextureKeys.push(keys[pose]);
         if (pose !== "bark") {
-          for (let frame = 0; frame < 4; frame++) {
+          for (let frame = 0; frame < frames; frame++) {
             texture.add(String(frame), 0, frame * 112, 0, 112, 128);
           }
         }
@@ -142,19 +178,19 @@ export class PlayerWearables {
 
   private syncLayer(
     image: Phaser.GameObjects.Image | undefined,
-    keys: TexturePair | undefined,
-    bark: boolean,
+    keys: AccessoryTextures | undefined,
+    pose: "run" | "bark" | "pirouette" | "pirouetteMirror",
     frame: number,
     depthOffset: number,
   ): void {
     if (!image || !keys) return;
-    const key = bark ? keys.bark : keys.run;
+    const key = keys[pose];
     if (!this.scene.textures.exists(key)) {
       image.setVisible(false);
       return;
     }
-    if (image.texture.key !== key) image.setTexture(key, bark ? undefined : frame);
-    else if (!bark && Number(image.frame.name) !== frame) image.setFrame(frame);
+    if (image.texture.key !== key) image.setTexture(key, pose === "bark" ? undefined : frame);
+    else if (pose !== "bark" && Number(image.frame.name) !== frame) image.setFrame(frame);
     image.setPosition(this.player.x, this.player.y)
       .setOrigin(this.player.originX, this.player.originY)
       .setScale(this.player.scaleX, this.player.scaleY)

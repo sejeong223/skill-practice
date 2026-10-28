@@ -1,5 +1,6 @@
 import { InputManager } from "../input/InputManager";
 import { Player } from "../entities/Player";
+import type { PlayerJumpStartEvent } from "../entities/Player";
 import type { PlayerTuning } from "../entities/playerTypes";
 
 export class PlayerController {
@@ -73,13 +74,19 @@ export class PlayerController {
       this.player.setFlipX(false);
     }
 
+    let jumpedThisUpdate = false;
     if (this.jumpBufferRemainingMs > 0 && this.coyoteRemainingMs > 0) {
       this.player.setVelocityY(this.tuning.jumpVelocity);
       this.jumpBufferRemainingMs = 0;
       this.coyoteRemainingMs = 0;
+      jumpedThisUpdate = true;
+      this.player.emit("player-jump-started", {
+        kind: "normal", facingLeft: this.player.flipX,
+      } satisfies PlayerJumpStartEvent);
     }
 
-    this.updateAirState(this.isGrounded());
+    // Arcade's grounded flags may still reflect the platform for this launch frame.
+    this.updateAirState(jumpedThisUpdate ? false : this.isGrounded());
   }
 
   public setControlEnabled(enabled: boolean): void {

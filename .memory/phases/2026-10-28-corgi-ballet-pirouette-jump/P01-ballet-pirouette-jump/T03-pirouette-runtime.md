@@ -1,6 +1,6 @@
 # Task: T03 발레 회전 재생과 착용 외형 동기화
 
-## Status: pending
+## Status: done
 
 ## Goal
 
@@ -153,9 +153,9 @@ Task: T03-pirouette-runtime
 
 ## Progress
 
-- [ ] 구현 완료
-- [ ] 검증 통과
-- commit: pending
+- [x] 구현 완료
+- [x] 검증 통과
+- commit: 이 태스크 커밋에 기록
 
 ## Worktree Guard
 

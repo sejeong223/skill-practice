@@ -1,7 +1,7 @@
 import type { CustomOutfitDesign } from "../core/types";
 import { CUSTOM_OUTFIT_CELL_COUNT, CUSTOM_OUTFIT_HEIGHT, CUSTOM_OUTFIT_WIDTH } from "../data/customOutfitPaint";
 
-export type OutfitPose = "run" | "bark" | "bite";
+export type OutfitPose = "run" | "bark" | "bite" | "pirouette" | "pirouetteMirror";
 
 // The paint grid covers the white fabric in the approved 112 x 128 corgi sprite.
 const garmentBounds = { left: 7, top: 40, width: 78, height: 56 } as const;
@@ -38,10 +38,13 @@ export function colorizeCustomOutfitPixels(
   height: number,
   pose: OutfitPose,
   design: CustomOutfitDesign,
+  uvMap?: Uint8ClampedArray,
 ): Uint8ClampedArray {
-  const frames = pose === "bark" ? 1 : 4;
+  const spinning = pose === "pirouette" || pose === "pirouetteMirror";
+  const frames = pose === "bark" ? 1 : spinning ? 8 : 4;
   if (width !== frames * 112 || height !== 128 || template.length !== width * height * 4 ||
-      design.cells.length !== CUSTOM_OUTFIT_CELL_COUNT) {
+      design.cells.length !== CUSTOM_OUTFIT_CELL_COUNT ||
+      (spinning && (!uvMap || uvMap.length !== template.length))) {
     throw new Error("Invalid custom outfit template or design size");
   }
   const result = new Uint8ClampedArray(template);
@@ -51,10 +54,23 @@ export function colorizeCustomOutfitPixels(
     return [parseInt(color.slice(1, 3), 16), parseInt(color.slice(3, 5), 16), parseInt(color.slice(5, 7), 16)];
   });
   for (let y = 0; y < height; y++) for (let x = 0; x < width; x++) {
-    if (!isWhiteSuitPixel(template, width, x, y)) continue;
-    const color = colors[customOutfitCellForPixel(x % 112, y)];
-    if (!color) continue;
     const pixel = (y * width + x) * 4;
+    let cellIndex: number;
+    if (spinning) {
+      if (!uvMap || uvMap[pixel + 3] < 200) continue;
+      cellIndex = uvMap[pixel] + (uvMap[pixel + 1] << 8) - 1;
+      const red = template[pixel], green = template[pixel + 1], blue = template[pixel + 2];
+      if (cellIndex < 0 || cellIndex >= CUSTOM_OUTFIT_CELL_COUNT ||
+          template[pixel + 3] < 200 || Math.min(red, green, blue) < 230 ||
+          Math.max(red, green, blue) - Math.min(red, green, blue) > 8) {
+        throw new Error("Invalid pirouette paint UV or fabric pixel");
+      }
+    } else {
+      if (!isWhiteSuitPixel(template, width, x, y)) continue;
+      cellIndex = customOutfitCellForPixel(x % 112, y);
+    }
+    const color = colors[cellIndex];
+    if (!color) continue;
     result[pixel] = color[0];
     result[pixel + 1] = color[1];
     result[pixel + 2] = color[2];

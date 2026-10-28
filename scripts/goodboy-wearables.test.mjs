@@ -44,7 +44,8 @@ function harness(missing = new Set()) {
   const player = { scene, x: 100, y: 200, originX: 0.5, originY: 99 / 128,
     scaleX: 1, scaleY: 1, flipX: false, visible: true, active: true, depth: 10,
     texture: { key: "corgi-run" }, frame: { name: 0 }, body: { width: 72, height: 40 },
-    appearance: { run: "corgi-run", bark: "corgi-bark", bite: "corgi-bite" },
+    appearance: { run: "corgi-run", bark: "corgi-bark", bite: "corgi-bite",
+      pirouette: "corgi-pirouette", pirouetteMirror: "corgi-pirouette-mirror" },
     getAppearanceTextures() { return this.appearance; },
     setAppearanceTextures(value) { this.appearance = value; },
     setTexture(key, frame = 0) { this.texture.key = key; this.frame.name = frame; return this; },
@@ -154,7 +155,7 @@ test("사용자 옷 교체·재저장·파괴 때 해당 장면의 동적 텍스
   const removed = [];
   h.scene.textures = {
     exists: key => dynamic.has(key) || key.startsWith("custom-outfit-template") || key.startsWith("corgi-"),
-    get: () => ({ getSourceImage: () => ({}) }),
+    get: key => ({ getSourceImage: () => ({ key }) }),
     addCanvas: key => {
       dynamic.add(key);
       return { add: () => ({}), refresh: () => {} };
@@ -164,29 +165,37 @@ test("사용자 옷 교체·재저장·파괴 때 해당 장면의 동적 텍스
   const originalDocument = global.document;
   global.document = { createElement: () => ({
     width: 0, height: 0,
-    getContext: () => ({ drawImage() {}, clearRect() {}, getImageData(x, y, width, height) {
-      const data = new Uint8ClampedArray(width * height * 4); data.fill(255); return { data };
+    getContext: () => ({ source: null, drawImage(source) { this.source = source; }, clearRect() {}, getImageData(x, y, width, height) {
+      const data = new Uint8ClampedArray(width * height * 4);
+      if (this.source?.key?.endsWith("-uv")) {
+        for (let frame = 0; frame < 8; frame++) {
+          const at = (44 * width + frame * 112 + 32) * 4;
+          data[at] = 1; data[at + 3] = 255;
+        }
+      } else data.fill(255);
+      return { data };
     }, putImageData() {} }),
   }) };
   try {
     const wearables = new PlayerWearables(h.scene, h.player);
     const design = { id: "custom-outfit-1", cells: Array(56 * 32).fill("#123456"), updatedAt: "2026-10-22T00:00:00.000Z" };
     wearables.setEquipment(null, null, design);
-    assert.equal(dynamic.size, 3);
+    assert.equal(dynamic.size, 5);
     assert.ok(h.player.getAppearanceTextures().bite.endsWith("-bite"));
+    assert.ok(h.player.getAppearanceTextures().pirouette.endsWith("-pirouette"));
     assert.ok(h.player.texture.key.includes("wear-custom-custom-outfit-1"));
     h.player.frame.name = 3; h.player.flipX = true; h.emitPostupdate();
     assert.equal(h.player.frame.name, 3);
     h.player.setTexture(h.player.getAppearanceTextures().bite, 2); h.emitPostupdate();
     assert.ok(h.player.texture.key.endsWith("-bite"));
     wearables.setEquipment(null, null, { ...design, updatedAt: "2026-10-22T00:00:01.000Z" });
-    assert.equal(dynamic.size, 3);
-    assert.equal(removed.length, 3);
+    assert.equal(dynamic.size, 5);
+    assert.equal(removed.length, 5);
     assert.ok(h.player.texture.key.endsWith("-bite"));
     assert.equal(h.player.frame.name, 2);
     wearables.destroy();
     assert.equal(dynamic.size, 0);
-    assert.equal(removed.length, 6);
+    assert.equal(removed.length, 10);
   } finally {
     global.document = originalDocument;
   }

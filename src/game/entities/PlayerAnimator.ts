@@ -1,14 +1,24 @@
 import type * as Phaser from "phaser";
-import { Player } from "./Player";
+import { Player, type PlayerJumpStartEvent } from "./Player";
 import { DEFAULT_PLAYER_TUNING } from "./playerTypes";
 
 const RUN_FRAME_RATE = 10;
 export const BARK_PRESENTATION_MS = 450;
 export const BITE_PRESENTATION_MS = 320;
+export const PIROUETTE_DURATION_MS = 600;
+const PIROUETTE_FRAME_MS = 75;
+const PIROUETTE_FOOT_ANCHOR = 99;
 const BARK_FOOT_ANCHOR = 99;
 const SLIPPER_SWING_MS = 220;
 // Opaque paw rows in corgi-run.png, measured per animation frame.
 const RUN_FRAME_FOOT_ANCHORS = [99, 99, 100, 104] as const;
+
+type PirouettePlayback = {
+  elapsedMs: number;
+  lockedFacingLeft: boolean;
+  sawAirborne: boolean;
+  kind: PlayerJumpStartEvent["kind"];
+};
 
 export class PlayerAnimator {
   private readonly player: Player;
@@ -20,10 +30,13 @@ export class PlayerAnimator {
   private slipperSwingStartedAt = 0;
   private slipperSwingUntil = 0;
   private slipperFacing: -1 | 1 = 1;
+  private pirouette: PirouettePlayback | null = null;
 
   public constructor(player: Player) {
     this.player = player;
     this.player.on("animationupdate", this.syncRunFootAnchor, this);
+    this.player.on("player-jump-started", this.startPirouette, this);
+    this.player.on("player-reset", this.stopPirouette, this);
   }
 
   public triggerSlipperSwing(now: number): void {
@@ -37,6 +50,7 @@ export class PlayerAnimator {
   }
 
   public triggerBark(): void {
+    if (this.pirouette) return;
     const barkTextureKey = this.player.getAppearanceTextures().bark;
     if (!this.player.scene.textures.exists(barkTextureKey)) return;
     this.stopBite();
@@ -58,6 +72,7 @@ export class PlayerAnimator {
   }
 
   public triggerBite(now: number): void {
+    if (this.pirouette) return;
     const biteKey = this.player.getAppearanceTextures().bite;
     if (!biteKey || !this.player.scene.textures.exists(biteKey)) return;
     this.stopBark();
@@ -86,6 +101,16 @@ export class PlayerAnimator {
 
   public update(now = this.player.scene.time.now, deltaMs = 0): void {
     this.updateSlipperSwing(now);
+    if (this.pirouette) {
+      const grounded = this.player.body.blocked.down || this.player.body.touching.down;
+      if (!grounded) this.pirouette.sawAirborne = true;
+      if (this.player.getAnimationState() === "death" ||
+          (grounded && (this.pirouette.sawAirborne || this.player.body.velocity.y >= 0))) {
+        this.stopPirouette();
+      } else if (this.updatePirouette(deltaMs)) {
+        return;
+      }
+    }
     if (this.updateBite(now)) return;
     if (this.barkRemainingMs > 0) {
       this.barkRemainingMs = Math.max(0, this.barkRemainingMs - (Number.isFinite(deltaMs) ? Math.max(0, deltaMs) : 0));
@@ -112,15 +137,65 @@ export class PlayerAnimator {
   }
 
   public destroy(): void {
+    this.stopPirouette();
     this.stopBark();
     this.stopBite();
     this.player.off("animationupdate", this.syncRunFootAnchor, this);
+    this.player.off("player-jump-started", this.startPirouette, this);
+    this.player.off("player-reset", this.stopPirouette, this);
     this.slipperImage?.destroy();
     this.slipperImage = undefined;
   }
 
   public stopSlipperSwing(): void {
     this.slipperImage?.setVisible(false);
+  }
+
+  private startPirouette(event: PlayerJumpStartEvent): void {
+    const { pirouette, pirouetteMirror } = this.player.getAppearanceTextures();
+    if (!this.player.scene.textures.exists(pirouette) ||
+        !this.player.scene.textures.exists(pirouetteMirror)) return;
+    this.stopBark();
+    this.stopBite();
+    this.player.anims.stop();
+    this.player.anims.timeScale = 1;
+    this.activeAnimationKey = null;
+    this.pirouette = {
+      elapsedMs: 0,
+      lockedFacingLeft: event.facingLeft,
+      sawAirborne: false,
+      kind: event.kind,
+    };
+    this.updatePirouette(0);
+  }
+
+  private stopPirouette(): void {
+    if (!this.pirouette) return;
+    this.pirouette = null;
+    const { run, pirouette, pirouetteMirror } = this.player.getAppearanceTextures();
+    if (this.player.scene && [pirouette, pirouetteMirror].includes(this.player.texture.key)) {
+      this.player.setTexture(run, 0);
+      this.player.alignFeetToFrame(RUN_FRAME_FOOT_ANCHORS[0]);
+    }
+    this.activeAnimationKey = null;
+  }
+
+  private updatePirouette(deltaMs: number): boolean {
+    const playback = this.pirouette;
+    if (!playback) return false;
+    playback.elapsedMs += Number.isFinite(deltaMs) ? Math.max(0, deltaMs) : 0;
+    const { pirouette, pirouetteMirror } = this.player.getAppearanceTextures();
+    const key = this.player.flipX === playback.lockedFacingLeft ? pirouette : pirouetteMirror;
+    if (!this.player.scene.textures.exists(key)) {
+      this.stopPirouette();
+      return false;
+    }
+    const frame = playback.elapsedMs < PIROUETTE_DURATION_MS
+      ? Math.min(7, Math.floor(playback.elapsedMs / PIROUETTE_FRAME_MS)) : 0;
+    if (this.player.texture.key !== key) this.player.setTexture(key, frame);
+    else if (Number(this.player.frame.name) !== frame) this.player.setFrame(frame);
+    this.player.alignFeetToFrame(PIROUETTE_FOOT_ANCHOR);
+    return true;
   }
 
   private syncRunFootAnchor(): void {

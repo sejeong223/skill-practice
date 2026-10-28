@@ -130,6 +130,9 @@ export class SkillSystem {
       case "double-jump":
         this.player.setAnimationState("double-jump");
         this.player.setVelocityY(-420);
+        this.player.emit("player-jump-started", {
+          kind: "double", facingLeft: this.player.flipX,
+        });
         break;
       case "tail-rotor":
         this.player.setAnimationState("tail-rotor");

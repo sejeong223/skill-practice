@@ -10,15 +10,15 @@
 
 ## Active Task
 
-[T03 발레 회전 재생과 착용 외형 동기화](./phases/2026-10-28-corgi-ballet-pirouette-jump/P01-ballet-pirouette-jump/T03-pirouette-runtime.md)
+[T04 발레 점프 통합 회귀와 화면 검증](./phases/2026-10-28-corgi-ballet-pirouette-jump/P01-ballet-pirouette-jump/T04-pirouette-regression-qa.md)
 
 ## Status
 
-- T01 기본 코기와 T02 의상 5종·장신구 5종·색칠 의상 회전 자산/UV 검사 완료. 신규 발레 점프 계획 P01 2/4, T03 진행 준비 완료. 현재 미연결 더블 점프는 연출 재시작 이벤트만 계획하고 실제 입력·해금 연결은 포함하지 않는다.
+- T01~T03 완료. 기본 코기·의상·장신구 자산과 점프마다 600ms 회전 재생, 공중 스킬·방향·색칠 의상 동기화 검증 통과. 발레 점프 계획 P01 3/4, T04 진행 준비 완료. 미연결 더블 점프는 연출 재시작 이벤트만 지원한다.
 
 ## Next Step (IMPORTANT)
 
-T03 청사진을 읽고 점프 시작 이벤트, 600ms 회전 재생, 공중 스킬 표시 우선순위와 장신구·색칠 의상 동기화를 구현한다. 기존 미커밋 보스·HUD·월드 3 변경은 보존한다.
+T04 청사진을 읽고 통합 회귀 검사, 스프라이트 접촉표, 실제 게임 화면 검증을 진행한다. 기존 미커밋 보스·HUD·월드 3 변경은 보존한다.
 
 ## Previous Work Context
 
