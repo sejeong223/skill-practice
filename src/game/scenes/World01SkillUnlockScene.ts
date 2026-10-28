@@ -2,6 +2,7 @@ import * as Phaser from "phaser";
 import { GameEventBus } from "../bridge/GameEventBus";
 import type { ProgressState } from "../core/types";
 import { getBossVictoryPresentation, type BossVictoryStageId } from "../data/bossVictoryPresentation";
+import { getWorld03Entry } from "../systems/world03IntroRouting";
 
 export interface World01SkillUnlockSceneData {
   readonly stageId: BossVictoryStageId;
@@ -110,10 +111,8 @@ export class World01SkillUnlockScene extends Phaser.Scene {
     if (!this.canContinue || this.transitioning || !this.stageData) return;
     this.transitioning = true;
     if (this.stageData.stageId === "world-02-stage-boss") {
-      this.scene.start("StageScene", {
-        stageId: "world-03-stage-1",
-        playerName: (this.registry.get("progressState") as ProgressState).playerName,
-      });
+      const entry = getWorld03Entry(this.registry.get("progressState") as ProgressState);
+      this.scene.start(entry.sceneKey, entry.data);
     } else {
       this.scene.start("World01StageClearScene", {
         stageId: this.stageData.stageId,

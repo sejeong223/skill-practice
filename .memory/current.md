@@ -10,15 +10,15 @@
 
 ## Active Task
 
-[T04 첫 진입 경로와 통합 회귀](./phases/2026-10-28-world03-entrance-intro/P01-construction-entrance/T04-entry-routing-and-regression.md)
+없음 (월드 3 공사장 인트로 계획 완료)
 
 ## Status
 
-- 월드 3 공사장 인트로 계획 P01 3/4. T03 장면·자막·HUD 계약 검증 완료, T04 진행 중. 실제 화면 검증은 첫 진입 경로를 연결한 뒤 통합 점검한다.
+- 월드 3 공사장 인트로 계획 P01 4/4 완료. 월드 2 스타일의 픽셀 공사장 그림과 코기 초상화, 여섯 줄 대사, 효과음, 첫 방문 경로를 구현했다. 자동 검사 38건과 타입·lint·빌드가 통과했다. 실제 화면에서는 첫 장면을 확인했고, 연속 재생·모바일 배치·청음 한계는 [검증 기록](./test-plans/2026-10-28-world03-entrance-intro.md)에 남겼다.
 
 ## Next Step (IMPORTANT)
 
-T04 청사진을 읽고 `src/game/systems/world03IntroRouting.ts`와 일반·개발 첫 진입 경로를 연결한다. 기존 미커밋 보스·HUD·월드 3·발레 점프 변경은 보존한다.
+이번 계획의 남은 Task는 없다. 기존 미커밋 보스·HUD·월드 3·발레 점프 변경은 보존한다.
 
 ## Previous Work Context
 

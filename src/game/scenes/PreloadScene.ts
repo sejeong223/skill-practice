@@ -6,7 +6,8 @@ import { STAGE_IDS } from "../core/constants";
 import { FEEDBACK_AUDIO } from "../audio/audioManifest";
 import { getWorld01Respawn } from "../systems/world01Respawn";
 import { getSelectedWorldResume } from "../systems/worldSelection";
-import { getDevelopmentWorld02Entry } from "../systems/developmentWorld02Start";
+import { getDevelopmentWorld03Entry } from "../systems/developmentWorld03Start";
+import { getWorld03Entry } from "../systems/world03IntroRouting";
 
 export class PreloadScene extends Phaser.Scene {
   private loadError: string | null = null;
@@ -72,7 +73,7 @@ export class PreloadScene extends Phaser.Scene {
   public create(): void {
     const progress = this.registry.get("progressState") as ProgressState | undefined;
     if (!this.loadError && progress) {
-      const developmentEntry = getDevelopmentWorld02Entry(
+      const developmentEntry = getDevelopmentWorld03Entry(
         progress,
         process.env.NODE_ENV === "development",
       );
@@ -102,6 +103,11 @@ export class PreloadScene extends Phaser.Scene {
           stageId: "world-01-stage-boss",
           nextStageId: "world-02-stage-1",
         });
+        return;
+      }
+      if (firstUncleared === "world-03-stage-1") {
+        const entry = getWorld03Entry(progress);
+        this.scene.start(entry.sceneKey, entry.data);
         return;
       }
       this.scene.start("StageScene", {

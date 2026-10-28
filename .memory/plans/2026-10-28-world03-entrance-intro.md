@@ -13,7 +13,7 @@
 
 | Phase | Status | Summary | Blueprint |
 | :--- | :--- | :--- | :--- |
-| P01 | `in_progress` | 전용 대본·그림·오디오·화면과 첫 진입 경로 완성 | [P01](../phases/2026-10-28-world03-entrance-intro/P01-construction-entrance/phase.md) |
+| P01 | `done` | 전용 대본·그림·오디오·화면과 첫 진입 경로 완성 | [P01](../phases/2026-10-28-world03-entrance-intro/P01-construction-entrance/phase.md) |
 
 ## Scope Boundary
 

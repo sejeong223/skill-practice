@@ -1,6 +1,6 @@
 # Task: T04 첫 진입 경로와 통합 회귀
 
-## Status: pending
+## Status: done
 
 ## Goal
 
@@ -118,6 +118,6 @@ Task: T04-entry-routing-and-regression
 
 ## Progress
 
-- [ ] 구현 완료
-- [ ] 검증 통과
-- commit: pending
+- [x] 구현 완료
+- [x] 자동 검증 통과 (브라우저 연속 재생·모바일 화면·청음은 검증 기록에 한계 명시)
+- commit: 이 Task의 Git 커밋 참조
