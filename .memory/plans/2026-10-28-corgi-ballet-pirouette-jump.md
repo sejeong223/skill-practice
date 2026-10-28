@@ -13,7 +13,7 @@
 
 | Phase | Status | Summary | Blueprint |
 | :--- | :--- | :--- | :--- |
-| P01 | `in_progress` | 전신 회전 아트, 의상·장신구 자산, 점프 표시 로직, 회귀 검증 | [P01](../phases/2026-10-28-corgi-ballet-pirouette-jump/P01-ballet-pirouette-jump/phase.md) |
+| P01 | `done ✅` | 전신 회전 아트, 의상·장신구 자산, 점프 표시 로직, 회귀 검증 | [P01](../phases/2026-10-28-corgi-ballet-pirouette-jump/P01-ballet-pirouette-jump/phase.md) |
 
 ## Scope Boundary
 

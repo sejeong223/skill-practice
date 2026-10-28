@@ -1,6 +1,6 @@
 # Task: T04 발레 점프 통합 회귀와 화면 검증
 
-## Status: pending
+## Status: done
 
 ## Goal
 
@@ -106,9 +106,9 @@ Task: T04-pirouette-regression-qa
 
 ## Progress
 
-- [ ] 구현 완료
-- [ ] 검증 통과
-- commit: pending
+- [x] 구현 완료
+- [x] 검증 통과 (브라우저 점프 중간 프레임은 자동화 입력 한계로 미확인, 검증 기록 참조)
+- commit: 이 태스크 커밋에 기록
 
 ## Worktree Guard
 
