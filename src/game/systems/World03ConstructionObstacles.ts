@@ -1,7 +1,7 @@
 import type * as Phaser from "phaser";
 import type { StageId } from "../core/types";
 import type { GameplayEventBus } from "../core/events";
-import { getWorld03Obstacles, WORLD03_OBSTACLE_SCALE } from "../data/world03Construction";
+import { getWorld03Obstacles, WORLD03_OBSTACLE_SCALE, WORLD03_WHEELBARROW_HITBOX_OFFSET_X } from "../data/world03Construction";
 import type { Player } from "../entities/Player";
 
 type DrumPhase = "idle" | "rolling" | "stopped";
@@ -47,7 +47,7 @@ export class World03ConstructionObstacles {
         .setScale(WORLD03_OBSTACLE_SCALE)
         .setDepth(2);
       const zone = scene.add.zone(
-        obstacle.x,
+        obstacle.x + (obstacle.kind === "wheelbarrow" ? WORLD03_WHEELBARROW_HITBOX_OFFSET_X : 0),
         FLOOR_Y - obstacle.height / 2,
         obstacle.width,
         obstacle.height,

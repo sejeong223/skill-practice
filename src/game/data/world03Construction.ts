@@ -11,6 +11,7 @@ export interface World03ObstaclePlacement {
 }
 
 export const WORLD03_OBSTACLE_SCALE = 1.25;
+export const WORLD03_WHEELBARROW_HITBOX_OFFSET_X = 6;
 
 const POSITIONS = [380, 740, 1100, 1460, 1820, 2180, 2820, 3220] as const;
 const COIN_POSITIONS = [
@@ -42,7 +43,9 @@ const HITBOX: Readonly<Record<World03ObstacleKind, { width: number; height: numb
   "cement-bag": { width: 29, height: 32 },
   "steel-pipe": { width: 37, height: 23 },
   "drum-barrel": { width: 42, height: 30 },
-  "wheelbarrow": { width: 52, height: 40 },
+  // The handles and empty space above the tray are visual details. Only the
+  // loaded tray and wheel chassis are lethal so a normal jump can clear it.
+  "wheelbarrow": { width: 30, height: 28 },
 };
 
 export function getWorld03Obstacles(stageId: StageId): readonly World03ObstaclePlacement[] {

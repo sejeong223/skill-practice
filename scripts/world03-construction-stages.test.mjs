@@ -3,8 +3,9 @@ import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 import { getWorld03CoinPositions, getWorld03CollapseZones, getWorld03Obstacles, WORLD03_OBSTACLE_SCALE } from '../src/game/data/world03Construction.ts';
 import { NORMAL_MAP_WIDTH, getNextStageId } from '../src/game/core/constants.ts';
+import { DEFAULT_PLAYER_TUNING } from '../src/game/entities/playerTypes.ts';
 
-test('four construction stages each have eight stable, jumpable obstacles', () => {
+test('four construction stages each have eight stable obstacles', () => {
   const all = [];
   for (let number = 1; number <= 4; number++) {
     const stageId = `world-03-stage-${number}`;
@@ -28,6 +29,21 @@ test('four construction stages each have eight stable, jumpable obstacles', () =
   assert.equal(new Set(all).size, 32);
   assert.deepEqual(getWorld03Obstacles('world-03-stage-boss'), []);
   assert.equal(getNextStageId('world-03-stage-4'), 'world-03-stage-boss');
+});
+
+test('손수레의 실제 충돌 상자는 기본 달리기 점프로 여유 있게 넘어갈 수 있다', () => {
+  const wheelbarrow = getWorld03Obstacles('world-03-stage-1').find(({ kind }) => kind === 'wheelbarrow');
+  assert.ok(wheelbarrow);
+  assert.equal(wheelbarrow.width, 37.5);
+  assert.equal(wheelbarrow.height, 35);
+  // Player.ts uses a 72px-wide body. The time with its feet above the hitbox
+  // must cover the box plus that body, with room for jump timing error.
+  const playerBodyWidth = 72;
+  const gravity = DEFAULT_PLAYER_TUNING.gravityY;
+  const jumpSpeed = Math.abs(DEFAULT_PLAYER_TUNING.jumpVelocity);
+  const timeAboveHitbox = 2 * Math.sqrt(jumpSpeed ** 2 - 2 * gravity * wheelbarrow.height) / gravity;
+  const travelAboveHitbox = DEFAULT_PLAYER_TUNING.runSpeed * timeAboveHitbox;
+  assert.ok(travelAboveHitbox - (playerBodyWidth + wheelbarrow.width) >= 30);
 });
 
 test('construction stages use bone coin positions clear of enlarged obstacles', () => {

@@ -98,13 +98,13 @@ test('월드 3 장애물 네 종류는 기존 판정 안에 보이는 그림과 
   }
 });
 
-test('월드 3 새 위험물 세 종류는 투명 여백과 판정 크기를 지킨다', async () => {
+test('월드 3 새 위험물 세 종류는 투명 여백과 이미지 실루엣 크기를 지킨다', async () => {
   const contracts = [
     ['drum-barrel', 48, 48, 42, 30],
     ['wheelbarrow', 56, 44, 52, 40],
     ['falling-steel-beam', 64, 28, 56, 20],
   ];
-  for (const [kind, width, height, hitboxWidth, hitboxHeight] of contracts) {
+  for (const [kind, width, height, maxVisibleWidth, maxVisibleHeight] of contracts) {
     const artwork = await imageData(`objects/world-03/${kind}.png`);
     assert.deepEqual([artwork.width, artwork.height], [width, height], kind);
     assert.equal(pixel(artwork, 0, 0)[3], 0, `${kind} transparent corner`);
@@ -121,8 +121,8 @@ test('월드 3 새 위험물 세 종류는 투명 여백과 판정 크기를 지
       }
     }
     assert.ok(right >= left && bottom >= top, `${kind} visible`);
-    assert.ok(right - left + 1 <= hitboxWidth, `${kind} hitbox width`);
-    assert.ok(bottom - top + 1 <= hitboxHeight, `${kind} hitbox height`);
+    assert.ok(right - left + 1 <= maxVisibleWidth, `${kind} silhouette width`);
+    assert.ok(bottom - top + 1 <= maxVisibleHeight, `${kind} silhouette height`);
     assert.ok(Math.abs((left + right) / 2 - (width - 1) / 2) <= 1, `${kind} centered`);
     if (kind === 'wheelbarrow') assert.ok(bottom >= height - 2, 'wheel touches ground');
     assert.ok(colors.size >= 8, `${kind} color detail`);

@@ -103,6 +103,11 @@ test('wheelbarrow stays put and drum resets after death, pausing, and scene shut
   const wheelbarrow = images.find(image => image.key === 'world-03-wheelbarrow');
   const wheelZone = zones[images.indexOf(wheelbarrow)];
   assert.deepEqual(wheelbarrow.origin, [0.5, 1]);
+  assert.equal(wheelbarrow.scale, 1.25);
+  assert.equal(wheelZone.x, wheelbarrow.x + 6);
+  assert.equal(wheelZone.y, 504 - 35 / 2);
+  assert.equal(wheelZone.width, 37.5);
+  assert.equal(wheelZone.height, 35);
   player.x = 900;
   setContactAllowed(false);
   system.update(50);
@@ -113,7 +118,7 @@ test('wheelbarrow stays put and drum resets after death, pausing, and scene shut
   system.update(Number.NaN);
   assert.equal(drum.x, 1092);
   assert.equal(wheelbarrow.x, 1820);
-  assert.equal(wheelZone.x, 1820);
+  assert.equal(wheelZone.x, 1826);
   const wheelContact = colliders.find(collider => collider.zone === wheelZone);
   wheelContact.callback();
   wheelContact.callback();
