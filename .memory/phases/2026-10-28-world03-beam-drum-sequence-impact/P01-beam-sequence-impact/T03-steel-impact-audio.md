@@ -1,6 +1,6 @@
 # Task: T03 철근 충돌 `꽝!` 효과음 제작
 
-## Status: pending
+## Status: done
 
 ## Goal
 
@@ -98,6 +98,6 @@ Task: T03-steel-impact-audio
 
 ## Progress
 
-- [ ] 구현 완료
-- [ ] 검증 통과
-- commit: pending
+- [x] 구현 완료
+- [x] 자동 검증 통과 (청감 확인 한계는 검증 기록 참조)
+- commit: Task 커밋에 포함

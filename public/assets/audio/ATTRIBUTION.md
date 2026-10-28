@@ -1,5 +1,12 @@
 # Audio attribution
 
+## world-03-steel-impact.wav
+
+- Original sound synthesized locally by `scripts/generate-world03-steel-impact.mjs`; no external recordings or samples used.
+- A brief noisy strike, descending low impact, inharmonic metal resonance and two smaller rattles are exported as 44.1 kHz mono 16-bit PCM (0.85 s).
+- [SamsterBirdies' metal signpost drop on concrete](https://freesound.org/people/SamsterBirdies/sounds/581596/) is a field-recording reference only; no samples from it are included.
+- Recreate or verify with `node scripts/generate-world03-steel-impact.mjs [--check]`.
+
 ## world-03-construction-drill.wav / world-03-construction-excavator.wav
 
 - Original sounds synthesized locally by `scripts/generate-world03-intro-sfx.mjs`; no external recordings or samples used.

@@ -70,6 +70,7 @@ export class AudioManager {
       this.prepareFeedbackSound("cat-hiss");
       this.prepareFeedbackSound("world-03-drill");
       this.prepareFeedbackSound("world-03-excavator");
+      this.prepareFeedbackSound("world-03-steel-impact");
     }
     this.bindUnlockGesture();
     if (gameplayBus) {

@@ -10,15 +10,15 @@
 
 ## Active Task
 
-[T03 금속 충돌 WAV 제작과 오디오 등록](./phases/2026-10-28-world03-beam-drum-sequence-impact/P01-beam-sequence-impact/T03-steel-impact-audio.md)
+[T04 철근 명중·착지 충돌음 재생](./phases/2026-10-28-world03-beam-drum-sequence-impact/P01-beam-sequence-impact/T04-impact-playback.md)
 
 ## Status
 
-- 월드 3 후반 위험물·체크포인트·철근 충돌음 계획 P01 2/4. T01 배치와 T02 마지막 체크포인트 부활의 자동 검증 완료. 실제 플레이의 인트로 정지 한계는 [검증 기록](./test-plans/2026-10-28-world03-beam-drum-sequence-impact.md)에 남겼다.
+- 월드 3 후반 위험물·체크포인트·철근 충돌음 계획 P01 3/4. T01 배치, T02 체크포인트, T03 금속 충돌음 자산의 자동 검증 완료. 수동 검증 한계는 [검증 기록](./test-plans/2026-10-28-world03-beam-drum-sequence-impact.md)에 남겼다.
 
 ## Next Step (IMPORTANT)
 
-T03 청사진을 읽고 금속 충돌 WAV를 제작하고 오디오 manifest에 등록한다. 기존 미커밋 보스·HUD·발레 점프·인트로 변경은 보존한다.
+T04 청사진을 읽고 철근 명중·바닥 착지 순간에 충돌음을 한 번 재생하고 중복 사망음을 막는다. 기존 미커밋 보스·HUD·발레 점프·인트로 변경은 보존한다.
 
 ## Previous Work Context
 
