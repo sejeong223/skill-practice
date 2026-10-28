@@ -74,6 +74,7 @@ import { isCalicoInSlipperReach } from "../systems/calicoMeleeHitbox";
 import { World02ObstacleSystem } from "../systems/World02ObstacleSystem";
 import { World02PigeonDropSystem } from "../systems/World02PigeonDropSystem";
 import { getWorld01Respawn, isWorld01CheckpointStageId } from "../systems/world01Respawn";
+import { shouldActivateWorld03Checkpoint } from "../systems/world03CheckpointCrossing";
 import { getWorld01ReplayTarget, getWorldStartStageId, isWorldSelectionUnlocked } from "../systems/worldSelection";
 import { getMarketProduct } from "../data/marketCatalog";
 
@@ -927,6 +928,7 @@ export class StageScene extends Phaser.Scene {
     this.skillElapsedMs += elapsed;
     this.bossFeedback.update(elapsed);
     this.playerController?.update(time, delta);
+    this.activateWorld03CheckpointByCrossing();
     this.world03CollapsingFloor?.update(elapsed);
     this.world03Obstacles?.update(elapsed);
     this.world03SteelBeamDrops?.update(elapsed);
@@ -1219,6 +1221,24 @@ export class StageScene extends Phaser.Scene {
     this.eventBus?.emit("pause-state-changed", {
       paused: runtime.getStatus() === "paused",
     });
+  }
+
+  private activateWorld03CheckpointByCrossing(): void {
+    if (!/^world-03-stage-[1-4]$/.test(this.stageId) ||
+        !this.player || !this.runtime || !this.checkpointSystem) return;
+    const latestActiveX = this.checkpointSystem.getSnapshot()?.x ?? null;
+    const playerCenterX = this.player.body.center.x;
+    const candidates = this.runtime.getEntities("checkpoint")
+      .map(({ id, entity }) => ({
+        id,
+        x: (entity.getData("respawnPosition") as { x?: number } | undefined)?.x ?? Number.NaN,
+      }))
+      .filter(({ x }) => shouldActivateWorld03Checkpoint({
+        stageId: this.stageId, playerCenterX, checkpointX: x, latestActiveX,
+      }))
+      .sort((left, right) => left.x - right.x);
+    const latest = candidates.at(-1);
+    if (latest) this.activateCheckpoint(latest.id);
   }
 
   private activateCheckpoint(checkpointId: string): void {

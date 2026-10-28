@@ -40,7 +40,7 @@ export class CheckpointSystem {
     now: number,
     options?: CheckpointActivationOptions,
   ): boolean {
-    if (this.snapshot || this.isFakeCheckpoint?.(checkpointId)) {
+    if (this.snapshot?.checkpointId === checkpointId || this.isFakeCheckpoint?.(checkpointId)) {
       return false;
     }
 

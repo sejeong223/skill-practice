@@ -27,9 +27,14 @@ test("첫 체크포인트 활성화만 한 번 알리고 새 시도는 다시 �
   assert.equal(events.length, 1);
   assert.equal(runtime.checkpointId, "real");
   assert.equal(system.getSnapshot().x, 500);
+  assert.equal(system.activate("next", 900, 504, -1, 12), true);
+  assert.equal(system.activate("next", 910, 504, 1, 13), false);
+  assert.equal(events.length, 2);
+  assert.equal(runtime.checkpointId, "next");
+  assert.deepEqual([system.getRespawnPosition().x, system.getRespawnPosition().y], [900, 504]);
   system.resetForStage();
   assert.equal(system.activate("real", 510, 512, -1, 20), true);
-  assert.equal(events.length, 2);
+  assert.equal(events.length, 3);
 });
 
 test("가짜 체크포인트는 저장과 효과음 이벤트를 만들지 않는다", () => {

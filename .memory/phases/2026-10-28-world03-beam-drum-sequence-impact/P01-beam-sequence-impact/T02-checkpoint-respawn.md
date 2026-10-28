@@ -1,6 +1,6 @@
 # Task: T02 월드 3 마지막 체크포인트 부활
 
-## Status: pending
+## Status: done
 
 ## Goal
 
@@ -123,6 +123,6 @@ Task: T02-checkpoint-respawn
 
 ## Progress
 
-- [ ] 구현 완료
-- [ ] 검증 통과
-- commit: pending
+- [x] 구현 완료
+- [x] 자동 검증 통과 (수동 플레이 한계는 검증 기록 참조)
+- commit: Task 커밋에 포함
