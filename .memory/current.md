@@ -2,23 +2,23 @@
 
 ## Active Plan
 
-없음
+[코기 물기 전신 스프라이트](./plans/2026-10-28-corgi-bite-full-body.md)
 
 ## Active Phase
 
-없음
+[P01 코기 물기 전신 스프라이트](./phases/2026-10-28-corgi-bite-full-body/P01-bite-sprite/phase.md)
 
 ## Active Task
 
-없음
+[T02 착용 의상을 유지하는 전신 물기 이미지](./phases/2026-10-28-corgi-bite-full-body/P01-bite-sprite/T02-outfit-bite-art.md)
 
 ## Status
 
-- 월드 3 숨은 바닥 붕괴 P00 1/1, 공사장 위험물 P01 4/4 완료. 활성 작업 없음.
+- 코기 물기 전신 스프라이트·전용 효과음 P01 1/4. T01 전신 시트와 이미지 검증 완료, T02 진행.
 
 ## Next Step (IMPORTANT)
 
-새 계획이 등록되면 해당 계획의 첫 Task부터 진행한다.
+P01-T02 청사진에 따라 상점 의상 5종과 직접 그린 의상 템플릿의 전신 물기 시트를 제작하고 `src/game/assets/assetManifest.json`과 이미지 테스트에 등록한다. 기존 미커밋 변경을 보존하고 Task 변경만 커밋한다.
 
 ## Previous Work Context
 
