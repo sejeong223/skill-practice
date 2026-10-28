@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { readFile } from "node:fs/promises";
 import { STAGE_IDS, WORLD02_PLAYABLE_STAGE_IDS, getNextStageId, getPreviousWorld02StageId } from "../src/game/core/constants.ts";
+import { WORLD03_ENTRANCE_CUTSCENE } from "../src/game/data/cutscenes/worlds.ts";
 
 const worlds = await readFile(new URL('../src/game/data/worlds.ts', import.meta.url), 'utf8');
 const maps = await readFile(new URL('../src/game/data/worldMaps.ts', import.meta.url), 'utf8');
@@ -48,8 +49,11 @@ test("construction stages select four distinct image layers without changing sav
 });
 
 test("world 3 and 4 intros and later boss intros match their locations", () => {
+  assert.equal(WORLD03_ENTRANCE_CUTSCENE.id, "world-03-intro");
+  assert.equal(WORLD03_ENTRANCE_CUTSCENE.stageId, "world-03-stage-1");
+  assert.ok(WORLD03_ENTRANCE_CUTSCENE.beats[0].narration.includes("공사장"));
   for (const [id, landmark] of [
-    ["world-03-intro", "공사장"], ["world-04-intro", "고물상"],
+    ["world-04-intro", "고물상"],
     ["world-03-boss-intro", "고등어"],
     ["world-04-boss-intro", "턱시도"], ["world-05-boss-intro", "메인쿤"],
   ]) {

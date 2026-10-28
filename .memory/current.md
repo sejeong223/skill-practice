@@ -2,25 +2,29 @@
 
 ## Active Plan
 
-[코기 발레 피루엣 점프](./plans/2026-10-28-corgi-ballet-pirouette-jump.md)
+[월드 3 공사장 인트로](./plans/2026-10-28-world03-entrance-intro.md)
 
 ## Active Phase
 
-[P01 코기 발레 피루엣 점프](./phases/2026-10-28-corgi-ballet-pirouette-jump/P01-ballet-pirouette-jump/phase.md)
+[P01 월드 3 공사장 진입](./phases/2026-10-28-world03-entrance-intro/P01-construction-entrance/phase.md)
 
 ## Active Task
 
-없음 (현재 계획 완료)
+[T02 공사장 합성 효과음과 오디오 계약](./phases/2026-10-28-world03-entrance-intro/P01-construction-entrance/T02-construction-audio.md)
 
 ## Status
 
-- 코기 발레 피루엣 점프 계획 P01 4/4 완료. 기본 코기·의상·장신구 자산, 점프마다 600ms 회전 재생, 공중 스킬·방향·색칠 의상 동기화와 통합 회귀 48개를 검증했다. 브라우저 자동화 키 입력으로 점프 중간 프레임을 포착하지 못한 한계는 검증 기록에 남겼다. 미연결 더블 점프는 연출 재시작 이벤트만 지원한다.
+- 월드 3 공사장 인트로 계획 P01 1/4. T01 대본·그림·낡은 맵 항목 정리 검증 완료, T02 진행 중.
 
 ## Next Step (IMPORTANT)
 
-현재 활성 Task 없음. [발레 점프 검증 기록](./test-plans/2026-10-28-corgi-ballet-pirouette-jump.md)의 미확인 게임 화면 항목은 다음 수동 플레이 점검에서 확인한다. 기존 미커밋 보스·HUD·월드 3 변경은 보존한다.
+T02 청사진을 읽고 `scripts/generate-world03-intro-sfx.mjs`와 `src/game/audio/audioManifest.ts`의 공사장 효과음을 구현한다. 기존 미커밋 보스·HUD·월드 3·발레 점프 변경은 보존한다.
 
 ## Previous Work Context
+
+## Last Completed Ballet Jump Plan
+
+- [코기 발레 피루엣 점프](./plans/2026-10-28-corgi-ballet-pirouette-jump.md): P01 4/4 완료. 기본 코기·의상·장신구 자산, 점프마다 600ms 회전 재생, 공중 스킬·방향·색칠 의상 동기화와 통합 회귀 48개를 검증했다. 브라우저 자동화 키 입력으로 점프 중간 프레임을 포착하지 못한 한계는 [검증 기록](./test-plans/2026-10-28-corgi-ballet-pirouette-jump.md)에 남겼다. 미연결 더블 점프는 연출 재시작 이벤트만 지원한다.
 
 ## Last Completed Corgi Plan
 

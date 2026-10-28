@@ -283,6 +283,27 @@
     "required": true
   },
   {
+    "key": "world-03-entrance-construction",
+    "kind": "image",
+    "url": "/assets/pixel/cutscenes/world-03/world-03-construction-pov.png",
+    "worldId": "world-03",
+    "required": true
+  },
+  {
+    "key": "world-03-entrance-corgi-cough",
+    "kind": "image",
+    "url": "/assets/pixel/cutscenes/world-03/world-03-corgi-cough.png",
+    "worldId": "world-03",
+    "required": true
+  },
+  {
+    "key": "world-03-entrance-corgi-resolved",
+    "kind": "image",
+    "url": "/assets/pixel/cutscenes/world-03/world-03-corgi-resolved.png",
+    "worldId": "world-03",
+    "required": true
+  },
+  {
     "key": "world-02-background-far",
     "kind": "image",
     "url": "/assets/pixel/backgrounds/world-02/world-02-far.png",
@@ -628,15 +649,6 @@
     "tileWidth": 16,
     "tileHeight": 16,
     "worldId": "world-02",
-    "required": false
-  },
-  {
-    "key": "world-03-map-placeholder",
-    "kind": "tilemap",
-    "url": "/assets/pixel/maps/world-03/world-03-stage-1.json",
-    "tileWidth": 16,
-    "tileHeight": 16,
-    "worldId": "world-03",
     "required": false
   },
   {

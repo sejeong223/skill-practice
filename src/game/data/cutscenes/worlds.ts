@@ -92,10 +92,55 @@ export const WORLD02_ENTRANCE_CUTSCENE: CutsceneScript = {
   ],
 };
 
+export const WORLD03_ENTRANCE_CUTSCENE: CutsceneScript = {
+  id: "world-03-intro",
+  stageId: "world-03-stage-1",
+  beats: [
+    {
+      id: "construction-reveal",
+      durationMs: 7500,
+      narration: "지옥의 놀이터를 헤쳐 나온 코기의 앞에 웅장한 위엄을 드러낸 곳은... 철근과 시멘트 가루가 춤추는 위험천만 공사장.",
+      musicKey: "world-03-factory",
+      skipAllowedAfterSeen: true,
+    },
+    {
+      id: "construction-noise",
+      durationMs: 7000,
+      narration: "사방에서 들려오는 진동드릴 소음과 굴착기의 굉음 속에서, 냥아치들은 이미 자신들만의 요새를 구축하고 있었다.",
+      soundCue: "world-03-drill",
+      skipAllowedAfterSeen: true,
+    },
+    {
+      id: "corgi-cough",
+      durationMs: 5000,
+      dialogue: [{ speaker: "corgi", text: "콜록콜록! 이 먼지 구덩이에 시멘트 냄새까지... 강아지 호흡기 다 망가지겠네!" }],
+      skipAllowedAfterSeen: true,
+    },
+    {
+      id: "rebar-cement",
+      durationMs: 7500,
+      narration: "시뻘건 철근이 사방으로 널려 있고, 발 밑은 아직 굳지 않은 촉촉한 시멘트가 코기의 짧은 다리를 유혹하고 있었다.",
+      skipAllowedAfterSeen: true,
+    },
+    {
+      id: "rib-instinct",
+      durationMs: 6500,
+      narration: "누가 봐도 냥아치들의 덫이지만, 15cm 다리의 왕갈비뼈 집착 본능은 위험을 아예 지워버렸다.",
+      skipAllowedAfterSeen: true,
+    },
+    {
+      id: "corgi-resolved",
+      durationMs: 4800,
+      dialogue: [{ speaker: "corgi", text: "먼지 좀 마시면 어때! 내 갈비뼈만 찾으면 그만이다, 기다려라 냥아치들!" }],
+      skipAllowedAfterSeen: true,
+    },
+  ],
+};
+
 export const WORLD_CUTSCENES: readonly CutsceneScript[] = [
   { id: "world-01-intro", stageId: "world-01-stage-1", beats: [{ id: "alley", durationMs: 3200, narration: "무법지대 뒷골목. 왕갈비뼈를 훔쳐간 냥아치 연합의 흔적이 골목 끝으로 이어진다.", musicKey: "world-01-peaceful", skipAllowedAfterSeen: true }] },
   WORLD02_ENTRANCE_CUTSCENE,
-  { id: "world-03-intro", stageId: "world-03-stage-1", beats: [{ id: "junkyard", durationMs: 3200, narration: "공사장 진입로. 크레인과 레미콘 차 사이로 냥아치 고등어의 발자국이 이어진다.", musicKey: "world-03-factory", skipAllowedAfterSeen: true }] },
+  WORLD03_ENTRANCE_CUTSCENE,
   { id: "world-04-intro", stageId: "world-04-stage-1", beats: [{ id: "rooftop", durationMs: 3200, narration: "냥아치 아지트가 된 고물상. 쌓인 고철과 자석 뒤에 행동대장 턱시도가 숨어 있다.", musicKey: "world-04-rooftop", skipAllowedAfterSeen: true }] },
   { id: "world-05-intro", stageId: "world-05-stage-1", beats: [{ id: "kingdom", durationMs: 3200, narration: "최종 캣타워 공성전. 왕갈비뼈의 냄새가 메인쿤의 왕좌 뒤에서 진하게 풍겨온다.", musicKey: "world-05-kingdom", skipAllowedAfterSeen: true }] },
   { id: "world-02-boss-intro", stageId: "world-02-stage-boss", beats: WORLD02_BOSS_INTRO_LINES.map((line, index) => ({
