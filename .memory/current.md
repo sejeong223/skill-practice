@@ -2,25 +2,29 @@
 
 ## Active Plan
 
-없음 — [코기 물기 전신 스프라이트](./plans/2026-10-28-corgi-bite-full-body.md) 완료.
+[코기 발레 피루엣 점프](./plans/2026-10-28-corgi-ballet-pirouette-jump.md)
 
 ## Active Phase
 
-없음 — [P01 코기 물기 전신 스프라이트](./phases/2026-10-28-corgi-bite-full-body/P01-bite-sprite/phase.md) 4/4 완료.
+[P01 코기 발레 피루엣 점프](./phases/2026-10-28-corgi-ballet-pirouette-jump/P01-ballet-pirouette-jump/phase.md)
 
 ## Active Task
 
-없음 — 이 계획의 모든 Task 완료.
+[T02 발레 회전 의상·장신구·색칠 의상 자산](./phases/2026-10-28-corgi-ballet-pirouette-jump/P01-ballet-pirouette-jump/T02-wardrobe-pirouette-art.md)
 
 ## Status
 
-- 코기 물기 전신 스프라이트·전용 효과음 P01 4/4 완료. 사용자 지적에 따라 기본·의상 7개 물기 시트의 몸통·다리 자세를 다시 제작하고, 기존 코기 색·비율과 안광 없는 눈을 유지했다.
+- T01 기본 코기 전신 8방향·반전 시트 구현과 자산 검사 완료. 신규 발레 점프 계획 P01 1/4, T02 진행 준비 완료. 현재 미연결 더블 점프는 연출 재시작 이벤트만 계획하고 실제 입력·해금 연결은 포함하지 않는다.
 
 ## Next Step (IMPORTANT)
 
-활성 Task 없음. 새 작업은 별도 계획 포인터를 설정한 뒤 진행한다. 기존 미커밋 보스·UI 변경은 보존했다.
+T02 청사진을 읽고 기존 의상 5종·장신구 5종·색칠 의상의 회전 8방향 자산과 색칠 좌표 지도를 만든다. 기존 미커밋 보스·HUD·월드 3 변경은 보존한다.
 
 ## Previous Work Context
+
+## Last Completed Corgi Plan
+
+- [코기 물기 전신 스프라이트](./plans/2026-10-28-corgi-bite-full-body.md): P01 4/4 완료. 기본·의상 7개 물기 시트의 몸통·다리 자세를 다시 제작하고 기존 코기 색·비율과 안광 없는 눈을 유지했다.
 
 ## Last Completed Plan
 

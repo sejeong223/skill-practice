@@ -36,13 +36,13 @@
     "required": true
   },
   {
-    "key": "corgi-jump",
+    "key": "corgi-pirouette",
     "kind": "spritesheet",
-    "url": "/assets/pixel/characters/corgi/corgi-jump.png",
-    "frameWidth": 32,
-    "frameHeight": 48,
-    "frameCount": 3,
-    "required": false
+    "url": "/assets/pixel/characters/corgi/corgi-pirouette.png",
+    "frameWidth": 112,
+    "frameHeight": 128,
+    "frameCount": 8,
+    "required": true
   },
   {
     "key": "corgi-slipper-attack",
@@ -78,13 +78,13 @@
     "required": true
   },
   {
-    "key": "corgi-double-jump",
+    "key": "corgi-pirouette-mirror",
     "kind": "spritesheet",
-    "url": "/assets/pixel/characters/corgi/corgi-double-jump.png",
-    "frameWidth": 32,
-    "frameHeight": 48,
-    "frameCount": 3,
-    "required": false
+    "url": "/assets/pixel/characters/corgi/corgi-pirouette-mirror.png",
+    "frameWidth": 112,
+    "frameHeight": 128,
+    "frameCount": 8,
+    "required": true
   },
   {
     "key": "corgi-tail-rotor",
