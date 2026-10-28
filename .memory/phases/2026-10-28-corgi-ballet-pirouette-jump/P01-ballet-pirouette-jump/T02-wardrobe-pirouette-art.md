@@ -1,6 +1,6 @@
 # Task: T02 발레 회전 의상·장신구·색칠 의상 자산
 
-## Status: pending
+## Status: done
 
 ## Goal
 
@@ -130,9 +130,9 @@ Task: T02-wardrobe-pirouette-art
 
 ## Progress
 
-- [ ] 구현 완료
-- [ ] 검증 통과
-- commit: pending
+- [x] 구현 완료
+- [x] 검증 통과
+- commit: 완료 (이 Task의 Git 커밋)
 
 ## Worktree Guard
 

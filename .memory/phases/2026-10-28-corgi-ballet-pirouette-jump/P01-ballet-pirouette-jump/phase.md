@@ -5,13 +5,13 @@
 | Task | Status | Summary | Blueprint |
 | :--- | :--- | :--- | :--- |
 | T01 | `done ✅` | 기본 코기 회전 전신 8프레임과 좌우 보정 자산 | [T01](./T01-core-pirouette-art.md) |
-| T02 | `in_progress 🔵` | 의상 5종·색칠 의상·장신구 5종 회전 자산과 색칠 좌표 지도 | [T02](./T02-wardrobe-pirouette-art.md) |
-| T03 | `pending` | 점프 시작 이벤트, 0.6초 애니메이션, 외형·스킬·방향 동기화 | [T03](./T03-pirouette-runtime.md) |
+| T02 | `done ✅` | 의상 5종·색칠 의상·장신구 5종 회전 자산과 색칠 좌표 지도 | [T02](./T02-wardrobe-pirouette-art.md) |
+| T03 | `in_progress 🔵` | 점프 시작 이벤트, 0.6초 애니메이션, 외형·스킬·방향 동기화 | [T03](./T03-pirouette-runtime.md) |
 | T04 | `pending` | 회귀 자동 검사와 게임 화면에서 자세·장비·착지 검증 | [T04](./T04-pirouette-regression-qa.md) |
 
 ## Progress
 
-- done: 1/4 (active: T02)
+- done: 2/4 (active: T03)
 
 ## Dependency Order
 

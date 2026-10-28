@@ -1085,5 +1085,215 @@
     "frameHeight": 128,
     "frameCount": 4,
     "required": true
+  },
+  {
+    "key": "wear-pink-caterpillar-suit-pirouette",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/characters/corgi/equipment/pink-caterpillar-suit-pirouette.png",
+    "frameWidth": 112,
+    "frameHeight": 128,
+    "frameCount": 8,
+    "required": true
+  },
+  {
+    "key": "wear-pink-caterpillar-suit-pirouette-mirror",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/characters/corgi/equipment/pink-caterpillar-suit-pirouette-mirror.png",
+    "frameWidth": 112,
+    "frameHeight": 128,
+    "frameCount": 8,
+    "required": true
+  },
+  {
+    "key": "wear-banana-peel-suit-pirouette",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/characters/corgi/equipment/banana-peel-suit-pirouette.png",
+    "frameWidth": 112,
+    "frameHeight": 128,
+    "frameCount": 8,
+    "required": true
+  },
+  {
+    "key": "wear-banana-peel-suit-pirouette-mirror",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/characters/corgi/equipment/banana-peel-suit-pirouette-mirror.png",
+    "frameWidth": 112,
+    "frameHeight": 128,
+    "frameCount": 8,
+    "required": true
+  },
+  {
+    "key": "wear-bee-bodysuit-pirouette",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/characters/corgi/equipment/bee-bodysuit-pirouette.png",
+    "frameWidth": 112,
+    "frameHeight": 128,
+    "frameCount": 8,
+    "required": true
+  },
+  {
+    "key": "wear-bee-bodysuit-pirouette-mirror",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/characters/corgi/equipment/bee-bodysuit-pirouette-mirror.png",
+    "frameWidth": 112,
+    "frameHeight": 128,
+    "frameCount": 8,
+    "required": true
+  },
+  {
+    "key": "wear-hotdog-outfit-pirouette",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/characters/corgi/equipment/hotdog-outfit-pirouette.png",
+    "frameWidth": 112,
+    "frameHeight": 128,
+    "frameCount": 8,
+    "required": true
+  },
+  {
+    "key": "wear-hotdog-outfit-pirouette-mirror",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/characters/corgi/equipment/hotdog-outfit-pirouette-mirror.png",
+    "frameWidth": 112,
+    "frameHeight": 128,
+    "frameCount": 8,
+    "required": true
+  },
+  {
+    "key": "wear-diamond-armor-pirouette",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/characters/corgi/equipment/diamond-armor-pirouette.png",
+    "frameWidth": 112,
+    "frameHeight": 128,
+    "frameCount": 8,
+    "required": true
+  },
+  {
+    "key": "wear-diamond-armor-pirouette-mirror",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/characters/corgi/equipment/diamond-armor-pirouette-mirror.png",
+    "frameWidth": 112,
+    "frameHeight": 128,
+    "frameCount": 8,
+    "required": true
+  },
+  {
+    "key": "wear-shinchan-eyebrow-sticker-pirouette",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/characters/corgi/equipment/shinchan-eyebrow-sticker-pirouette.png",
+    "frameWidth": 112,
+    "frameHeight": 128,
+    "frameCount": 8,
+    "required": true
+  },
+  {
+    "key": "wear-shinchan-eyebrow-sticker-pirouette-mirror",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/characters/corgi/equipment/shinchan-eyebrow-sticker-pirouette-mirror.png",
+    "frameWidth": 112,
+    "frameHeight": 128,
+    "frameCount": 8,
+    "required": true
+  },
+  {
+    "key": "wear-birthday-party-hat-pirouette",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/characters/corgi/equipment/birthday-party-hat-pirouette.png",
+    "frameWidth": 112,
+    "frameHeight": 128,
+    "frameCount": 8,
+    "required": true
+  },
+  {
+    "key": "wear-birthday-party-hat-pirouette-mirror",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/characters/corgi/equipment/birthday-party-hat-pirouette-mirror.png",
+    "frameWidth": 112,
+    "frameHeight": 128,
+    "frameCount": 8,
+    "required": true
+  },
+  {
+    "key": "wear-strawberry-headpiece-pirouette",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/characters/corgi/equipment/strawberry-headpiece-pirouette.png",
+    "frameWidth": 112,
+    "frameHeight": 128,
+    "frameCount": 8,
+    "required": true
+  },
+  {
+    "key": "wear-strawberry-headpiece-pirouette-mirror",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/characters/corgi/equipment/strawberry-headpiece-pirouette-mirror.png",
+    "frameWidth": 112,
+    "frameHeight": 128,
+    "frameCount": 8,
+    "required": true
+  },
+  {
+    "key": "wear-propeller-hat-pirouette",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/characters/corgi/equipment/propeller-hat-pirouette.png",
+    "frameWidth": 112,
+    "frameHeight": 128,
+    "frameCount": 8,
+    "required": true
+  },
+  {
+    "key": "wear-propeller-hat-pirouette-mirror",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/characters/corgi/equipment/propeller-hat-pirouette-mirror.png",
+    "frameWidth": 112,
+    "frameHeight": 128,
+    "frameCount": 8,
+    "required": true
+  },
+  {
+    "key": "wear-prince-crown-pirouette",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/characters/corgi/equipment/prince-crown-pirouette.png",
+    "frameWidth": 112,
+    "frameHeight": 128,
+    "frameCount": 8,
+    "required": true
+  },
+  {
+    "key": "wear-prince-crown-pirouette-mirror",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/characters/corgi/equipment/prince-crown-pirouette-mirror.png",
+    "frameWidth": 112,
+    "frameHeight": 128,
+    "frameCount": 8,
+    "required": true
+  },
+  {
+    "key": "custom-outfit-template-pirouette",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/characters/corgi/equipment/custom-outfit-template-pirouette.png",
+    "frameWidth": 112,
+    "frameHeight": 128,
+    "frameCount": 8,
+    "required": true
+  },
+  {
+    "key": "custom-outfit-template-pirouette-mirror",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/characters/corgi/equipment/custom-outfit-template-pirouette-mirror.png",
+    "frameWidth": 112,
+    "frameHeight": 128,
+    "frameCount": 8,
+    "required": true
+  },
+  {
+    "key": "custom-outfit-template-pirouette-uv",
+    "kind": "image",
+    "url": "/assets/pixel/characters/corgi/equipment/custom-outfit-template-pirouette-uv.png",
+    "required": true
+  },
+  {
+    "key": "custom-outfit-template-pirouette-mirror-uv",
+    "kind": "image",
+    "url": "/assets/pixel/characters/corgi/equipment/custom-outfit-template-pirouette-mirror-uv.png",
+    "required": true
   }
 ]
