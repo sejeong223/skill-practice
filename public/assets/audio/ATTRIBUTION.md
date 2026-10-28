@@ -1,5 +1,11 @@
 # Audio attribution
 
+## world-03-construction-drill.wav / world-03-construction-excavator.wav
+
+- Original sounds synthesized locally by `scripts/generate-world03-intro-sfx.mjs`; no external recordings or samples used.
+- The drill combines gated midrange tones and seeded noise (0.55 s). The excavator combines a descending low motor tone and seeded noise (0.85 s).
+- Both are exported as 44.1 kHz mono 16-bit PCM. Recreate or verify with `node scripts/generate-world03-intro-sfx.mjs [--check]`.
+
 ## corgi-bite.wav
 
 - Original sound synthesized locally by `scripts/generate-bite-sfx.mjs`; no external samples used.

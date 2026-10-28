@@ -10,15 +10,15 @@
 
 ## Active Task
 
-[T02 공사장 합성 효과음과 오디오 계약](./phases/2026-10-28-world03-entrance-intro/P01-construction-entrance/T02-construction-audio.md)
+[T03 전용 인트로 장면과 자막 화면](./phases/2026-10-28-world03-entrance-intro/P01-construction-entrance/T03-entrance-scene-and-overlay.md)
 
 ## Status
 
-- 월드 3 공사장 인트로 계획 P01 1/4. T01 대본·그림·낡은 맵 항목 정리 검증 완료, T02 진행 중.
+- 월드 3 공사장 인트로 계획 P01 2/4. T02 합성 WAV·오디오 재생 계약 검증 완료, T03 진행 중.
 
 ## Next Step (IMPORTANT)
 
-T02 청사진을 읽고 `scripts/generate-world03-intro-sfx.mjs`와 `src/game/audio/audioManifest.ts`의 공사장 효과음을 구현한다. 기존 미커밋 보스·HUD·월드 3·발레 점프 변경은 보존한다.
+T03 청사진을 읽고 `src/game/scenes/World03EntranceScene.ts`의 장면과 자막·HUD 표시를 구현한다. 기존 미커밋 보스·HUD·월드 3·발레 점프 변경은 보존한다.
 
 ## Previous Work Context
 

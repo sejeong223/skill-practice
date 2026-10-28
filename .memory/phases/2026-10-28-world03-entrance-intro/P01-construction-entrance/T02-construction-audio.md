@@ -1,6 +1,6 @@
 # Task: T02 공사장 합성 효과음과 오디오 계약
 
-## Status: pending
+## Status: done
 
 ## Goal
 
@@ -97,6 +97,6 @@ Task: T02-construction-audio
 
 ## Progress
 
-- [ ] 구현 완료
-- [ ] 검증 통과
+- [x] 구현 완료
+- [x] 검증 통과
 - commit: pending

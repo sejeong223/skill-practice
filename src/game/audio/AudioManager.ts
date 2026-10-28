@@ -68,6 +68,8 @@ export class AudioManager {
       this.prepareFeedbackSound("bark");
       this.prepareFeedbackSound("bite");
       this.prepareFeedbackSound("cat-hiss");
+      this.prepareFeedbackSound("world-03-drill");
+      this.prepareFeedbackSound("world-03-excavator");
     }
     this.bindUnlockGesture();
     if (gameplayBus) {
@@ -103,8 +105,8 @@ export class AudioManager {
 
   public playSfx(key: string): void {
     if (this.destroyed || this.paused || !SOUND_KEYS.includes(key as SoundKey)) return;
-    if (key === "coin" || key === "checkpoint" || key === "bark" || key === "bite" || key === "cat-hiss") {
-      void this.playFeedbackSound(key);
+    if (key in FEEDBACK_AUDIO) {
+      void this.playFeedbackSound(key as FeedbackSoundKey);
       return;
     }
     if (this.scene.cache.audio.exists(key)) {
@@ -419,12 +421,15 @@ export class AudioManager {
     source.buffer = buffer;
     gain.gain.setValueAtTime(FEEDBACK_AUDIO[key].gain, context.currentTime);
     source.connect(gain).connect(context.destination);
-    this.feedbackVoices += 1;
-    this.setMusicGain(0.38);
-    this.trackSource(source, [gain], () => {
+    const duckMusic = FEEDBACK_AUDIO[key].duckMusic !== false;
+    if (duckMusic) {
+      this.feedbackVoices += 1;
+      this.setMusicGain(0.38);
+    }
+    this.trackSource(source, [gain], duckMusic ? () => {
       this.feedbackVoices = Math.max(0, this.feedbackVoices - 1);
       if (!this.paused && !this.destroyed) this.setMusicGain(this.feedbackVoices ? 0.38 : 1);
-    });
+    } : undefined);
     source.start();
   }
 

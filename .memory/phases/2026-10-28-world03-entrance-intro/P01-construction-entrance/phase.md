@@ -5,13 +5,13 @@
 | Task | Status | Summary | Blueprint |
 | :--- | :--- | :--- | :--- |
 | T01 | `done ✅` | 확정 대본과 오후 공사장·코기 초상화 자산 등록 | [T01](./T01-script-and-pixel-art.md) |
-| T02 | `in_progress 🔵` | 드릴·굴착기 합성 효과음과 오디오 재생 계약 | [T02](./T02-construction-audio.md) |
-| T03 | `pending` | 전용 Phaser 인트로 장면과 React 자막·HUD 표시 | [T03](./T03-entrance-scene-and-overlay.md) |
+| T02 | `done ✅` | 드릴·굴착기 합성 효과음과 오디오 재생 계약 | [T02](./T02-construction-audio.md) |
+| T03 | `in_progress 🔵` | 전용 Phaser 인트로 장면과 React 자막·HUD 표시 | [T03](./T03-entrance-scene-and-overlay.md) |
 | T04 | `pending` | 일반·개발 첫 진입 연결 및 통합 회귀 테스트 | [T04](./T04-entry-routing-and-regression.md) |
 
 ## Progress
 
-- done: 1/4 (active: T02)
+- done: 2/4 (active: T03)
 
 ## Dependency Order
 

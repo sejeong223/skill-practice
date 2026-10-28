@@ -18,10 +18,15 @@ function harness({ locked = false, cached = [] } = {}) {
   const unlocks = [];
   const decodes = [];
   const sources = [];
+  const gains = [];
   const rawContext = {
     state: locked ? "suspended" : "running", currentTime: 100, destination: {},
     decodeAudioData: bytes => new Promise(resolve => decodes.push({ resolve, id: new Uint8Array(bytes)[0] })),
-    createGain: () => ({ gain: { setValueAtTime() {} }, connect() { return this; }, disconnect() {} }),
+    createGain: () => {
+      const gain = { value: 0, setValueAtTime(value) { this.value = value; } };
+      gains.push(gain);
+      return { gain, connect() { return this; }, disconnect() {} };
+    },
     createBufferSource() {
       const source = { buffer: null, started: false, stopped: false,
         connect() { return this; }, disconnect() {},
@@ -85,6 +90,8 @@ function harness({ locked = false, cached = [] } = {}) {
       "feedback-bark": 3,
       "feedback-cat-hiss": 4,
       "feedback-bite": 5,
+      "feedback-world-03-drill": 6,
+      "feedback-world-03-excavator": 7,
     }[key] ?? 0, 0, 0, 0).buffer },
   }, sound: {
     locked: false,
@@ -104,7 +111,7 @@ function harness({ locked = false, cached = [] } = {}) {
   return {
     create: (gameplayBus, gameBus) => new loaded.exports.AudioManager(scene, gameplayBus, gameBus),
     createNoAudio: () => new loaded.exports.AudioManager({ ...scene, sound: new NoAudioSoundManager() }),
-    transport, nodes, sounds, sources, Sequence, Gain,
+    transport, nodes, sounds, sources, gains, Sequence, Gain,
     async decode() { decodes.splice(0).forEach(({ resolve, id }) => resolve({ duration: 0.4, id })); await Promise.resolve(); await Promise.resolve(); },
     async unlock() { unlocks.splice(0).forEach(resolve => resolve()); await Promise.resolve(); await Promise.resolve(); },
   };
@@ -240,6 +247,36 @@ test("새 효과음은 획득 이벤트에서 재생하고 종료·정지 때 �
   h.sources[1].ended(); assert.equal(gain.value, 0);
   audio.setPaused(false); assert.equal(gain.value, 1); audio.destroy();
   gameBus.emit("coin-collected", {}); await Promise.resolve(); assert.equal(h.sources.length, 2);
+});
+
+test("월드 3 공사장 효과음은 낮은 음량으로 재생하고 음악을 낮추지 않는다", async () => {
+  const h = harness();
+  const audio = h.create();
+  audio.playMusic("world-03-factory");
+  await h.decode();
+  const musicGain = h.nodes.find(node => node instanceof h.Gain).gain;
+  audio.playSfx("world-03-drill");
+  await Promise.resolve();
+  assert.equal(h.sources.length, 1);
+  assert.equal(h.sources[0].buffer.id, 6);
+  assert.equal(h.gains[0].value, 0.13);
+  assert.equal(musicGain.value, 1);
+  audio.playSfx("world-03-excavator");
+  await Promise.resolve();
+  assert.equal(h.sources.length, 2);
+  assert.equal(h.sources[1].buffer.id, 7);
+  assert.equal(h.gains[1].value, 0.12);
+  assert.equal(musicGain.value, 1);
+  audio.setPaused(true);
+  assert.ok(h.sources.every(source => source.stopped));
+  audio.destroy();
+
+  const late = harness();
+  const gone = late.create();
+  gone.playSfx("world-03-drill");
+  gone.destroy();
+  await late.decode();
+  assert.equal(late.sources.length, 0);
 });
 
 test("해독·잠금 해제가 늦은 효과음은 정지나 폐기 뒤 재생하지 않는다", async () => {
