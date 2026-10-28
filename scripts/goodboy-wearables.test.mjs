@@ -44,7 +44,7 @@ function harness(missing = new Set()) {
   const player = { scene, x: 100, y: 200, originX: 0.5, originY: 99 / 128,
     scaleX: 1, scaleY: 1, flipX: false, visible: true, active: true, depth: 10,
     texture: { key: "corgi-run" }, frame: { name: 0 }, body: { width: 72, height: 40 },
-    appearance: { run: "corgi-run", bark: "corgi-bark" },
+    appearance: { run: "corgi-run", bark: "corgi-bark", bite: "corgi-bite" },
     getAppearanceTextures() { return this.appearance; },
     setAppearanceTextures(value) { this.appearance = value; },
     setTexture(key, frame = 0) { this.texture.key = key; this.frame.name = frame; return this; },
@@ -58,6 +58,7 @@ test("의상은 코기 자체 이미지로 바뀌고 장신구는 달리기·짖
   const wearables = new PlayerWearables(h.scene, h.player);
   wearables.setEquipment("bee-bodysuit", "prince-crown");
   assert.equal(h.player.texture.key, "wear-bee-bodysuit-run");
+  assert.equal(h.player.getAppearanceTextures().bite, "wear-bee-bodysuit-bite");
   assert.equal(h.images.length, 1);
   assert.deepEqual(h.images.map(image => image.texture.key), ["wear-prince-crown-run"]);
   assert.deepEqual(h.images.map(image => image.depth), [11]);
@@ -71,6 +72,9 @@ test("의상은 코기 자체 이미지로 바뀌고 장신구는 달리기·짖
   h.player.setTexture("wear-bee-bodysuit-bark");
   h.emitPostupdate();
   assert.deepEqual(h.images.map(image => image.texture.key), ["wear-prince-crown-bark"]);
+  h.player.setTexture("wear-bee-bodysuit-bite", 2);
+  h.emitPostupdate();
+  assert.deepEqual(h.images.map(image => image.texture.key), ["wear-prince-crown-run"]);
   h.player.setTexture("wear-bee-bodysuit-run", 0); h.player.visible = false;
   h.emitPostupdate();
   assert.ok(h.images.every(image => image.visible === false && image.frame.name === 0));
@@ -94,6 +98,15 @@ test("의상 즉시 교체·벗기기·없는 에셋은 기본 코기 이미지�
   wearables.destroy();
 });
 
+test("물기 텍스처만 빠진 의상은 옷을 유지하고 물기 연출만 생략한다", () => {
+  const h = harness(new Set(["wear-banana-peel-suit-bite"]));
+  const wearables = new PlayerWearables(h.scene, h.player);
+  wearables.setEquipment("banana-peel-suit", null);
+  assert.equal(h.player.texture.key, "wear-banana-peel-suit-run");
+  assert.equal(h.player.getAppearanceTextures().bite, null);
+  wearables.destroy();
+});
+
 test("외형 장착 이벤트는 저장에서 다시 복원된다", async () => {
   const data = new Map();
   const storage = { getItem: key => data.get(key) ?? null, setItem: (key, value) => data.set(key, value), removeItem: key => data.delete(key) };
@@ -112,10 +125,10 @@ test("외형 장착 이벤트는 저장에서 다시 복원된다", async () => 
   save.destroy();
 });
 
-test("직접 그린 색은 달리기 네 프레임과 짖기에만 칠하고 외곽선은 보존한다", async () => {
+test("직접 그린 색은 달리기·물기 네 프레임과 짖기에 칠하고 외곽선은 보존한다", async () => {
   const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
   const design = { id: "custom-outfit-1", cells: Array(56 * 32).fill("#E95F68"), updatedAt: "2026-10-22T00:00:00.000Z" };
-  for (const [pose, frames] of [["run", 4], ["bark", 1]]) {
+  for (const [pose, frames] of [["run", 4], ["bark", 1], ["bite", 4]]) {
     const { data, info } = await sharp(path.join(root, `public/assets/pixel/characters/corgi/equipment/custom-outfit-template-${pose}.png`))
       .ensureAlpha().raw().toBuffer({ resolveWithObject: true });
     const source = new Uint8ClampedArray(data);
@@ -159,28 +172,30 @@ test("사용자 옷 교체·재저장·파괴 때 해당 장면의 동적 텍스
     const wearables = new PlayerWearables(h.scene, h.player);
     const design = { id: "custom-outfit-1", cells: Array(56 * 32).fill("#123456"), updatedAt: "2026-10-22T00:00:00.000Z" };
     wearables.setEquipment(null, null, design);
-    assert.equal(dynamic.size, 2);
+    assert.equal(dynamic.size, 3);
+    assert.ok(h.player.getAppearanceTextures().bite.endsWith("-bite"));
     assert.ok(h.player.texture.key.includes("wear-custom-custom-outfit-1"));
     h.player.frame.name = 3; h.player.flipX = true; h.emitPostupdate();
     assert.equal(h.player.frame.name, 3);
-    h.player.setTexture(h.player.getAppearanceTextures().bark); h.emitPostupdate();
-    assert.ok(h.player.texture.key.endsWith("-bark"));
+    h.player.setTexture(h.player.getAppearanceTextures().bite, 2); h.emitPostupdate();
+    assert.ok(h.player.texture.key.endsWith("-bite"));
     wearables.setEquipment(null, null, { ...design, updatedAt: "2026-10-22T00:00:01.000Z" });
-    assert.equal(dynamic.size, 2);
-    assert.equal(removed.length, 2);
-    assert.ok(h.player.texture.key.endsWith("-bark"));
+    assert.equal(dynamic.size, 3);
+    assert.equal(removed.length, 3);
+    assert.ok(h.player.texture.key.endsWith("-bite"));
+    assert.equal(h.player.frame.name, 2);
     wearables.destroy();
     assert.equal(dynamic.size, 0);
-    assert.equal(removed.length, 4);
+    assert.equal(removed.length, 6);
   } finally {
     global.document = originalDocument;
   }
 });
 
-test("painted white suit remains fitted in every running and barking frame", async () => {
+test("painted white suit remains fitted in every running, barking and biting frame", async () => {
   const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
   const design = { id: "custom-outfit-1", cells: Array(56 * 32).fill("#E95F68"), updatedAt: "2026-10-22T00:00:00.000Z" };
-  for (const [pose, frames] of [["run", 4], ["bark", 1]]) {
+  for (const [pose, frames] of [["run", 4], ["bark", 1], ["bite", 4]]) {
     const width = frames * 112;
     const template = await sharp(path.join(root, `public/assets/pixel/characters/corgi/equipment/custom-outfit-template-${pose}.png`))
       .ensureAlpha().raw().toBuffer();

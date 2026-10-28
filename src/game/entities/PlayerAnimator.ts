@@ -14,7 +14,6 @@ export class PlayerAnimator {
   private readonly player: Player;
   private activeAnimationKey: string | null = null;
   private barkRemainingMs = 0;
-  private biteImage?: Phaser.GameObjects.Sprite;
   private biteStartedAt = 0;
   private biteUntil = 0;
   private slipperImage?: Phaser.GameObjects.Image;
@@ -59,24 +58,35 @@ export class PlayerAnimator {
   }
 
   public triggerBite(now: number): void {
-    if (!this.player.scene.textures.exists("corgi-bite")) return;
+    const biteKey = this.player.getAppearanceTextures().bite;
+    if (!biteKey || !this.player.scene.textures.exists(biteKey)) return;
     this.stopBark();
-    this.biteImage ??= this.player.scene.add.sprite(this.player.x, this.player.y, "corgi-bite", 0)
-      .setDepth(this.player.depth + 0.5);
+    this.player.anims.stop();
+    this.player.anims.timeScale = 1;
+    this.activeAnimationKey = null;
     this.biteStartedAt = now;
     this.biteUntil = now + BITE_PRESENTATION_MS;
-    this.biteImage.setFrame(0).setVisible(true);
+    this.player.setTexture(biteKey, 0);
+    this.player.alignFeetToFrame(RUN_FRAME_FOOT_ANCHORS[0]);
     this.updateBite(now);
   }
 
   public stopBite(): void {
+    if (this.biteUntil <= 0) return;
     this.biteUntil = 0;
-    this.biteImage?.setVisible(false);
+    if (!this.player.scene) return;
+    const { run, bite } = this.player.getAppearanceTextures();
+    if (this.player.texture?.key === bite) {
+      this.player.setTexture(run, 0);
+      this.player.alignFeetToFrame(RUN_FRAME_FOOT_ANCHORS[0]);
+    }
+    this.player.anims.timeScale = 1;
+    this.activeAnimationKey = null;
   }
 
   public update(now = this.player.scene.time.now, deltaMs = 0): void {
     this.updateSlipperSwing(now);
-    this.updateBite(now);
+    if (this.updateBite(now)) return;
     if (this.barkRemainingMs > 0) {
       this.barkRemainingMs = Math.max(0, this.barkRemainingMs - (Number.isFinite(deltaMs) ? Math.max(0, deltaMs) : 0));
       if (this.barkRemainingMs > 0) return;
@@ -105,8 +115,6 @@ export class PlayerAnimator {
     this.stopBark();
     this.stopBite();
     this.player.off("animationupdate", this.syncRunFootAnchor, this);
-    this.biteImage?.destroy();
-    this.biteImage = undefined;
     this.slipperImage?.destroy();
     this.slipperImage = undefined;
   }
@@ -139,23 +147,22 @@ export class PlayerAnimator {
       .setAlpha(1 - Math.max(0, progress - 0.7) / 0.3);
   }
 
-  private updateBite(now: number): void {
-    const image = this.biteImage;
-    if (!image?.visible) return;
+  private updateBite(now: number): boolean {
+    if (this.biteUntil <= 0) return false;
     if (now >= this.biteUntil) {
       this.stopBite();
-      return;
+      return false;
     }
-    image
-      .setFrame(Math.min(3, Math.floor(Math.max(0, now - this.biteStartedAt) / 80)))
-      .setPosition(this.player.x, this.player.y)
-      .setOrigin(this.player.originX, this.player.originY)
-      .setScale(this.player.scaleX, this.player.scaleY)
-      .setAngle(this.player.angle)
-      .setFlipX(this.player.flipX)
-      .setFlipY(this.player.flipY)
-      .setAlpha(this.player.alpha)
-      .setDepth(this.player.depth + 0.5);
+    const biteKey = this.player.getAppearanceTextures().bite;
+    if (!biteKey || !this.player.scene.textures.exists(biteKey)) {
+      this.stopBite();
+      return false;
+    }
+    const frame = Math.min(3, Math.floor(Math.max(0, now - this.biteStartedAt) / 80));
+    if (this.player.texture.key !== biteKey) this.player.setTexture(biteKey, frame);
+    else if (Number(this.player.frame.name) !== frame) this.player.setFrame(frame);
+    this.player.alignFeetToFrame(RUN_FRAME_FOOT_ANCHORS[frame]);
+    return true;
   }
 
   private playRunAnimation(): void {

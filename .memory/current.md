@@ -10,15 +10,15 @@
 
 ## Active Task
 
-[T03 물기 때 코기 본체 한 장만 표시](./phases/2026-10-28-corgi-bite-full-body/P01-bite-sprite/T03-single-actor-bite-presentation.md)
+[T04 짖기와 구별되는 전용 물기 효과음](./phases/2026-10-28-corgi-bite-full-body/P01-bite-sprite/T04-dedicated-bite-audio.md)
 
 ## Status
 
-- 코기 물기 전신 스프라이트·전용 효과음 P01 2/4. T02 의상 6종 물기 시트와 검증 완료, T03 진행.
+- 코기 물기 전신 스프라이트·전용 효과음 P01 3/4. T03 본체 단일 애니메이션과 검증 완료, T04 진행.
 
 ## Next Step (IMPORTANT)
 
-P01-T03 청사진에 따라 `PlayerAppearanceTextures`, `PlayerWearables`, `PlayerAnimator`를 연결해 별도 얼굴 Sprite 없이 본체로 물기를 재생한다. 기존 미커밋 변경을 보존하고 Task 변경만 커밋한다.
+P01-T04 청사진에 따라 물기 전용 WAV를 생성해 `FEEDBACK_AUDIO`에 등록하고 `bite-hit`가 짖기 대신 그 음원을 재생하도록 연결한다. 기존 미커밋 변경을 보존하고 Task 변경만 커밋한다.
 
 ## Previous Work Context
 

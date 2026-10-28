@@ -9,7 +9,8 @@ const categories = new Map(MARKET_PRODUCTS
   .map((product) => [product.cosmeticId!, product.category]));
 let nextWearableInstanceId = 1;
 type TexturePair = { run: string; bark: string };
-const BARE_CORGI: TexturePair = { run: "corgi-run", bark: "corgi-bark" };
+type TextureSet = TexturePair & { bite: string | null };
+const BARE_CORGI: TextureSet = { run: "corgi-run", bark: "corgi-bark", bite: "corgi-bite" };
 
 export class PlayerWearables {
   private readonly scene: Phaser.Scene;
@@ -37,6 +38,7 @@ export class PlayerWearables {
     if (safeOutfit !== this.outfitId || signature !== this.customSignature) {
       const current = this.player.getAppearanceTextures();
       const wasBarking = this.player.texture.key === current.bark;
+      const wasBiting = current.bite !== null && this.player.texture.key === current.bite;
       const frame = Number(this.player.frame.name);
       this.player.anims?.stop();
       this.player.setAppearanceTextures(BARE_CORGI);
@@ -46,12 +48,18 @@ export class PlayerWearables {
       this.customSignature = signature;
       const requested = safeCustom
         ? this.createCustomTextures(safeCustom)
-        : safeOutfit ? { run: `wear-${safeOutfit}-run`, bark: `wear-${safeOutfit}-bark` } : undefined;
-      const appearance = requested && this.scene.textures.exists(requested.run) && this.scene.textures.exists(requested.bark)
-        ? requested : BARE_CORGI;
+        : safeOutfit ? { run: `wear-${safeOutfit}-run`, bark: `wear-${safeOutfit}-bark`,
+          bite: `wear-${safeOutfit}-bite` } : undefined;
+      const appearance: TextureSet = requested && this.scene.textures.exists(requested.run) &&
+          this.scene.textures.exists(requested.bark)
+        ? { ...requested, bite: requested.bite && this.scene.textures.exists(requested.bite)
+          ? requested.bite : null }
+        : BARE_CORGI;
       this.player.setAppearanceTextures(appearance);
-      this.player.setTexture(wasBarking ? appearance.bark : appearance.run,
-        wasBarking ? undefined : Number.isInteger(frame) && frame >= 0 && frame < 4 ? frame : 0);
+      const nextPose = wasBarking ? appearance.bark : wasBiting && appearance.bite
+        ? appearance.bite : appearance.run;
+      this.player.setTexture(nextPose, wasBarking ? undefined :
+        Number.isInteger(frame) && frame >= 0 && frame < 4 ? frame : 0);
     }
     if (safeAccessory !== this.accessoryId) {
       this.accessoryImage?.destroy();
@@ -89,16 +97,16 @@ export class PlayerWearables {
     return this.scene.add.image(this.player.x, this.player.y, key, 0).setDepth(this.player.depth + depthOffset);
   }
 
-  private createCustomTextures(design: CustomOutfitDesign): TexturePair | null {
+  private createCustomTextures(design: CustomOutfitDesign): TextureSet | null {
     const version = design.updatedAt.replace(/[^0-9]/g, "");
     const prefix = `wear-custom-${design.id}-${version}-${this.instanceId}`;
-    const keys = { run: `${prefix}-run`, bark: `${prefix}-bark` };
+    const keys = { run: `${prefix}-run`, bark: `${prefix}-bark`, bite: `${prefix}-bite` };
     try {
-      for (const pose of ["run", "bark"] as const) {
+      for (const pose of ["run", "bark", "bite"] as const) {
         const templateKey = `custom-outfit-template-${pose}`;
         const source = this.scene.textures.get(templateKey).getSourceImage() as CanvasImageSource;
         const canvas = document.createElement("canvas");
-        canvas.width = pose === "run" ? 448 : 112;
+        canvas.width = pose === "bark" ? 112 : 448;
         canvas.height = 128;
         const context = canvas.getContext("2d", { willReadFrequently: true });
         if (!context) throw new Error("Canvas 2D context unavailable");
@@ -110,7 +118,7 @@ export class PlayerWearables {
         const texture = this.scene.textures.addCanvas(keys[pose], canvas);
         if (!texture) throw new Error(`Could not create custom outfit texture: ${pose}`);
         this.ownedTextureKeys.push(keys[pose]);
-        if (pose === "run") {
+        if (pose !== "bark") {
           for (let frame = 0; frame < 4; frame++) {
             texture.add(String(frame), 0, frame * 112, 0, 112, 128);
           }

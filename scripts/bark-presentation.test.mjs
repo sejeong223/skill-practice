@@ -13,7 +13,7 @@ function harness() {
     scene: { time: { now: 0 }, textures: { exists: () => true }, anims: { exists: () => true } },
     texture: { key: "corgi-run" }, frame: { name: 0 }, flipX: true,
     body: { velocity: { x: 100, y: -200 }, width: 48, height: 40 }, state: "idle",
-    appearance: { run: "corgi-run", bark: "corgi-bark" },
+    appearance: { run: "corgi-run", bark: "corgi-bark", bite: "corgi-bite" },
     getAppearanceTextures() { return this.appearance; },
     anims: { timeScale: 1, stop() {}, play() {} },
     on() {}, off() {}, setTexture(key, frame = 0) { this.texture.key = key; this.frame.name = frame; },
@@ -31,7 +31,7 @@ test("이동 상태가 덮어써져도 짖기는 450ms 유지되고 현재 동�
 });
 test("옷을 입고 짖어도 옷 입은 짖기 이미지에서 옷 입은 달리기 이미지로 돌아온다", () => {
   const { player: p, animator: a } = harness();
-  p.appearance = { run: "wear-bee-bodysuit-run", bark: "wear-bee-bodysuit-bark" };
+  p.appearance = { run: "wear-bee-bodysuit-run", bark: "wear-bee-bodysuit-bark", bite: "wear-bee-bodysuit-bite" };
   p.setTexture(p.appearance.run);
   a.triggerBark();
   assert.equal(p.texture.key, p.appearance.bark);
@@ -53,7 +53,7 @@ test("every outfit stays equipped through strides, jumps, attacks, and barking",
     "hotdog-outfit", "diamond-armor", "custom-outfit-1",
   ]) {
     const { player, animator } = harness();
-    player.appearance = { run: `wear-${id}-run`, bark: `wear-${id}-bark` };
+    player.appearance = { run: `wear-${id}-run`, bark: `wear-${id}-bark`, bite: `wear-${id}-bite` };
     player.setTexture(player.appearance.run);
     player.state = "run";
     animator.update(0, 16);

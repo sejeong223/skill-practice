@@ -1,7 +1,7 @@
 import type { CustomOutfitDesign } from "../core/types";
 import { CUSTOM_OUTFIT_CELL_COUNT, CUSTOM_OUTFIT_HEIGHT, CUSTOM_OUTFIT_WIDTH } from "../data/customOutfitPaint";
 
-export type OutfitPose = "run" | "bark";
+export type OutfitPose = "run" | "bark" | "bite";
 
 // The paint grid covers the white fabric in the approved 112 x 128 corgi sprite.
 const garmentBounds = { left: 7, top: 40, width: 78, height: 56 } as const;
@@ -39,7 +39,7 @@ export function colorizeCustomOutfitPixels(
   pose: OutfitPose,
   design: CustomOutfitDesign,
 ): Uint8ClampedArray {
-  const frames = pose === "run" ? 4 : 1;
+  const frames = pose === "bark" ? 1 : 4;
   if (width !== frames * 112 || height !== 128 || template.length !== width * height * 4 ||
       design.cells.length !== CUSTOM_OUTFIT_CELL_COUNT) {
     throw new Error("Invalid custom outfit template or design size");

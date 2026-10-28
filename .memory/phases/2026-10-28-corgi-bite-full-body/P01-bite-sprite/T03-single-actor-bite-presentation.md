@@ -1,6 +1,6 @@
 # Task: T03 물기 때 코기 본체 한 장만 표시
 
-## Status: pending
+## Status: done
 
 ## Goal
 
@@ -125,6 +125,6 @@ Task: T03-single-actor-bite-presentation
 
 ## Progress
 
-- [ ] 구현 완료
-- [ ] 검증 통과
-- commit: pending
+- [x] 구현 완료
+- [x] 검증 통과 (관련 자동 29건, 에셋·타입·lint·빌드, 기본 코기 브라우저 확인)
+- commit: 이 Task의 Git 커밋
