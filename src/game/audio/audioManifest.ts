@@ -21,5 +21,5 @@ export const FEEDBACK_AUDIO: Readonly<Record<FeedbackSoundKey, {
   "cat-hiss": { cacheKey: "feedback-cat-hiss", url: "/assets/audio/world-02-cat-hiss.wav", gain: 0.55 },
   "world-03-drill": { cacheKey: "feedback-world-03-drill", url: "/assets/audio/world-03-construction-drill.wav", gain: 0.13, duckMusic: false },
   "world-03-excavator": { cacheKey: "feedback-world-03-excavator", url: "/assets/audio/world-03-construction-excavator.wav", gain: 0.12, duckMusic: false },
-  "world-03-steel-impact": { cacheKey: "feedback-world-03-steel-impact", url: "/assets/audio/world-03-steel-impact.wav", gain: 0.52, duckMusic: true },
+  "world-03-steel-impact": { cacheKey: "feedback-world-03-steel-impact", url: "/assets/audio/world-03-steel-impact.wav", gain: 0.72, duckMusic: true },
 };

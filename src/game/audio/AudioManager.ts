@@ -54,6 +54,7 @@ export class AudioManager {
   private musicStartedAt = 0;
   private toneMusicPaused = false;
   private readonly feedbackBuffers = new Map<FeedbackSoundKey, Promise<AudioBuffer | null>>();
+  private readonly readyFeedbackBuffers = new Map<FeedbackSoundKey, AudioBuffer>();
   private effectsGeneration = 0;
   private feedbackVoices = 0;
 
@@ -397,7 +398,10 @@ export class AudioManager {
     if (cached) return cached;
     const bytes = this.scene.cache.binary?.get(FEEDBACK_AUDIO[key].cacheKey) as ArrayBuffer | undefined;
     if (!this.audioContext || !bytes) return Promise.resolve(null);
-    const decoded = this.audioContext.decodeAudioData(bytes.slice(0)).catch((error: unknown) => {
+    const decoded = this.audioContext.decodeAudioData(bytes.slice(0)).then((buffer) => {
+      if (!this.destroyed) this.readyFeedbackBuffers.set(key, buffer);
+      return buffer;
+    }).catch((error: unknown) => {
       console.error("효과음 해독 실패: " + FEEDBACK_AUDIO[key].url, error);
       return null;
     });
@@ -406,6 +410,11 @@ export class AudioManager {
   }
 
   private async playFeedbackSound(key: FeedbackSoundKey): Promise<void> {
+    const readyBuffer = this.readyFeedbackBuffers.get(key);
+    if (readyBuffer && this.isAudioReady()) {
+      this.startFeedbackSound(key, readyBuffer);
+      return;
+    }
     const generation = this.effectsGeneration;
     const requestedAt = performance.now();
     const buffer = await this.prepareFeedbackSound(key);
@@ -420,6 +429,11 @@ export class AudioManager {
       } catch { return; }
     }
     if (!isCurrent() || !this.isAudioReady()) return;
+    this.startFeedbackSound(key, buffer);
+  }
+
+  private startFeedbackSound(key: FeedbackSoundKey, buffer: AudioBuffer): void {
+    if (this.destroyed || this.paused || !this.isAudioReady()) return;
     const context = this.audioContext!;
     const source = context.createBufferSource();
     const gain = context.createGain();

@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 
 const SAMPLE_RATE = 44_100;
 const DURATION_SECONDS = 0.28;
+const SOURCE_LEAD_SAMPLES = Math.round(SAMPLE_RATE * 0.008);
 const OUTPUT_PATH = fileURLToPath(new URL('../public/assets/audio/world-03-steel-impact.wav', import.meta.url));
 const SOURCE_PATH = fileURLToPath(new URL('../art/source/world03-steel-pipe-drop-bibow-cc0.wav', import.meta.url));
 
@@ -13,7 +14,7 @@ export function renderWorld03SteelImpactSfx() {
   if (source.toString('ascii', 0, 4) !== 'RIFF' || source.toString('ascii', 8, 16) !== 'WAVEfmt '
     || source.toString('ascii', 36, 40) !== 'data' || source.readUInt16LE(20) !== 1
     || source.readUInt16LE(22) !== 1 || source.readUInt32LE(24) !== SAMPLE_RATE
-    || source.readUInt16LE(34) !== 16 || source.readUInt32LE(40) < count * 2) {
+    || source.readUInt16LE(34) !== 16 || source.readUInt32LE(40) < (count + SOURCE_LEAD_SAMPLES) * 2) {
     throw new Error('Expected a 44.1 kHz mono PCM steel pipe source recording');
   }
   const samples = new Float64Array(count);
@@ -21,7 +22,7 @@ export function renderWorld03SteelImpactSfx() {
 
   for (let index = 0; index < count; index += 1) {
     const t = index / SAMPLE_RATE;
-    const body = source.readInt16LE(44 + index * 2) / 32768;
+    const body = source.readInt16LE(44 + (index + SOURCE_LEAD_SAMPLES) * 2) / 32768;
     smoothedBody += 0.12 * (body - smoothedBody);
     const brightEdge = body - smoothedBody;
     const decay = Math.exp(-t / 0.075);
