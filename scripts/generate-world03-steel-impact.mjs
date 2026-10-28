@@ -3,55 +3,31 @@ import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const SAMPLE_RATE = 44_100;
-const DURATION_SECONDS = 0.85;
+const DURATION_SECONDS = 0.28;
 const OUTPUT_PATH = fileURLToPath(new URL('../public/assets/audio/world-03-steel-impact.wav', import.meta.url));
-const RESONANCES = [
-  { frequency: 313, decay: 0.28, gain: 0.22 },
-  { frequency: 521, decay: 0.44, gain: 0.16 },
-  { frequency: 997, decay: 0.63, gain: 0.12 },
-  { frequency: 1678, decay: 0.40, gain: 0.075 },
-];
-
-function nextNoise(state) {
-  let seed = state.value;
-  seed ^= seed << 13;
-  seed ^= seed >>> 17;
-  seed ^= seed << 5;
-  state.value = seed;
-  return (seed >>> 0) / 0xffffffff * 2 - 1;
-}
-
-function transient(t, onset, decay) {
-  return t < onset ? 0 : Math.exp(-(t - onset) / decay);
-}
+const SOURCE_PATH = fileURLToPath(new URL('../art/source/world03-steel-pipe-drop-bibow-cc0.wav', import.meta.url));
 
 export function renderWorld03SteelImpactSfx() {
   const count = Math.round(SAMPLE_RATE * DURATION_SECONDS);
+  const source = readFileSync(SOURCE_PATH);
+  if (source.toString('ascii', 0, 4) !== 'RIFF' || source.toString('ascii', 8, 16) !== 'WAVEfmt '
+    || source.toString('ascii', 36, 40) !== 'data' || source.readUInt16LE(20) !== 1
+    || source.readUInt16LE(22) !== 1 || source.readUInt32LE(24) !== SAMPLE_RATE
+    || source.readUInt16LE(34) !== 16 || source.readUInt32LE(40) < count * 2) {
+    throw new Error('Expected a 44.1 kHz mono PCM steel pipe source recording');
+  }
   const samples = new Float64Array(count);
-  const noiseState = { value: 0x5e31b00f };
-  let lowPhase = 0;
-  let lowNoise = 0;
+  let smoothedBody = 0;
 
   for (let index = 0; index < count; index += 1) {
     const t = index / SAMPLE_RATE;
-    const whiteNoise = nextNoise(noiseState);
-    lowNoise += 0.09 * (whiteNoise - lowNoise);
-    const attack = 0.85 * whiteNoise * transient(t, 0, 0.012)
-      + 0.22 * lowNoise * transient(t, 0, 0.035);
-    const frequency = 118 - 46 * Math.min(1, t / 0.22);
-    lowPhase += 2 * Math.PI * frequency / SAMPLE_RATE;
-    const lowImpact = (0.65 * Math.sin(lowPhase) + 0.12 * Math.sin(lowPhase * 2.03))
-      * transient(t, 0, 0.22);
-    const ring = RESONANCES.reduce((sum, { frequency: resonantHz, decay, gain }, voice) =>
-      sum + gain * Math.sin(2 * Math.PI * resonantHz * t + voice * 0.37)
-        * transient(t, 0, decay), 0);
-    const firstRattle = transient(t, 0.095, 0.012);
-    const secondRattle = transient(t, 0.18, 0.018);
-    const rattles = (0.24 * firstRattle + 0.14 * secondRattle)
-      * (0.72 * whiteNoise + 0.28 * Math.sin(2 * Math.PI * 1297 * t));
+    const body = source.readInt16LE(44 + index * 2) / 32768;
+    smoothedBody += 0.12 * (body - smoothedBody);
+    const brightEdge = body - smoothedBody;
+    const decay = Math.exp(-t / 0.075);
     const fadeIn = Math.min(1, t / 0.001);
-    const fadeOut = Math.min(1, (DURATION_SECONDS - t) / 0.02);
-    samples[index] = (attack + lowImpact + ring + rattles) * fadeIn * fadeOut;
+    const fadeOut = Math.min(1, (DURATION_SECONDS - t) / 0.012);
+    samples[index] = (body + 0.22 * brightEdge) * decay * fadeIn * fadeOut;
   }
 
   let peak = 0;
@@ -71,7 +47,7 @@ export function renderWorld03SteelImpactSfx() {
   wav.writeUInt16LE(16, 34);
   wav.write('data', 36, 'ascii');
   wav.writeUInt32LE(count * 2, 40);
-  const scale = 0.78 / peak;
+  const scale = 0.84 / peak;
   for (let index = 0; index < count; index += 1) {
     const value = index === count - 1 ? 0 : samples[index] * scale;
     wav.writeInt16LE(Math.round(value * 32767), 44 + index * 2);
