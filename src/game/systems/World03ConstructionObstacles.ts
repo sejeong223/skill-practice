@@ -1,7 +1,12 @@
 import type * as Phaser from "phaser";
 import type { StageId } from "../core/types";
 import type { GameplayEventBus } from "../core/events";
-import { getWorld03Obstacles, WORLD03_OBSTACLE_SCALE, WORLD03_WHEELBARROW_HITBOX_OFFSET_X } from "../data/world03Construction";
+import {
+  getWorld03Obstacles,
+  WORLD03_OBSTACLE_SCALE,
+  WORLD03_TAPERED_HITBOXES,
+  WORLD03_WHEELBARROW_HITBOX_OFFSET_X,
+} from "../data/world03Construction";
 import type { Player } from "../entities/Player";
 
 type DrumPhase = "idle" | "rolling" | "stopped";
@@ -46,36 +51,52 @@ export class World03ConstructionObstacles {
         .setOrigin(0.5, drum ? 0.5 : 1)
         .setScale(WORLD03_OBSTACLE_SCALE)
         .setDepth(2);
-      const zone = scene.add.zone(
-        obstacle.x + (obstacle.kind === "wheelbarrow" ? WORLD03_WHEELBARROW_HITBOX_OFFSET_X : 0),
-        FLOOR_Y - obstacle.height / 2,
-        obstacle.width,
-        obstacle.height,
-      );
-      scene.physics.add.existing(zone, true);
-      (zone.body as Phaser.Physics.Arcade.StaticBody).updateFromGameObject();
+      const profile = WORLD03_TAPERED_HITBOXES[obstacle.kind];
+      const hitboxes = profile ? profile.bands.map((band) => {
+        const left = obstacle.x + (band.left - profile.sourceWidth / 2) * WORLD03_OBSTACLE_SCALE;
+        const right = obstacle.x + (band.right - profile.sourceWidth / 2) * WORLD03_OBSTACLE_SCALE;
+        const top = FLOOR_Y - (profile.sourceHeight - band.top) * WORLD03_OBSTACLE_SCALE;
+        const bottom = FLOOR_Y - (profile.sourceHeight - band.bottom) * WORLD03_OBSTACLE_SCALE;
+        return {
+          x: (left + right) / 2,
+          y: (top + bottom) / 2,
+          width: right - left,
+          height: bottom - top,
+        };
+      }) : [{
+        x: obstacle.x + (obstacle.kind === "wheelbarrow" ? WORLD03_WHEELBARROW_HITBOX_OFFSET_X : 0),
+        y: FLOOR_Y - obstacle.height / 2,
+        width: obstacle.width,
+        height: obstacle.height,
+      }];
       this.sprites.push(image);
-      this.zones.push(zone);
+      const obstacleZones = hitboxes.map(({ x, y, width, height }) => {
+        const zone = scene.add.zone(x, y, width, height);
+        scene.physics.add.existing(zone, true);
+        (zone.body as Phaser.Physics.Arcade.StaticBody).updateFromGameObject();
+        this.zones.push(zone);
+        this.colliders.push(scene.physics.add.overlap(player, zone, () => {
+          if (this.destroyed || this.contactPending || !canHandleContact()) return;
+          this.contactPending = true;
+          eventBus.emit("death-requested", {
+            stageId,
+            cause: "trap",
+            checkpointId: getCheckpointId(),
+            now: scene.time.now,
+          });
+        }));
+        return zone;
+      });
       if (drum) {
         this.drums.push({
           originX: obstacle.x,
           radius: obstacle.height / 2,
           image,
-          zone,
+          zone: obstacleZones[0],
           phase: "idle",
           traveled: 0,
         });
       }
-      this.colliders.push(scene.physics.add.overlap(player, zone, () => {
-        if (this.destroyed || this.contactPending || !canHandleContact()) return;
-        this.contactPending = true;
-        eventBus.emit("death-requested", {
-          stageId,
-          cause: "trap",
-          checkpointId: getCheckpointId(),
-          now: scene.time.now,
-        });
-      }));
     }
   }
 

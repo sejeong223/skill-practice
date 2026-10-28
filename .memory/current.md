@@ -2,23 +2,23 @@
 
 ## Active Plan
 
-[월드 3 공사장 인트로](./plans/2026-10-28-world03-entrance-intro.md)
+[월드 3 안전 콘·시멘트 포대 히트박스 보정](./plans/2026-10-28-world03-cone-cement-hitboxes.md)
 
 ## Active Phase
 
-[P01 월드 3 공사장 진입](./phases/2026-10-28-world03-entrance-intro/P01-construction-entrance/phase.md)
+[P01 안전 콘·포대의 높이별 충돌](./phases/2026-10-28-world03-cone-cement-hitboxes/P01-shaped-obstacle-collision/phase.md)
 
 ## Active Task
 
-없음 (월드 3 공사장 인트로 계획 완료)
+없음 (월드 3 안전 콘·시멘트 포대 히트박스 보정 계획 완료)
 
 ## Status
 
-- 월드 3 공사장 인트로 계획 P01 4/4 완료. 월드 2 스타일의 픽셀 공사장 그림과 코기 초상화, 여섯 줄 대사, 효과음, 첫 방문 경로를 구현했다. 자동 검사 38건과 타입·lint·빌드가 통과했다. 실제 화면에서는 첫 장면을 확인했고, 연속 재생·모바일 배치·청음 한계는 [검증 기록](./test-plans/2026-10-28-world03-entrance-intro.md)에 남겼다.
+- 월드 3 안전 콘·시멘트 포대 히트박스 보정 계획 P01 1/1 완료. 두 사물에 4단 높이별 충돌 영역을 적용하고 자동 검사 10건과 자산·타입·lint·빌드를 통과했다. 브라우저에서는 인트로 이후 장면 진행이 멈춰 직접 접촉 검증을 못 했으며 [검증 기록](./test-plans/2026-10-28-world03-cone-cement-hitboxes.md)에 남겼다.
 
 ## Next Step (IMPORTANT)
 
-이번 계획의 남은 Task는 없다. 기존 미커밋 보스·HUD·월드 3·발레 점프 변경은 보존한다.
+이번 계획의 남은 Task는 없다. 기존 미커밋 보스·HUD·발레 점프 변경은 보존한다.
 
 ## Previous Work Context
 

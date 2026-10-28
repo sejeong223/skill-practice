@@ -4,6 +4,7 @@ import path from 'node:path';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
 import sharp from 'sharp';
+import { WORLD03_TAPERED_HITBOXES } from '../src/game/data/world03Construction.ts';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const manifest = JSON.parse(await readFile(path.join(root, 'src/game/assets/assetManifest.json'), 'utf8'));
@@ -49,5 +50,45 @@ test('each construction area has different pixels and every obstacle has a visib
     for (let p = 3; p < data.length; p += 4) if (data[p] > 127) visible++;
     assert.ok(visible > info.width * info.height * .08, `${name} must be identifiable`);
     assert.equal(data[3], 0, `${name} has transparent corners`);
+  }
+});
+
+test('cone and cement collision bands match each PNG silhouette at every height', async () => {
+  for (const [kind, profile] of Object.entries(WORLD03_TAPERED_HITBOXES)) {
+    const file = path.join(root, `public/assets/pixel/objects/world-03/${kind}.png`);
+    const {data, info} = await sharp(await readFile(file)).ensureAlpha().raw().toBuffer({resolveWithObject:true});
+    assert.equal(profile.sourceWidth, info.width, `${kind} source width`);
+    assert.equal(profile.sourceHeight, info.height, `${kind} source height`);
+    assert.equal(profile.bands.length, 4, `${kind} band count`);
+
+    let previousBottom = profile.bands[0].top;
+    for (const band of profile.bands) {
+      assert.equal(band.top, previousBottom, `${kind} vertical bands must touch`);
+      assert.ok(band.left >= 0 && band.right <= info.width && band.left < band.right, kind);
+      assert.ok(band.top >= 0 && band.bottom <= info.height && band.top < band.bottom, kind);
+      let left = info.width;
+      let right = 0;
+      let top = info.height;
+      let bottom = 0;
+      for (let y = band.top; y < band.bottom; y++) {
+        for (let x = 0; x < info.width; x++) {
+          if (data[(y * info.width + x) * info.channels + 3] === 0) continue;
+          left = Math.min(left, x);
+          right = Math.max(right, x + 1);
+          top = Math.min(top, y);
+          bottom = Math.max(bottom, y + 1);
+        }
+      }
+      assert.deepEqual({left, top, right, bottom}, band, `${kind} alpha bounds`);
+      previousBottom = band.bottom;
+    }
+    for (let y = 0; y < info.height; y++) {
+      for (let x = 0; x < info.width; x++) {
+        if (data[(y * info.width + x) * info.channels + 3] === 0) continue;
+        assert.ok(profile.bands.some(band =>
+          x >= band.left && x < band.right && y >= band.top && y < band.bottom),
+        `${kind} opaque pixel outside collision bands: ${x},${y}`);
+      }
+    }
   }
 });

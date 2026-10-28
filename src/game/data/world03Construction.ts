@@ -10,6 +10,19 @@ export interface World03ObstaclePlacement {
   readonly height: number;
 }
 
+export interface World03HitboxBand {
+  readonly left: number;
+  readonly top: number;
+  readonly right: number;
+  readonly bottom: number;
+}
+
+export interface World03CollisionProfile {
+  readonly sourceWidth: number;
+  readonly sourceHeight: number;
+  readonly bands: readonly World03HitboxBand[];
+}
+
 export const WORLD03_OBSTACLE_SCALE = 1.25;
 export const WORLD03_WHEELBARROW_HITBOX_OFFSET_X = 6;
 
@@ -46,6 +59,30 @@ const HITBOX: Readonly<Record<World03ObstacleKind, { width: number; height: numb
   // The handles and empty space above the tray are visual details. Only the
   // loaded tray and wheel chassis are lethal so a normal jump can clear it.
   "wheelbarrow": { width: 30, height: 28 },
+};
+
+// Half-open pixel bounds follow the opaque silhouette in each vertical band.
+export const WORLD03_TAPERED_HITBOXES: Readonly<Partial<Record<World03ObstacleKind, World03CollisionProfile>>> = {
+  "traffic-cone": {
+    sourceWidth: 32,
+    sourceHeight: 40,
+    bands: [
+      { left: 12, top: 6, right: 19, bottom: 10 },
+      { left: 5, top: 10, right: 22, bottom: 18 },
+      { left: 7, top: 18, right: 24, bottom: 29 },
+      { left: 4, top: 29, right: 27, bottom: 40 },
+    ],
+  },
+  "cement-bag": {
+    sourceWidth: 34,
+    sourceHeight: 36,
+    bands: [
+      { left: 5, top: 4, right: 27, bottom: 8 },
+      { left: 4, top: 8, right: 27, bottom: 15 },
+      { left: 3, top: 15, right: 29, bottom: 26 },
+      { left: 2, top: 26, right: 31, bottom: 36 },
+    ],
+  },
 };
 
 export function getWorld03Obstacles(stageId: StageId): readonly World03ObstaclePlacement[] {
