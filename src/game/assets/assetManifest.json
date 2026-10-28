@@ -1031,5 +1031,59 @@
     "url": "/assets/pixel/objects/world-03/falling-steel-beam.png",
     "worldId": "world-03",
     "required": true
+  },
+  {
+    "key": "wear-pink-caterpillar-suit-bite",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/characters/corgi/equipment/pink-caterpillar-suit-bite.png",
+    "frameWidth": 112,
+    "frameHeight": 128,
+    "frameCount": 4,
+    "required": true
+  },
+  {
+    "key": "wear-banana-peel-suit-bite",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/characters/corgi/equipment/banana-peel-suit-bite.png",
+    "frameWidth": 112,
+    "frameHeight": 128,
+    "frameCount": 4,
+    "required": true
+  },
+  {
+    "key": "wear-bee-bodysuit-bite",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/characters/corgi/equipment/bee-bodysuit-bite.png",
+    "frameWidth": 112,
+    "frameHeight": 128,
+    "frameCount": 4,
+    "required": true
+  },
+  {
+    "key": "wear-hotdog-outfit-bite",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/characters/corgi/equipment/hotdog-outfit-bite.png",
+    "frameWidth": 112,
+    "frameHeight": 128,
+    "frameCount": 4,
+    "required": true
+  },
+  {
+    "key": "wear-diamond-armor-bite",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/characters/corgi/equipment/diamond-armor-bite.png",
+    "frameWidth": 112,
+    "frameHeight": 128,
+    "frameCount": 4,
+    "required": true
+  },
+  {
+    "key": "custom-outfit-template-bite",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/characters/corgi/equipment/custom-outfit-template-bite.png",
+    "frameWidth": 112,
+    "frameHeight": 128,
+    "frameCount": 4,
+    "required": true
   }
 ]

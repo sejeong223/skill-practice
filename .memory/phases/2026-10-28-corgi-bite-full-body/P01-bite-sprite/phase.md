@@ -9,13 +9,13 @@
 | Task | Status | Summary | Blueprint |
 | :--- | :--- | :--- | :--- |
 | T01 | `done ✅` | 전신 물기 이미지 4프레임과 픽셀 계약 | [T01](./T01-full-body-bite-art.md) |
-| T02 | `in_progress 🔵` | 상점 의상 5종과 직접 그린 의상 물기 이미지 | [T02](./T02-outfit-bite-art.md) |
-| T03 | `pending` | 의상 시트 연결, 본체 텍스처 전환, 중단·복귀 검증 | [T03](./T03-single-actor-bite-presentation.md) |
+| T02 | `done ✅` | 상점 의상 5종과 직접 그린 의상 물기 이미지 | [T02](./T02-outfit-bite-art.md) |
+| T03 | `in_progress 🔵` | 의상 시트 연결, 본체 텍스처 전환, 중단·복귀 검증 | [T03](./T03-single-actor-bite-presentation.md) |
 | T04 | `pending` | 전용 물기 효과음과 재생·일시정지 회귀 | [T04](./T04-dedicated-bite-audio.md) |
 
 ## Progress
 
-- done: 1/4 (active: T02)
+- done: 2/4 (active: T03)
 
 ## Shared constraints
 

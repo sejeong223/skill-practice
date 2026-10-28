@@ -1,6 +1,6 @@
 # Task: T02 착용 의상을 유지하는 전신 물기 이미지
 
-## Status: pending
+## Status: done
 
 ## Goal
 
@@ -87,6 +87,6 @@ Task: T02-outfit-bite-art
 
 ## Progress
 
-- [ ] 구현 완료
-- [ ] 검증 통과
-- commit: pending
+- [x] 구현 완료
+- [x] 검증 통과 (이미지 테스트 9건, 필수 에셋 검사, 빌드, 확대 리뷰)
+- commit: 이 Task의 Git 커밋

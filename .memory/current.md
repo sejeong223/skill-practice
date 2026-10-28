@@ -10,15 +10,15 @@
 
 ## Active Task
 
-[T02 착용 의상을 유지하는 전신 물기 이미지](./phases/2026-10-28-corgi-bite-full-body/P01-bite-sprite/T02-outfit-bite-art.md)
+[T03 물기 때 코기 본체 한 장만 표시](./phases/2026-10-28-corgi-bite-full-body/P01-bite-sprite/T03-single-actor-bite-presentation.md)
 
 ## Status
 
-- 코기 물기 전신 스프라이트·전용 효과음 P01 1/4. T01 전신 시트와 이미지 검증 완료, T02 진행.
+- 코기 물기 전신 스프라이트·전용 효과음 P01 2/4. T02 의상 6종 물기 시트와 검증 완료, T03 진행.
 
 ## Next Step (IMPORTANT)
 
-P01-T02 청사진에 따라 상점 의상 5종과 직접 그린 의상 템플릿의 전신 물기 시트를 제작하고 `src/game/assets/assetManifest.json`과 이미지 테스트에 등록한다. 기존 미커밋 변경을 보존하고 Task 변경만 커밋한다.
+P01-T03 청사진에 따라 `PlayerAppearanceTextures`, `PlayerWearables`, `PlayerAnimator`를 연결해 별도 얼굴 Sprite 없이 본체로 물기를 재생한다. 기존 미커밋 변경을 보존하고 Task 변경만 커밋한다.
 
 ## Previous Work Context
 
