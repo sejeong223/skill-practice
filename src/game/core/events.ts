@@ -7,6 +7,11 @@ export interface GameplayEventMap {
     obstacleId: string;
     now: number;
   };
+  "world03-steel-impact": {
+    beamId: string;
+    surface: "player" | "floor";
+    now: number;
+  };
   "slipper-hit": {
     comboCount: number;
     now: number;

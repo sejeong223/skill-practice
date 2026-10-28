@@ -115,13 +115,17 @@ test('a direct hit kills once; restart re-arms ahead and skips sites behind the 
   assert.equal(images.length, 1);
   assert.deepEqual([images[0].x, images[0].y, images[0].depth], [1165, -128, 11]);
   for (let index = 0; index < 10; index++) system.update(50);
-  assert.equal(events.length, 1);
   assert.deepEqual(events[0], {
-    name: 'death-requested',
-    payload: { stageId: 'world-03-stage-3', cause: 'trap', checkpointId: 'checkpoint-1', now: 4321 },
+    name: 'world03-steel-impact',
+    payload: { beamId: 'world-03-stage-3-steel-beam-1', surface: 'player', now: 4321 },
   });
+  assert.deepEqual(events[1], {
+    name: 'death-requested',
+    payload: { stageId: 'world-03-stage-3', cause: 'trap', checkpointId: 'checkpoint-1', gimmickId: 'world-03-stage-3-steel-beam-1', now: 4321 },
+  });
+  assert.equal(events.length, 2);
   system.update(50);
-  assert.equal(events.length, 1);
+  assert.equal(events.length, 2);
   setPlayerCenter(2496);
   system.resetForAttempt(2496);
   assert.equal(images[0].destroyed, true);
@@ -154,18 +158,40 @@ test('landing is harmless and vanishes after 300ms; pausing freezes the beam', (
   setContactAllowed(false);
   system.update(50);
   assert.equal(beam.y, -128);
+  assert.equal(events.length, 0);
   setContactAllowed(true);
+  system.update(0);
+  assert.equal(beam.y, -128);
+  assert.equal(events.length, 0);
   for (let index = 0; index < 8; index++) system.update(50);
   assert.equal(beam.y, 494);
-  assert.equal(events.length, 0);
+  assert.deepEqual(events, [{
+    name: 'world03-steel-impact',
+    payload: { beamId: 'world-03-stage-1-steel-beam-1', surface: 'floor', now: 4321 },
+  }]);
   setPlayerCenter(1165);
   for (let index = 0; index < 5; index++) system.update(50);
-  assert.equal(events.length, 0);
+  assert.equal(events.length, 1);
   assert.equal(beam.destroyed, false);
   system.update(50);
   assert.equal(beam.destroyed, true);
   system.update(50);
   assert.equal(images.length, 1);
+  system.destroy();
+});
+
+test('player contact on the landing frame takes priority over the floor impact', () => {
+  const { system, player, events, setPlayerCenter } = createHarness('world-03-stage-1');
+  player.body.top = 490;
+  player.body.bottom = 504;
+  setPlayerCenter(1165);
+  system.update(50);
+  for (let index = 0; index < 8; index++) system.update(50);
+  assert.deepEqual(events.map(event => event.name), ['world03-steel-impact', 'death-requested']);
+  assert.equal(events[0].payload.surface, 'player');
+  assert.equal(events[1].payload.gimmickId, events[0].payload.beamId);
+  system.update(50);
+  assert.equal(events.length, 2);
   system.destroy();
 });
 
@@ -182,7 +208,8 @@ test('running forward into the beam footprint is hit instead of passing beneath 
     setPlayerCenter(1101 + step * 12);
     system.update(50);
   }
-  assert.equal(events.length, 1);
+  assert.deepEqual(events.map(event => event.name), ['world03-steel-impact', 'death-requested']);
+  assert.equal(events[0].payload.surface, 'player');
   system.destroy();
 });
 
@@ -205,7 +232,7 @@ test('a fast backward turn after the beam appears clears its landing path', () =
     setPlayerCenter(center);
   }
   assert.equal(images[0].y, 494);
-  assert.equal(events.length, 0);
+  assert.deepEqual(events.map(event => event.payload.surface), ['floor']);
   assert.ok(center < 1165 - 28 - 36);
   system.destroy();
 });

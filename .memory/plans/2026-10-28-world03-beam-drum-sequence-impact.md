@@ -14,7 +14,7 @@
 
 | Phase | Status | Summary | Blueprint |
 | :--- | :--- | :--- | :--- |
-| P01 | `in_progress` | 후반 장애물·낙하 좌표, 마지막 체크포인트 부활, 금속 충돌음과 재생 연결 | [P01](../phases/2026-10-28-world03-beam-drum-sequence-impact/P01-beam-sequence-impact/phase.md) |
+| P01 | `done` | 후반 장애물·낙하 좌표, 마지막 체크포인트 부활, 금속 충돌음과 재생 연결 | [P01](../phases/2026-10-28-world03-beam-drum-sequence-impact/P01-beam-sequence-impact/phase.md) |
 
 ## Task Order and Boundary
 

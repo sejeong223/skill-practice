@@ -92,6 +92,7 @@ function harness({ locked = false, cached = [] } = {}) {
       "feedback-bite": 5,
       "feedback-world-03-drill": 6,
       "feedback-world-03-excavator": 7,
+      "feedback-world-03-steel-impact": 8,
     }[key] ?? 0, 0, 0, 0).buffer },
   }, sound: {
     locked: false,
@@ -277,6 +278,58 @@ test("월드 3 공사장 효과음은 낮은 음량으로 재생하고 음악을
   gone.destroy();
   await late.decode();
   assert.equal(late.sources.length, 0);
+});
+
+test("월드 3 철근 충돌은 한 번 재생하고 철근 사망에 카툰음을 겹치지 않는다", async () => {
+  const { GameplayEventBus } = require("../src/game/core/events.ts");
+  const bus = new GameplayEventBus();
+  const h = harness({ cached: ["death-cartoon"] });
+  const audio = h.create(bus);
+  audio.playMusic("world-03-factory");
+  await h.decode();
+  const musicGain = h.nodes.find(node => node instanceof h.Gain).gain;
+  bus.emit("world03-steel-impact", { beamId: "world-03-stage-2-steel-beam-1", surface: "player", now: 100 });
+  await Promise.resolve();
+  assert.equal(h.sources.length, 1);
+  assert.equal(h.sources[0].buffer.id, 8);
+  assert.equal(h.gains[0].value, 0.52);
+  assert.equal(musicGain.value, 0.38);
+  bus.emit("death", { stageId: "world-03-stage-2", cause: "trap", gimmickId: "world-03-stage-2-steel-beam-1" });
+  assert.equal(h.sounds.length, 0);
+  h.sources[0].ended();
+  assert.equal(musicGain.value, 1);
+  bus.emit("death", { stageId: "world-03-stage-2", cause: "fall" });
+  assert.equal(h.sounds.length, 1);
+  bus.emit("death", { stageId: "world-02-stage-1", cause: "trap", gimmickId: "world-03-stage-2-steel-beam-1" });
+  assert.equal(h.sounds.length, 2);
+  audio.setPaused(true);
+  bus.emit("world03-steel-impact", { beamId: "world-03-stage-2-steel-beam-2", surface: "floor", now: 200 });
+  await Promise.resolve();
+  assert.equal(h.sources.length, 1);
+  audio.setPaused(false);
+  bus.emit("world03-steel-impact", { beamId: "world-03-stage-2-steel-beam-2", surface: "floor", now: 300 });
+  await Promise.resolve();
+  assert.equal(h.sources.length, 2);
+  audio.destroy();
+  assert.equal(h.sources[1].stopped, true);
+  bus.emit("world03-steel-impact", { beamId: "world-03-stage-2-steel-beam-2", surface: "floor", now: 400 });
+  await Promise.resolve();
+  assert.equal(h.sources.length, 2);
+});
+
+test("지연 해독된 철근 충돌음은 장면 폐기 뒤 시작하지 않는다", async () => {
+  const { GameplayEventBus } = require("../src/game/core/events.ts");
+  const bus = new GameplayEventBus();
+  const h = harness();
+  const audio = h.create(bus);
+  bus.emit("world03-steel-impact", { beamId: "world-03-stage-1-steel-beam-1", surface: "floor", now: 100 });
+  audio.destroy();
+  await h.decode();
+  assert.equal(h.sources.length, 0);
+  const noAudio = h.createNoAudio();
+  noAudio.playSfx("world-03-steel-impact");
+  noAudio.destroy();
+  assert.equal(h.sources.length, 0);
 });
 
 test("해독·잠금 해제가 늦은 효과음은 정지나 폐기 뒤 재생하지 않는다", async () => {

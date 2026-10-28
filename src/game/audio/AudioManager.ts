@@ -82,7 +82,11 @@ export class AudioManager {
       this.unsubscribers.push(gameplayBus.on("bite-hit", () => this.playSfx("bite")));
       this.unsubscribers.push(gameplayBus.on("clang", () => this.playSfx("bowl-clang")));
       this.unsubscribers.push(gameplayBus.on("stray-dog-surge", () => this.playSfx("stray-dog-rush")));
-      this.unsubscribers.push(gameplayBus.on("death", () => this.playSfx("death-cartoon")));
+      this.unsubscribers.push(gameplayBus.on("world03-steel-impact", () => this.playSfx("world-03-steel-impact")));
+      this.unsubscribers.push(gameplayBus.on("death", ({ stageId, gimmickId }) => {
+        if (stageId.startsWith("world-03-stage-") && gimmickId?.startsWith(`${stageId}-steel-beam-`)) return;
+        this.playSfx("death-cartoon");
+      }));
       this.unsubscribers.push(gameplayBus.on("checkpoint-reached", () => this.playSfx("checkpoint")));
       this.unsubscribers.push(gameplayBus.on("world02-cat-scratch", () => this.playSfx("cat-hiss")));
     }

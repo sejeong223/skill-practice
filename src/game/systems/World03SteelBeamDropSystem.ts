@@ -92,6 +92,7 @@ export class World03SteelBeamDropSystem {
         continue;
       }
       if (beam.status === "falling" && beam.sprite) {
+        if (elapsed === 0) continue;
         if (this.isBackpedaling()) {
           // A quick turn must overcome the normal run acceleration before impact.
           this.player.setVelocityX(-DEFAULT_PLAYER_TUNING.runSpeed);
@@ -108,10 +109,16 @@ export class World03SteelBeamDropSystem {
           currentPlayerBounds,
         )) {
           this.deathPending = true;
+          this.eventBus.emit("world03-steel-impact", {
+            beamId: beam.definition.id,
+            surface: "player",
+            now: this.scene.time.now,
+          });
           this.eventBus.emit("death-requested", {
             stageId: this.stageId,
             cause: "trap",
             checkpointId: this.getCheckpointId(),
+            gimmickId: beam.definition.id,
             now: this.scene.time.now,
           });
           return;
@@ -120,6 +127,11 @@ export class World03SteelBeamDropSystem {
         if (nextY >= LANDED_CENTER_Y) {
           beam.status = "landed";
           beam.landedRemainingMs = LANDED_LIFETIME_MS;
+          this.eventBus.emit("world03-steel-impact", {
+            beamId: beam.definition.id,
+            surface: "floor",
+            now: this.scene.time.now,
+          });
         }
       } else if (beam.status === "landed") {
         beam.landedRemainingMs = Math.max(0, beam.landedRemainingMs - elapsed);
