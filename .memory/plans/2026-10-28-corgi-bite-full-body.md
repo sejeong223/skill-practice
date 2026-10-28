@@ -13,7 +13,7 @@ E 물기 때 기존 코기 얼굴과 물기 얼굴이 겹쳐 보이는 현상을
 
 | Phase | Status | Summary | Blueprint |
 | :--- | :--- | :--- | :--- |
-| P01 | `in_progress` | 전신 물기 시트, 단일 본체 애니메이션, 전용 효과음 | [P01](../phases/2026-10-28-corgi-bite-full-body/P01-bite-sprite/phase.md) |
+| P01 | `done` | 전신 물기 시트, 단일 본체 애니메이션, 전용 효과음 | [P01](../phases/2026-10-28-corgi-bite-full-body/P01-bite-sprite/phase.md) |
 
 ## Sequence and dependencies
 

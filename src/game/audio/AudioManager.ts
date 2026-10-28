@@ -66,6 +66,7 @@ export class AudioManager {
       this.prepareFeedbackSound("coin");
       this.prepareFeedbackSound("checkpoint");
       this.prepareFeedbackSound("bark");
+      this.prepareFeedbackSound("bite");
       this.prepareFeedbackSound("cat-hiss");
     }
     this.bindUnlockGesture();
@@ -75,7 +76,7 @@ export class AudioManager {
       }));
       this.unsubscribers.push(gameplayBus.on("slipper-hit", () => this.playSfx("slipper-hit")));
       this.unsubscribers.push(gameplayBus.on("slipper-sneeze", () => this.playSfx("sneeze")));
-      this.unsubscribers.push(gameplayBus.on("bite-hit", () => this.playSfx("bark")));
+      this.unsubscribers.push(gameplayBus.on("bite-hit", () => this.playSfx("bite")));
       this.unsubscribers.push(gameplayBus.on("clang", () => this.playSfx("bowl-clang")));
       this.unsubscribers.push(gameplayBus.on("stray-dog-surge", () => this.playSfx("stray-dog-rush")));
       this.unsubscribers.push(gameplayBus.on("death", () => this.playSfx("death-cartoon")));
@@ -102,7 +103,7 @@ export class AudioManager {
 
   public playSfx(key: string): void {
     if (this.destroyed || this.paused || !SOUND_KEYS.includes(key as SoundKey)) return;
-    if (key === "coin" || key === "checkpoint" || key === "bark" || key === "cat-hiss") {
+    if (key === "coin" || key === "checkpoint" || key === "bark" || key === "bite" || key === "cat-hiss") {
       void this.playFeedbackSound(key);
       return;
     }

@@ -1,5 +1,10 @@
 # Audio attribution
 
+## corgi-bite.wav
+
+- Original sound synthesized locally by `scripts/generate-bite-sfx.mjs`; no external samples used.
+- Two filtered-noise bite transients and a short descending tone, exported as 44.1 kHz mono 16-bit PCM. Duration: 0.20 s.
+
 ## world-02-cat-hiss.wav
 
 - Source recording: **Cat hissing - Zabuhailo.wav** by **Zabuhailo**. [Commons source page](https://commons.wikimedia.org/wiki/File:Cat_hissing_-_Zabuhailo.wav), [accessible mirror](https://www.marefa.org/%D9%85%D9%84%D9%81:Cat_hissing_-_Zabuhailo.wav), [Freesound author page](https://freesound.org/people/Zabuhailo/).

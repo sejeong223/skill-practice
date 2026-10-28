@@ -11,11 +11,11 @@
 | T01 | `done ✅` | 전신 물기 이미지 4프레임과 픽셀 계약 | [T01](./T01-full-body-bite-art.md) |
 | T02 | `done ✅` | 상점 의상 5종과 직접 그린 의상 물기 이미지 | [T02](./T02-outfit-bite-art.md) |
 | T03 | `done ✅` | 의상 시트 연결, 본체 텍스처 전환, 중단·복귀 검증 | [T03](./T03-single-actor-bite-presentation.md) |
-| T04 | `in_progress 🔵` | 전용 물기 효과음과 재생·일시정지 회귀 | [T04](./T04-dedicated-bite-audio.md) |
+| T04 | `done ✅` | 전용 물기 효과음과 재생·일시정지 회귀 | [T04](./T04-dedicated-bite-audio.md) |
 
 ## Progress
 
-- done: 3/4 (active: T04)
+- done: 4/4 (active: 없음)
 
 ## Shared constraints
 

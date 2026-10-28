@@ -20,7 +20,7 @@ function harness({ locked = false, cached = [] } = {}) {
   const sources = [];
   const rawContext = {
     state: locked ? "suspended" : "running", currentTime: 100, destination: {},
-    decodeAudioData: () => new Promise(resolve => decodes.push(resolve)),
+    decodeAudioData: bytes => new Promise(resolve => decodes.push({ resolve, id: new Uint8Array(bytes)[0] })),
     createGain: () => ({ gain: { setValueAtTime() {} }, connect() { return this; }, disconnect() {} }),
     createBufferSource() {
       const source = { buffer: null, started: false, stopped: false,
@@ -79,7 +79,13 @@ function harness({ locked = false, cached = [] } = {}) {
   const sounds = [];
   const scene = { cache: {
     audio: { exists: key => cached.includes(key) },
-    binary: { get: () => new ArrayBuffer(4) },
+    binary: { get: key => Uint8Array.of({
+      "feedback-coin": 1,
+      "feedback-checkpoint": 2,
+      "feedback-bark": 3,
+      "feedback-cat-hiss": 4,
+      "feedback-bite": 5,
+    }[key] ?? 0, 0, 0, 0).buffer },
   }, sound: {
     locked: false,
     add(key) {
@@ -99,7 +105,7 @@ function harness({ locked = false, cached = [] } = {}) {
     create: (gameplayBus, gameBus) => new loaded.exports.AudioManager(scene, gameplayBus, gameBus),
     createNoAudio: () => new loaded.exports.AudioManager({ ...scene, sound: new NoAudioSoundManager() }),
     transport, nodes, sounds, sources, Sequence, Gain,
-    async decode() { decodes.splice(0).forEach(resolve => resolve({ duration: 0.4 })); await Promise.resolve(); await Promise.resolve(); },
+    async decode() { decodes.splice(0).forEach(({ resolve, id }) => resolve({ duration: 0.4, id })); await Promise.resolve(); await Promise.resolve(); },
     async unlock() { unlocks.splice(0).forEach(resolve => resolve()); await Promise.resolve(); await Promise.resolve(); },
   };
 }
@@ -266,4 +272,67 @@ test('고양이 할퀴기 이벤트는 실제 샘플 하나를 재생하고 정�
   bus.emit('world02-cat-scratch', { obstacleId: 'world-02-stage-1-obstacle-sleeping-fat-cat', now: 300 });
   await Promise.resolve();
   assert.equal(h.sources.length, 1);
+});
+
+test("승인된 물기는 전용 버퍼를 한 번 재생하고 짖기는 기존 버퍼를 유지한다", async () => {
+  const { GameplayEventBus } = require("../src/game/core/events.ts");
+  const bus = new GameplayEventBus();
+  const h = harness();
+  const audio = h.create(bus);
+  await h.decode();
+  bus.emit("skill-used", { skillId: "bite", now: 100 });
+  await Promise.resolve();
+  assert.equal(h.sources.length, 0);
+  bus.emit("bite-hit", { now: 100 });
+  await Promise.resolve();
+  assert.equal(h.sources.length, 1);
+  assert.equal(h.sources[0].buffer.id, 5);
+  bus.emit("skill-used", { skillId: "bark", now: 200 });
+  await Promise.resolve();
+  assert.equal(h.sources.length, 2);
+  assert.equal(h.sources[1].buffer.id, 3);
+  audio.destroy();
+});
+
+test("물기 소리는 일시정지와 종료 후에 재생되지 않는다", async () => {
+  const { GameplayEventBus } = require("../src/game/core/events.ts");
+  const bus = new GameplayEventBus();
+  const h = harness();
+  const audio = h.create(bus);
+  await h.decode();
+  bus.emit("bite-hit", { now: 100 });
+  await Promise.resolve();
+  assert.equal(h.sources.length, 1);
+  audio.setPaused(true);
+  assert.equal(h.sources[0].stopped, true);
+  bus.emit("bite-hit", { now: 200 });
+  await Promise.resolve();
+  assert.equal(h.sources.length, 1);
+  audio.setPaused(false);
+  audio.destroy();
+  bus.emit("bite-hit", { now: 300 });
+  await Promise.resolve();
+  assert.equal(h.sources.length, 1);
+});
+
+test("잠긴 오디오나 지연된 물기 디코딩은 일시정지 뒤 소리를 남기지 않는다", async () => {
+  const { GameplayEventBus } = require("../src/game/core/events.ts");
+  const bus = new GameplayEventBus();
+  const h = harness({ locked: true });
+  const audio = h.create(bus);
+  await h.decode();
+  bus.emit("bite-hit", { now: 100 });
+  await Promise.resolve();
+  audio.setPaused(true);
+  await h.unlock();
+  assert.equal(h.sources.length, 0);
+  audio.destroy();
+
+  const lateBus = new GameplayEventBus();
+  const late = harness();
+  const lateAudio = late.create(lateBus);
+  lateBus.emit("bite-hit", { now: 100 });
+  lateAudio.destroy();
+  await late.decode();
+  assert.equal(late.sources.length, 0);
 });

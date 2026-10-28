@@ -1,6 +1,6 @@
 # Task: T04 짖기와 구별되는 전용 물기 효과음
 
-## Status: pending
+## Status: done
 
 ## Goal
 
@@ -112,6 +112,6 @@ Task: T04-dedicated-bite-audio
 
 ## Progress
 
-- [ ] 구현 완료
-- [ ] 검증 통과
-- commit: pending
+- [x] 구현 완료
+- [x] 검증 통과 (오디오·스킬·연출 자동 24건, 에셋·타입·lint·빌드, 브라우저 오류 로그 0건; 직접 청음 미실시)
+- commit: 이 Task의 Git 커밋
