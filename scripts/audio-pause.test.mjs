@@ -291,7 +291,7 @@ test("월드 3 철근 충돌은 한 번 재생하고 철근 사망에 카툰음�
   bus.emit("world03-steel-impact", { beamId: "world-03-stage-2-steel-beam-1", surface: "player", now: 100 });
   assert.equal(h.sources.length, 1, "predecoded steel impact starts in the collision event");
   assert.equal(h.sources[0].buffer.id, 8);
-  assert.equal(h.gains[0].value, 0.72);
+  assert.equal(h.gains[0].value, 1.0);
   assert.equal(musicGain.value, 0.38);
   bus.emit("death", { stageId: "world-03-stage-2", cause: "trap", gimmickId: "world-03-stage-2-steel-beam-1" });
   assert.equal(h.sounds.length, 0);

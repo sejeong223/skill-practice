@@ -26,7 +26,7 @@ test('steel impact is a reproducible, bright and short mono PCM clang', async ()
     .reduce((sum, sample, index) => sum + ((sample - samples[from + index]) / 32768) ** 2, 0) / (to - from - 1));
   assert.ok(peak >= 0.82 && peak <= 0.86);
   const attackSample = samples.findIndex(sample => Math.abs(sample / 32768) >= 0.03);
-  assert.ok(attackSample >= 0 && attackSample < 44_100 * 0.002);
+  assert.ok(attackSample >= 0 && attackSample < 44_100 * 0.00055);
   assert.ok(differenceRms(0, 1323) > rms(0, 1323) * 0.8);
   assert.ok(rms(0, 1323) > rms(2205, 4410) * 4);
   assert.ok(rms(6615, 11025) < rms(0, 1323) / 20);
@@ -44,7 +44,7 @@ test('steel impact uses the recorded pipe strike and prepared feedback audio pat
   assert.deepEqual(FEEDBACK_AUDIO['world-03-steel-impact'], {
     cacheKey: 'feedback-world-03-steel-impact',
     url: '/assets/audio/world-03-steel-impact.wav',
-    gain: 0.72,
+    gain: 1.0,
     duckMusic: true,
   });
   const manager = await readFile(new URL('../src/game/audio/AudioManager.ts', import.meta.url), 'utf8');

@@ -4,7 +4,7 @@
 
 - Source recording: **Steel, hollow pipe on concrete, Indoor, 8 impacts.wav** by **Bibow**. [Freesound source page](https://freesound.org/people/Bibow/sounds/426849/).
 - License: [Creative Commons Zero 1.0 (CC0)](https://creativecommons.org/publicdomain/zero/1.0/). The source page lists this recording as CC0.
-- Changes: selected the first impact around **3.685–3.995 s** from the high-quality MP3 preview, mixed stereo to mono, resampled to 44.1 kHz and saved the 0.31 s source clip as `art/source/world03-steel-pipe-drop-bibow-cc0.wav`. `scripts/generate-world03-steel-impact.mjs` removes the first 8 ms of the source clip, brightens its attack, rapidly shortens the ring and exports a 0.28 s mono 16-bit PCM effect.
+- Changes: selected the first impact around **3.685–3.995 s** from the high-quality MP3 preview, mixed stereo to mono, resampled to 44.1 kHz and saved the 0.31 s source clip as `art/source/world03-steel-pipe-drop-bibow-cc0.wav`. `scripts/generate-world03-steel-impact.mjs` removes the first 8.1 ms of the source clip, brightens its attack, rapidly shortens the ring and exports a 0.28 s mono 16-bit PCM effect.
 - Recreate or verify with `node scripts/generate-world03-steel-impact.mjs [--check]`.
 
 ## world-03-construction-drill.wav / world-03-construction-excavator.wav

@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 
 const SAMPLE_RATE = 44_100;
 const DURATION_SECONDS = 0.28;
-const SOURCE_LEAD_SAMPLES = Math.round(SAMPLE_RATE * 0.008);
+const SOURCE_LEAD_SAMPLES = Math.round(SAMPLE_RATE * 0.0081);
 const OUTPUT_PATH = fileURLToPath(new URL('../public/assets/audio/world-03-steel-impact.wav', import.meta.url));
 const SOURCE_PATH = fileURLToPath(new URL('../art/source/world03-steel-pipe-drop-bibow-cc0.wav', import.meta.url));
 
