@@ -5,28 +5,36 @@ import { getWorld03CoinPositions, getWorld03CollapseZones, getWorld03Obstacles, 
 import { NORMAL_MAP_WIDTH, getNextStageId } from '../src/game/core/constants.ts';
 import { DEFAULT_PLAYER_TUNING } from '../src/game/entities/playerTypes.ts';
 
-test('four construction stages each have eight stable obstacles', () => {
+test('four construction stages keep eight obstacles and add two distinct fixed hazards near the exit', () => {
   const all = [];
+  const expectedTailKinds = [
+    ['brick-stack', 'traffic-cone'], ['steel-pipe', 'cement-bag'],
+    ['traffic-cone', 'brick-stack'], ['cement-bag', 'steel-pipe'],
+  ];
   for (let number = 1; number <= 4; number++) {
     const stageId = `world-03-stage-${number}`;
     const placements = getWorld03Obstacles(stageId);
-    assert.equal(placements.length, 8);
+    assert.equal(placements.length, 10);
     assert.deepEqual(getWorld03Obstacles(stageId), placements);
-    assert.equal(new Set(placements.map(({id}) => id)).size, 8);
+    assert.equal(new Set(placements.map(({id}) => id)).size, 10);
+    assert.deepEqual(placements.slice(0, 8).map(({ x }) => x), [380, 740, 1100, 1460, 1820, 2180, 2820, 3220]);
+    assert.deepEqual(placements.slice(8).map(({ x, kind }) => [x, kind]),
+      [[3400, expectedTailKinds[number - 1][0]], [3550, expectedTailKinds[number - 1][1]]]);
     assert.equal(placements.filter(({kind}) => kind === 'drum-barrel').length, number === 1 ? 1 : 2);
     assert.equal(placements.filter(({kind}) => kind === 'wheelbarrow').length, number >= 3 ? 2 : 1);
     assert.equal(new Set(placements.map(({kind}) => kind)).size, 6);
     assert.ok(placements[0].x >= 300);
-    assert.ok(placements.at(-1).x <= NORMAL_MAP_WIDTH - 300);
+    assert.ok(placements.at(-1).x <= NORMAL_MAP_WIDTH - 250);
     for (const [index, obstacle] of placements.entries()) {
       assert.ok(obstacle.width <= 65 && obstacle.height <= 52.5, obstacle.id);
       assert.ok(Math.abs(obstacle.x - 2496) >= 150, obstacle.id);
       assert.ok(Math.abs(obstacle.x - 3728) >= 150, obstacle.id);
-      if (index > 0) assert.ok(obstacle.x - placements[index - 1].x >= 300);
+      if (index > 0) assert.ok(obstacle.x - placements[index - 1].x >=
+        (index === 8 ? 180 : index === 9 ? 150 : 300));
       all.push(obstacle.id);
     }
   }
-  assert.equal(new Set(all).size, 32);
+  assert.equal(new Set(all).size, 40);
   assert.deepEqual(getWorld03Obstacles('world-03-stage-boss'), []);
   assert.equal(getNextStageId('world-03-stage-4'), 'world-03-stage-boss');
 });

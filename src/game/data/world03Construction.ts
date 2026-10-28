@@ -26,7 +26,7 @@ export interface World03CollisionProfile {
 export const WORLD03_OBSTACLE_SCALE = 1.25;
 export const WORLD03_WHEELBARROW_HITBOX_OFFSET_X = 6;
 
-const POSITIONS = [380, 740, 1100, 1460, 1820, 2180, 2820, 3220] as const;
+const POSITIONS = [380, 740, 1100, 1460, 1820, 2180, 2820, 3220, 3400, 3550] as const;
 const COIN_POSITIONS = [
   170, 250, 330, 800, 880, 1530, 1720, 2280,
   2420, 2600, 3120, 3300, 3500, 3600, 3680,
@@ -45,10 +45,10 @@ export interface World03CollapseZone {
   readonly width: number;
 }
 const KINDS: readonly (readonly World03ObstacleKind[])[] = [
-  ["traffic-cone", "cement-bag", "drum-barrel", "brick-stack", "wheelbarrow", "steel-pipe", "traffic-cone", "brick-stack"],
-  ["cement-bag", "steel-pipe", "drum-barrel", "traffic-cone", "wheelbarrow", "brick-stack", "drum-barrel", "cement-bag"],
-  ["steel-pipe", "brick-stack", "drum-barrel", "traffic-cone", "wheelbarrow", "cement-bag", "drum-barrel", "wheelbarrow"],
-  ["brick-stack", "traffic-cone", "drum-barrel", "cement-bag", "wheelbarrow", "steel-pipe", "drum-barrel", "wheelbarrow"],
+  ["traffic-cone", "cement-bag", "drum-barrel", "brick-stack", "wheelbarrow", "steel-pipe", "traffic-cone", "brick-stack", "brick-stack", "traffic-cone"],
+  ["cement-bag", "steel-pipe", "drum-barrel", "traffic-cone", "wheelbarrow", "brick-stack", "drum-barrel", "cement-bag", "steel-pipe", "cement-bag"],
+  ["steel-pipe", "brick-stack", "drum-barrel", "traffic-cone", "wheelbarrow", "cement-bag", "drum-barrel", "wheelbarrow", "traffic-cone", "brick-stack"],
+  ["brick-stack", "traffic-cone", "drum-barrel", "cement-bag", "wheelbarrow", "steel-pipe", "drum-barrel", "wheelbarrow", "cement-bag", "steel-pipe"],
 ];
 const HITBOX: Readonly<Record<World03ObstacleKind, { width: number; height: number }>> = {
   "traffic-cone": { width: 23, height: 34 },

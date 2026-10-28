@@ -63,16 +63,20 @@ function createHarness(stageId = 'world-03-stage-3') {
 test('fixed beam sites grow 1/2/3/3 and avoid coins, holes, props, drum routes and exits', () => {
   assert.equal(WORLD03_STEEL_BEAM_SPEED_PX_PER_SECOND, 1600);
   assert.equal(WORLD03_STEEL_BEAM_HITBOX_WIDTH, 56);
+  const expectedSites = [[1165], [1165, 2340], [1165, 2340, 2900], [1165, 2340, 2880]];
   for (let number = 1; number <= 4; number++) {
     const stageId = `world-03-stage-${number}`;
     const beams = getWorld03SteelBeamDefinitions(stageId);
-    assert.deepEqual(beams.map(beam => beam.x), [1640, 2360, 3400].slice(0, number === 1 ? 1 : number === 2 ? 2 : 3));
+    assert.deepEqual(beams.map(beam => beam.x), expectedSites[number - 1]);
     assert.equal(new Set(beams.map(beam => beam.id)).size, beams.length);
     for (const beam of beams) {
       assert.ok(Math.abs(beam.x - 2496) > 28 + 40);
       assert.ok(Math.abs(beam.x - 3728) > 28 + 40);
+      for (const wheelbarrow of getWorld03Obstacles(stageId).filter(obstacle => obstacle.kind === 'wheelbarrow')) {
+        assert.ok(Math.abs(beam.x - wheelbarrow.x) > 300, `${beam.id} near ${wheelbarrow.id}`);
+      }
       for (const coinX of getWorld03CoinPositions(stageId)) {
-        assert.ok(Math.abs(beam.x - coinX) > 28 + 17, `${beam.id} near coin ${coinX}`);
+        assert.ok(Math.abs(beam.x - coinX) > 28 + 17 + 8, `${beam.id} near coin ${coinX}`);
       }
       for (const gap of getWorld03CollapseZones(stageId)) {
         assert.ok(beam.x + 28 < gap.x || beam.x - 28 > gap.x + gap.width, `${beam.id} near ${gap.id}`);
@@ -103,13 +107,13 @@ test('swept AABB catches a fast pass between frames without false envelope colli
 test('a direct hit kills once; restart re-arms ahead and skips sites behind the checkpoint', () => {
   const harness = createHarness();
   const { system, images, events, setPlayerCenter } = harness;
-  setPlayerCenter(1550);
+  setPlayerCenter(1075);
   system.update(50);
   assert.equal(images.length, 0);
-  setPlayerCenter(1576);
+  setPlayerCenter(1101);
   system.update(50);
   assert.equal(images.length, 1);
-  assert.deepEqual([images[0].x, images[0].y, images[0].depth], [1640, -128, 11]);
+  assert.deepEqual([images[0].x, images[0].y, images[0].depth], [1165, -128, 11]);
   for (let index = 0; index < 10; index++) system.update(50);
   assert.equal(events.length, 1);
   assert.deepEqual(events[0], {
@@ -123,13 +127,13 @@ test('a direct hit kills once; restart re-arms ahead and skips sites behind the 
   assert.equal(images[0].destroyed, true);
   system.update(50);
   assert.equal(images.length, 1);
-  setPlayerCenter(3400);
+  setPlayerCenter(2900);
   system.update(50);
   assert.equal(images.length, 2);
-  assert.equal(images[1].x, 3400);
+  assert.equal(images[1].x, 2900);
   setPlayerCenter(96);
   system.resetForAttempt(96);
-  setPlayerCenter(1640);
+  setPlayerCenter(1165);
   system.update(50);
   assert.equal(images.length, 3);
   system.destroy();
@@ -142,7 +146,7 @@ test('a direct hit kills once; restart re-arms ahead and skips sites behind the 
 test('landing is harmless and vanishes after 300ms; pausing freezes the beam', () => {
   const harness = createHarness('world-03-stage-1');
   const { system, images, events, setPlayerCenter, setContactAllowed } = harness;
-  setPlayerCenter(1640);
+  setPlayerCenter(1165);
   system.update(50);
   const beam = images[0];
   assert.equal(beam.y, -128);
@@ -154,7 +158,7 @@ test('landing is harmless and vanishes after 300ms; pausing freezes the beam', (
   for (let index = 0; index < 8; index++) system.update(50);
   assert.equal(beam.y, 494);
   assert.equal(events.length, 0);
-  setPlayerCenter(1640);
+  setPlayerCenter(1165);
   for (let index = 0; index < 5; index++) system.update(50);
   assert.equal(events.length, 0);
   assert.equal(beam.destroyed, false);
@@ -168,14 +172,14 @@ test('landing is harmless and vanishes after 300ms; pausing freezes the beam', (
 test('running forward into the beam footprint is hit instead of passing beneath it', () => {
   const harness = createHarness('world-03-stage-1');
   const { system, images, events, setPlayerCenter } = harness;
-  setPlayerCenter(1564);
+  setPlayerCenter(1089);
   system.update(50);
   assert.equal(images.length, 0);
-  setPlayerCenter(1576);
+  setPlayerCenter(1101);
   system.update(50);
   assert.equal(images[0].y, -128);
   for (let step = 1; step <= 8; step++) {
-    setPlayerCenter(1576 + step * 12);
+    setPlayerCenter(1101 + step * 12);
     system.update(50);
   }
   assert.equal(events.length, 1);
@@ -185,7 +189,7 @@ test('running forward into the beam footprint is hit instead of passing beneath 
 test('a fast backward turn after the beam appears clears its landing path', () => {
   const harness = createHarness('world-03-stage-1');
   const { system, player, images, events, setPlayerCenter, setBackpedaling } = harness;
-  let center = 1576;
+  let center = 1101;
   setPlayerCenter(center);
   player.body.velocity.x = 240;
   system.update(50);
@@ -202,6 +206,6 @@ test('a fast backward turn after the beam appears clears its landing path', () =
   }
   assert.equal(images[0].y, 494);
   assert.equal(events.length, 0);
-  assert.ok(center < 1640 - 28 - 36);
+  assert.ok(center < 1165 - 28 - 36);
   system.destroy();
 });

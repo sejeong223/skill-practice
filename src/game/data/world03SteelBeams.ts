@@ -10,10 +10,10 @@ export const WORLD03_STEEL_BEAM_HITBOX_WIDTH = 56;
 export const WORLD03_STEEL_BEAM_HITBOX_HEIGHT = 20;
 
 const DROP_POSITIONS: readonly (readonly number[])[] = [
-  [1640],
-  [1640, 2360],
-  [1640, 2360, 3400],
-  [1640, 2360, 3400],
+  [1165],
+  [1165, 2340],
+  [1165, 2340, 2900],
+  [1165, 2340, 2880],
 ];
 
 export function getWorld03SteelBeamDefinitions(stageId: StageId): readonly World03SteelBeamDefinition[] {

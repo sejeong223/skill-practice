@@ -2,23 +2,23 @@
 
 ## Active Plan
 
-[월드 3 안전 콘·시멘트 포대 히트박스 보정](./plans/2026-10-28-world03-cone-cement-hitboxes.md)
+[월드 3 후반 장애물·체크포인트·철근 충돌음](./plans/2026-10-28-world03-beam-drum-sequence-impact.md)
 
 ## Active Phase
 
-[P01 안전 콘·포대의 높이별 충돌](./phases/2026-10-28-world03-cone-cement-hitboxes/P01-shaped-obstacle-collision/phase.md)
+[P01 월드 3 후반 위험물·체크포인트·충돌음](./phases/2026-10-28-world03-beam-drum-sequence-impact/P01-beam-sequence-impact/phase.md)
 
 ## Active Task
 
-없음 (월드 3 안전 콘·시멘트 포대 히트박스 보정 계획 완료)
+[T02 마지막 체크포인트 부활 경로 보정](./phases/2026-10-28-world03-beam-drum-sequence-impact/P01-beam-sequence-impact/T02-checkpoint-respawn.md)
 
 ## Status
 
-- 월드 3 안전 콘·시멘트 포대 히트박스 보정 계획 P01 1/1 완료. 두 사물에 4단 높이별 충돌 영역을 적용하고 자동 검사 10건과 자산·타입·lint·빌드를 통과했다. 브라우저에서는 인트로 이후 장면 진행이 멈춰 직접 접촉 검증을 못 했으며 [검증 기록](./test-plans/2026-10-28-world03-cone-cement-hitboxes.md)에 남겼다.
+- 월드 3 후반 위험물·체크포인트·철근 충돌음 계획 P01 1/4. T01 철근·후반 장애물 배치와 자동 검증 완료. 실제 플레이의 인트로 정지 한계는 [검증 기록](./test-plans/2026-10-28-world03-beam-drum-sequence-impact.md)에 남겼다.
 
 ## Next Step (IMPORTANT)
 
-이번 계획의 남은 Task는 없다. 기존 미커밋 보스·HUD·발레 점프 변경은 보존한다.
+T02 청사진을 읽고 월드 3 마지막 체크포인트의 활성화·사망·부활 경로를 검증하고 수정한다. 기존 미커밋 보스·HUD·발레 점프·인트로 변경은 보존한다.
 
 ## Previous Work Context
 
