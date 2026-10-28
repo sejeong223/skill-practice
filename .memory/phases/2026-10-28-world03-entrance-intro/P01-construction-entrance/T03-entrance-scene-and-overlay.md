@@ -1,6 +1,6 @@
 # Task: T03 전용 인트로 장면과 자막 화면
 
-## Status: pending
+## Status: done
 
 ## Goal
 
@@ -107,6 +107,6 @@ Task: T03-entrance-scene-and-overlay
 
 ## Progress
 
-- [ ] 구현 완료
-- [ ] 검증 통과
+- [x] 구현 완료
+- [x] 검증 통과
 - commit: pending

@@ -8,6 +8,7 @@ import { StageScene } from "./scenes/StageScene";
 import { World01StageClearScene } from "./scenes/World01StageClearScene";
 import { World01SkillUnlockScene } from "./scenes/World01SkillUnlockScene";
 import { World02EntranceScene } from "./scenes/World02EntranceScene";
+import { World03EntranceScene } from "./scenes/World03EntranceScene";
 import type { ProgressState } from "./core/types";
 
 export const GAME_WIDTH = 1280;
@@ -57,7 +58,7 @@ export function createPhaserConfig(
         debug: false,
       },
     },
-    scene: [BootScene, PreloadScene, IntroScene, PrototypeScene, StageScene, World01SkillUnlockScene, World01StageClearScene, World02EntranceScene],
+    scene: [BootScene, PreloadScene, IntroScene, PrototypeScene, StageScene, World01SkillUnlockScene, World01StageClearScene, World02EntranceScene, World03EntranceScene],
   };
 }
 

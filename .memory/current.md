@@ -10,15 +10,15 @@
 
 ## Active Task
 
-[T03 전용 인트로 장면과 자막 화면](./phases/2026-10-28-world03-entrance-intro/P01-construction-entrance/T03-entrance-scene-and-overlay.md)
+[T04 첫 진입 경로와 통합 회귀](./phases/2026-10-28-world03-entrance-intro/P01-construction-entrance/T04-entry-routing-and-regression.md)
 
 ## Status
 
-- 월드 3 공사장 인트로 계획 P01 2/4. T02 합성 WAV·오디오 재생 계약 검증 완료, T03 진행 중.
+- 월드 3 공사장 인트로 계획 P01 3/4. T03 장면·자막·HUD 계약 검증 완료, T04 진행 중. 실제 화면 검증은 첫 진입 경로를 연결한 뒤 통합 점검한다.
 
 ## Next Step (IMPORTANT)
 
-T03 청사진을 읽고 `src/game/scenes/World03EntranceScene.ts`의 장면과 자막·HUD 표시를 구현한다. 기존 미커밋 보스·HUD·월드 3·발레 점프 변경은 보존한다.
+T04 청사진을 읽고 `src/game/systems/world03IntroRouting.ts`와 일반·개발 첫 진입 경로를 연결한다. 기존 미커밋 보스·HUD·월드 3·발레 점프 변경은 보존한다.
 
 ## Previous Work Context
 

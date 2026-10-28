@@ -83,7 +83,7 @@ export function CutsceneOverlay({ eventBus, onSkip }: CutsceneOverlayProps): Rea
     ? "문장 끝까지 보기"
     : captionIndex + 1 < captionCount ? "다음 대사" : index + 1 === totalBeats ? "대화 마치기" : "다음 장면";
   return (
-    <div className={"cutscene-overlay" + (state.cutsceneId === "world-02-intro" ? " cutscene-overlay--world02" : "")}>
+    <div className={"cutscene-overlay" + (["world-02-intro", "world-03-intro"].includes(state.cutsceneId) ? " cutscene-overlay--world-entrance" : "")}>
       <div className="cutscene-vignette" />
       {beat.itemCard && <ItemCard item={beat.itemCard} />}
       {(beat.narration || beat.dialogue) && (

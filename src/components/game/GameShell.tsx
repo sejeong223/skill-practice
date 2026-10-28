@@ -82,7 +82,7 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
   const [statusOpen, setStatusOpen] = useState(false);
   const [activeStageId, setActiveStageId] = useState<StageId>(initialStageId);
   const [bossHearts, setBossHearts] = useState<0 | 1 | 2 | 3 | undefined>();
-  const [world02EntranceActive, setWorld02EntranceActive] = useState(false);
+  const [worldEntranceActive, setWorldEntranceActive] = useState(false);
   const [introGateStep, setIntroGateStep] = useState<"intro" | "title" | "ready">("intro");
   const menuAvailable = canOpenSharedMenu({
     stageId: activeStageId, mode, introReady: introGateStep === "ready", paused,
@@ -133,13 +133,17 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
   useEffect(() => {
     const removeStart = eventBus.on("cutscene-started", (payload) => {
       if (payload.cutsceneId === "intro-home") setIntroGateStep("intro");
-      if (payload.cutsceneId === "world-02-intro") setWorld02EntranceActive(true);
+      if (payload.cutsceneId === "world-02-intro" || payload.cutsceneId === "world-03-intro") {
+        setWorldEntranceActive(true);
+      }
     });
     const removeFinish = eventBus.on("cutscene-finished", (payload) => {
       if (payload.cutsceneId === "intro-home") setIntroGateStep("title");
-      if (payload.cutsceneId === "world-02-intro") setWorld02EntranceActive(false);
+      if (payload.cutsceneId === "world-02-intro" || payload.cutsceneId === "world-03-intro") {
+        setWorldEntranceActive(false);
+      }
     });
-    const removeStage = eventBus.on("stage-started", () => setWorld02EntranceActive(false));
+    const removeStage = eventBus.on("stage-started", () => setWorldEntranceActive(false));
     return () => {
       removeStart();
       removeFinish();
@@ -423,13 +427,13 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
       <div className="game-content-frame">
         <BossCombatOverlay eventBus={eventBus} stageId={activeStageId} barkKeybind={progress.keybinds.bark}
           biteKeybind={progress.keybinds.bite}
-          visible={progressLoaded && introGateStep === "ready" && mode === "play" && !paused && !world02EntranceActive} />
-        {progressLoaded && introGateStep === "ready" && !world02EntranceActive && <SnackCoinCounter balance={progress.bankedCoins} />}
+          visible={progressLoaded && introGateStep === "ready" && mode === "play" && !paused && !worldEntranceActive} />
+        {progressLoaded && introGateStep === "ready" && !worldEntranceActive && <SnackCoinCounter balance={progress.bankedCoins} />}
         {progressLoaded && <PhaserGame className="phaser-viewport" gameEventBus={eventBus} progressState={sharedProgressState} />}
         <GameEventBridge eventBus={eventBus} onEvent={handleEvent} />
         <CutsceneOverlay eventBus={eventBus} onSkip={() => eventBus.emit("cutscene-skip-requested", {})} />
         {introGateStep === "title" && <IntroTitleOverlay initialName={progress.playerName} onConfirm={handleNameConfirm} />}
-        {introGateStep === "ready" && mode !== "stage-clear" && mode !== "ending" && !world02EntranceActive && <GameOverlay stageTitle={stage.title} runtime={runtime} progress={progress} skills={SKILL_DEFINITIONS} tools={TOOL_DEFINITIONS} cooldowns={{}} bossHearts={stage.kind === "boss" ? bossHearts : undefined} alive={mode !== "dead" && mode !== "cutscene"} statusOpen={statusOpen} onEquip={handleEquip} onKeybindChange={handleKeybindChange} onToggleStatus={() => setStatusOpen((open) => !open)} paused={paused} onTogglePause={() => eventBus.emit("pause-requested", { paused: !paused })} onResetProgress={() => setResetProgressDialogOpen(true)} worldSelectUnlocked={worldSelectUnlocked} onOpenWorldSelect={handleOpenWorldSelect} onOpenShop={handleOpenShop} onOpenCatalog={handleOpenCatalog} onOpenPaint={handleOpenPaint} />}
+        {introGateStep === "ready" && mode !== "stage-clear" && mode !== "ending" && !worldEntranceActive && <GameOverlay stageTitle={stage.title} runtime={runtime} progress={progress} skills={SKILL_DEFINITIONS} tools={TOOL_DEFINITIONS} cooldowns={{}} bossHearts={stage.kind === "boss" ? bossHearts : undefined} alive={mode !== "dead" && mode !== "cutscene"} statusOpen={statusOpen} onEquip={handleEquip} onKeybindChange={handleKeybindChange} onToggleStatus={() => setStatusOpen((open) => !open)} paused={paused} onTogglePause={() => eventBus.emit("pause-requested", { paused: !paused })} onResetProgress={() => setResetProgressDialogOpen(true)} worldSelectUnlocked={worldSelectUnlocked} onOpenWorldSelect={handleOpenWorldSelect} onOpenShop={handleOpenShop} onOpenCatalog={handleOpenCatalog} onOpenPaint={handleOpenPaint} />}
         {mode === "ending" && <EndingOverlay onReplayWorld01={() => handleSelectWorld({ worldId: "world-01", point: "start" })} />}
         {paused && introGateStep === "ready" && !worldSelectOpen && !shopOpen && !catalogOpen && !paintOpen && <PauseOverlay onResume={() => eventBus.emit("pause-requested", { paused: false })} />}
         {shopOpen && <ShopPanel bankedCoins={progress.bankedCoins} products={MARKET_PRODUCTS} progress={progress}
@@ -451,8 +455,8 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
           />
         )}
         <DeathCounterOverlay deathCount={deathOverlayCount} visible={deathOverlayVisible} />
-        {introGateStep === "ready" && mode !== "stage-clear" && mode !== "ending" && !world02EntranceActive && <div className="game-toast" role="status">{toast}</div>}
-        {onExit && !world02EntranceActive && <button className="exit-button" type="button" onClick={onExit}>나가기</button>}
+        {introGateStep === "ready" && mode !== "stage-clear" && mode !== "ending" && !worldEntranceActive && <div className="game-toast" role="status">{toast}</div>}
+        {onExit && !worldEntranceActive && <button className="exit-button" type="button" onClick={onExit}>나가기</button>}
       </div>
     </div>
   );
