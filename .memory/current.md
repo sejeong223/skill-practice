@@ -10,15 +10,15 @@
 
 ## Active Task
 
-[T02 시멘트 공격 픽셀 자산](./phases/2026-10-29-world03-mackerel-boss-redesign/P01-boss-attack-assets/T02-cement-attack-assets.md)
+[T03 공사장 준비 효과음](./phases/2026-10-29-world03-mackerel-boss-redesign/P01-boss-attack-assets/T03-construction-attack-sfx.md)
 
 ## Status
 
-- P01 보스와 공격 자산 1/3. T01 그림·판정 검증 완료. T02 진행 중. 이후 P02 세 공격 전투 0/2, P03 대시·대화·보상 0/4를 순차 실행한다.
+- P01 보스와 공격 자산 2/3. T01 그림·판정, T02 시멘트 자산 검증 완료. T03 진행 중. 이후 P02 세 공격 전투 0/2, P03 대시·대화·보상 0/4를 순차 실행한다.
 
 ## Next Step (IMPORTANT)
 
-T02 청사진을 읽고 시멘트 파도·덩어리·웅덩이의 픽셀 원본과 게임용 에셋, manifest 검증을 구현한다. 기존 미커밋 보스·HUD·발레 점프·인트로 변경은 보존한다.
+T03 청사진을 읽고 실제 공사장 소리 기반 벽돌·흙손·시멘트 준비 효과음을 제작하고 오디오 manifest·검증을 연결한다. 기존 미커밋 보스·HUD·발레 점프·인트로 변경은 보존한다.
 
 ## Previous Work Context
 

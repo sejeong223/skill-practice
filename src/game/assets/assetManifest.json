@@ -534,6 +534,27 @@
     "required": true
   },
   {
+    "key": "world-03-cement-wave",
+    "kind": "image",
+    "url": "/assets/pixel/objects/world-03/cement-wave.png",
+    "worldId": "world-03",
+    "required": true
+  },
+  {
+    "key": "world-03-cement-lump",
+    "kind": "image",
+    "url": "/assets/pixel/objects/world-03/cement-lump.png",
+    "worldId": "world-03",
+    "required": true
+  },
+  {
+    "key": "world-03-cement-puddle",
+    "kind": "image",
+    "url": "/assets/pixel/objects/world-03/cement-puddle.png",
+    "worldId": "world-03",
+    "required": true
+  },
+  {
     "key": "world-04-tileset",
     "kind": "image",
     "url": "/assets/pixel/tiles/world-04/world-04-tileset.png",

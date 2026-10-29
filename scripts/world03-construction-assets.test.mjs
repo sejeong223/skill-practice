@@ -21,6 +21,9 @@ const expected = [
   ['world-03-drum-barrel', 48, 48],
   ['world-03-wheelbarrow', 56, 44],
   ['world-03-falling-steel-beam', 64, 28],
+  ['world-03-cement-wave', 64, 24],
+  ['world-03-cement-lump', 48, 48],
+  ['world-03-cement-puddle', 96, 16],
 ];
 
 test('construction art is registered once as real required PNG assets', async () => {
