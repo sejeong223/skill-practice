@@ -10,15 +10,15 @@
 
 ## Active Task
 
-[T03 보스 대화·승리 경로](./phases/2026-10-29-world03-mackerel-boss-redesign/P03-dash-story-progression/T03-boss-dialogue-victory-route.md)
+[T04 보스전 통합 검증](./phases/2026-10-29-world03-mackerel-boss-redesign/P03-dash-story-progression/T04-world03-boss-integration.md)
 
 ## Status
 
-- P01 보스와 공격 자산 3/3 완료. P02 세 공격 전투 2/2 완료. P03 대시·대화·보상 2/4, T03 진행 중.
+- P01 보스와 공격 자산 3/3 완료. P02 세 공격 전투 2/2 완료. P03 대시·대화·보상 3/4, T04 진행 중.
 
 ## Next Step (IMPORTANT)
 
-P03-T03 청사진을 읽고 고등어 태비 전후 대화·대시 해금·STAGE CLEAR·월드 4 진입을 연결한다. 기존 미커밋 보스·HUD·발레 점프·인트로 변경은 보존한다.
+P03-T04 청사진을 읽고 전체 전투·대시·승리 경로를 수동/자동으로 검증한다. 기존 미커밋 보스·HUD·발레 점프·인트로 변경은 보존한다.
 
 ## Previous Work Context
 

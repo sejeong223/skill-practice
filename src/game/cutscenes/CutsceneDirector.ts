@@ -109,6 +109,7 @@ export class CutsceneDirector {
 
   private isBossDialogue(id: string): boolean {
     return id === "world-01-boss-intro" || id === "world-01-boss-clear" ||
-      id === "world-02-boss-intro" || id === "world-02-boss-clear";
+      id === "world-02-boss-intro" || id === "world-02-boss-clear" ||
+      id === "world-03-boss-intro" || id === "world-03-boss-clear";
   }
 }

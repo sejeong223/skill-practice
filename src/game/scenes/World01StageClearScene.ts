@@ -5,7 +5,7 @@ import { getBossVictoryPresentation, type BossVictoryStageId } from "../data/bos
 
 export interface World01StageClearSceneData {
   readonly stageId: BossVictoryStageId;
-  readonly nextStageId: "world-02-stage-1" | "world-03-stage-1";
+  readonly nextStageId: "world-02-stage-1" | "world-03-stage-1" | "world-04-stage-1";
 }
 
 export class World01StageClearScene extends Phaser.Scene {
@@ -101,10 +101,10 @@ export class World01StageClearScene extends Phaser.Scene {
   private continueToNextStage(): void {
     if (!this.canContinue || this.transitioning || !this.progress || !this.stageData) return;
     this.transitioning = true;
-    if (this.stageData.stageId === "world-02-stage-boss") {
+    if (this.stageData.stageId === "world-02-stage-boss" || this.stageData.stageId === "world-03-stage-boss") {
       this.scene.start("World01SkillUnlockScene", {
         ...this.stageData,
-        skillId: "bite",
+        skillId: this.stageData.stageId === "world-02-stage-boss" ? "bite" : "dash",
       });
     } else {
       this.scene.start("World02EntranceScene", { nextStageId: "world-02-stage-1" });

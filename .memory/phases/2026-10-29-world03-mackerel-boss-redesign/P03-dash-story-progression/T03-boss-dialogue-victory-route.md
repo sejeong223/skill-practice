@@ -1,6 +1,6 @@
 # Task: T03 고등어 태비 전후 대화·승리 화면·월드 4 진입
 
-## Status: pending
+## Status: done
 
 ## Goal
 
@@ -143,6 +143,6 @@ Task: T03-boss-dialogue-victory-route
 
 ## Progress
 
-- [ ] 구현 완료
-- [ ] 검증 통과
-- commit: pending
+- [x] 구현 완료
+- [x] 검증 통과
+- commit: feat(월드3): 고등어 대화와 클리어 대시 해금 연결

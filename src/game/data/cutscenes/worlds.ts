@@ -43,6 +43,26 @@ const WORLD02_BOSS_CLEAR_LINES = [
   { speaker: "cheese-tabby", text: "눈이 골뱅이가 된 채 핑글핑글 돌며 기절한다." },
 ] as const;
 
+const WORLD03_BOSS_INTRO_LINES = [
+  { speaker: "mackerel-tabby", text: "요란하게 짖어대며 기어오더니, 꼴이 이게 뭐냥." },
+  { speaker: "corgi", text: "네 녀석이 고등어 태비냐? 내 왕갈비뼈를 가져간 턱시도의 위치를 불어!" },
+  { speaker: "mackerel-tabby", text: "턱시도 형님 말이지? 그라운드 작업은 이미 끝내고 우리의 아지트로 떴다냥." },
+  { speaker: "mackerel-tabby", text: "너 같은 숏다리가 여기까지 쫓아온 건 가상하지만... 선은 여기서 긋는다냥." },
+  { speaker: "corgi", text: "휑한 공사장 따위가 내 전진을 막을 줄 알았냐 멍!" },
+  { speaker: "mackerel-tabby", text: "입만 살아가지고... 뼈도 못 추리게 공사장 자갈맛을 보여주마. 자, 오늘은 네 제삿날이다냥!" },
+] as const;
+
+const WORLD03_BOSS_CLEAR_LINES = [
+  { speaker: "mackerel-tabby", text: "큭... 이 숏다리한테 내 공격이 무산되다니, 뼈가 으스러지는구만..." },
+  { speaker: "corgi", text: "동네 철근 좀 씹어먹었다고 유세 떨더니 별 것도 아니네 멍! 당장 턱시도가 어디로 갔는지 불어라!" },
+  { speaker: "mackerel-tabby", text: "허... 성깔 하난 대단하네. 어차피 턱시도 형님 구역으로 가면 넌 보신탕 거리가 될 거다냥." },
+  { speaker: "mackerel-tabby", text: "턱시도 형님은 지금 고물상 아지트에 계시다냥!" },
+  { speaker: "corgi", text: "고물상 아지트? 거긴 또 어떤 잡동사니가 기다리고 있는 거냐!" },
+  { speaker: "mackerel-tabby", text: "그래냥! 거긴 우리 연합의 진짜 행동대장인 턱시도 형님이 버티고 있는 본진이다냥." },
+  { speaker: "mackerel-tabby", text: "그 녀석의 교란에 걸려 영영 고물상 쓰레기 더미에 파묻힐 거다냥!" },
+  { speaker: "mackerel-tabby", text: "철근 파편 사이로 정신을 잃고 뻗어버린다." },
+] as const;
+
 export const WORLD02_ENTRANCE_CUTSCENE: CutsceneScript = {
   id: "world-02-intro",
   stageId: "world-02-stage-1",
@@ -146,7 +166,9 @@ export const WORLD_CUTSCENES: readonly CutsceneScript[] = [
   { id: "world-02-boss-intro", stageId: "world-02-stage-boss", beats: WORLD02_BOSS_INTRO_LINES.map((line, index) => ({
     id: `cheese-intro-${index + 1}`, durationMs: 3000, dialogue: [line], skipAllowedAfterSeen: true,
   })) },
-  { id: "world-03-boss-intro", stageId: "world-03-stage-boss", beats: [{ id: "mackerel", durationMs: 3000, narration: "공사장 감독 고등어가 벽돌 조각을 집어 든다. 날아온 벽돌은 잠깐 바닥을 막는다!", skipAllowedAfterSeen: true }] },
+  { id: "world-03-boss-intro", stageId: "world-03-stage-boss", beats: WORLD03_BOSS_INTRO_LINES.map((line, index) => ({
+    id: `mackerel-intro-${index + 1}`, durationMs: 3000, dialogue: [line], skipAllowedAfterSeen: true,
+  })) },
   { id: "world-04-boss-intro", stageId: "world-04-stage-boss", beats: [{ id: "tuxedo", durationMs: 3000, narration: "고물상 한가운데, 턱시도가 고철을 떨어뜨린다. 자석 신호가 나면 고철이 한 번 더 움직인다!", skipAllowedAfterSeen: true }] },
   { id: "world-05-boss-intro", stageId: "world-05-stage-boss", beats: [{ id: "maine-coon", durationMs: 3000, narration: "캣타워의 메인쿤이 코기를 계속 노리는 생쥐를 난사한다. 털뭉치 낙하 지점도 살펴야 한다!", skipAllowedAfterSeen: true }] },
   {
@@ -172,7 +194,9 @@ export const WORLD_CUTSCENES: readonly CutsceneScript[] = [
   { id: "world-02-boss-clear", stageId: "world-02-stage-boss", beats: WORLD02_BOSS_CLEAR_LINES.map((line, index) => ({
     id: `cheese-clear-${index + 1}`, durationMs: 3000, dialogue: [line], skipAllowedAfterSeen: true,
   })) },
-  { id: "world-03-boss-clear", stageId: "world-03-stage-boss", beats: [{ id: "dash-reward", durationMs: 2400, narration: "고등어를 이겼다! 코기는 새 기술 '대시'를 배웠다. 짧은 다리에도 이제 돌진의 힘이 생겼다.", soundCue: "stage-clear", skipAllowedAfterSeen: true }] },
+  { id: "world-03-boss-clear", stageId: "world-03-stage-boss", beats: WORLD03_BOSS_CLEAR_LINES.map((line, index) => ({
+    id: `mackerel-clear-${index + 1}`, durationMs: 3000, dialogue: [line], skipAllowedAfterSeen: true,
+  })) },
   { id: "world-04-boss-clear", stageId: "world-04-stage-boss", beats: [{ id: "jump-reward", durationMs: 2400, narration: "턱시도를 이겼다! 코기는 새 기술 '더블 점프'를 배웠다. 다음은 최종 캣타워다.", soundCue: "stage-clear", skipAllowedAfterSeen: true }] },
   { id: "world-05-boss-clear", stageId: "world-05-stage-boss", beats: [{ id: "rotor-reward", durationMs: 2400, narration: "메인쿤을 이겼다! 코기는 마지막 기술 '꼬리 모터'를 배웠다. 이제 왕갈비뼈를 들고 집으로 돌아가자!", soundCue: "stage-clear", skipAllowedAfterSeen: true }] },
 ];

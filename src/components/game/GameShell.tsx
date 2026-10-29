@@ -133,13 +133,15 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
   useEffect(() => {
     const removeStart = eventBus.on("cutscene-started", (payload) => {
       if (payload.cutsceneId === "intro-home") setIntroGateStep("intro");
-      if (payload.cutsceneId === "world-02-intro" || payload.cutsceneId === "world-03-intro") {
+      if (payload.cutsceneId === "world-02-intro" || payload.cutsceneId === "world-03-intro" ||
+          payload.cutsceneId === "world-04-intro") {
         setWorldEntranceActive(true);
       }
     });
     const removeFinish = eventBus.on("cutscene-finished", (payload) => {
       if (payload.cutsceneId === "intro-home") setIntroGateStep("title");
-      if (payload.cutsceneId === "world-02-intro" || payload.cutsceneId === "world-03-intro") {
+      if (payload.cutsceneId === "world-02-intro" || payload.cutsceneId === "world-03-intro" ||
+          payload.cutsceneId === "world-04-intro") {
         setWorldEntranceActive(false);
       }
     });

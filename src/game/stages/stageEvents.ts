@@ -50,11 +50,11 @@ export interface StageEventMap {
   "ending-finished": { cutsceneId: "ending-homecoming" };
   "stage-clear-scene-opened": {
     stageId: BossVictoryStageId;
-    nextStageId: "world-02-stage-1" | "world-03-stage-1";
+    nextStageId: "world-02-stage-1" | "world-03-stage-1" | "world-04-stage-1";
   };
   "skill-unlock-scene-opened": {
     stageId: BossVictoryStageId;
-    skillId: "bark" | "bite";
+    skillId: "bark" | "bite" | "dash";
   };
   "cutscene-requested": {
     stageId: StageId;

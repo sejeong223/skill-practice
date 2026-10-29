@@ -8,6 +8,7 @@ import { getWorld01Respawn } from "../systems/world01Respawn";
 import { getSelectedWorldResume } from "../systems/worldSelection";
 import { getDevelopmentWorld03Entry } from "../systems/developmentWorld03Start";
 import { getWorld03Entry } from "../systems/world03IntroRouting";
+import { getWorld04Entry } from "../systems/world04IntroRouting";
 
 export class PreloadScene extends Phaser.Scene {
   private loadError: string | null = null;
@@ -86,6 +87,12 @@ export class PreloadScene extends Phaser.Scene {
     if (!this.loadError && progress?.onboardingCompleted) {
       const selectedWorldResume = getSelectedWorldResume(progress);
       if (selectedWorldResume) {
+        if (selectedWorldResume.stageId === "world-04-stage-1" &&
+            !progress.seenCutsceneIds.includes("world-04-intro")) {
+          const entry = getWorld04Entry(progress);
+          this.scene.start(entry.sceneKey, entry.data);
+          return;
+        }
         this.scene.start("StageScene", {
           ...selectedWorldResume,
           playerName: progress.playerName,
@@ -107,6 +114,11 @@ export class PreloadScene extends Phaser.Scene {
       }
       if (firstUncleared === "world-03-stage-1") {
         const entry = getWorld03Entry(progress);
+        this.scene.start(entry.sceneKey, entry.data);
+        return;
+      }
+      if (firstUncleared === "world-04-stage-1") {
+        const entry = getWorld04Entry(progress);
         this.scene.start(entry.sceneKey, entry.data);
         return;
       }

@@ -3,11 +3,12 @@ import { GameEventBus } from "../bridge/GameEventBus";
 import type { ProgressState } from "../core/types";
 import { getBossVictoryPresentation, type BossVictoryStageId } from "../data/bossVictoryPresentation";
 import { getWorld03Entry } from "../systems/world03IntroRouting";
+import { getWorld04Entry } from "../systems/world04IntroRouting";
 
 export interface World01SkillUnlockSceneData {
   readonly stageId: BossVictoryStageId;
-  readonly nextStageId: "world-02-stage-1" | "world-03-stage-1";
-  readonly skillId: "bark" | "bite";
+  readonly nextStageId: "world-02-stage-1" | "world-03-stage-1" | "world-04-stage-1";
+  readonly skillId: "bark" | "bite" | "dash";
 }
 
 export class World01SkillUnlockScene extends Phaser.Scene {
@@ -112,6 +113,9 @@ export class World01SkillUnlockScene extends Phaser.Scene {
     this.transitioning = true;
     if (this.stageData.stageId === "world-02-stage-boss") {
       const entry = getWorld03Entry(this.registry.get("progressState") as ProgressState);
+      this.scene.start(entry.sceneKey, entry.data);
+    } else if (this.stageData.stageId === "world-03-stage-boss") {
+      const entry = getWorld04Entry(this.registry.get("progressState") as ProgressState);
       this.scene.start(entry.sceneKey, entry.data);
     } else {
       this.scene.start("World01StageClearScene", {

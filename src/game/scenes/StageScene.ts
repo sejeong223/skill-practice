@@ -592,9 +592,10 @@ export class StageScene extends Phaser.Scene {
         this.eventBus.on("cutscene-skip-requested", () => this.cutsceneDirector?.skip()),
         this.eventBus.on("cutscene-advance-requested", () => this.cutsceneDirector?.advance()),
         this.eventBus.on("cutscene-beat", ({ cutsceneId, beat, index }) => {
-          if (cutsceneId !== "world-02-boss-intro" && cutsceneId !== "world-02-boss-clear") return;
+          if (cutsceneId !== "world-02-boss-intro" && cutsceneId !== "world-02-boss-clear" &&
+              cutsceneId !== "world-03-boss-intro" && cutsceneId !== "world-03-boss-clear") return;
           const speaker = beat.dialogue?.[0]?.speaker;
-          const actor = speaker === "cheese-tabby" ? this.laterBossSprite
+          const actor = speaker === "cheese-tabby" || speaker === "mackerel-tabby" ? this.laterBossSprite
             : speaker === "corgi" ? this.player : undefined;
           if (actor) this.cameraDirector?.focusDialogue(actor.x, stage.mapHeight / 2, index === 0);
         }),
@@ -627,7 +628,8 @@ export class StageScene extends Phaser.Scene {
       if (stageId !== this.stageId || this.stageTransitionStarted) return;
       this.rememberWorld02Visit();
       this.runtime?.setStatus("completed");
-      if (stageId === "world-01-stage-boss" || stageId === "world-02-stage-boss") return;
+      if (stageId === "world-01-stage-boss" || stageId === "world-02-stage-boss" ||
+          stageId === "world-03-stage-boss") return;
       const nextStageId = getNextStageId(stageId);
       if (!nextStageId) {
         if (stageId === "world-05-stage-boss") {
@@ -1136,6 +1138,7 @@ export class StageScene extends Phaser.Scene {
     this.player?.setVelocity(0, 0);
     this.player?.lockControl("boss-victory");
     this.laterBossSprite?.setFrame(3);
+    if (stage.id === "world-03-stage-boss") this.holdPlayerForVictoryDialogue();
     await this.cutsceneDirector?.play(`${stage.worldId}-boss-clear`);
     if (!this.scene.isActive() || !this.bossEncounter?.isDefeated()) return;
     const config = stage.worldId === "world-01" ? null : BOSS_COMBAT_CONFIG[stage.worldId];
@@ -1148,10 +1151,10 @@ export class StageScene extends Phaser.Scene {
     if (stage.id === "world-02-stage-boss") this.progress.selectedWorldId = null;
     this.player?.unlockControl("boss-victory");
     this.runtime?.complete();
-    if (stage.id === "world-02-stage-boss") {
+    if (stage.id === "world-02-stage-boss" || stage.id === "world-03-stage-boss") {
       this.scene.start("World01StageClearScene", {
-        stageId: "world-02-stage-boss",
-        nextStageId: "world-03-stage-1",
+        stageId: stage.id,
+        nextStageId: stage.id === "world-02-stage-boss" ? "world-03-stage-1" : "world-04-stage-1",
       });
     }
   }

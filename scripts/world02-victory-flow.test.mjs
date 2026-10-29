@@ -18,7 +18,7 @@ test('월드 1/2 결과 화면은 캠페인의 실제 다음 스테이지와 같
     assert.equal(presentation.nextStageId, getNextStageId(stageId));
     assert.ok(presentation.skillName && presentation.skillDescription && presentation.skillEffectNote);
   }
-  assert.equal(getBossVictoryPresentation('world-03-stage-boss'), null);
+  assert.equal(getBossVictoryPresentation('world-03-stage-boss').skillId, 'dash');
   assert.equal(getBossVictoryPresentation('__proto__'), null);
 });
 

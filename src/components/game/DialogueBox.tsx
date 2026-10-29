@@ -18,6 +18,7 @@ const SPEAKER_LABELS: Readonly<Record<DialogueLine["speaker"], string>> = {
   cat: "턱시도",
   calico: "삼색이",
   "cheese-tabby": "치즈 태비",
+  "mackerel-tabby": "고등어 태비",
 };
 
 export function DialogueBox({ lines, durationMs, resetKey, forceReveal, onComplete }: DialogueBoxProps): ReactElement {
