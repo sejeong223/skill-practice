@@ -1,7 +1,7 @@
 import type { CustomOutfitDesign } from "../core/types";
 import { CUSTOM_OUTFIT_CELL_COUNT, CUSTOM_OUTFIT_HEIGHT, CUSTOM_OUTFIT_WIDTH } from "../data/customOutfitPaint";
 
-export type OutfitPose = "run" | "bark" | "bite" | "pirouette" | "pirouetteMirror";
+export type OutfitPose = "run" | "bark" | "bite" | "dash" | "pirouette" | "pirouetteMirror";
 
 // The paint grid covers the white fabric in the approved 112 x 128 corgi sprite.
 const garmentBounds = { left: 7, top: 40, width: 78, height: 56 } as const;
@@ -41,10 +41,11 @@ export function colorizeCustomOutfitPixels(
   uvMap?: Uint8ClampedArray,
 ): Uint8ClampedArray {
   const spinning = pose === "pirouette" || pose === "pirouetteMirror";
+  const usesUV = spinning || pose === "dash";
   const frames = pose === "bark" ? 1 : spinning ? 8 : 4;
   if (width !== frames * 112 || height !== 128 || template.length !== width * height * 4 ||
       design.cells.length !== CUSTOM_OUTFIT_CELL_COUNT ||
-      (spinning && (!uvMap || uvMap.length !== template.length))) {
+      (usesUV && (!uvMap || uvMap.length !== template.length))) {
     throw new Error("Invalid custom outfit template or design size");
   }
   const result = new Uint8ClampedArray(template);
@@ -56,14 +57,14 @@ export function colorizeCustomOutfitPixels(
   for (let y = 0; y < height; y++) for (let x = 0; x < width; x++) {
     const pixel = (y * width + x) * 4;
     let cellIndex: number;
-    if (spinning) {
+    if (usesUV) {
       if (!uvMap || uvMap[pixel + 3] < 200) continue;
       cellIndex = uvMap[pixel] + (uvMap[pixel + 1] << 8) - 1;
       const red = template[pixel], green = template[pixel + 1], blue = template[pixel + 2];
       if (cellIndex < 0 || cellIndex >= CUSTOM_OUTFIT_CELL_COUNT ||
           template[pixel + 3] < 200 || Math.min(red, green, blue) < 230 ||
           Math.max(red, green, blue) - Math.min(red, green, blue) > 8) {
-        throw new Error("Invalid pirouette paint UV or fabric pixel");
+        throw new Error("Invalid pose paint UV or fabric pixel");
       }
     } else {
       if (!isWhiteSuitPixel(template, width, x, y)) continue;

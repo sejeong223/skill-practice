@@ -6,6 +6,7 @@ const RUN_FRAME_RATE = 10;
 export const BARK_PRESENTATION_MS = 450;
 export const BITE_PRESENTATION_MS = 320;
 export const PIROUETTE_DURATION_MS = 600;
+export const DASH_PRESENTATION_MS = 250;
 const PIROUETTE_FRAME_MS = 75;
 const PIROUETTE_FOOT_ANCHOR = 99;
 const BARK_FOOT_ANCHOR = 99;
@@ -31,12 +32,16 @@ export class PlayerAnimator {
   private slipperSwingUntil = 0;
   private slipperFacing: -1 | 1 = 1;
   private pirouette: PirouettePlayback | null = null;
+  private dashRemainingMs = 0;
+  private dashAirborne = false;
+  private dashGhosts: Phaser.GameObjects.Image[] = [];
 
   public constructor(player: Player) {
     this.player = player;
     this.player.on("animationupdate", this.syncRunFootAnchor, this);
     this.player.on("player-jump-started", this.startPirouette, this);
     this.player.on("player-reset", this.stopPirouette, this);
+    this.player.on("player-reset", this.stopDash, this);
   }
 
   public triggerSlipperSwing(now: number): void {
@@ -50,7 +55,7 @@ export class PlayerAnimator {
   }
 
   public triggerBark(): void {
-    if (this.pirouette) return;
+    if (this.pirouette || this.dashRemainingMs > 0) return;
     const barkTextureKey = this.player.getAppearanceTextures().bark;
     if (!this.player.scene.textures.exists(barkTextureKey)) return;
     this.stopBite();
@@ -72,7 +77,7 @@ export class PlayerAnimator {
   }
 
   public triggerBite(now: number): void {
-    if (this.pirouette) return;
+    if (this.pirouette || this.dashRemainingMs > 0) return;
     const biteKey = this.player.getAppearanceTextures().bite;
     if (!biteKey || !this.player.scene.textures.exists(biteKey)) return;
     this.stopBark();
@@ -99,8 +104,40 @@ export class PlayerAnimator {
     this.activeAnimationKey = null;
   }
 
+  public triggerDash(airborne: boolean): void {
+    const key = this.player.getAppearanceTextures().dash;
+    if (!airborne && !this.player.scene.textures.exists(key)) return;
+    this.dashAirborne = airborne;
+    this.dashRemainingMs = DASH_PRESENTATION_MS;
+    if (airborne) {
+      for (let index = this.dashGhosts.length; index < 2; index++) {
+        this.dashGhosts.push(this.player.scene.add.image(this.player.x, this.player.y, this.player.texture.key)
+          .setDepth(this.player.depth - 1));
+      }
+      this.updateDashGhosts();
+      return;
+    }
+    this.hideDashGhosts();
+    this.player.anims.stop();
+    this.player.anims.timeScale = 1;
+    this.activeAnimationKey = null;
+    this.player.setTexture(key, 0);
+    this.player.alignFeetToFrame(99);
+  }
+
+  public stopDash(): void {
+    this.dashRemainingMs = 0;
+    this.dashAirborne = false;
+    this.hideDashGhosts();
+    if (!this.player.scene || this.player.texture?.key !== this.player.getAppearanceTextures().dash) return;
+    this.player.setTexture(this.player.getAppearanceTextures().run, 0);
+    this.player.alignFeetToFrame(RUN_FRAME_FOOT_ANCHORS[0]);
+    this.activeAnimationKey = null;
+  }
+
   public update(now = this.player.scene.time.now, deltaMs = 0): void {
     this.updateSlipperSwing(now);
+    if (this.player.getAnimationState() === "death") this.stopDash();
     if (this.pirouette) {
       const grounded = this.player.body.blocked.down || this.player.body.touching.down;
       if (!grounded) this.pirouette.sawAirborne = true;
@@ -108,6 +145,20 @@ export class PlayerAnimator {
           (grounded && (this.pirouette.sawAirborne || this.player.body.velocity.y >= 0))) {
         this.stopPirouette();
       } else if (this.updatePirouette(deltaMs)) {
+        this.tickDash(deltaMs);
+        this.updateDashGhosts();
+        return;
+      }
+    }
+    if (this.dashRemainingMs > 0) {
+      this.tickDash(deltaMs);
+      if (this.dashAirborne) this.updateDashGhosts();
+      if (this.dashRemainingMs > 0 && !this.dashAirborne) {
+        const key = this.player.getAppearanceTextures().dash;
+        const frame = Math.min(3, Math.floor((DASH_PRESENTATION_MS - this.dashRemainingMs) / 62.5));
+        if (this.player.texture.key !== key) this.player.setTexture(key, frame);
+        else if (Number(this.player.frame.name) !== frame) this.player.setFrame(frame);
+        this.player.alignFeetToFrame(99);
         return;
       }
     }
@@ -137,12 +188,16 @@ export class PlayerAnimator {
   }
 
   public destroy(): void {
+    this.stopDash();
     this.stopPirouette();
     this.stopBark();
     this.stopBite();
     this.player.off("animationupdate", this.syncRunFootAnchor, this);
     this.player.off("player-jump-started", this.startPirouette, this);
     this.player.off("player-reset", this.stopPirouette, this);
+    this.player.off("player-reset", this.stopDash, this);
+    this.dashGhosts.forEach(image => image.destroy());
+    this.dashGhosts = [];
     this.slipperImage?.destroy();
     this.slipperImage = undefined;
   }
@@ -197,6 +252,24 @@ export class PlayerAnimator {
     this.player.alignFeetToFrame(PIROUETTE_FOOT_ANCHOR);
     return true;
   }
+
+  private tickDash(deltaMs: number): void {
+    this.dashRemainingMs = Math.max(0, this.dashRemainingMs - (Number.isFinite(deltaMs) ? Math.max(0, deltaMs) : 0));
+    if (this.dashRemainingMs === 0) this.stopDash();
+  }
+
+  private updateDashGhosts(): void {
+    if (!this.dashAirborne || this.dashRemainingMs <= 0) { this.hideDashGhosts(); return; }
+    for (let index = 0; index < this.dashGhosts.length; index++) {
+      this.dashGhosts[index].setTexture(this.player.texture.key, Number(this.player.frame.name) || 0)
+        .setPosition(this.player.x - (this.player.flipX ? -1 : 1) * (index + 1) * 18, this.player.y)
+        .setOrigin(this.player.originX, this.player.originY)
+        .setFlipX(this.player.flipX).setAlpha(index === 0 ? 0.28 : 0.14)
+        .setVisible(this.player.visible && this.player.active);
+    }
+  }
+
+  private hideDashGhosts(): void { this.dashGhosts.forEach(image => image.setVisible(false)); }
 
   private syncRunFootAnchor(): void {
     if (this.player.texture.key !== this.player.getAppearanceTextures().run) return;

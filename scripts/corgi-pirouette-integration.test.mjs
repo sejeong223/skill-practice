@@ -34,6 +34,7 @@ function createGame() {
         setOrigin(nx, ny) { this.originX = nx; this.originY = ny; return this; },
         setScale(nx, ny) { this.scaleX = nx; this.scaleY = ny; return this; },
         setFlipX(value) { this.flipX = value; return this; },
+        setAlpha(value) { this.alpha = value; return this; },
         setVisible(value) { this.visible = value; return this; },
         destroy() { this.destroyed = true; } };
       images.push(image); return image;
@@ -45,7 +46,7 @@ function createGame() {
     texture: { key: "corgi-run" }, frame: { name: 0 }, state: "idle", foot: 99,
     body: { blocked: { down: true }, touching: { down: false }, velocity: { x: 0, y: 0 },
       width: 72, height: 40, offsetY: 59, setGravityY(value) { this.gravityY = value; } },
-    appearance: { run: "corgi-run", bark: "corgi-bark", bite: "corgi-bite",
+    appearance: { run: "corgi-run", bark: "corgi-bark", bite: "corgi-bite", dash: "corgi-dash",
       pirouette: "corgi-pirouette", pirouetteMirror: "corgi-pirouette-mirror" },
     on(event, callback, context) { const entries = listeners.get(event) ?? []; entries.push({ callback, context }); listeners.set(event, entries); },
     off(event, callback) { listeners.set(event, (listeners.get(event) ?? []).filter(entry => entry.callback !== callback)); },
@@ -218,7 +219,7 @@ test("회전 중 직접 색칠한 의상으로 갈아입어도 프레임을 유�
     game.wearables.setEquipment(null, "prince-crown", design);
     assert.equal(game.player.frame.name, 3);
     assert.ok(game.player.texture.key.endsWith("-pirouette"));
-    assert.equal(dynamic.size, 5);
+    assert.equal(dynamic.size, 6);
     game.frame(75, { grounded: false, left: true });
     assert.ok(game.player.texture.key.endsWith("-pirouette-mirror"));
     assert.equal(game.player.frame.name, 4);
@@ -226,9 +227,41 @@ test("회전 중 직접 색칠한 의상으로 갈아입어도 프레임을 유�
     assert.equal(game.player.texture.key, "corgi-pirouette-mirror");
     assert.equal(game.player.frame.name, 4);
     assert.equal(dynamic.size, 0);
-    assert.equal(removed.length, 5);
+    assert.equal(removed.length, 6);
     game.animator.destroy(); game.wearables.destroy();
   } finally {
     global.document = originalDocument;
   }
+});
+
+test("지상 대시는 전신 4프레임을 사용하고 의상 교체 중에도 현재 대시 프레임을 유지한다", () => {
+  const game = createGame();
+  game.animator.triggerDash(false);
+  assert.equal(game.player.texture.key, "corgi-dash");
+  game.frame(63);
+  assert.equal(game.player.frame.name, 1);
+  game.wearables.setEquipment("bee-bodysuit", "prince-crown");
+  assert.equal(game.player.texture.key, "wear-bee-bodysuit-dash");
+  assert.equal(game.player.frame.name, 1);
+  assert.equal(game.images.at(-1).texture.key, "wear-prince-crown-dash");
+  game.frame(63);
+  assert.equal(game.player.frame.name, 2);
+  game.frame(124);
+  assert.equal(game.player.texture.key, "wear-bee-bodysuit-run");
+  game.animator.destroy(); game.wearables.destroy();
+});
+
+test("공중 대시는 발레 회전을 유지하고 두 잔상만 250ms 동안 표시한다", () => {
+  const game = createGame();
+  game.frame(0, { jumpPressed: true });
+  game.animator.triggerDash(true);
+  game.frame(75, { grounded: false });
+  assert.equal(game.player.texture.key, "corgi-pirouette");
+  assert.equal(game.player.frame.name, 1);
+  assert.equal(game.images.filter(image => image.visible && !image.destroyed).length, 2);
+  assert.ok(game.images.every(image => image.texture.key === "corgi-pirouette"));
+  game.frame(175, { grounded: false });
+  assert.ok(game.images.every(image => !image.visible));
+  assert.equal(game.player.texture.key, "corgi-pirouette");
+  game.animator.destroy(); game.wearables.destroy();
 });

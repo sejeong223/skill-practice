@@ -8,6 +8,7 @@ export type PlayerAppearanceTextures = Readonly<{
   run: string;
   bark: string;
   bite: string | null;
+  dash: string;
   pirouette: string;
   pirouetteMirror: string;
 }>;
@@ -31,7 +32,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   private readonly bodyOffsetX: number;
   private footAnchorY = 99;
   private appearanceTextures: PlayerAppearanceTextures = {
-    run: "corgi-run", bark: "corgi-bark", bite: "corgi-bite",
+    run: "corgi-run", bark: "corgi-bark", bite: "corgi-bite", dash: "corgi-dash",
     pirouette: "corgi-pirouette", pirouetteMirror: "corgi-pirouette-mirror",
   };
 

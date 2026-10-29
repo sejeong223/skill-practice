@@ -66,10 +66,10 @@
     "key": "corgi-dash",
     "kind": "spritesheet",
     "url": "/assets/pixel/characters/corgi/corgi-dash.png",
-    "frameWidth": 32,
-    "frameHeight": 48,
+    "frameWidth": 112,
+    "frameHeight": 128,
     "frameCount": 4,
-    "required": false
+    "required": true
   },
   {
     "key": "corgi-bark",
@@ -1327,6 +1327,111 @@
     "key": "custom-outfit-template-pirouette-mirror-uv",
     "kind": "image",
     "url": "/assets/pixel/characters/corgi/equipment/custom-outfit-template-pirouette-mirror-uv.png",
+    "required": true
+  },
+  {
+    "key": "wear-pink-caterpillar-suit-dash",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/characters/corgi/equipment/pink-caterpillar-suit-dash.png",
+    "frameWidth": 112,
+    "frameHeight": 128,
+    "frameCount": 4,
+    "required": true
+  },
+  {
+    "key": "wear-banana-peel-suit-dash",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/characters/corgi/equipment/banana-peel-suit-dash.png",
+    "frameWidth": 112,
+    "frameHeight": 128,
+    "frameCount": 4,
+    "required": true
+  },
+  {
+    "key": "wear-bee-bodysuit-dash",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/characters/corgi/equipment/bee-bodysuit-dash.png",
+    "frameWidth": 112,
+    "frameHeight": 128,
+    "frameCount": 4,
+    "required": true
+  },
+  {
+    "key": "wear-hotdog-outfit-dash",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/characters/corgi/equipment/hotdog-outfit-dash.png",
+    "frameWidth": 112,
+    "frameHeight": 128,
+    "frameCount": 4,
+    "required": true
+  },
+  {
+    "key": "wear-diamond-armor-dash",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/characters/corgi/equipment/diamond-armor-dash.png",
+    "frameWidth": 112,
+    "frameHeight": 128,
+    "frameCount": 4,
+    "required": true
+  },
+  {
+    "key": "wear-shinchan-eyebrow-sticker-dash",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/characters/corgi/equipment/shinchan-eyebrow-sticker-dash.png",
+    "frameWidth": 112,
+    "frameHeight": 128,
+    "frameCount": 4,
+    "required": true
+  },
+  {
+    "key": "wear-birthday-party-hat-dash",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/characters/corgi/equipment/birthday-party-hat-dash.png",
+    "frameWidth": 112,
+    "frameHeight": 128,
+    "frameCount": 4,
+    "required": true
+  },
+  {
+    "key": "wear-strawberry-headpiece-dash",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/characters/corgi/equipment/strawberry-headpiece-dash.png",
+    "frameWidth": 112,
+    "frameHeight": 128,
+    "frameCount": 4,
+    "required": true
+  },
+  {
+    "key": "wear-propeller-hat-dash",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/characters/corgi/equipment/propeller-hat-dash.png",
+    "frameWidth": 112,
+    "frameHeight": 128,
+    "frameCount": 4,
+    "required": true
+  },
+  {
+    "key": "wear-prince-crown-dash",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/characters/corgi/equipment/prince-crown-dash.png",
+    "frameWidth": 112,
+    "frameHeight": 128,
+    "frameCount": 4,
+    "required": true
+  },
+  {
+    "key": "custom-outfit-template-dash",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/characters/corgi/equipment/custom-outfit-template-dash.png",
+    "frameWidth": 112,
+    "frameHeight": 128,
+    "frameCount": 4,
+    "required": true
+  },
+  {
+    "key": "custom-outfit-template-dash-uv",
+    "kind": "image",
+    "url": "/assets/pixel/characters/corgi/equipment/custom-outfit-template-dash-uv.png",
     "required": true
   }
 ]
