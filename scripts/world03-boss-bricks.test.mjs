@@ -14,12 +14,12 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 test("고등어 보스와 벽돌은 투명한 픽셀 에셋으로 등록된다", async () => {
   const manifest = JSON.parse(await readFile(path.join(root, "src/game/assets/assetManifest.json"), "utf8"));
   for (const [key, width, height, frameCount] of [
-    ["world-03-mackerel-boss", 512, 128, 4],
+    ["world-03-mackerel-boss", 896, 112, 8],
     ["world-03-boss-brick", 32, 32, 1],
   ]) {
     const entry = manifest.find(asset => asset.key === key);
     assert.equal(entry?.required, true, key);
-    if (frameCount === 4) assert.deepEqual([entry.frameWidth, entry.frameHeight, entry.frameCount], [128, 128, 4]);
+    if (frameCount === 8) assert.deepEqual([entry.frameWidth, entry.frameHeight, entry.frameCount], [112, 112, 8]);
     const { data, info } = await sharp(path.join(root, "public", entry.url)).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
     assert.deepEqual([info.width, info.height], [width, height]);
     assert.equal(data[3], 0, `${key} must have transparent background`);

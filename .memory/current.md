@@ -2,25 +2,29 @@
 
 ## Active Plan
 
-[월드 3 후반 장애물·체크포인트·철근 충돌음](./plans/2026-10-28-world03-beam-drum-sequence-impact.md)
+[월드 3 고등어 태비 보스전 재구상](./plans/2026-10-29-world03-mackerel-boss-redesign.md)
 
 ## Active Phase
 
-[P01 월드 3 후반 위험물·체크포인트·충돌음](./phases/2026-10-28-world03-beam-drum-sequence-impact/P01-beam-sequence-impact/phase.md)
+[P01 보스와 공격 자산](./phases/2026-10-29-world03-mackerel-boss-redesign/P01-boss-attack-assets/phase.md)
 
 ## Active Task
 
-없음 — 이번 계획의 4개 Task 완료.
+[T02 시멘트 공격 픽셀 자산](./phases/2026-10-29-world03-mackerel-boss-redesign/P01-boss-attack-assets/T02-cement-attack-assets.md)
 
 ## Status
 
-- 월드 3 후반 위험물·체크포인트·철근 충돌음 계획 P01 4/4 완료. T01 배치, T02 체크포인트, T03 금속 충돌음 자산, T04 명중·착지 재생의 자동 검증 완료. 수동 검증 한계는 [검증 기록](./test-plans/2026-10-28-world03-beam-drum-sequence-impact.md)에 남겼다.
+- P01 보스와 공격 자산 1/3. T01 그림·판정 검증 완료. T02 진행 중. 이후 P02 세 공격 전투 0/2, P03 대시·대화·보상 0/4를 순차 실행한다.
 
 ## Next Step (IMPORTANT)
 
-이번 계획의 다음 Task는 없다. 기존 미커밋 보스·HUD·발레 점프·인트로 변경은 보존했다.
+T02 청사진을 읽고 시멘트 파도·덩어리·웅덩이의 픽셀 원본과 게임용 에셋, manifest 검증을 구현한다. 기존 미커밋 보스·HUD·발레 점프·인트로 변경은 보존한다.
 
 ## Previous Work Context
+
+## Last Completed World 3 Hazard Plan
+
+- [월드 3 후반 장애물·체크포인트·철근 충돌음](./plans/2026-10-28-world03-beam-drum-sequence-impact.md): P01 4/4 완료. 철근 배치·체크포인트·실제 철 충돌음과 자동 검증을 마쳤다. 수동 검증 한계는 [검증 기록](./test-plans/2026-10-28-world03-beam-drum-sequence-impact.md)에 남겼다.
 
 ## Last Completed Ballet Jump Plan
 

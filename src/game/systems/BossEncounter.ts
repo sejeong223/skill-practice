@@ -56,7 +56,7 @@ export class BossEncounter {
     this.state = this.initialState();
     this.bar = scene.add.graphics().setDepth(12);
     const cheeseTabby = stageId === "world-02-stage-boss";
-    this.name = scene.add.text(sprite.x, sprite.y - (cheeseTabby ? 90 : 112), "", {
+    this.name = scene.add.text(sprite.x, sprite.y - (cheeseTabby ? 90 : stageId === "world-03-stage-boss" ? 96 : 112), "", {
       color: "#fff5d8", fontFamily: "Galmuri11Pixel, monospace", fontSize: "17px",
       stroke: "#423039", strokeThickness: 4,
     }).setOrigin(0.5).setDepth(12);
@@ -253,6 +253,16 @@ export class BossEncounter {
   }
 
   private getHitBounds(): Pick<Phaser.Geom.Rectangle, "x" | "y" | "width" | "height" | "centerX" | "centerY"> {
+    if (this.stageId === "world-03-stage-boss") {
+      return {
+        x: this.sprite.x - 50,
+        y: this.sprite.y - 31,
+        width: 100,
+        height: 80,
+        centerX: this.sprite.x,
+        centerY: this.sprite.y + 9,
+      };
+    }
     if (this.stageId !== "world-02-stage-boss") return this.sprite.getBounds();
     // The 96px cat is visible from about y=18 to y=80 in each standing frame.
     return {
@@ -271,7 +281,7 @@ export class BossEncounter {
     const left = this.sprite.x - width * this.config.maxHealth / 2;
     for (let index = 0; index < this.config.maxHealth; index++) {
       this.bar.fillStyle(index < this.state.health ? 0xf0b95f : 0x4a3b42, 1);
-      this.bar.fillRect(left + index * width, this.sprite.y - (this.stageId === "world-02-stage-boss" ? 68 : 89), width - 2, 12);
+      this.bar.fillRect(left + index * width, this.sprite.y - (this.stageId === "world-02-stage-boss" ? 68 : this.stageId === "world-03-stage-boss" ? 74 : 89), width - 2, 12);
     }
     this.name.setText(`${this.config.bossName}  ${this.state.health} / ${this.config.maxHealth}`);
   }
