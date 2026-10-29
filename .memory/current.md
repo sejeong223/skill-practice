@@ -10,15 +10,15 @@
 
 ## Active Task
 
-[T04 보스전 통합 검증](./phases/2026-10-29-world03-mackerel-boss-redesign/P03-dash-story-progression/T04-world03-boss-integration.md)
+없음 — 월드 3 고등어 태비 보스전 재구상 계획의 모든 Task 완료.
 
 ## Status
 
-- P01 보스와 공격 자산 3/3 완료. P02 세 공격 전투 2/2 완료. P03 대시·대화·보상 3/4, T04 진행 중.
+- P01 보스와 공격 자산 3/3 완료. P02 세 공격 전투 2/2 완료. P03 대시·대화·보상 4/4 완료. [검증 기록](./test-plans/2026-10-29-world03-mackerel-boss-redesign.md)에 자동 통과와 수동 미검증을 구분했다.
 
 ## Next Step (IMPORTANT)
 
-P03-T04 청사진을 읽고 전체 전투·대시·승리 경로를 수동/자동으로 검증한다. 기존 미커밋 보스·HUD·발레 점프·인트로 변경은 보존한다.
+이 계획의 다음 Task는 없다. 월드 3 인트로 두 번째 자막 이후 자동 진행이 멈춰 수동 보스전·청음 확인은 별도 조사 후 재검증한다. 기존 미커밋 보스·HUD·발레 점프·인트로 변경은 보존한다.
 
 ## Previous Work Context
 

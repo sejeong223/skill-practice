@@ -238,6 +238,8 @@ test("지상 대시는 전신 4프레임을 사용하고 의상 교체 중에도
   const game = createGame();
   game.animator.triggerDash(false);
   assert.equal(game.player.texture.key, "corgi-dash");
+  game.frame(16);
+  assert.equal(game.player.frame.name, 0);
   game.frame(63);
   assert.equal(game.player.frame.name, 1);
   game.wearables.setEquipment("bee-bodysuit", "prince-crown");
@@ -255,6 +257,7 @@ test("공중 대시는 발레 회전을 유지하고 두 잔상만 250ms 동안 
   const game = createGame();
   game.frame(0, { jumpPressed: true });
   game.animator.triggerDash(true);
+  game.frame(16, { grounded: false });
   game.frame(75, { grounded: false });
   assert.equal(game.player.texture.key, "corgi-pirouette");
   assert.equal(game.player.frame.name, 1);

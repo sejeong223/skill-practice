@@ -33,6 +33,7 @@ export class PlayerAnimator {
   private slipperFacing: -1 | 1 = 1;
   private pirouette: PirouettePlayback | null = null;
   private dashRemainingMs = 0;
+  private dashStartedSinceLastUpdate = false;
   private dashAirborne = false;
   private dashGhosts: Phaser.GameObjects.Image[] = [];
 
@@ -109,6 +110,7 @@ export class PlayerAnimator {
     if (!airborne && !this.player.scene.textures.exists(key)) return;
     this.dashAirborne = airborne;
     this.dashRemainingMs = DASH_PRESENTATION_MS;
+    this.dashStartedSinceLastUpdate = true;
     if (airborne) {
       for (let index = this.dashGhosts.length; index < 2; index++) {
         this.dashGhosts.push(this.player.scene.add.image(this.player.x, this.player.y, this.player.texture.key)
@@ -127,6 +129,7 @@ export class PlayerAnimator {
 
   public stopDash(): void {
     this.dashRemainingMs = 0;
+    this.dashStartedSinceLastUpdate = false;
     this.dashAirborne = false;
     this.hideDashGhosts();
     if (!this.player.scene || this.player.texture?.key !== this.player.getAppearanceTextures().dash) return;
@@ -261,6 +264,10 @@ export class PlayerAnimator {
   }
 
   private tickDash(deltaMs: number): void {
+    if (this.dashStartedSinceLastUpdate) {
+      this.dashStartedSinceLastUpdate = false;
+      return;
+    }
     this.dashRemainingMs = Math.max(0, this.dashRemainingMs - (Number.isFinite(deltaMs) ? Math.max(0, deltaMs) : 0));
     if (this.dashRemainingMs === 0) this.stopDash();
   }

@@ -7,9 +7,9 @@
 | T01 | `done` | 코기 지상 대시 전신과 의상·장신구·맞춤 옷 | [T01](./T01-corgi-dash-wardrobe-art.md) |
 | T02 | `done` | 숫자 1 대시 250ms 이동·피해 무시·저장 이전 | [T02](./T02-dash-input-invulnerability.md) |
 | T03 | `done` | 고등어 전후 대화와 클리어·해금·월드 4 인트로 | [T03](./T03-boss-dialogue-victory-route.md) |
-| T04 | `in_progress` | 전체 보스전·재시도·대시·승리 수동/자동 회귀 | [T04](./T04-world03-boss-integration.md) |
+| T04 | `done` | 전체 보스전·재시도·대시·승리 자동 회귀와 수동 미검증 기록 | [T04](./T04-world03-boss-integration.md) |
 
 ## Progress
 
-- done: 3/4 (active: T04)
+- done: 4/4 (수동 보스전·청음은 인트로 진행 정지로 미검증)
 - 지상 대시 아트를 먼저 등록한 뒤 이동·피해 판정을 연결한다. 승리 보상은 실제 조작이 준비된 후 노출한다.
