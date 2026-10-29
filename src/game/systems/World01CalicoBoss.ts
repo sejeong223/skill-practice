@@ -72,6 +72,7 @@ export class World01CalicoBoss {
     private readonly onHeartsChanged: (remaining: 0 | 1 | 2 | 3) => void,
     private readonly onDefeated: () => void,
     private readonly onThirdHit: (now: number) => void,
+    private readonly isPlayerDashActive: () => boolean = () => false,
   ) {
     this.bar = scene.add.graphics().setDepth(12);
     this.name = scene.add.text(sprite.x, sprite.y - 112, "", {
@@ -329,6 +330,7 @@ export class World01CalicoBoss {
     const body = new Phaser.Geom.Rectangle(this.player.body.x, this.player.body.y, this.player.body.width, this.player.body.height);
     if (!Phaser.Geom.Rectangle.Overlaps(hitbox, body)) return;
     this.clearFishbone();
+    if (this.isPlayerDashActive()) return;
     if (this.elapsed < this.state.damageLockedUntil) return;
     const block = this.defense.tryBlock({ id: bone.id, kind: "weak", damage: 1,
       sourceX: this.sprite.x, defenderX: this.player.body.center.x,

@@ -67,7 +67,7 @@ export const DEFAULT_KEYBINDS: Readonly<Record<InputAction, string>> = {
   down: "ArrowDown",
   jump: "Space",
   attack: "KeyQ",
-  dash: "KeyK",
+  dash: "Digit1",
   bark: "KeyW",
   bite: "KeyE",
   pause: "Escape",

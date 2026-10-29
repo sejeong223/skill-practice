@@ -31,6 +31,7 @@ function createHarness(stageId = 'world-03-stage-3') {
   };
   let canHandleContact = true;
   let backpedaling = false;
+  let dashing = false;
   const scene = {
     time: { now: 4321 },
     add: {
@@ -51,12 +52,14 @@ function createHarness(stageId = 'world-03-stage-3') {
     scene, player, { emit: (name, payload) => events.push({ name, payload }) }, stageId,
     getWorld03SteelBeamDefinitions(stageId), () => 'checkpoint-1', () => canHandleContact,
     () => backpedaling,
+    () => dashing,
   );
   return {
     system, player, images, events,
     setPlayerCenter(x) { player.body.left = x - 36; player.body.right = x + 36; },
     setContactAllowed(value) { canHandleContact = value; },
     setBackpedaling(value) { backpedaling = value; },
+    setDashing(value) { dashing = value; },
   };
 }
 
@@ -89,6 +92,22 @@ test('fixed beam sites grow 1/2/3/3 and avoid coins, holes, props, drum routes a
     }
   }
   assert.deepEqual(getWorld03SteelBeamDefinitions('world-03-stage-boss'), []);
+});
+
+test('dash consumes a beam player hit, still plays floor impact, and never rewrites dash speed', () => {
+  const { system, player, events, setPlayerCenter, setBackpedaling, setDashing } = createHarness('world-03-stage-1');
+  setPlayerCenter(1165);
+  system.update(50);
+  setDashing(true);
+  setBackpedaling(true);
+  player.setVelocityX(-480);
+  for (let index = 0; index < 8; index++) system.update(50);
+  assert.equal(player.body.velocity.x, -480);
+  assert.deepEqual(events.map(event => [event.name, event.payload.surface]), [['world03-steel-impact', 'floor']]);
+  setDashing(false);
+  for (let index = 0; index < 6; index++) system.update(50);
+  assert.equal(events.length, 1);
+  system.destroy();
 });
 
 test('swept AABB catches a fast pass between frames without false envelope collisions', () => {

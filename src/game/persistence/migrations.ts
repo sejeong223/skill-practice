@@ -131,6 +131,7 @@ export function migrateSave(input: unknown): ProgressState {
         keybinds[action] = key;
       }
     }
+    if (keybinds.dash === "KeyK" || keybinds.dash === "K") keybinds.dash = "Digit1";
     if (schemaVersion < 5) {
       keybinds.attack = "KeyQ";
       keybinds.bark = "KeyW";

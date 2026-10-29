@@ -19,6 +19,7 @@ interface BeamRuntime {
   sprite?: Phaser.GameObjects.Image;
   previousY: number;
   landedRemainingMs: number;
+  dashPassed: boolean;
 }
 
 const SPAWN_CENTER_Y = -128;
@@ -61,12 +62,14 @@ export class World03SteelBeamDropSystem {
     private readonly getCheckpointId: () => string | null,
     private readonly canHandleContact: () => boolean,
     private readonly isBackpedaling: () => boolean,
+    private readonly isPlayerDashActive: () => boolean = () => false,
   ) {
     this.beams = definitions.map((definition) => ({
       definition,
       status: "armed",
       previousY: SPAWN_CENTER_Y,
       landedRemainingMs: 0,
+      dashPassed: false,
     }));
     this.previousPlayerBounds = playerBodyBounds(player);
   }
@@ -93,7 +96,7 @@ export class World03SteelBeamDropSystem {
       }
       if (beam.status === "falling" && beam.sprite) {
         if (elapsed === 0) continue;
-        if (this.isBackpedaling()) {
+        if (this.isBackpedaling() && !this.isPlayerDashActive()) {
           // A quick turn must overcome the normal run acceleration before impact.
           this.player.setVelocityX(-DEFAULT_PLAYER_TUNING.runSpeed);
         }
@@ -102,26 +105,30 @@ export class World03SteelBeamDropSystem {
           beam.previousY + WORLD03_STEEL_BEAM_SPEED_PX_PER_SECOND * elapsed / 1000,
         );
         beam.sprite.setY(nextY);
-        if (sweptAabbOverlap(
+        if (!beam.dashPassed && sweptAabbOverlap(
           beamBounds(beam.definition.x, beam.previousY),
           beamBounds(beam.definition.x, nextY),
           previousPlayerBounds,
           currentPlayerBounds,
         )) {
-          this.deathPending = true;
-          this.eventBus.emit("world03-steel-impact", {
-            beamId: beam.definition.id,
-            surface: "player",
-            now: this.scene.time.now,
-          });
-          this.eventBus.emit("death-requested", {
-            stageId: this.stageId,
-            cause: "trap",
-            checkpointId: this.getCheckpointId(),
-            gimmickId: beam.definition.id,
-            now: this.scene.time.now,
-          });
-          return;
+          if (this.isPlayerDashActive()) {
+            beam.dashPassed = true;
+          } else {
+            this.deathPending = true;
+            this.eventBus.emit("world03-steel-impact", {
+              beamId: beam.definition.id,
+              surface: "player",
+              now: this.scene.time.now,
+            });
+            this.eventBus.emit("death-requested", {
+              stageId: this.stageId,
+              cause: "trap",
+              checkpointId: this.getCheckpointId(),
+              gimmickId: beam.definition.id,
+              now: this.scene.time.now,
+            });
+            return;
+          }
         }
         beam.previousY = nextY;
         if (nextY >= LANDED_CENTER_Y) {
@@ -153,6 +160,7 @@ export class World03SteelBeamDropSystem {
       beam.sprite = undefined;
       beam.previousY = SPAWN_CENTER_Y;
       beam.landedRemainingMs = 0;
+      beam.dashPassed = false;
       beam.status = beam.definition.x < safeRespawnX ? "skipped" : "armed";
     }
     this.previousPlayerBounds = playerBodyBounds(this.player);

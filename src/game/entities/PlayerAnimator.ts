@@ -212,6 +212,13 @@ export class PlayerAnimator {
         !this.player.scene.textures.exists(pirouetteMirror)) return;
     this.stopBark();
     this.stopBite();
+    if (this.dashRemainingMs > 0 && !this.dashAirborne) {
+      this.dashAirborne = true;
+      for (let index = this.dashGhosts.length; index < 2; index++) {
+        this.dashGhosts.push(this.player.scene.add.image(this.player.x, this.player.y, this.player.texture.key)
+          .setDepth(this.player.depth - 1));
+      }
+    }
     this.player.anims.stop();
     this.player.anims.timeScale = 1;
     this.activeAnimationKey = null;

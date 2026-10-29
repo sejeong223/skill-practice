@@ -261,6 +261,8 @@ export class StageScene extends Phaser.Scene {
     this.resetBossFeedback();
     this.eventUnsubscribers.push(
       this.gameplayEventBus.on("death", () => {
+        this.playerController?.cancelDash();
+        this.playerAnimator?.stopDash();
         this.combatSystem?.resetForStage();
         this.playerAnimator?.stopBark();
         this.playerAnimator?.stopBite();
@@ -268,6 +270,8 @@ export class StageScene extends Phaser.Scene {
         this.publishBossFeedback(true, true);
       }),
       this.gameplayEventBus.on("restart", () => {
+        this.playerController?.cancelDash();
+        this.playerAnimator?.stopDash();
         this.combatSystem?.resetForStage();
         this.world02Obstacles?.resetForAttempt();
         this.world03Obstacles?.resetForAttempt();
@@ -365,6 +369,7 @@ export class StageScene extends Phaser.Scene {
         hazards.obstacles,
         () => this.runtime?.runtimeState.checkpointId ?? null,
         () => this.runtime?.getStatus() === "play" && !this.stageTransitionStarted,
+        () => this.playerController?.isDashing() ?? false,
       );
       this.world02PigeonDrops = new World02PigeonDropSystem(
         this,
@@ -374,6 +379,7 @@ export class StageScene extends Phaser.Scene {
         hazards.pigeonPasses,
         () => this.runtime?.runtimeState.checkpointId ?? null,
         () => this.runtime?.getStatus() === "play" && !this.stageTransitionStarted,
+        () => this.playerController?.isDashing() ?? false,
       );
     }
     if (getWorld03Obstacles(stage.id).length > 0 && !this.loadedMap) {
@@ -404,6 +410,7 @@ export class StageScene extends Phaser.Scene {
           return Boolean(movement?.left && !movement.right &&
             !this.player?.isControlLocked() && !this.player?.getControlOverride());
         },
+        () => this.playerController?.isDashing() ?? false,
       );
       this.world03SteelBeamDrops.resetForAttempt(this.player.x);
     }
@@ -506,6 +513,7 @@ export class StageScene extends Phaser.Scene {
         }),
         () => { void this.handleCalicoDefeat(); },
         (now) => this.handleCalicoThirdHit(now),
+        () => this.playerController?.isDashing() ?? false,
       );
       this.cutsceneDirector = new CutsceneDirector(
         this, this.player, this.progress, CUTSCENE_SCRIPTS, this.eventBus, this.cameraDirector, this.audioManager,
@@ -575,6 +583,7 @@ export class StageScene extends Phaser.Scene {
         this.defenseToolSystem, this.gameplayEventBus, pattern,
         (remaining) => this.eventBus?.emit("boss-hearts-changed", { stageId: stage.id, remaining }),
         () => { void this.handleLaterBossDefeat(stage); },
+        () => this.playerController?.isDashing() ?? false,
       );
       this.cutsceneDirector = new CutsceneDirector(
         this, this.player, this.progress, CUTSCENE_SCRIPTS, this.eventBus, this.cameraDirector, this.audioManager,
@@ -743,6 +752,8 @@ export class StageScene extends Phaser.Scene {
     }
 
     this.events.once("shutdown", () => {
+      this.playerController?.cancelDash();
+      this.playerAnimator?.stopDash();
       this.resetBossFeedback();
       this.publishBossFeedback(true, true);
       this.eventBus?.emit("pause-state-changed", { paused: false });
@@ -917,6 +928,8 @@ export class StageScene extends Phaser.Scene {
     if (this.runtime?.getStatus() !== "play") {
       this.equipmentVisual?.setEnabled(this.runtime?.getStatus() === "paused");
       if (this.runtime?.getStatus() !== "paused") {
+        this.playerController?.cancelDash();
+        this.playerAnimator?.stopDash();
         this.playerAnimator?.stopBark();
         this.playerAnimator?.stopBite();
         this.bossFeedback.clearWarning();
@@ -932,6 +945,20 @@ export class StageScene extends Phaser.Scene {
     this.skillElapsedMs += elapsed;
     this.bossFeedback.update(elapsed);
     this.playerController?.update(time, delta);
+    if (this.stageTransitionStarted) {
+      this.playerController?.cancelDash();
+      this.playerAnimator?.stopDash();
+    } else if (input?.dashPressed && this.progress.unlockedSkills.includes("dash") &&
+        this.player && this.playerController && !this.playerController.isDashing() &&
+        !this.player.isControlLocked() && !this.player.getControlOverride() &&
+        !this.shopOpen && !this.catalogOpen && !this.paintOpen && !this.menuPauseGuard) {
+      const result = this.skillSystem?.use("dash", this.skillElapsedMs);
+      if (result?.accepted && this.playerController.startDash(250, 480)) {
+        const grounded = this.player.body.blocked.down || this.player.body.touching.down;
+        this.playerAnimator?.triggerDash(!grounded);
+        this.publishBossFeedback(true);
+      }
+    }
     this.activateWorld03CheckpointByCrossing();
     this.world03CollapsingFloor?.update(elapsed);
     this.world03Obstacles?.update(elapsed);
@@ -1325,7 +1352,7 @@ export class StageScene extends Phaser.Scene {
     });
     this.mapEnemies.set(object.id, enemy);
     this.physics.add.overlap(this.player, enemy, () => {
-      if (!enemy.active) return;
+      if (!enemy.active || this.playerController?.isDashing()) return;
       this.gameplayEventBus?.emit("death-requested", {
         stageId: this.stageId,
         cause: "enemy",

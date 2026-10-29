@@ -11,6 +11,9 @@ export class PlayerController {
   private coyoteRemainingMs = 0;
   private jumpBufferRemainingMs = 0;
   private cementSlowRemainingMs = 0;
+  private dashRemainingMs = 0;
+  private dashDirection: -1 | 1 = 1;
+  private dashSpeed = 480;
 
   public constructor(
     player: Player,
@@ -48,6 +51,7 @@ export class PlayerController {
     }
 
     if (controlOverride) {
+      this.cancelDash();
       if (controlOverride.kind === "run-left" || controlOverride.kind === "drift-backward") {
         this.player.setVelocityX(-this.currentRunSpeed());
         this.player.setFlipX(true);
@@ -58,22 +62,24 @@ export class PlayerController {
     }
 
     if (!this.controlEnabled || this.player.isControlLocked()) {
+      this.cancelDash();
       this.moveToward(0, this.tuning.deceleration, delta);
       this.updateAirState(grounded);
       return;
     }
 
-    const direction = Number(snapshot.right) - Number(snapshot.left);
-    const targetVelocity = direction * this.currentRunSpeed();
-    const changeRate =
-      direction === 0 ? this.tuning.deceleration : this.tuning.acceleration;
-
-    this.moveToward(targetVelocity, changeRate, delta);
-
-    if (direction < 0) {
-      this.player.setFlipX(true);
-    } else if (direction > 0) {
-      this.player.setFlipX(false);
+    if (this.dashRemainingMs > 0) {
+      this.dashRemainingMs = Math.max(0, this.dashRemainingMs - Math.max(0, delta));
+    }
+    if (this.dashRemainingMs > 0) {
+      this.player.setVelocityX(this.dashDirection * this.dashSpeed);
+    } else {
+      const direction = Number(snapshot.right) - Number(snapshot.left);
+      const targetVelocity = direction * this.currentRunSpeed();
+      const changeRate = direction === 0 ? this.tuning.deceleration : this.tuning.acceleration;
+      this.moveToward(targetVelocity, changeRate, delta);
+      if (direction < 0) this.player.setFlipX(true);
+      else if (direction > 0) this.player.setFlipX(false);
     }
 
     let jumpedThisUpdate = false;
@@ -91,11 +97,32 @@ export class PlayerController {
     this.updateAirState(jumpedThisUpdate ? false : this.isGrounded());
   }
 
+  public startDash(durationMs = 250, speedPxPerSecond = 480): boolean {
+    if (this.isDashing() || !this.controlEnabled || this.player.isControlLocked() ||
+        this.player.getControlOverride() || !Number.isFinite(durationMs) || durationMs <= 0 ||
+        !Number.isFinite(speedPxPerSecond) || speedPxPerSecond <= 0) return false;
+    this.dashRemainingMs = durationMs;
+    this.dashSpeed = speedPxPerSecond;
+    this.dashDirection = this.player.flipX ? -1 : 1;
+    this.player.setVelocityX(this.dashDirection * this.dashSpeed);
+    return true;
+  }
+
+  public isDashing(): boolean { return this.dashRemainingMs > 0; }
+
+  public cancelDash(): void {
+    if (!this.isDashing()) return;
+    this.dashRemainingMs = 0;
+    this.player.setVelocityX(0);
+  }
+
   public setControlEnabled(enabled: boolean): void {
     this.controlEnabled = enabled;
+    if (!enabled) this.cancelDash();
   }
 
   public applyCementSlow(durationMs: number): void {
+    if (this.isDashing()) return;
     this.cementSlowRemainingMs = Math.max(this.cementSlowRemainingMs, durationMs);
     this.player.setVelocityX(Math.max(-120, Math.min(120, this.player.body.velocity.x)));
   }

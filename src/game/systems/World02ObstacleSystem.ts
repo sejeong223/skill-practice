@@ -17,6 +17,7 @@ export class World02ObstacleSystem {
   private readonly stageId: StageId;
   private readonly getCheckpointId: () => string | null;
   private readonly canHandleContact: () => boolean;
+  private readonly isPlayerDashActive: () => boolean;
   private readonly sprites: ObstacleSprite[] = [];
   private readonly colliders: Phaser.Physics.Arcade.Collider[] = [];
   private readonly catSprites: ObstacleSprite[] = [];
@@ -33,6 +34,7 @@ export class World02ObstacleSystem {
     definitions: readonly World02ObstacleDefinition[],
     getCheckpointId: () => string | null,
     canHandleContact: () => boolean,
+    isPlayerDashActive: () => boolean = () => false,
   ) {
     this.scene = scene;
     this.player = player;
@@ -40,6 +42,7 @@ export class World02ObstacleSystem {
     this.stageId = stageId;
     this.getCheckpointId = getCheckpointId;
     this.canHandleContact = canHandleContact;
+    this.isPlayerDashActive = isPlayerDashActive;
 
     for (const definition of definitions) {
       if (definition.contact === "cat-scratch" && !definition.scratchTextureKey) {
@@ -112,7 +115,7 @@ export class World02ObstacleSystem {
   }
 
   private handleCatContact(sprite: ObstacleSprite): void {
-    if (this.destroyed || this.attackPending || !this.canHandleContact()) return;
+    if (this.destroyed || this.attackPending || !this.canHandleContact() || this.isPlayerDashActive()) return;
     this.attackPending = true;
     this.attackRemainingMs = 360;
     this.player.lockControl("world02-cat-scratch");

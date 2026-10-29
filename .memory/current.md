@@ -10,15 +10,15 @@
 
 ## Active Task
 
-[T02 숫자 1 대시 이동·무적](./phases/2026-10-29-world03-mackerel-boss-redesign/P03-dash-story-progression/T02-dash-input-invulnerability.md)
+[T03 보스 대화·승리 경로](./phases/2026-10-29-world03-mackerel-boss-redesign/P03-dash-story-progression/T03-boss-dialogue-victory-route.md)
 
 ## Status
 
-- P01 보스와 공격 자산 3/3 완료. P02 세 공격 전투 2/2 완료. P03 대시·대화·보상 1/4, T02 진행 중.
+- P01 보스와 공격 자산 3/3 완료. P02 세 공격 전투 2/2 완료. P03 대시·대화·보상 2/4, T03 진행 중.
 
 ## Next Step (IMPORTANT)
 
-P03-T02 청사진을 읽고 숫자 1 대시 이동·무적·저장 키 이전을 연결한다. 기존 미커밋 보스·HUD·발레 점프·인트로 변경은 보존한다.
+P03-T03 청사진을 읽고 고등어 태비 전후 대화·대시 해금·STAGE CLEAR·월드 4 진입을 연결한다. 기존 미커밋 보스·HUD·발레 점프·인트로 변경은 보존한다.
 
 ## Previous Work Context
 

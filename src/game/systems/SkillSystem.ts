@@ -125,7 +125,6 @@ export class SkillSystem {
         break;
       case "dash":
         this.player.setAnimationState("dash");
-        this.player.setVelocityX(this.player.flipX ? -480 : 480);
         break;
       case "double-jump":
         this.player.setAnimationState("double-jump");

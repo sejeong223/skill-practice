@@ -28,7 +28,7 @@ export const SKILL_DEFINITIONS: readonly SkillDefinition[] = [
     unlockAfterBossId: "world-03-boss",
     cooldownMs: 1400,
     inputAction: "dash",
-    description: "짧은 순간 앞으로 돌진해 함정을 통과한다.",
+    description: "0.25초 동안 공격 피해를 피하며 앞으로 빠르게 돌진한다.",
     effect: "invulnerable-dash",
   },
   {

@@ -51,6 +51,7 @@ export class BossEncounter {
     private readonly pattern: BossPattern,
     private readonly onHeartsChanged: (hearts: 0 | 1 | 2 | 3) => void,
     private readonly onDefeated: () => void,
+    private readonly isPlayerDashActive: () => boolean = () => false,
   ) {
     if (!pattern || !scene.textures.exists(sprite.texture.key)) {
       throw new Error(`보스 패턴 또는 이미지가 없습니다: ${stageId}`);
@@ -247,6 +248,7 @@ export class BossEncounter {
     if (hit.bounds.x >= body.right || hit.bounds.right <= body.left ||
         hit.bounds.y >= body.bottom || hit.bounds.bottom <= body.top) return;
     this.usedHazards.add(hit.id);
+    if (this.isPlayerDashActive()) return;
     if (this.state.elapsedMs < this.state.damageLockedUntilMs) return;
     const result = this.defense.tryBlock({
       id: hit.id, kind: hit.kind, damage: 1, sourceX: hit.sourceX,

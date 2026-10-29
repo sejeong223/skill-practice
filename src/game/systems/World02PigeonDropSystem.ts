@@ -20,6 +20,7 @@ interface PigeonDropping {
   readonly x: number;
   status: DroppingStatus;
   splatRemainingMs: number;
+  dashPassed: boolean;
   sprite?: Phaser.Physics.Arcade.Sprite;
   splat?: Phaser.GameObjects.Image;
   overlap?: Phaser.Physics.Arcade.Collider;
@@ -48,6 +49,7 @@ export class World02PigeonDropSystem {
     private readonly definitions: readonly World02PigeonPassDefinition[],
     private readonly getCheckpointId: () => string | null,
     private readonly canHandleContact: () => boolean,
+    private readonly isPlayerDashActive: () => boolean = () => false,
   ) {}
 
   public update(deltaMs: number): void {
@@ -138,6 +140,7 @@ export class World02PigeonDropSystem {
         x: definition.dropX + offset,
         status: "pending",
         splatRemainingMs: 0,
+        dashPassed: false,
       })),
     });
   }
@@ -161,6 +164,8 @@ export class World02PigeonDropSystem {
   private handleDroppingContact(drop: PigeonDropping): void {
     if (this.destroyed || this.deathPending || drop.status !== "falling" ||
         !drop.sprite || !this.canHandleContact()) return;
+    if (drop.dashPassed) return;
+    if (this.isPlayerDashActive()) { drop.dashPassed = true; return; }
     this.deathPending = true;
     const checkpointId = this.getCheckpointId();
     this.clearFlights();

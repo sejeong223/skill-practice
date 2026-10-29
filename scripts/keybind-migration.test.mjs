@@ -28,7 +28,7 @@ test('새 게임은 Q 공격, W 짖기, E 물기이며 W는 위쪽 이동에 쓰
     ['KeyQ', 'KeyW', 'KeyE', 'ArrowUp']);
   assert.deepEqual(toKeybindMap(progress.keybinds), {
     left: ['LEFT'], right: ['RIGHT'], up: ['UP'], down: ['DOWN'],
-    jump: ['SPACE'], attack: ['Q'], dash: ['K'], bark: ['W'], bite: ['E'], pause: ['ESC'],
+    jump: ['SPACE'], attack: ['Q'], dash: ['1'], bark: ['W'], bite: ['E'], pause: ['ESC'],
   });
   assert.deepEqual([DEFAULT_KEYBINDS.attack, DEFAULT_KEYBINDS.bark, DEFAULT_KEYBINDS.bite, DEFAULT_KEYBINDS.up],
     [['Q'], ['W'], ['E'], ['UP']]);
@@ -49,7 +49,7 @@ test('스키마 4 저장은 진행 자산을 보존하며 키 충돌만 새 배�
   const restored = migrateSave({ schemaVersion: 4, progress });
   assert.equal(restored.version, 5);
   assert.deepEqual([restored.keybinds.up, restored.keybinds.attack, restored.keybinds.bark, restored.keybinds.bite,
-    restored.keybinds.dash, restored.keybinds.pause], ['ArrowUp', 'KeyQ', 'KeyW', 'KeyE', 'KeyK', 'Escape']);
+    restored.keybinds.dash, restored.keybinds.pause], ['ArrowUp', 'KeyQ', 'KeyW', 'KeyE', 'Digit1', 'Escape']);
   assert.equal(restored.bankedCoins, 42);
   assert.ok(restored.ownedToolIds.includes('squeaky-ball'));
   assert.deepEqual(restored.clearedStages, ['world-01-stage-boss']);
@@ -82,4 +82,18 @@ test('InputManager는 Q/W/E를 서로 다른 한 프레임 입력으로 보고�
   snapshot = input.getSnapshot();
   assert.deepEqual([snapshot.attackPressed, snapshot.barkPressed, snapshot.bitePressed], [false, false, false]);
   input.destroy();
+});
+
+test('old K dash becomes Digit1 in every supported save; custom dash is kept', () => {
+  for (const schemaVersion of [4, 5]) {
+    for (const legacy of ['KeyK', 'K']) {
+      const progress = createDefaultProgressState();
+      progress.keybinds.dash = legacy;
+      assert.equal(migrateSave({ schemaVersion, progress }).keybinds.dash, 'Digit1');
+    }
+  }
+  const progress = createDefaultProgressState();
+  progress.keybinds.dash = 'KeyR';
+  assert.equal(migrateSave({ schemaVersion: 5, progress }).keybinds.dash, 'KeyR');
+  assert.equal(SKILL_DEFINITIONS.find(skill => skill.id === 'dash').cooldownMs, 1400);
 });

@@ -8,7 +8,7 @@ export const DEFAULT_KEYBINDS: KeybindMap = {
   down: ["S", "DOWN"],
   jump: ["SPACE"],
   attack: ["Q"],
-  dash: ["K"],
+  dash: ["1"],
   bark: ["W"],
   bite: ["E"],
   pause: ["ESC"],
@@ -28,7 +28,7 @@ export function toKeybindMap(keybinds: Readonly<Record<string, string>>): Keybin
   const get = (action: keyof KeybindMap, fallback: string): string[] => [normalize(keybinds[action] ?? fallback)];
   return {
     left: get("left", "A"), right: get("right", "D"), up: get("up", "UP"), down: get("down", "S"),
-    jump: get("jump", "SPACE"), attack: get("attack", "Q"), dash: get("dash", "K"), bark: get("bark", "W"), bite: get("bite", "E"), pause: get("pause", "ESC"),
+    jump: get("jump", "SPACE"), attack: get("attack", "Q"), dash: get("dash", "1"), bark: get("bark", "W"), bite: get("bite", "E"), pause: get("pause", "ESC"),
   };
 }
 
