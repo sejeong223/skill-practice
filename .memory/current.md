@@ -10,15 +10,15 @@
 
 ## Active Task
 
-[T01 시드 기반 공격 순서](./phases/2026-10-29-world03-mackerel-boss-redesign/P02-three-pattern-combat/T01-seeded-attack-schedule.md)
+[T02 세 공격 전투 연결](./phases/2026-10-29-world03-mackerel-boss-redesign/P02-three-pattern-combat/T02-cement-brick-combat.md)
 
 ## Status
 
-- P01 보스와 공격 자산 3/3 완료. P02 세 공격 전투 0/2, T01 진행 중. 이후 P03 대시·대화·보상 0/4를 순차 실행한다.
+- P01 보스와 공격 자산 3/3 완료. P02 세 공격 전투 1/2, T02 진행 중. 이후 P03 대시·대화·보상 0/4를 순차 실행한다.
 
 ## Next Step (IMPORTANT)
 
-P02-T01 청사진을 읽고 시드 기반 3종 공격 순서와 체력 10 이하 연계 타이밍 모델을 구현한다. 기존 미커밋 보스·HUD·발레 점프·인트로 변경은 보존한다.
+P02-T02 청사진을 읽고 벽돌·시멘트 파도·덩어리·웅덩이 전투를 연결한다. 기존 미커밋 보스·HUD·발레 점프·인트로 변경은 보존한다.
 
 ## Previous Work Context
 
