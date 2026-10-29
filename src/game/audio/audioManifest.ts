@@ -1,5 +1,5 @@
 export const SOUND_KEYS = [
-  "bark", "bite", "whine", "slipper-hit", "sneeze", "bowl-clang", "stray-dog-rush", "coin", "checkpoint", "cat-hiss", "death-cartoon", "stage-clear", "cat-taunt", "rib-reveal", "bag-rustle", "cat-land", "slipper-scrape", "escape-door", "boss-whistle", "magnet-hum", "world-03-drill", "world-03-excavator", "world-03-steel-impact",
+  "bark", "bite", "whine", "slipper-hit", "sneeze", "bowl-clang", "stray-dog-rush", "coin", "checkpoint", "cat-hiss", "death-cartoon", "stage-clear", "cat-taunt", "rib-reveal", "bag-rustle", "cat-land", "slipper-scrape", "escape-door", "boss-whistle", "magnet-hum", "world-03-drill", "world-03-excavator", "world-03-steel-impact", "world-03-boss-brick", "world-03-boss-trowel", "world-03-boss-cement",
 ] as const;
 
 export const MUSIC_KEYS = [
@@ -10,7 +10,7 @@ export const MUSIC_KEYS = [
 export type SoundKey = (typeof SOUND_KEYS)[number];
 export type MusicKey = (typeof MUSIC_KEYS)[number];
 
-export type FeedbackSoundKey = "coin" | "checkpoint" | "bark" | "cat-hiss" | "bite" | "world-03-drill" | "world-03-excavator" | "world-03-steel-impact";
+export type FeedbackSoundKey = "coin" | "checkpoint" | "bark" | "cat-hiss" | "bite" | "world-03-drill" | "world-03-excavator" | "world-03-steel-impact" | "world-03-boss-brick" | "world-03-boss-trowel" | "world-03-boss-cement";
 export const FEEDBACK_AUDIO: Readonly<Record<FeedbackSoundKey, {
   cacheKey: string; url: string; gain: number; duckMusic?: boolean;
 }>> = {
@@ -22,4 +22,7 @@ export const FEEDBACK_AUDIO: Readonly<Record<FeedbackSoundKey, {
   "world-03-drill": { cacheKey: "feedback-world-03-drill", url: "/assets/audio/world-03-construction-drill.wav", gain: 0.13, duckMusic: false },
   "world-03-excavator": { cacheKey: "feedback-world-03-excavator", url: "/assets/audio/world-03-construction-excavator.wav", gain: 0.12, duckMusic: false },
   "world-03-steel-impact": { cacheKey: "feedback-world-03-steel-impact", url: "/assets/audio/world-03-steel-impact.wav", gain: 1.0, duckMusic: true },
+  "world-03-boss-brick": { cacheKey: "feedback-world-03-boss-brick", url: "/assets/audio/world-03-boss-brick.wav", gain: 0.68, duckMusic: false },
+  "world-03-boss-trowel": { cacheKey: "feedback-world-03-boss-trowel", url: "/assets/audio/world-03-boss-trowel.wav", gain: 0.56, duckMusic: false },
+  "world-03-boss-cement": { cacheKey: "feedback-world-03-boss-cement", url: "/assets/audio/world-03-boss-cement.wav", gain: 0.52, duckMusic: false },
 };

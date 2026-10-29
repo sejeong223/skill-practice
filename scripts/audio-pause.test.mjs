@@ -93,6 +93,9 @@ function harness({ locked = false, cached = [] } = {}) {
       "feedback-world-03-drill": 6,
       "feedback-world-03-excavator": 7,
       "feedback-world-03-steel-impact": 8,
+      "feedback-world-03-boss-brick": 9,
+      "feedback-world-03-boss-trowel": 10,
+      "feedback-world-03-boss-cement": 11,
     }[key] ?? 0, 0, 0, 0).buffer },
   }, sound: {
     locked: false,
@@ -424,4 +427,24 @@ test("잠긴 오디오나 지연된 물기 디코딩은 일시정지 뒤 소리�
   lateAudio.destroy();
   await late.decode();
   assert.equal(late.sources.length, 0);
+});
+
+test("고등어 태비 준비음 세 종류는 선해독되고 일시정지·폐기 뒤 재생되지 않는다", async () => {
+  const h = harness();
+  const audio = h.create();
+  await h.decode();
+  for (const key of ["world-03-boss-brick", "world-03-boss-trowel", "world-03-boss-cement"]) {
+    audio.playSfx(key);
+    await Promise.resolve();
+  }
+  assert.deepEqual(h.sources.map(source => source.buffer.id), [9, 10, 11]);
+  audio.setPaused(true);
+  assert.ok(h.sources.every(source => source.stopped));
+  audio.playSfx("world-03-boss-brick");
+  await Promise.resolve();
+  assert.equal(h.sources.length, 3);
+  audio.destroy();
+  audio.playSfx("world-03-boss-cement");
+  await Promise.resolve();
+  assert.equal(h.sources.length, 3);
 });

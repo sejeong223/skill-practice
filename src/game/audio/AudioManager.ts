@@ -72,6 +72,9 @@ export class AudioManager {
       this.prepareFeedbackSound("world-03-drill");
       this.prepareFeedbackSound("world-03-excavator");
       this.prepareFeedbackSound("world-03-steel-impact");
+      this.prepareFeedbackSound("world-03-boss-brick");
+      this.prepareFeedbackSound("world-03-boss-trowel");
+      this.prepareFeedbackSound("world-03-boss-cement");
     }
     this.bindUnlockGesture();
     if (gameplayBus) {
