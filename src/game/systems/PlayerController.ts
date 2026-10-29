@@ -1,5 +1,5 @@
-import { InputManager } from "../input/InputManager";
-import { Player } from "../entities/Player";
+import type { InputManager } from "../input/InputManager";
+import type { Player } from "../entities/Player";
 import type { PlayerJumpStartEvent } from "../entities/Player";
 import type { PlayerTuning } from "../entities/playerTypes";
 
@@ -10,6 +10,7 @@ export class PlayerController {
   private controlEnabled = true;
   private coyoteRemainingMs = 0;
   private jumpBufferRemainingMs = 0;
+  private cementSlowRemainingMs = 0;
 
   public constructor(
     player: Player,
@@ -23,6 +24,7 @@ export class PlayerController {
   }
 
   public update(_time: number, delta: number): void {
+    this.cementSlowRemainingMs = Math.max(0, this.cementSlowRemainingMs - Math.max(0, delta));
     const snapshot = this.input.getSnapshot();
     const grounded = this.isGrounded();
     const controlOverride = this.player.getControlOverride();
@@ -47,7 +49,7 @@ export class PlayerController {
 
     if (controlOverride) {
       if (controlOverride.kind === "run-left" || controlOverride.kind === "drift-backward") {
-        this.player.setVelocityX(-this.tuning.runSpeed);
+        this.player.setVelocityX(-this.currentRunSpeed());
         this.player.setFlipX(true);
       }
       this.jumpBufferRemainingMs = 0;
@@ -62,7 +64,7 @@ export class PlayerController {
     }
 
     const direction = Number(snapshot.right) - Number(snapshot.left);
-    const targetVelocity = direction * this.tuning.runSpeed;
+    const targetVelocity = direction * this.currentRunSpeed();
     const changeRate =
       direction === 0 ? this.tuning.deceleration : this.tuning.acceleration;
 
@@ -91,6 +93,18 @@ export class PlayerController {
 
   public setControlEnabled(enabled: boolean): void {
     this.controlEnabled = enabled;
+  }
+
+  public applyCementSlow(durationMs: number): void {
+    this.cementSlowRemainingMs = Math.max(this.cementSlowRemainingMs, durationMs);
+    this.player.setVelocityX(Math.max(-120, Math.min(120, this.player.body.velocity.x)));
+  }
+
+  public clearCementSlow(): void { this.cementSlowRemainingMs = 0; }
+  public getCementSlowRemainingMs(): number { return this.cementSlowRemainingMs; }
+
+  private currentRunSpeed(): number {
+    return this.cementSlowRemainingMs > 0 ? Math.min(120, this.tuning.runSpeed) : this.tuning.runSpeed;
   }
 
   private moveToward(target: number, rate: number, delta: number): void {

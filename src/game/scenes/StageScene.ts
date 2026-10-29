@@ -49,7 +49,7 @@ import { World03CollapsingFloor } from "../systems/World03CollapsingFloor";
 import { World03SteelBeamDropSystem } from "../systems/World03SteelBeamDropSystem";
 import { BossEncounter } from "../systems/BossEncounter";
 import { CheeseTabbyBallPattern } from "../systems/CheeseTabbyBallPattern";
-import { MackerelBrickPattern } from "../systems/MackerelBrickPattern";
+import { MackerelConstructionPattern } from "../systems/MackerelConstructionPattern";
 import { TuxedoMagnetPattern } from "../systems/TuxedoMagnetPattern";
 import { MaineCoonPattern } from "../systems/MaineCoonPattern";
 import { BOSS_COMBAT_CONFIG } from "../data/bossCombat";
@@ -273,7 +273,8 @@ export class StageScene extends Phaser.Scene {
         this.world03Obstacles?.resetForAttempt();
         this.world03CollapsingFloor?.resetForAttempt();
         this.world03SteelBeamDrops?.resetForAttempt(this.player?.x ?? stage.spawn.x);
-        this.bossEncounter?.resetAttempt();
+        this.bossEncounter?.resetAttempt(this.runtime?.runtimeState.attempt);
+        this.playerController?.clearCementSlow();
         this.world02PigeonDrops?.resetForAttempt(this.player?.x ?? stage.spawn.x);
         this.playerAnimator?.stopBark();
         this.playerAnimator?.stopBite();
@@ -561,7 +562,10 @@ export class StageScene extends Phaser.Scene {
       const pattern = isCheeseTabby
         ? new CheeseTabbyBallPattern(this, this.player, this.laterBossSprite,
           () => this.audioManager?.playSfx("boss-whistle"))
-        : isMackerel ? new MackerelBrickPattern(this, this.player, this.laterBossSprite)
+        : isMackerel ? new MackerelConstructionPattern(this, this.player, this.laterBossSprite,
+          this.runtime.runtimeState.attempt,
+          key => this.audioManager?.playSfx(key),
+          () => this.playerController?.applyCementSlow(1000))
           : isTuxedo ? new TuxedoMagnetPattern(this, this.player, this.laterBossSprite,
             () => this.audioManager?.playSfx("magnet-hum"))
             : new MaineCoonPattern(this, this.player, this.laterBossSprite,

@@ -34,6 +34,8 @@ export class BossEncounter {
   private state: BossEncounterState;
   private barkStun: BossBarkStunState = { remainingMs: 0, nextAllowedAt: 0 };
   private telegraphUntilMs = 0;
+  private comboPendingAtMs: number | null = null;
+  private comboTelegraph = false;
   private playerFlashUntilMs = 0;
   private deathPending = false;
   private destroyed = false;
@@ -92,18 +94,28 @@ export class BossEncounter {
     }
     if (this.state.phase === "telegraph" && elapsedMs >= this.telegraphUntilMs) {
       this.pattern.launch(this.player.body.center.x, this.state.attackSerial);
+      if (this.stageId === "world-03-stage-boss" && !this.comboTelegraph && this.state.health <= 10) {
+        this.comboPendingAtMs = elapsedMs + 800;
+      }
+      this.comboTelegraph = false;
       this.state = { ...this.state, phase: "active" };
       this.warning.setVisible(false);
     }
-    if (this.state.phase !== "telegraph" && elapsedMs >= this.state.nextTelegraphAtMs) {
+    const comboDue = this.comboPendingAtMs !== null && elapsedMs >= this.comboPendingAtMs;
+    if (this.state.phase !== "telegraph" && (comboDue || elapsedMs >= this.state.nextTelegraphAtMs)) {
       const serial = this.state.attackSerial + 1;
       this.pattern.telegraph(this.player.body.center.x, serial);
       this.telegraphUntilMs = elapsedMs + this.config.telegraphMs;
+      this.comboTelegraph = comboDue;
+      if (comboDue) this.comboPendingAtMs = null;
       this.state = {
         ...this.state, phase: "telegraph", attackSerial: serial,
-        nextTelegraphAtMs: Math.max(this.state.nextTelegraphAtMs + this.config.attackIntervalMs, elapsedMs + 500),
+        nextTelegraphAtMs: comboDue ? this.state.nextTelegraphAtMs
+          : Math.max(this.state.nextTelegraphAtMs + this.config.attackIntervalMs, elapsedMs + 500),
       };
-      this.warning.setText(this.pattern.warningText ?? "공격 예고!").setVisible(true);
+      if (this.config.showWarning !== false) {
+        this.warning.setText(this.pattern.warningText ?? "공격 예고!").setVisible(true);
+      }
     }
     for (const hit of this.pattern.update(delta)) this.resolveHazard(hit);
   }
@@ -148,6 +160,8 @@ export class BossEncounter {
     if (!next) return false;
     this.barkStun = next;
     this.pattern.clear();
+    this.comboPendingAtMs = null;
+    this.comboTelegraph = false;
     this.usedHazards.clear();
     this.warning.setVisible(false);
     this.state = {
@@ -157,9 +171,12 @@ export class BossEncounter {
     return true;
   }
 
-  public resetAttempt(): void {
+  public resetAttempt(attempt?: number): void {
     if (this.destroyed) return;
     this.pattern.clear();
+    if (attempt !== undefined) this.pattern.resetForAttempt?.(attempt);
+    this.comboPendingAtMs = null;
+    this.comboTelegraph = false;
     this.usedHazards.clear();
     this.weaponHits.reset();
     this.defense.resetForStage(this.defense.getToolId());
@@ -211,11 +228,15 @@ export class BossEncounter {
     this.drawHealth();
     if (health !== 0) return;
     this.state = { ...this.state, phase: "defeated" };
+    this.comboPendingAtMs = null;
+    this.comboTelegraph = false;
     this.warning.setVisible(false);
     this.pattern.clear();
     this.sprite.clearTint();
     if (this.stageId === "world-02-stage-boss") {
       this.sprite.setFrame(3).setFlipX(true);
+    } else if (this.stageId === "world-03-stage-boss") {
+      this.sprite.setFrame(3);
     }
     this.onDefeated();
   }
@@ -240,6 +261,8 @@ export class BossEncounter {
     this.playerFlashUntilMs = this.state.elapsedMs + 180;
     if (hearts > 0) return;
     this.deathPending = true;
+    this.comboPendingAtMs = null;
+    this.comboTelegraph = false;
     this.pattern.clear();
     this.warning.setVisible(false);
     this.eventBus.emit("death-requested", {

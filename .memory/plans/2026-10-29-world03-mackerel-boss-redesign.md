@@ -14,9 +14,9 @@
 
 | Phase | Status | Summary | Blueprint |
 | :--- | :--- | :--- | :--- |
-| P01 | `in_progress` | 보스 전신 8자세, 시멘트 시각 자산, 실제 공사장 녹음 기반 준비 효과음 | [P01](../phases/2026-10-29-world03-mackerel-boss-redesign/P01-boss-attack-assets/phase.md) |
-| P02 | `pending` | 시도별 재현 가능한 공격 순서, 세 공격의 물리·감속·연계 전투 | [P02](../phases/2026-10-29-world03-mackerel-boss-redesign/P02-three-pattern-combat/phase.md) |
-| P03 | `pending` | 코기 전신 대시·의상, 숫자 1 대시 판정, 대화·모달·월드 4 진입과 통합 검증 | [P03](../phases/2026-10-29-world03-mackerel-boss-redesign/P03-dash-story-progression/phase.md) |
+| P01 | `done` | 보스 전신 8자세, 시멘트 시각 자산, 실제 공사장 녹음 기반 준비 효과음 | [P01](../phases/2026-10-29-world03-mackerel-boss-redesign/P01-boss-attack-assets/phase.md) |
+| P02 | `done` | 시도별 재현 가능한 공격 순서, 세 공격의 물리·감속·연계 전투 | [P02](../phases/2026-10-29-world03-mackerel-boss-redesign/P02-three-pattern-combat/phase.md) |
+| P03 | `in_progress` | 코기 전신 대시·의상, 숫자 1 대시 판정, 대화·모달·월드 4 진입과 통합 검증 | [P03](../phases/2026-10-29-world03-mackerel-boss-redesign/P03-dash-story-progression/phase.md) |
 
 ## Ordered Tasks and Dependencies
 

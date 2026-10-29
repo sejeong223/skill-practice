@@ -348,13 +348,13 @@ export const BOSS_DEFINITIONS: readonly BossDefinition[] =
     }] : blueprint.id === "world-03" ? [{
       id: "world-03-phase-1",
       healthThreshold: 1,
-      pattern: "telegraphed-brick-throw-then-temporary-wall",
-      telegraph: "고등어가 벽돌 조각이 떨어질 자리를 먼저 표시한다",
+      pattern: "brick-cement-wave-and-lump",
+      telegraph: "고등어가 벽돌·흙손·시멘트마다 다른 준비 자세를 취한다",
     }, {
       id: "world-03-phase-2",
       healthThreshold: 0.5,
-      pattern: "overlapping-brick-flights-with-two-landed-walls",
-      telegraph: "착지한 벽돌이 잠시 길을 막는 동안 다음 조각이 날아온다",
+      pattern: "random-two-attack-combo-with-temporary-cement",
+      telegraph: "체력이 절반 이하일 때 서로 다른 두 공격을 짧게 연계한다",
     }] : blueprint.id === "world-04" ? [{
       id: "world-04-phase-1",
       healthThreshold: 1,

@@ -13,5 +13,6 @@ export interface BossPattern {
   launch(targetX: number, serial: number): void;
   update(deltaMs: number): readonly BossHazardHit[];
   clear(): void;
+  resetForAttempt?(attempt: number): void;
   destroy(): void;
 }
