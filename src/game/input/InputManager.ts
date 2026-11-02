@@ -8,7 +8,7 @@ export const DEFAULT_KEYBINDS: KeybindMap = {
   down: ["S", "DOWN"],
   jump: ["SPACE"],
   attack: ["Q"],
-  dash: ["1"],
+  dash: ["ONE"],
   bark: ["W"],
   bite: ["E"],
   pause: ["ESC"],
@@ -22,7 +22,8 @@ export function toKeybindMap(keybinds: Readonly<Record<string, string>>): Keybin
     } as Record<string, string>)[key];
     if (named) return named;
     if (/^Key[A-Z]$/.test(key)) return key.slice(3);
-    if (/^Digit[0-9]$/.test(key)) return key.slice(5);
+    const digit = /^(?:Digit)?([0-9])$/.exec(key)?.[1];
+    if (digit !== undefined) return ["ZERO", "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE"][Number(digit)];
     return key;
   };
   const get = (action: keyof KeybindMap, fallback: string): string[] => [normalize(keybinds[action] ?? fallback)];

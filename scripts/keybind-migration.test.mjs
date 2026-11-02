@@ -28,7 +28,7 @@ test('새 게임은 Q 공격, W 짖기, E 물기이며 W는 위쪽 이동에 쓰
     ['KeyQ', 'KeyW', 'KeyE', 'ArrowUp']);
   assert.deepEqual(toKeybindMap(progress.keybinds), {
     left: ['LEFT'], right: ['RIGHT'], up: ['UP'], down: ['DOWN'],
-    jump: ['SPACE'], attack: ['Q'], dash: ['1'], bark: ['W'], bite: ['E'], pause: ['ESC'],
+    jump: ['SPACE'], attack: ['Q'], dash: ['ONE'], bark: ['W'], bite: ['E'], pause: ['ESC'],
   });
   assert.deepEqual([DEFAULT_KEYBINDS.attack, DEFAULT_KEYBINDS.bark, DEFAULT_KEYBINDS.bite, DEFAULT_KEYBINDS.up],
     [['Q'], ['W'], ['E'], ['UP']]);

@@ -5,8 +5,8 @@ export const validRect = (r: World04Rect): boolean => finitePoint(r) &&
   Number.isFinite(r.width) && Number.isFinite(r.height) && r.width > 0 && r.height > 0;
 
 export function overlapRect(a: World04Rect, b: World04Rect): boolean {
-  return validRect(a) && validRect(b) && a.x < b.x + b.width && a.x + a.width > b.x &&
-    a.y < b.y + b.height && a.y + a.height > b.y;
+  return validRect(a) && validRect(b) && a.x < b.x + b.width - 1e-7 && a.x + a.width > b.x + 1e-7 &&
+    a.y < b.y + b.height - 1e-7 && a.y + a.height > b.y + 1e-7;
 }
 
 export function overlapCircleRect(p: World04Point, radius: number, r: World04Rect): boolean {
@@ -20,7 +20,7 @@ export function overlapCircleRect(p: World04Point, radius: number, r: World04Rec
 function segmentInRect(p: World04Point, d: World04Point, r: World04Rect): boolean {
   let enter = 0, leave = 1;
   for (const [v, delta, low, high] of [[p.x, d.x, r.x, r.x + r.width], [p.y, d.y, r.y, r.y + r.height]]) {
-    if (delta === 0) { if (v <= low || v >= high) return false; }
+    if (Math.abs(delta) < 1e-7) { if (v <= low + 1e-7 || v >= high - 1e-7) return false; }
     else {
       const a = (low - v) / delta, b = (high - v) / delta;
       enter = Math.max(enter, Math.min(a, b));

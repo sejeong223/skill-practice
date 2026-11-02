@@ -5,11 +5,12 @@ import type { World04DebugEntry, World04Layout, World04Rect, World04RuntimePort 
 import type { PlayerController } from "./PlayerController";
 import { advanceGroundState, createGroundState, footOnRect, type World04GroundDefinition, type World04GroundState, type World04GroundStep } from "./world04GroundState";
 import { createWorld04Solid, playerRect, type World04SolidHandle } from "./world04RuntimeGeometry";
-import { sweepRect } from "./world04Geometry";
+import { overlapRect, sweepRect } from "./world04Geometry";
 interface GroundEntry { definition: World04GroundDefinition; state: World04GroundState; step: World04GroundStep; images: Phaser.GameObjects.Sprite[]; solids: World04SolidHandle[]; }
 export class World04GroundSystem {
   private readonly entries: GroundEntry[] = [];
   private previous: World04Rect;
+  private previousDashing = false;
   private generation = 0;
   private destroyed = false;
   public constructor(private readonly scene: Phaser.Scene, private readonly player: Player, private readonly controller: PlayerController, layout: World04Layout, private readonly port: World04RuntimePort) {
@@ -19,6 +20,7 @@ export class World04GroundSystem {
       const rect = d.kind === "plate-gate" ? d.plate : d.rect;
       const names = d.kind === "press" ? ["press-left", "press-right"] : d.kind === "plate-gate" ? ["plate", "door"] : [d.kind];
       const images = names.map(key => scene.add.sprite(rect.x + rect.width / 2, rect.y + rect.height, `world-04-scrapyard-${key}`).setOrigin(.5, 1).setDepth(6));
+      if (d.kind === "oil" || d.kind === "belt") images[0].setDisplaySize(rect.width, d.kind === "oil" ? 16 : 24);
       const state = createGroundState(d), sample = { before: this.previous, after: this.previous, grounded: false, velocityY: 0, canLaunch: false };
       const e: GroundEntry = { definition: d, state, step: advanceGroundState(d, state, sample, 0), images, solids: [] };
       if (d.kind === "plate-gate") e.solids.push(createWorld04Solid(scene, player, d.door));
@@ -61,16 +63,17 @@ export class World04GroundSystem {
       const step = advanceGroundState(e.definition, old, { before: this.previous, after, grounded: body.blocked.down || body.touching.down, velocityY: body.velocity.y, canLaunch: !this.player.isControlLocked() && !this.player.getControlOverride() }, deltaMs);
       e.state = step.state; e.step = step;
       // Test closing doors before enabling the static body, which would separate the player first.
-      if (step.risk !== "none" && step.dangerRects.some(r => sweepRect(this.previous, after, r, r)) && this.port.kill(e.definition.id, step.risk)) return true;
+      const dashEnded = step.risk === "attack" && this.previousDashing && !this.port.isDashing();
+      if (step.risk !== "none" && step.dangerRects.some(r => dashEnded ? overlapRect(after, r) : sweepRect(this.previous, after, r, r)) && this.port.kill(e.definition.id, step.risk)) return true;
       if (generation !== this.generation) return true;
       if (step.launchVelocityY !== null && !this.controller.launchFromSurface(step.launchVelocityY)) e.state = old;
       this.render(e);
     }
-    this.previous = after; return false;
+    this.previous = after; this.previousDashing = this.port.isDashing(); return false;
   }
   public resetForAttempt(spawnX: number): void {
     if (!Number.isFinite(spawnX)) throw new Error("Invalid World 4 respawn");
-    this.generation++; this.previous = playerRect(this.player); this.controller.clearSurfaceModifier();
+    this.generation++; this.previous = playerRect(this.player); this.previousDashing = false; this.controller.clearSurfaceModifier();
     for (const e of this.entries) {
       e.state = createGroundState(e.definition);
       e.step = advanceGroundState(e.definition, e.state, { before: this.previous, after: this.previous, grounded: false, velocityY: 0, canLaunch: false }, 0);

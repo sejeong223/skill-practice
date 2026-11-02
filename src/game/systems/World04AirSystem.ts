@@ -3,7 +3,7 @@ import type { Player } from "../entities/Player";
 import type { World04DebugEntry, World04Layout, World04Rect, World04RuntimePort } from "../data/world04Types";
 import { advanceWorld04AirClock, evaluateWorld04Air, type World04AirClock, type World04AirDefinition, type World04AirPose } from "./world04AirState";
 import { createWorld04Solid, playerRect, type World04SolidHandle } from "./world04RuntimeGeometry";
-import { sweepCircleRect, sweepRect } from "./world04Geometry";
+import { overlapCircleRect, sweepCircleRect, sweepRect } from "./world04Geometry";
 interface AirEntry {
   definition: World04AirDefinition; clock: World04AirClock; pose: World04AirPose;
   images: Phaser.GameObjects.Image[]; graphics: Phaser.GameObjects.Graphics; solid?: World04SolidHandle;
@@ -11,6 +11,7 @@ interface AirEntry {
 export class World04AirSystem {
   private readonly entries: AirEntry[] = [];
   private previous: World04Rect;
+  private previousDashing = false;
   private generation = 0;
   private destroyed = false;
   public constructor(scene: Phaser.Scene, private readonly player: Player, layout: World04Layout, private readonly port: World04RuntimePort) {
@@ -48,17 +49,21 @@ export class World04AirSystem {
       const old = e.pose;
       e.clock = advanceWorld04AirClock(e.definition, e.clock, this.previous.x + this.previous.width, after.x + after.width, deltaMs);
       e.pose = evaluateWorld04Air(e.definition, e.clock.elapsedMs);
+      // Physics moved under the preceding frame's dash. On expiry only the current
+      // overlap is exposed; do not retroactively damage its protected path.
+      const dashEnded = this.previousDashing && !this.port.isDashing();
       const hit = old.rect && e.pose.rect ? sweepRect(this.previous, after, old.rect, e.pose.rect) :
-        old.circle && e.pose.circle ? sweepCircleRect(this.previous, after, old.circle.center, e.pose.circle.center, e.pose.circle.radius) : false;
+        old.circle && e.pose.circle ? dashEnded ? overlapCircleRect(e.pose.circle.center, e.pose.circle.radius, after) :
+          sweepCircleRect(this.previous, after, old.circle.center, e.pose.circle.center, e.pose.circle.radius) : false;
       if (hit && this.port.kill(e.definition.id, e.definition.kind === "crane" ? "physical" : "attack")) return true;
       if (generation !== this.generation) return true;
       this.render(e);
     }
-    this.previous = after; return false;
+    this.previous = after; this.previousDashing = this.port.isDashing(); return false;
   }
   public resetForAttempt(spawnX: number): void {
     if (!Number.isFinite(spawnX)) throw new Error("Invalid World 4 respawn");
-    this.generation++; this.previous = playerRect(this.player);
+    this.generation++; this.previous = playerRect(this.player); this.previousDashing = false;
     for (const e of this.entries) { e.clock = { id: e.definition.id, started: false, elapsedMs: 0 }; e.pose = evaluateWorld04Air(e.definition, 0); this.render(e); }
   }
   public getDebugState(): readonly World04DebugEntry[] { return this.entries.map(e => ({ id: e.definition.id, kind: e.definition.kind, state: e.pose.phase, elapsedMs: e.clock.elapsedMs,

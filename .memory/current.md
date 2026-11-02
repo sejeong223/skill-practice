@@ -10,18 +10,18 @@
 
 ## Active Task
 
-[T08 실제 통과 경로·재도전·회귀 검증](./phases/2026-11-02-world04-scrapyard-map-obstacles/P01-scrapyard/T08-playthrough-validation.md)
+없음 — 월드 4 고물상 계획 전체 8/8 완료.
 
 ## Status
 
-- 새 계획 P01 0/8 완료. T01 구현 시작 준비 완료. 이번 단계에서는 계획 문서만 생성했다.
+- P01 8/8 완료. 일반맵 4개의 기믹 22·24·26·27개, 실제 입력 전체 통과·보스 연결, 브라우저 35사례 및 30fps 목표 통과, 자동 검사 61건·타입·린트·빌드를 검증했다.
 - 사용자 지시: 별도 테스트 폴더·test-plans 문서를 만들지 않는다. 자동 검증 파일은 기존 scripts/ 바로 아래에, 검증 결과는 해당 Task의 Progress에 기록한다.
 - 후속 실행 스킬의 검증 기록 경로 관례보다 위 사용자 지시를 우선한다.
 - 월드 3 인트로 자동 진행 중단 기록은 사용자 선택에 따라 별도 후속 작업으로 유지한다.
 
 ## Next Step (IMPORTANT)
 
-T08 청사진을 읽고 이어서 구현·검증한다. MEA에 따라 남은 Task를 자동 진행하며 기존 미커밋 변경은 보존한다.
+현재 계획은 완료했다. 검증 결과와 조정 근거는 [T08 Progress](./phases/2026-11-02-world04-scrapyard-map-obstacles/P01-scrapyard/T08-playthrough-validation.md#progress)에 기록했다. 다음 사용자 지시를 기다리며 이전 계획을 자동 재개하지 않는다. 기존 미커밋 변경은 보존한다.
 
 ## Previous Active Plan
 

@@ -33,11 +33,11 @@ function buildLayout(stageId: World04StageId, templates: readonly World04Templat
         oil(24, 80); scrap(136); platform(256, 448, 128); tire(280, 448);
         gaps.push(rect(408, 504, 96, 216)); saw(300, 440, 280); break;
       case "dash-tunnel":
-        oil(64); cable(272); platform(184, 424, 192, "ceiling", 20);
+        oil(64); cable(272); platform(184, 424, 160, "ceiling", 20);
         scrap(456); saw(408, 504); belt(384, 64); break;
       case "collapse-scrap": {
         const compact = c.width === 400;
-        collapse(compact ? 96 : 224); scrap(compact ? 296 : 448);
+        collapse(compact ? 96 : 224); scrap(compact ? 296 : 464);
         tire(compact ? 0 : 64); saw(compact ? 272 : 416, compact ? 360 : 504);
         if (!compact) swing(304); break;
       }
@@ -55,12 +55,12 @@ function buildLayout(stageId: World04StageId, templates: readonly World04Templat
         if (c.template === "tire-swing") gaps.push(rect(224, 504, 128, 216));
         else collapse(224); break;
       case "oil-electric":
-        oil(64); cable(286); platform(214, 424, 192, "ceiling", 20);
+        oil(64); cable(286); platform(214, 424, 128, "ceiling", 20);
         scrap(456); saw(432, 504); belt(8, 48); break;
       case "conveyor-press":
-        belt(64); objects.push({ ...base("press"), kind: "press", rect: rect(256, 392, 128, 112), openMs: 700, warningMs: 240, closeMs: 260, holdMs: 500, reopenMs: 260 });
+        belt(64, 112); objects.push({ ...base("press"), kind: "press", rect: rect(256, 392, 128, 112), openMs: 700, warningMs: 240, closeMs: 260, holdMs: 500, reopenMs: 260 });
         saw(80, 200, 360); oil(8, 40);
-        if (c.width > 400) { scrap(464); saw(432, 504); } break;
+        if (c.width > 400) { scrap(488); saw(432, 504); } break;
       case "saw-scrap":
         scrap(144); saw(120, 312); oil(16, 80); cable(336);
         platform(280, 424, 120, "ceiling", 20); break;
@@ -73,9 +73,9 @@ function buildLayout(stageId: World04StageId, templates: readonly World04Templat
   }
   // The last approach to the checkpoint becomes a denser timing puzzle in later stages.
   const number = Number(stageId.slice(-1));
-  if (number >= 2) objects.push({ id: `${stageId}-approach-scrap`, triggerX: 2176, kind: "scrap", rect: { x: 2240, y: 472, width: 48, height: 32 } });
-  if (number >= 3) objects.push({ id: `${stageId}-approach-saw`, triggerX: 2176, kind: "saw", fromX: 2224, toX: 2296, centerY: 392, radius: 22, periodMs: 1800 });
-  if (number >= 4) objects.push({ id: `${stageId}-approach-belt`, triggerX: 2176, kind: "belt", rect: { x: 2184, y: 498, width: 128, height: 6 }, speed: 90, periodMs: 2400, warningMs: 300, initialDirection: -1 });
+  if (number >= 2) objects.push({ id: `${stageId}-approach-scrap`, triggerX: 2176, kind: "scrap", rect: { x: 2288, y: 472, width: 48, height: 32 } });
+  if (number >= 3) objects.push({ id: `${stageId}-approach-saw`, triggerX: 2176, kind: "saw", fromX: 2272, toX: 2344, centerY: 392, radius: 22, periodMs: 1800 });
+  if (number >= 4) objects.push({ id: `${stageId}-approach-belt`, triggerX: 2176, kind: "belt", rect: { x: 2224, y: 498, width: 88, height: 6 }, speed: 90, periodMs: 2400, warningMs: 300, initialDirection: -1 });
   const holes = [...gaps, ...terrain.filter(t => t.kind === "collapse").map(t => t.rect)].sort((a, b) => a.x - b.x);
   let x = 0;
   for (const h of [...holes, { x: 3840, width: 0 }]) {

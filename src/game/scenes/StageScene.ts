@@ -831,6 +831,7 @@ export class StageScene extends Phaser.Scene {
       this.world02PigeonDrops?.destroy();
       this.world02PigeonDrops = undefined;
       this.gimmickSystem?.destroy();
+      this.gimmickSystem = undefined;
       this.deathSystem?.destroy();
       this.checkpointSystem?.resetForStage();
       this.clearMapEnemies();
