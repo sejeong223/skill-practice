@@ -14,10 +14,10 @@
 | T03 | `done` | 사물 10종 아트 | [T03](./T03-obstacle-art.md) |
 | T04 | `done` | 지형·꺼짐·후퇴 상승 바닥 | [T04](./T04-terrain-traps.md) |
 | T05 | `done` | 지상 기믹·이동 표면 | [T05](./T05-ground-mechanisms.md) |
-| T06 | `in_progress` | 공중 기믹·궤적 | [T06](./T06-air-mechanisms.md) |
-| T07 | `pending` | Scene·캠페인·복원 연결 | [T07](./T07-campaign-integration.md) |
+| T06 | `done` | 공중 기믹·궤적 | [T06](./T06-air-mechanisms.md) |
+| T07 | `in_progress` | Scene·캠페인·복원 연결 | [T07](./T07-campaign-integration.md) |
 | T08 | `pending` | 실제 통과·회귀 검증·수치 조정 | [T08](./T08-playthrough-validation.md) |
 
 ## Progress
-- done: 5/8 (active: T06)
+- done: 6/8 (active: T07)
 
