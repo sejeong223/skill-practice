@@ -2,23 +2,32 @@
 
 ## Active Plan
 
-[월드 3 고등어 태비 보스전 재구상](./plans/2026-10-29-world03-mackerel-boss-redesign.md)
+[월드 4 고물상 맵·장애물·바닥 함정](./plans/2026-11-02-world04-scrapyard-map-obstacles.md)
 
 ## Active Phase
 
-[P03 대시·대화·보상](./phases/2026-10-29-world03-mackerel-boss-redesign/P03-dash-story-progression/phase.md)
+[P01 고물상 맵·기믹·캠페인 연결](./phases/2026-11-02-world04-scrapyard-map-obstacles/P01-scrapyard/phase.md)
 
 ## Active Task
 
-없음 — 월드 3 고등어 태비 보스전 재구상 계획의 모든 Task 완료.
+[T01 고물상 배치·치수·공통 계약](./phases/2026-11-02-world04-scrapyard-map-obstacles/P01-scrapyard/T01-layout-contracts.md)
 
 ## Status
 
-- P01 보스와 공격 자산 3/3 완료. P02 세 공격 전투 2/2 완료. P03 대시·대화·보상 4/4 완료. [검증 기록](./test-plans/2026-10-29-world03-mackerel-boss-redesign.md)에 자동 통과와 수동 미검증을 구분했다.
+- 새 계획 P01 0/8 완료. T01 구현 시작 준비 완료. 이번 단계에서는 계획 문서만 생성했다.
+- 사용자 지시: 별도 테스트 폴더·test-plans 문서를 만들지 않는다. 자동 검증 파일은 기존 scripts/ 바로 아래에, 검증 결과는 해당 Task의 Progress에 기록한다.
+- 후속 실행 스킬의 검증 기록 경로 관례보다 위 사용자 지시를 우선한다.
+- 월드 3 인트로 자동 진행 중단 기록은 사용자 선택에 따라 별도 후속 작업으로 유지한다.
 
 ## Next Step (IMPORTANT)
 
-이 계획의 다음 Task는 없다. 월드 3 인트로 두 번째 자막 이후 자동 진행이 멈춰 수동 보스전·청음 확인은 별도 조사 후 재검증한다. 기존 미커밋 보스·HUD·발레 점프·인트로 변경은 보존한다.
+T01 청사진을 읽고 src/game/data/world04Types.ts와 src/game/data/world04Scrapyard.ts의 구현부터 시작한다. T01→T08을 순차 실행하며 각 Task 검증 후 지정된 한국어 커밋을 사용한다. 기존 미커밋 보스·HUD·발레 점프·인트로 변경은 보존한다.
+
+## Previous Active Plan
+
+- [월드 3 고등어 태비 보스전 재구상](./plans/2026-10-29-world03-mackerel-boss-redesign.md): P01 3/3, P02 2/2, P03 4/4 완료. 이전 Active Task는 없음이었다.
+- 당시 월드 3 인트로 두 번째 자막 이후 자동 진행 중단으로 수동 보스전·청음 확인은 별도 조사·재검증 대상으로 남았다. 이번 계획에 자동으로 포함하지 않는다.
+- 기존 검증 기록과 아래 이전 작업 문맥은 보존한다. 새 계획 완료 후 과거 미완료 계획을 자동 재개하지 않는다.
 
 ## Previous Work Context
 
