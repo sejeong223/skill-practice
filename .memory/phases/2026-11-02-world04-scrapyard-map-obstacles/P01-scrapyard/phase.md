@@ -12,12 +12,12 @@
 | T01 | `done` | 맵 데이터·치수·물리 계약 | [T01](./T01-layout-contracts.md) |
 | T02 | `done` | 노을 배경·지형 아트 | [T02](./T02-background-terrain-art.md) |
 | T03 | `done` | 사물 10종 아트 | [T03](./T03-obstacle-art.md) |
-| T04 | `in_progress` | 지형·꺼짐·후퇴 상승 바닥 | [T04](./T04-terrain-traps.md) |
-| T05 | `pending` | 지상 기믹·이동 표면 | [T05](./T05-ground-mechanisms.md) |
+| T04 | `done` | 지형·꺼짐·후퇴 상승 바닥 | [T04](./T04-terrain-traps.md) |
+| T05 | `in_progress` | 지상 기믹·이동 표면 | [T05](./T05-ground-mechanisms.md) |
 | T06 | `pending` | 공중 기믹·궤적 | [T06](./T06-air-mechanisms.md) |
 | T07 | `pending` | Scene·캠페인·복원 연결 | [T07](./T07-campaign-integration.md) |
 | T08 | `pending` | 실제 통과·회귀 검증·수치 조정 | [T08](./T08-playthrough-validation.md) |
 
 ## Progress
-- done: 3/8 (active: T04)
+- done: 4/8 (active: T05)
 

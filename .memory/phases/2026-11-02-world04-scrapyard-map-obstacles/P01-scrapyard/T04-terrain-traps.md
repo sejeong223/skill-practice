@@ -1,6 +1,6 @@
 # Task: T04 지형과 꺼짐·후퇴 상승 바닥
 
-## Status: pending
+## Status: done
 
 ## Goal
 통바닥 잔여 충돌 없이 평지·발판·구멍을 구성하고, 무전조 꺼짐과 후퇴만 가능한 1회 상승 함정을 실제 그림·충돌체로 구현한다.
@@ -111,10 +111,10 @@ export class World04TerrainSystem {
 - 이 단위 검증은 실제 인간 반응/Phaser 클리어를 대체하지 않는다. T08에서 실제 입력으로700ms 창을 검증한다.
 
 ## Acceptance Criteria
-- [ ] 네 맵의 지형이 데이터와 일치하고 열린 구멍 아래 통바닥이 남지 않는다.
-- [ ] 상승 함정이 무전조·후퇴 전용·작동 후 반응 시간·1회성을 모두 만족한다.
-- [ ] 실제 그림 밖의 숨은 즉사 영역이나 부활 직후 남은 판정이 없다.
-- [ ] StageScene은 아직 변경하지 않고 독립 생성/업데이트/복원/해제가 검증된다.
+- [x] 네 맵의 지형이 데이터와 일치하고 열린 구멍 아래 통바닥이 남지 않는다.
+- [x] 상승 함정이 무전조·후퇴 전용·작동 후 반응 시간·1회성을 모두 만족한다.
+- [x] 실제 그림 밖의 숨은 즉사 영역이나 부활 직후 남은 판정이 없다.
+- [x] StageScene은 아직 변경하지 않고 독립 생성/업데이트/복원/해제가 검증된다.
 
 ## Validation
 - node --experimental-strip-types --test scripts/world04-terrain.test.mjs scripts/world04-layout.test.mjs scripts/world03-collapsing-floor.test.mjs — 상태·충돌·기존 함정 회귀.
@@ -134,8 +134,8 @@ Task: T04-terrain-traps
 ```
 
 ## Progress
-- [ ] 구현 완료
-- [ ] 검증 통과
-- commit: pending
-- 검증 결과: 미실행 — 계획 단계
+- [x] 구현 완료
+- [x] 검증 통과
+- commit: 이 Task의 Plan/Phase/Task 식별자를 가진 커밋
+- 검증 결과: 지형·배치·월드3 바닥 회귀 11개, tsc, 대상 ESLint 통과. 무전조·700ms 반응·1회성·대시 중 물리 즉사·정지·동기 부활·구멍 바디 제거/복원 검증. 학습 노트: 순수 advanceTerrainState가 판의 rect를 계산하고 런타임이 동일 rect로 그림과 충돌을 갱신한다. kill 중 부활이 동기로 실행되므로 즉시 반환하며 이전 시도의 좌표를 저장하지 않는다. 공통 정적 바디 처리는 world04RuntimeGeometry.ts, 좁은 Phaser 검증 대역은 기존 scripts/world04-test-fixtures.mjs에 추가했다. 실제 인간 반응/Phaser 통과는 T08 대상. 범위 밖 발견: 특이사항 없음.
 
