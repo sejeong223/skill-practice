@@ -10,7 +10,7 @@
 
 ## Active Task
 
-[T05 지상 기믹 일곱 종류와 이동 표면](./phases/2026-11-02-world04-scrapyard-map-obstacles/P01-scrapyard/T05-ground-mechanisms.md)
+[T06 자석 크레인·고철 추·레일 원형톱](./phases/2026-11-02-world04-scrapyard-map-obstacles/P01-scrapyard/T06-air-mechanisms.md)
 
 ## Status
 
@@ -21,7 +21,7 @@
 
 ## Next Step (IMPORTANT)
 
-T05 청사진을 읽고 이어서 구현·검증한다. MEA에 따라 남은 Task를 자동 진행하며 기존 미커밋 변경은 보존한다.
+T06 청사진을 읽고 이어서 구현·검증한다. MEA에 따라 남은 Task를 자동 진행하며 기존 미커밋 변경은 보존한다.
 
 ## Previous Active Plan
 

@@ -9,6 +9,12 @@ export interface PlayerTuning {
   jumpBufferMs: number;
 }
 
+export interface PlayerSurfaceModifier {
+  readonly acceleration: number | null;
+  readonly deceleration: number | null;
+  readonly conveyorVelocityX: number;
+}
+
 export type PlayerAnimationState =
   | "idle"
   | "run"

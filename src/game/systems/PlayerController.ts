@@ -1,7 +1,7 @@
 import type { InputManager } from "../input/InputManager";
 import type { Player } from "../entities/Player";
 import type { PlayerJumpStartEvent } from "../entities/Player";
-import type { PlayerTuning } from "../entities/playerTypes";
+import type { PlayerSurfaceModifier, PlayerTuning } from "../entities/playerTypes";
 
 export class PlayerController {
   private readonly player: Player;
@@ -14,6 +14,7 @@ export class PlayerController {
   private dashRemainingMs = 0;
   private dashDirection: -1 | 1 = 1;
   private dashSpeed = 480;
+  private surfaceModifier: PlayerSurfaceModifier | null = null;
 
   public constructor(
     player: Player,
@@ -75,8 +76,9 @@ export class PlayerController {
       this.player.setVelocityX(this.dashDirection * this.dashSpeed);
     } else {
       const direction = Number(snapshot.right) - Number(snapshot.left);
-      const targetVelocity = direction * this.currentRunSpeed();
-      const changeRate = direction === 0 ? this.tuning.deceleration : this.tuning.acceleration;
+      const surface = grounded ? this.surfaceModifier : null;
+      const targetVelocity = direction * this.currentRunSpeed() + (surface?.conveyorVelocityX ?? 0);
+      const changeRate = direction === 0 ? (surface?.deceleration ?? this.tuning.deceleration) : (surface?.acceleration ?? this.tuning.acceleration);
       this.moveToward(targetVelocity, changeRate, delta);
       if (direction < 0) this.player.setFlipX(true);
       else if (direction > 0) this.player.setFlipX(false);
@@ -109,6 +111,24 @@ export class PlayerController {
   }
 
   public isDashing(): boolean { return this.dashRemainingMs > 0; }
+
+  public setSurfaceModifier(modifier: PlayerSurfaceModifier | null): void {
+    if (modifier && (!Number.isFinite(modifier.conveyorVelocityX) ||
+      [modifier.acceleration, modifier.deceleration].some(v => v !== null && (!Number.isFinite(v) || v <= 0)))) throw new Error("Invalid surface modifier");
+    this.surfaceModifier = modifier ? { ...modifier } : null;
+  }
+
+  public clearSurfaceModifier(): void { this.surfaceModifier = null; }
+
+  public launchFromSurface(velocityY: number): boolean {
+    if (!Number.isFinite(velocityY) || velocityY >= 0) throw new Error("Surface launch requires negative finite velocity");
+    if (!this.controlEnabled || this.player.isControlLocked() || this.player.getControlOverride()) return false;
+    this.coyoteRemainingMs = 0; this.jumpBufferRemainingMs = 0;
+    this.player.setVelocityY(velocityY);
+    this.player.emit("player-jump-started", { kind: "normal", facingLeft: this.player.flipX } satisfies PlayerJumpStartEvent);
+    this.updateAirState(false);
+    return true;
+  }
 
   public cancelDash(): void {
     if (!this.isDashing()) return;

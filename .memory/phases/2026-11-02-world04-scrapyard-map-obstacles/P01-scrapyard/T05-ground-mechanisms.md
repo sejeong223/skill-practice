@@ -1,6 +1,6 @@
 # Task: T05 지상 기믹 일곱 종류와 이동 표면
 
-## Status: pending
+## Status: done
 
 ## Goal
 고철·폐타이어·폐유·컨베이어·전기·압축기·압력판/차단문이 각자의 규칙대로 동작하고, 이동 효과가 PlayerController의 매 프레임 속도 처리에 덮어써지지 않게 한다.
@@ -129,10 +129,10 @@ export class World04GroundSystem {
 - **Tests**: 전체 주기의 경계 직전/정확 경계/직후, 대시 상태 전기 생존/고철·압사 사망, 문 닫힐 때 겹침·옆 대기·재누름, tire 중복 발사 방지, 2개 위험이 겹친 프레임의 사망1회, pause0ms·reset·destroy.
 
 ## Acceptance Criteria
-- [ ] 지상7종이 모두 동작하고 기름/컨베이어 값이 controller에 통합된다.
-- [ ] 대시의 시간·속도·방향 고정 및 다른 월드의 기본 이동이 유지된다.
-- [ ] 차단문 실패 뒤 다시 시도할 수 있고 진행 불능 상태가 없다.
-- [ ] 실제 Scene에 아직 연결하지 않아 기존 맵의 실행 경로가 바뀌지 않는다.
+- [x] 지상7종이 모두 동작하고 기름/컨베이어 값이 controller에 통합된다.
+- [x] 대시의 시간·속도·방향 고정 및 다른 월드의 기본 이동이 유지된다.
+- [x] 차단문 실패 뒤 다시 시도할 수 있고 진행 불능 상태가 없다.
+- [x] 실제 Scene에 아직 연결하지 않아 기존 맵의 실행 경로가 바뀌지 않는다.
 
 ## Validation
 - node --experimental-strip-types --test scripts/world04-ground.test.mjs scripts/world04-surface-motion.test.mjs scripts/dash-movement.test.mjs scripts/dash-invulnerability.test.mjs — 새 동작과 기존 대시 회귀.
@@ -152,8 +152,8 @@ Task: T05-ground-mechanisms
 ```
 
 ## Progress
-- [ ] 구현 완료
-- [ ] 검증 통과
-- commit: pending
-- 검증 결과: 미실행 — 계획 단계
+- [x] 구현 완료
+- [x] 검증 통과
+- commit: 이 Task의 Plan/Phase/Task 식별자를 가진 커밋
+- 검증 결과: 지상 상태·표면 이동·기존 대시 회귀 10개, tsc, 대상 ESLint 통과. 2400ms 벨트 반전/210ms 전기/1960ms 압축기/850ms 문, 타이어 재발사와 문 재누름, 대시 위험 분류, 동기 부활·정지·해제를 검증했다. 학습 노트: targetVelocity = direction * runSpeed + conveyorVelocityX로 목표 속도에만 운반 값을 합쳐 프레임마다 가속이 누적되지 않는다. 표면은 지상에만 적용하고 대시는 기존 ±480을 유지한다. 기존 playerTypes 미커밋 튜닝은 유지하고 새 인터페이스만 커밋했다. 범위 밖 발견: 특이사항 없음.
 
