@@ -1496,5 +1496,115 @@
     "url": "/assets/pixel/tiles/world-04/world-04-scrapyard-rise-column.png",
     "worldId": "world-04",
     "required": true
+  },
+  {
+    "key": "world-04-scrapyard-scrap",
+    "kind": "image",
+    "url": "/assets/pixel/objects/world-04/world-04-scrapyard-scrap.png",
+    "worldId": "world-04",
+    "required": true
+  },
+  {
+    "key": "world-04-scrapyard-tire",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/objects/world-04/world-04-scrapyard-tire.png",
+    "worldId": "world-04",
+    "required": true,
+    "frameWidth": 72,
+    "frameHeight": 40,
+    "frameCount": 3
+  },
+  {
+    "key": "world-04-scrapyard-oil",
+    "kind": "image",
+    "url": "/assets/pixel/objects/world-04/world-04-scrapyard-oil.png",
+    "worldId": "world-04",
+    "required": true
+  },
+  {
+    "key": "world-04-scrapyard-belt",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/objects/world-04/world-04-scrapyard-belt.png",
+    "worldId": "world-04",
+    "required": true,
+    "frameWidth": 160,
+    "frameHeight": 24,
+    "frameCount": 4
+  },
+  {
+    "key": "world-04-scrapyard-cable",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/objects/world-04/world-04-scrapyard-cable.png",
+    "worldId": "world-04",
+    "required": true,
+    "frameWidth": 32,
+    "frameHeight": 48,
+    "frameCount": 3
+  },
+  {
+    "key": "world-04-scrapyard-press-left",
+    "kind": "image",
+    "url": "/assets/pixel/objects/world-04/world-04-scrapyard-press-left.png",
+    "worldId": "world-04",
+    "required": true
+  },
+  {
+    "key": "world-04-scrapyard-press-right",
+    "kind": "image",
+    "url": "/assets/pixel/objects/world-04/world-04-scrapyard-press-right.png",
+    "worldId": "world-04",
+    "required": true
+  },
+  {
+    "key": "world-04-scrapyard-plate",
+    "kind": "spritesheet",
+    "url": "/assets/pixel/objects/world-04/world-04-scrapyard-plate.png",
+    "worldId": "world-04",
+    "required": true,
+    "frameWidth": 48,
+    "frameHeight": 8,
+    "frameCount": 2
+  },
+  {
+    "key": "world-04-scrapyard-door",
+    "kind": "image",
+    "url": "/assets/pixel/objects/world-04/world-04-scrapyard-door.png",
+    "worldId": "world-04",
+    "required": true
+  },
+  {
+    "key": "world-04-scrapyard-crane",
+    "kind": "image",
+    "url": "/assets/pixel/objects/world-04/world-04-scrapyard-crane.png",
+    "worldId": "world-04",
+    "required": true
+  },
+  {
+    "key": "world-04-scrapyard-magnet",
+    "kind": "image",
+    "url": "/assets/pixel/objects/world-04/world-04-scrapyard-magnet.png",
+    "worldId": "world-04",
+    "required": true
+  },
+  {
+    "key": "world-04-scrapyard-payload",
+    "kind": "image",
+    "url": "/assets/pixel/objects/world-04/world-04-scrapyard-payload.png",
+    "worldId": "world-04",
+    "required": true
+  },
+  {
+    "key": "world-04-scrapyard-swing",
+    "kind": "image",
+    "url": "/assets/pixel/objects/world-04/world-04-scrapyard-swing.png",
+    "worldId": "world-04",
+    "required": true
+  },
+  {
+    "key": "world-04-scrapyard-saw",
+    "kind": "image",
+    "url": "/assets/pixel/objects/world-04/world-04-scrapyard-saw.png",
+    "worldId": "world-04",
+    "required": true
   }
 ]

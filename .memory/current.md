@@ -10,7 +10,7 @@
 
 ## Active Task
 
-[T03 지상 7종·공중 3종 장애물 아트](./phases/2026-11-02-world04-scrapyard-map-obstacles/P01-scrapyard/T03-obstacle-art.md)
+[T04 지형과 꺼짐·후퇴 상승 바닥](./phases/2026-11-02-world04-scrapyard-map-obstacles/P01-scrapyard/T04-terrain-traps.md)
 
 ## Status
 
@@ -21,7 +21,7 @@
 
 ## Next Step (IMPORTANT)
 
-T03 청사진을 읽고 이어서 구현·검증한다. MEA에 따라 남은 Task를 자동 진행하며 기존 미커밋 변경은 보존한다.
+T04 청사진을 읽고 이어서 구현·검증한다. MEA에 따라 남은 Task를 자동 진행하며 기존 미커밋 변경은 보존한다.
 
 ## Previous Active Plan
 

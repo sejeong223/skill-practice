@@ -1,6 +1,6 @@
 # Task: T03 지상 7종·공중 3종 장애물 아트
 
-## Status: pending
+## Status: done
 
 ## Goal
 사물 10종의 역할과 위험 상태를 실루엣·동작으로 읽을 수 있는 픽셀 PNG를 제작하고 프레임·발 위치를 고정한다.
@@ -84,10 +84,10 @@ export async function normalizeWorld04Obstacles(
   4. 각 PNG의 크기·프레임·alpha·비어 있지 않은 그림·기준점과 manifest 중복을 검사한다. 테스트는 기존 scripts/ 아래 단일 파일이다.
 
 ## Acceptance Criteria
-- [ ] 사물10종이 14개 런타임 자산으로 완성되고 지상/공중 구분이 유지된다.
-- [ ] 원화와 PNG를 코기·월드3 장애물 옆에서 비교해 픽셀 스타일·크기가 맞는다.
-- [ ] 위험 그림과 충돌 크기의 대응이 명시되어 있고 투명 여백을 즉사 영역으로 사용하지 않는다.
-- [ ] 보스·기존 캐릭터 자산과 숨은 바닥의 대기 외형을 변경하지 않는다.
+- [x] 사물10종이 14개 런타임 자산으로 완성되고 지상/공중 구분이 유지된다.
+- [x] 원화와 PNG를 코기·월드3 장애물 옆에서 비교해 픽셀 스타일·크기가 맞는다.
+- [x] 위험 그림과 충돌 크기의 대응이 명시되어 있고 투명 여백을 즉사 영역으로 사용하지 않는다.
+- [x] 보스·기존 캐릭터 자산과 숨은 바닥의 대기 외형을 변경하지 않는다.
 
 ## Validation
 - node scripts/build-world04-obstacles.mjs --check — 원화와 배포 자산 일치.
@@ -109,8 +109,8 @@ Task: T03-obstacle-art
 ```
 
 ## Progress
-- [ ] 구현 완료
-- [ ] 검증 통과
-- commit: pending
-- 검증 결과: 미실행 — 계획 단계
+- [x] 구현 완료
+- [x] 검증 통과
+- commit: 이 Task의 Plan/Phase/Task 식별자를 가진 커밋
+- 검증 결과: 14개 PNG·프레임 크기/투명도/중복/앵커 검증, 정규화 --check, 전체 manifest, 대상 ESLint 통과. OS 임시 비교판에서 14개와 코기 및 월드3 콘을 육안 확인. 기본 imagegen으로 지상·공중 시트 생성 후 크레인 자석 혼입을 원화 수정으로 제거했다. 원화 art/source/world04-scrapyard-obstacles-{ground,air}.png, 배포 public/assets/pixel/objects/world-04. 프롬프트: 동일 카툰 픽셀 외곽선/3~4단 명암/녹슨 주황·회청색, 5×4 지상 프레임과 3×2 공중 부품 시트, 투명 배경·글자 없음. 학습 노트: 프레임별 고정 crop→nearest resize→발 기준 합성으로 애니메이션 기준점을 유지한다. 이미지 크기와 피해 rect는 다르며 원형 투명 모서리는 충돌에 사용하지 않는다. 범위 밖 발견: 특이사항 없음.
 
