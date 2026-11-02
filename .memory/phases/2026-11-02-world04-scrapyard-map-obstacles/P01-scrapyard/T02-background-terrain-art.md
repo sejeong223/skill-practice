@@ -1,6 +1,6 @@
 # Task: T02 노을빛 고물상 배경과 지형 아트
 
-## Status: pending
+## Status: done
 
 ## Goal
 일반맵 네 장소가 서로 구분되면서 월드 1~3과 같은 작품으로 보이는 배경·지형 PNG를 제작하고 필수 에셋으로 등록한다.
@@ -77,10 +77,10 @@ export async function normalizeWorld04Backgrounds(
 - 배경 미리보기는 도구의 이미지 보기 또는 OS 임시 폴더의 개별 PNG만 사용한다. .memory/test-plans·새 screenshots 폴더를 만들지 않는다.
 
 ## Acceptance Criteria
-- [ ] 네 장소의 중경과 공통 far/foreground/지형이 월드 1~3의 픽셀 표현과 일치한다.
-- [ ] 플레이 바닥과 함정 위치가 배경에 미리 그려져 있지 않다.
-- [ ] 9개 배포 PNG가 manifest에 등록되고 --check가 원화를 변경하지 않는다.
-- [ ] 기존 보스·인트로 배경은 이 Task의 변경 목록에 없다.
+- [x] 네 장소의 중경과 공통 far/foreground/지형이 월드 1~3의 픽셀 표현과 일치한다.
+- [x] 플레이 바닥과 함정 위치가 배경에 미리 그려져 있지 않다.
+- [x] 9개 배포 PNG가 manifest에 등록되고 --check가 원화를 변경하지 않는다.
+- [x] 기존 보스·인트로 배경은 이 Task의 변경 목록에 없다.
 
 ## Validation
 - node scripts/build-world04-backgrounds.mjs --check — 원화와 배포 파일 일치.
@@ -102,8 +102,8 @@ Task: T02-background-terrain-art
 ```
 
 ## Progress
-- [ ] 구현 완료
-- [ ] 검증 통과
-- commit: pending
-- 검증 결과: 미실행 — 계획 단계
+- [x] 구현 완료
+- [x] 검증 통과
+- commit: 이 Task의 Plan/Phase/Task 식별자를 가진 커밋
+- 검증 결과: 9개 PNG 규격·필수 manifest·정규화 재현·ESLint 통과. 월드 1/2/3 mid와 OS 임시 contact sheet에서 9개 출력 육안 비교 완료. 기본 imagegen 도구로 원화 7장 생성. 프롬프트: 기존 상세 카툰 픽셀 외곽선과 단계 명암, 노을 살구 하늘/녹슨 주황/회청색 그늘, 장소별 입구·분류장·압축장·경비 통로, 캐릭터·글자·실제 위험 배치 제외. 원화 art/source/world04-scrapyard-*.png, 배포 public/assets/pixel/{backgrounds,tiles}/world-04. 학습 노트: sharp extract→nearest resize로 크기를 고정하고 mid 밑선을504에 맞춘다. 숨은 함정은 일반 floor 키를 공유한다. 범위 밖 발견: 특이사항 없음.
 

@@ -10,7 +10,7 @@
 
 ## Active Task
 
-[T01 고물상 배치·치수·공통 계약](./phases/2026-11-02-world04-scrapyard-map-obstacles/P01-scrapyard/T01-layout-contracts.md)
+[T03 지상 7종·공중 3종 장애물 아트](./phases/2026-11-02-world04-scrapyard-map-obstacles/P01-scrapyard/T03-obstacle-art.md)
 
 ## Status
 
@@ -21,7 +21,7 @@
 
 ## Next Step (IMPORTANT)
 
-T01 청사진을 읽고 src/game/data/world04Types.ts와 src/game/data/world04Scrapyard.ts의 구현부터 시작한다. T01→T08을 순차 실행하며 각 Task 검증 후 지정된 한국어 커밋을 사용한다. 기존 미커밋 보스·HUD·발레 점프·인트로 변경은 보존한다.
+T03 청사진을 읽고 이어서 구현·검증한다. MEA에 따라 남은 Task를 자동 진행하며 기존 미커밋 변경은 보존한다.
 
 ## Previous Active Plan
 

@@ -1433,5 +1433,68 @@
     "kind": "image",
     "url": "/assets/pixel/characters/corgi/equipment/custom-outfit-template-dash-uv.png",
     "required": true
+  },
+  {
+    "key": "world-04-scrapyard-far",
+    "kind": "image",
+    "url": "/assets/pixel/backgrounds/world-04/world-04-scrapyard-far.png",
+    "worldId": "world-04",
+    "required": true
+  },
+  {
+    "key": "world-04-scrapyard-mid-1",
+    "kind": "image",
+    "url": "/assets/pixel/backgrounds/world-04/world-04-scrapyard-mid-1.png",
+    "worldId": "world-04",
+    "required": true
+  },
+  {
+    "key": "world-04-scrapyard-mid-2",
+    "kind": "image",
+    "url": "/assets/pixel/backgrounds/world-04/world-04-scrapyard-mid-2.png",
+    "worldId": "world-04",
+    "required": true
+  },
+  {
+    "key": "world-04-scrapyard-mid-3",
+    "kind": "image",
+    "url": "/assets/pixel/backgrounds/world-04/world-04-scrapyard-mid-3.png",
+    "worldId": "world-04",
+    "required": true
+  },
+  {
+    "key": "world-04-scrapyard-mid-4",
+    "kind": "image",
+    "url": "/assets/pixel/backgrounds/world-04/world-04-scrapyard-mid-4.png",
+    "worldId": "world-04",
+    "required": true
+  },
+  {
+    "key": "world-04-scrapyard-foreground",
+    "kind": "image",
+    "url": "/assets/pixel/backgrounds/world-04/world-04-scrapyard-foreground.png",
+    "worldId": "world-04",
+    "required": true
+  },
+  {
+    "key": "world-04-scrapyard-floor",
+    "kind": "image",
+    "url": "/assets/pixel/tiles/world-04/world-04-scrapyard-floor.png",
+    "worldId": "world-04",
+    "required": true
+  },
+  {
+    "key": "world-04-scrapyard-platform",
+    "kind": "image",
+    "url": "/assets/pixel/tiles/world-04/world-04-scrapyard-platform.png",
+    "worldId": "world-04",
+    "required": true
+  },
+  {
+    "key": "world-04-scrapyard-rise-column",
+    "kind": "image",
+    "url": "/assets/pixel/tiles/world-04/world-04-scrapyard-rise-column.png",
+    "worldId": "world-04",
+    "required": true
   }
 ]
