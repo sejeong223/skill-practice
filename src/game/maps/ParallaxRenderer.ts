@@ -92,13 +92,14 @@ export class ParallaxRenderer {
         .setOrigin(0)
         .setDepth(depth)
         .setScrollFactor(scrollFactorX, scrollFactorY);
-      if (assetKey.startsWith("world-02-") || assetKey.startsWith("world-03-")) {
+      if (assetKey.startsWith("world-02-") || assetKey.startsWith("world-03-") || assetKey.startsWith("world-04-scrapyard-")) {
         const textureHeight = this.scene.textures.get(assetKey).getSourceImage().height;
         sprite.setTileScale(mapHeight / textureHeight);
       }
       return sprite;
     }
 
+    if (assetKey.startsWith("world-04-scrapyard-")) throw new Error(`Missing World 4 asset: ${assetKey}`);
     return this.scene.add
       .rectangle(0, 0, mapWidth, mapHeight, fallbackColor, 1)
       .setOrigin(0)

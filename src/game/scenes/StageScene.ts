@@ -31,7 +31,11 @@ import { BARK_COOLDOWN_MS, BITE_COOLDOWN_MS, SKILL_DEFINITIONS } from "../data/s
 import { BossFeedbackController, BARK_SHAKE_DURATION_MS, BARK_SHAKE_INTENSITY, type BossFeedbackSnapshot } from "../systems/bossFeedback";
 import { GameplayEventBus } from "../core/events";
 import { getStageDefinition, getWorldMapTheme } from "../data";
-import { getWorld01StageTheme, getWorld02StageTheme, getWorld03StageTheme } from "../data/worldMaps";
+import { getWorld01StageTheme, getWorld02StageTheme, getWorld03StageTheme, getWorld04StageTheme } from "../data/worldMaps";
+import { getWorld04Layout } from "../data/world04Scrapyard";
+import type { World04Layout } from "../data/world04Types";
+import { World04HazardSystem } from "../systems/World04HazardSystem";
+import { shouldActivateWorld04Checkpoint } from "../systems/world04Checkpoint";
 import type { StageDefinition } from "../core/types";
 import type { EnemyDefinition } from "../core/contentTypes";
 import { MapDebugOverlay } from "../debug/MapDebugOverlay";
@@ -105,6 +109,9 @@ export class StageScene extends Phaser.Scene {
   private world03Obstacles?: World03ConstructionObstacles;
   private world03CollapsingFloor?: World03CollapsingFloor;
   private world03SteelBeamDrops?: World03SteelBeamDropSystem;
+  private world04Hazards?: World04HazardSystem;
+  private world04Layout: World04Layout | null = null;
+  private world04PreviousCenterX?: number;
   private world02PigeonDrops?: World02PigeonDropSystem;
   private exitFloor?: Phaser.GameObjects.Rectangle;
   private parallaxRenderer?: ParallaxRenderer;
@@ -172,11 +179,12 @@ export class StageScene extends Phaser.Scene {
     this.activeSectionId = undefined;
     const stage = getStageDefinition(this.stageId);
     this.stageDefinition = stage;
+    this.world04Layout = getWorld04Layout(stage.id);
     const registeredProgress = this.registry.get("progressState") as ProgressState | undefined;
     this.progress = registeredProgress ?? createDefaultProgressState(data.playerName);
     if (data.playerName) this.progress.playerName = data.playerName;
-    const theme = getWorld03StageTheme(stage.id, getWorld02StageTheme(stage.id,
-      getWorld01StageTheme(stage.id, getWorldMapTheme(stage.worldId))));
+    const theme = getWorld04StageTheme(stage.id, getWorld03StageTheme(stage.id, getWorld02StageTheme(stage.id,
+      getWorld01StageTheme(stage.id, getWorldMapTheme(stage.worldId)))));
     const savedCheckpoint = this.registry.get(WORLD01_CHECKPOINT_SNAPSHOT_KEY) as CheckpointSnapshot | undefined;
     const world02StageId = isWorld02PlaygroundStageId(stage.id) ? stage.id : null;
     const world02Playground = world02StageId !== null;
@@ -235,7 +243,7 @@ export class StageScene extends Phaser.Scene {
       DEFAULT_PLAYER_TUNING,
     );
     const runtimeState = createRuntimeStageState(stage.id, seed);
-    this.loadedMap = TiledMapLoader.load(this, stage, theme);
+    this.loadedMap = this.world04Layout ? null : TiledMapLoader.load(this, stage, theme);
     this.runtime = new StageBuilder(undefined, this.eventBus, this.progress).build(
       this,
       stage,
@@ -277,6 +285,7 @@ export class StageScene extends Phaser.Scene {
         this.world03Obstacles?.resetForAttempt();
         this.world03CollapsingFloor?.resetForAttempt();
         this.world03SteelBeamDrops?.resetForAttempt(this.player?.x ?? stage.spawn.x);
+        this.resetWorld04Attempt();
         this.bossEncounter?.resetAttempt(this.runtime?.runtimeState.attempt);
         this.playerController?.clearCementSlow();
         this.world02PigeonDrops?.resetForAttempt(this.player?.x ?? stage.spawn.x);
@@ -305,7 +314,7 @@ export class StageScene extends Phaser.Scene {
       () => this.runtime?.runtimeState.checkpointId ?? null,
     );
     const map = stage.map;
-    if (map) {
+    if (map && !this.world04Layout) {
       this.gimmickSystem = new MapGimmickSystem(
         this,
         this.player,
@@ -359,6 +368,13 @@ export class StageScene extends Phaser.Scene {
       this.persistenceEventBus,
       () => this.runtime?.getStatus() === "play",
     );
+    if (this.world04Layout) {
+      this.world04Hazards = new World04HazardSystem(this, this.player, this.playerController, this.world04Layout,
+        this.gameplayEventBus, () => this.runtime?.runtimeState.checkpointId ?? null,
+        () => this.runtime?.getStatus() === "play" && !this.stageTransitionStarted &&
+          !(this.eventBus?.isDeathOverlayVisible() ?? false) && !this.shopOpen && !this.catalogOpen && !this.paintOpen &&
+          this.player?.active === true && !this.player.isControlLocked());
+    }
     if (world02StageId && !this.loadedMap) {
       const hazards = getWorld02StageHazards(world02StageId, seed);
       this.world02Obstacles = new World02ObstacleSystem(
@@ -487,6 +503,7 @@ export class StageScene extends Phaser.Scene {
       this.world02PigeonDrops?.resetForAttempt(this.player.x);
       this.world03SteelBeamDrops?.resetForAttempt(this.player.x);
     }
+    this.resetWorld04Attempt();
     this.runtime.start();
     this.eventBus.emit("pause-state-changed", { paused: false });
     if (data.resumeCheckpointId) {
@@ -623,6 +640,7 @@ export class StageScene extends Phaser.Scene {
       this.mapInteraction?.reset(snapshot);
       this.gimmickSystem?.reset(snapshot);
       this.runtime?.resetCoins();
+      this.resetWorld04Attempt();
     });
     this.eventUnsubscribers.push(this.eventBus.on("stage-completed", ({ stageId }) => {
       if (stageId !== this.stageId || this.stageTransitionStarted) return;
@@ -754,6 +772,11 @@ export class StageScene extends Phaser.Scene {
     }
 
     this.events.once("shutdown", () => {
+      this.world04Hazards?.destroy();
+      this.world04Hazards = undefined;
+      this.world04Layout = null;
+      this.world04PreviousCenterX = undefined;
+      this.playerController?.clearSurfaceModifier();
       this.playerController?.cancelDash();
       this.playerAnimator?.stopDash();
       this.resetBossFeedback();
@@ -871,7 +894,9 @@ export class StageScene extends Phaser.Scene {
     if (stage.kind !== "normal" || !this.player) return;
 
     let floorY: number | undefined;
-    if (gameplayLayer) {
+    if (this.world04Layout) {
+      floorY = this.world04Layout.floorY;
+    } else if (gameplayLayer) {
       const lastColumn = gameplayLayer.layer.width - 1;
       const tile = gameplayLayer.getTilesWithin(
         lastColumn, 0, 1, gameplayLayer.layer.height, { isColliding: true },
@@ -942,11 +967,12 @@ export class StageScene extends Phaser.Scene {
       this.bowlShieldVisual?.update(0, false);
       return;
     }
-    const elapsed = Number.isFinite(delta) ? Math.max(0, delta) : 0;
+    const elapsed = Number.isFinite(delta) ? Math.min(this.world04Layout ? 50 : Infinity, Math.max(0, delta)) : 0;
     this.equipmentVisual?.setEnabled(true);
     this.skillElapsedMs += elapsed;
     this.bossFeedback.update(elapsed);
-    this.playerController?.update(time, delta);
+    this.world04Hazards?.beforePlayerUpdate();
+    this.playerController?.update(time, this.world04Layout ? elapsed : delta);
     if (this.stageTransitionStarted) {
       this.playerController?.cancelDash();
       this.playerAnimator?.stopDash();
@@ -962,6 +988,8 @@ export class StageScene extends Phaser.Scene {
       }
     }
     this.activateWorld03CheckpointByCrossing();
+    this.activateWorld04CheckpointByCrossing();
+    if (this.world04Hazards?.afterPlayerUpdate(elapsed)) return;
     this.world03CollapsingFloor?.update(elapsed);
     this.world03Obstacles?.update(elapsed);
     this.world03SteelBeamDrops?.update(elapsed);
@@ -1229,6 +1257,7 @@ export class StageScene extends Phaser.Scene {
     this.mapInteraction?.reset(mapSnapshot);
     this.gimmickSystem?.reset(mapSnapshot);
     this.player.resetTo(new Phaser.Math.Vector2(spawn.x, spawn.y));
+    this.resetWorld04Attempt();
     this.player.setFlipX((snapshot?.facing ?? 1) < 0);
     this.cameraDirector?.followPlayer();
     if (snapshot && isWorld01CheckpointStageId(this.stageId)) {
@@ -1255,6 +1284,23 @@ export class StageScene extends Phaser.Scene {
     this.eventBus?.emit("pause-state-changed", {
       paused: runtime.getStatus() === "paused",
     });
+  }
+
+  private resetWorld04Attempt(): void {
+    if (!this.world04Layout || !this.player) return;
+    this.world04Hazards?.resetForAttempt(this.player.x);
+    this.playerController?.clearSurfaceModifier();
+    this.world04PreviousCenterX = this.player.body.center.x;
+  }
+
+  private activateWorld04CheckpointByCrossing(): void {
+    if (!this.world04Layout || !this.player || !this.runtime) return;
+    const center = this.player.body.center.x;
+    if (shouldActivateWorld04Checkpoint({ previousCenterX: this.world04PreviousCenterX ?? center, currentCenterX: center,
+      checkpointX: this.world04Layout.checkpoint.x, alreadyActive: this.runtime.runtimeState.checkpointId !== null })) {
+      this.activateCheckpoint(`${this.stageId}-checkpoint`);
+    }
+    this.world04PreviousCenterX = center;
   }
 
   private activateWorld03CheckpointByCrossing(): void {

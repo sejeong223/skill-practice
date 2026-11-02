@@ -10,7 +10,7 @@
 
 ## Active Task
 
-[T07 일반맵 네 개의 캠페인·복원 연결](./phases/2026-11-02-world04-scrapyard-map-obstacles/P01-scrapyard/T07-campaign-integration.md)
+[T08 실제 통과 경로·재도전·회귀 검증](./phases/2026-11-02-world04-scrapyard-map-obstacles/P01-scrapyard/T08-playthrough-validation.md)
 
 ## Status
 
@@ -21,7 +21,7 @@
 
 ## Next Step (IMPORTANT)
 
-T07 청사진을 읽고 이어서 구현·검증한다. MEA에 따라 남은 Task를 자동 진행하며 기존 미커밋 변경은 보존한다.
+T08 청사진을 읽고 이어서 구현·검증한다. MEA에 따라 남은 Task를 자동 진행하며 기존 미커밋 변경은 보존한다.
 
 ## Previous Active Plan
 

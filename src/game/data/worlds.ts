@@ -13,7 +13,8 @@ import type {
   StageSegment,
   WorldDefinition,
 } from "../core/contentTypes";
-import { createDefaultStageSections, getWorld02StageTheme, getWorld03StageTheme, WORLD_MAP_THEMES } from "./worldMaps";
+import { createDefaultStageSections, getWorld02StageTheme, getWorld03StageTheme, getWorld04StageTheme, WORLD_MAP_THEMES } from "./worldMaps";
+import { getWorld04Layout, isWorld04StageId } from "./world04Scrapyard";
 import { WORLD01_STAGE_MAPS, world01Checkpoint } from "./world01Maps";
 import { getWorld01FloorY } from "./world01Gimmicks";
 import type {
@@ -115,7 +116,8 @@ function createSegment(
   const segmentId = stageId + "-segment-" + segmentNumber;
   const isSafeSection = !isBoss && (segmentNumber === 1 || segmentNumber === 5);
   const continuousFloor = /^world-02-stage-[1-3]$/.test(stageId) || /^world-03-stage-[1-4]$/.test(stageId);
-  const platforms = continuousFloor
+  const scrapyard = isWorld04StageId(stageId);
+  const platforms = scrapyard ? [] : continuousFloor
     ? segmentNumber === 1 ? [{
         id: segmentId + "-platform",
         x: NORMAL_MAP_WIDTH / 2,
@@ -135,7 +137,7 @@ function createSegment(
     id: segmentId,
     length,
     platforms,
-    traps: continuousFloor || isBoss || isSafeSection
+    traps: scrapyard || continuousFloor || isBoss || isSafeSection
       ? []
       : [
           {
@@ -152,7 +154,7 @@ function createSegment(
             effect: "knockback-and-reset",
           },
         ],
-    enemies: continuousFloor || isBoss || isSafeSection
+    enemies: scrapyard || continuousFloor || isBoss || isSafeSection
       ? []
       : [
           {
@@ -203,7 +205,7 @@ function createStageMap(
       id: stageId + "-checkpoint",
       kind: "checkpoint",
       x: 2496,
-      y: 400,
+      y: isWorld04StageId(stageId) ? 384 : 400,
       width: 18,
       height: 120,
       visualKey: "checkpoint",
@@ -242,7 +244,7 @@ function createStageMap(
     sections: isBoss ? [] : createDefaultStageSections(stageId),
     layers: (() => {
       const theme = WORLD_MAP_THEMES.find((candidate) => candidate.worldId === worldId);
-      return theme ? getWorld03StageTheme(stageId, getWorld02StageTheme(stageId, theme)).layers : [];
+      return theme ? getWorld04StageTheme(stageId, getWorld03StageTheme(stageId, getWorld02StageTheme(stageId, theme))).layers : [];
     })(),
     objectDefinitions: [...gimmickObjects, ...requiredObjects],
     gimmicks,
@@ -268,7 +270,7 @@ function createNormalStage(
     kind: "normal",
     spawn: {
       x: 96,
-      y: blueprint.id === "world-01" ? getWorld01FloorY(stageNumber, 96) : 440,
+      y: getWorld04Layout(id)?.spawn.y ?? (blueprint.id === "world-01" ? getWorld01FloorY(stageNumber, 96) : 440),
     },
     checkpointIds: blueprint.id === "world-01"
       ? world01Save ? [world01Save.id] : []

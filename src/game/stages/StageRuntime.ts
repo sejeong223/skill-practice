@@ -16,6 +16,7 @@ import { EconomySystem } from "../systems/EconomySystem";
 import { hasCollectedCoin } from "../systems/coinLedger";
 import { segmentCoinPresentation } from "./segmentCoinPresentation";
 import { getWorld03CoinPositions } from "../data/world03Construction";
+import { getWorld04Layout, isWorld04StageId } from "../data/world04Scrapyard";
 
 interface RuntimeEntityRecord {
   readonly kind: StageEntityKind;
@@ -80,6 +81,7 @@ export class StageRuntime {
     const random = new StageRandom(this.runtimeState.randomSeed);
     let segmentOffset = 0;
     const world03CoinPositions = getWorld03CoinPositions(this.definition.id);
+    const world04Layout = getWorld04Layout(this.definition.id);
     let coinIndex = 0;
 
     for (const segment of this.definition.segments) {
@@ -107,11 +109,14 @@ export class StageRuntime {
       }
 
       segment.coins.forEach((coinId, index) => {
-        const x = world03CoinPositions[coinIndex++] ?? segmentOffset + 180 + index * 72;
+        const world04Coin = world04Layout?.coins[coinIndex];
+        if (world04Layout && world04Coin?.id !== coinId) throw new Error(`World 4 coin mismatch: ${this.definition.id}/${coinId}`);
+        const x = world04Coin?.x ?? world03CoinPositions[coinIndex] ?? segmentOffset + 180 + index * 72;
+        coinIndex++;
         this.add("coin", coinId, this.factory.create(this.scene, {
           kind: "coin",
           id: coinId,
-          ...segmentCoinPresentation(this.definition.worldId),
+          ...(world04Coin ? { appearance: "bone" as const, y: world04Coin.y } : segmentCoinPresentation(this.definition.worldId)),
           x,
         }));
       });
@@ -128,6 +133,7 @@ export class StageRuntime {
       segmentOffset += segment.length;
     }
 
+    if (world04Layout && coinIndex !== world04Layout.coins.length) throw new Error(`World 4 coin count mismatch: ${this.definition.id}`);
     this.addCheckpointAndExit();
   }
 
@@ -224,7 +230,7 @@ export class StageRuntime {
       kind: "checkpoint",
       id: checkpointId,
       x,
-      y: /^world-02-stage-[1-3]$/.test(this.definition.id) || /^world-03-stage-[1-4]$/.test(this.definition.id)
+      y: isWorld04StageId(this.definition.id) || /^world-02-stage-[1-3]$/.test(this.definition.id) || /^world-03-stage-[1-4]$/.test(this.definition.id)
         ? 444 : 460,
     }));
   }

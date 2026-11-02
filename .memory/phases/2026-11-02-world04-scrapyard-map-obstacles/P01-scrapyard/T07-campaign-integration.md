@@ -1,6 +1,6 @@
 # Task: T07 일반맵 네 개의 캠페인·복원 연결
 
-## Status: pending
+## Status: done
 
 ## Goal
 완성된 배경·지형·지상·공중 시스템을 월드 4 일반맵 네 개에만 연결하고, 기존 입력·대시·체크포인트·사망·다음 스테이지 흐름을 실제로 작동시킨다.
@@ -137,11 +137,11 @@ private activateWorld04CheckpointByCrossing():void;
 - 기존 미커밋 StageScene/worlds/StageRuntime의 보스·대시 변경은 작업 시작 기준이다. HEAD로 돌리거나 파일 전체의 다른 변경까지 무조건 커밋하지 않는다.
 
 ## Acceptance Criteria
-- [ ] 월드4 일반맵에 새 그림·12종 기믹만 연결되고 샘플 함정·통바닥·기존 맵이 중복되지 않는다.
-- [ ] 입력·대시·표면·기계 업데이트 순서와 실제 대시 무적 분류가 맞는다.
-- [ ] 체크포인트/부활/정지/장면전환에서 같은 패턴과 안전한 시작 상태가 복원된다.
-- [ ] 정상 출구 이동과4→기존 보스 연결이 유지된다.
-- [ ] 다른 월드·보스·개발 시작 설정을 변경하지 않는다.
+- [x] 월드4 일반맵에 새 그림·12종 기믹만 연결되고 샘플 함정·통바닥·기존 맵이 중복되지 않는다.
+- [x] 입력·대시·표면·기계 업데이트 순서와 실제 대시 무적 분류가 맞는다.
+- [x] 체크포인트/부활/정지/장면전환에서 같은 패턴과 안전한 시작 상태가 복원된다.
+- [x] 정상 출구 이동과4→기존 보스 연결이 유지된다.
+- [x] 다른 월드·보스·개발 시작 설정을 변경하지 않는다.
 
 ## Validation
 - node --experimental-strip-types --test scripts/world04-runtime.test.mjs scripts/world04-campaign.test.mjs scripts/world04-ground.test.mjs scripts/world04-air.test.mjs scripts/world04-terrain.test.mjs scripts/world03-checkpoint-respawn.test.mjs scripts/world03-construction-stages.test.mjs scripts/stage-progression.test.mjs scripts/boss-stage-content.test.mjs — 통합과 인접 회귀.
@@ -164,8 +164,8 @@ Task: T07-campaign-integration
 ```
 
 ## Progress
-- [ ] 구현 완료
-- [ ] 검증 통과
-- commit: pending
-- 검증 결과: 미실행 — 계획 단계
+- [x] 구현 완료
+- [x] 검증 통과
+- commit: 이 Task의 Plan/Phase/Task 식별자를 가진 커밋
+- 검증 결과: 통합·지상/공중/지형·월드3·캠페인·보스 회귀 31개 통과. 전체 manifest, tsc, npm run lint, npm run build 통과. 학습 노트: 월드4 일반맵은 기존 샘플 발판과 맵 로더를 건너뛰고 World04HazardSystem이 지형과 장치를 소유한다. beforePlayerUpdate→기존 이동/대시→체크포인트→afterPlayerUpdate 순서다. death-requested가 동기 부활을 일으키므로 pendingAbort로 이전 프레임 처리를 끝낸다. 기존 dirty worlds/StageRuntime/StageScene은 기준본과 3방향 병합하여 이번 변경만 인덱스에 넣었다. 실제 브라우저 통과는 T08에서 검증한다. 범위 밖 발견: 기존 월드3 인트로 기록은 별도 후속 유지.
 

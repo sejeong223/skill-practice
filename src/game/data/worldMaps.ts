@@ -11,6 +11,19 @@ import {
 } from "../core/constants";
 import type { StageId, WorldId } from "../core/types";
 
+export function getWorld04StageTheme(stageId: StageId, base: WorldMapThemeDefinition): WorldMapThemeDefinition {
+  const match = /^world-04-stage-([1-4])$/.exec(stageId);
+  if (!match) return base;
+  return { ...base,
+    palette: { far: "#e8b197", mid: "#7a7278", gameplay: "#5a5555", foreground: "#302d3b", accent: "#e9a942" },
+    hazardCatalog: ["scrap", "tire", "oil", "belt", "cable", "press-left", "plate", "crane", "swing", "saw"].map(s => `world-04-scrapyard-${s}`),
+    layers: base.layers.map(layer => {
+      const suffix = layer.kind === "background-far" ? "far" : layer.kind === "background-mid" ? `mid-${match[1]}` : layer.kind === "foreground" ? "foreground" : null;
+      return suffix ? { ...layer, assetKey: `world-04-scrapyard-${suffix}` } : layer;
+    }),
+  };
+}
+
 export function getWorld01StageTheme(
   stageId: StageId,
   base: WorldMapThemeDefinition,
