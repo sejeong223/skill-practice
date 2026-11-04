@@ -1,0 +1,17 @@
+{
+  "name": "legendary-rib-corgi-api",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "dist/functions/*.js",
+  "engines": {
+    "node": "22.x"
+  },
+  "dependencies": {
+    "@azure/functions": "4.17.0",
+    "@azure/cosmos": "4.10.1",
+    "@azure/identity": "4.14.1",
+    "jose": "6.2.15"
+  }
+}
+

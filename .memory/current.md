@@ -10,11 +10,11 @@
 
 ## Active Task
 
-[T02 Functions 실행 구성과 Entra 토큰 검증](./phases/2026-11-04-entra-login-cloud-save-leaderboard/P01-cloud-api/T02-api-auth.md)
+[T03 계정 부트스트랩과 단일 쓰기 세션](./phases/2026-11-04-entra-login-cloud-save-leaderboard/P01-cloud-api/T03-account-session.md)
 
 ## Status
 
-- MEA 자동 연속 실행 중: 1/14 완료, P01 1/5. T01 공유 계약·진행 매핑·엄격 검증 구현 및 25개 테스트·타입·린트 통과. 다음 P01-T02를 이어서 실행한다.
+- MEA 실행: 2/14 완료. 최근 P01-cloud-api/T02-api-auth: 인증 22/22(Node22 포함), API npm ci·타입·빌드, 루트 타입·린트 통과. 실제 Entra 로그인은 P03에서 확인.
 - 확정 결정: [2026-11-04 로그인·저장·랭킹](./decisions/2026-11-04-entra-login-cloud-save-leaderboard.md).
 - computer-use 금지. 필요한 Azure 포털 확인·대화형 로그인·비밀 설정은 사용자에게 경로를 안내한다. 대상 구독 접근과 실제 ID·자격 증명 준비는 P03-T01에서 확인한다.
 - 기존 공용 Cosmos 계정 안에 게임 DB만 추가한다. 다른 DB·컨테이너·계정 설정을 변경하지 않는다. 새 컨테이너 전용 manual 400 RU/s, SWA Free, GitHub 수동 배포를 유지한다.
@@ -24,7 +24,7 @@
 
 ## Next Step (IMPORTANT)
 
-MEA 자동 연속 실행: P01-T02 청사진을 읽고 api/ Functions 실행 구성과 Entra 토큰 검증을 구현·검증한다. 기존 미커밋 변경을 보존하고 남은 Task를 순서대로 계속한다.
+MEA 자동 연속 실행: P01-cloud-api/T03-account-session 청사진을 읽고 구현·검증·선별 커밋한다. 남은 Task를 계속 실행하며 기존 미커밋 변경은 보존한다.
 
 ## Previous Active Plan
 

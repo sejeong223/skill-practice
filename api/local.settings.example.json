@@ -1,0 +1,14 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "FUNCTIONS_WORKER_RUNTIME": "node",
+    "GAME_TENANT_ID": "",
+    "GAME_API_CLIENT_ID": "",
+    "GAME_WEB_CLIENT_ID": "",
+    "GAME_COSMOS_ENDPOINT": "https://maze-rescue-ms-b7af62a9.documents.azure.com:443/",
+    "GAME_COSMOS_CLIENT_ID": "",
+    "GAME_COSMOS_CLIENT_SECRET": "",
+    "GAME_TEST_OBJECT_IDS": "[]"
+  }
+}
+

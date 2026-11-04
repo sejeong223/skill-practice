@@ -9,6 +9,9 @@
     "lint": "eslint",
     "test:progression": "node --experimental-strip-types --test scripts/stage-progression.test.mjs",
     "test:cloud-contracts": "node --import tsx --test scripts/cloud-contracts.test.mjs",
+    "build:api": "node scripts/build-game-api.mjs",
+    "typecheck:api": "tsc -p api/tsconfig.json",
+    "test:api-auth": "node --import tsx --test scripts/api-auth.test.mjs",
     "world01:maps": "node scripts/world01-maps.mjs",
     "world01:maps:check": "node scripts/world01-maps.mjs --check"
   },
@@ -24,6 +27,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "esbuild": "^0.28.2",
     "eslint": "^9",
     "eslint-config-next": "16.3.5",
     "tailwindcss": "^4",

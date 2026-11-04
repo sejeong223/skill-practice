@@ -1,6 +1,6 @@
 # Task: T02 Functions 실행 구성과 Entra 토큰 검증
 
-## Status: pending
+## Status: done
 
 ## Goal
 
@@ -134,9 +134,9 @@ interface ApiErrorBody { error:{code:ApiErrorCode;message:string;retryAfterMs:nu
 
 ## Acceptance Criteria
 
-- [ ] API 단독 빌드가 되고 게임 엔진·브라우저 코드가 번들에 들어가지 않는다.
-- [ ] 인증 실패·구성 실패가 운영 데이터 접근 이전에 차단된다.
-- [ ] 아래 검증이 통과하고 기존 작업 변경을 보존한다.
+- [x] API 단독 빌드가 되고 게임 엔진·브라우저 코드가 번들에 들어가지 않는다.
+- [x] 인증 실패·구성 실패가 운영 데이터 접근 이전에 차단된다.
+- [x] 아래 검증이 통과하고 기존 작업 변경을 보존한다.
 
 ## Validation
 
@@ -162,8 +162,8 @@ Task: T02-api-auth
 
 ## Progress
 
-- [ ] 구현 완료
-- [ ] 검증 통과
-- commit: pending
-- 검증 결과·미실행 외부 확인: 실행 시 기록
+- [x] 구현 완료
+- [x] 검증 통과
+- commit: 이 Task의 Plan/Phase/Task 트레일러 커밋으로 조회
+- 검증 결과: 인증 22/22(Node22 포함), API npm ci·타입·빌드, 루트 타입·린트 통과. 실제 Entra 로그인은 P03에서 확인.
 
