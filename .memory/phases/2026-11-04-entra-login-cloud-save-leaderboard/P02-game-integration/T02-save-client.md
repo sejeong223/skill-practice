@@ -1,6 +1,6 @@
 # Task: T02 계정 캐시와 순차 저장·복구 클라이언트
 
-## Status: pending
+## Status: done
 
 ## Goal
 
@@ -171,9 +171,9 @@ interface ProgressState {
 
 ## Acceptance Criteria
 
-- [ ] 저장 중복·실패 복구·계정 전환의 동작을 fake API와 clock으로 재현한다.
-- [ ] 클라이언트가 충돌된 기록을 임의 병합하거나 기본값으로 덮어쓰지 않는다.
-- [ ] 기존 게임·키 입력·저장 경로의 관련 회귀 검증이 통과한다.
+- [x] 저장 중복·실패 복구·계정 전환의 동작을 fake API와 clock으로 재현한다.
+- [x] 클라이언트가 충돌된 기록을 임의 병합하거나 기본값으로 덮어쓰지 않는다.
+- [x] 기존 게임·키 입력·저장 경로의 관련 회귀 검증이 통과한다.
 
 ## Validation
 
@@ -196,8 +196,10 @@ Task: T02-save-client
 
 ## Progress
 
-- [ ] 구현 완료
-- [ ] 검증 통과
-- commit: pending
-- 검증 결과·미실행 수동 확인: 실행 시 기록
+- 복구 스키마 보완: CacheEnvelope에 `pendingReset:ResetRequest|null`을 명시해 초기화 응답 유실을 새로고침 이후에도 같은 requestId로 복구한다. 다른 세대/회차 캐시는 별도 quarantine 키에 남기고 재사용하지 않는다.
+- SaveAck에는 전체 current/resume가 없으므로 저장 ACK 후 GET bootstrap까지 확인한 뒤 confirmed 캐시를 갱신한다. 그 GET이 실패하면 동일한 저장 요청을 재확인하며 새 sequence를 부여하지 않는다. 요청별 추가 읽기 비용은 P03 실제 RU 측정 대상이며, 클라이언트가 서버 재개 규칙을 중복 추측하지 않도록 한 선택이다.
+- [x] 구현 완료
+- [x] 검증 통과
+- commit: 이 Task의 Plan/Phase/Task 트레일러 커밋으로 조회
+- 검증 결과: 저장 클라이언트·인증 28/28, TypeScript 및 전체 린트 통과. 응답 유실·재접속·초기화·계정 격리·저장 공간·타임아웃·heartbeat 검증. 실제 브라우저 네트워크/기기 확인은 P03 대상.
 

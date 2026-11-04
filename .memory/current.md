@@ -10,11 +10,11 @@
 
 ## Active Task
 
-[T02 계정 캐시와 순차 저장·복구 클라이언트](./phases/2026-11-04-entra-login-cloud-save-leaderboard/P02-game-integration/T02-save-client.md)
+[T03 전 월드 체크포인트 스냅샷과 재개 경로](./phases/2026-11-04-entra-login-cloud-save-leaderboard/P02-game-integration/T03-resume-bridge.md)
 
 ## Status
 
-- MEA 실행: 6/14 완료. 최근 P02-game-integration/T01-auth-gate: 認証
+- MEA 실행: 7/14 완료. 최근 P02-game-integration/T02-save-client: 저장 클라이언트·인증 28/28, TypeScript 및 전체 린트 통과. 응답 유실·재접속·초기화·계정 격리·저장 공간·타임아웃·heartbeat 검증. 실제 브라우저 네트워크/기기 확인은 P03 대상.
 - 확정 결정: [2026-11-04 로그인·저장·랭킹](./decisions/2026-11-04-entra-login-cloud-save-leaderboard.md).
 - MSAL 5 호환 보완(P02-T01): root 로그인 복귀 주소 외에 silent 갱신용 `<origin>/auth/redirect/` SPA URI도 P03에서 등록한다. 해당 정적 경로에 `Cache-Control:no-store`, COOP 없음이 필요하다. 구체 근거는 P02-T01 Progress.
 - computer-use 금지. 필요한 Azure 포털 확인·대화형 로그인·비밀 설정은 사용자에게 경로를 안내한다. 대상 구독 접근과 실제 ID·자격 증명 준비는 P03-T01에서 확인한다.
@@ -25,7 +25,7 @@
 
 ## Next Step (IMPORTANT)
 
-MEA 자동 연속 실행: P02-game-integration/T02-save-client 청사진을 읽고 구현·검증·선별 커밋한다. 남은 Task를 계속 실행하며 기존 미커밋 변경은 보존한다.
+MEA 자동 연속 실행: P02-game-integration/T03-resume-bridge 청사진을 읽고 구현·검증·선별 커밋한다. 남은 Task를 계속 실행하며 기존 미커밋 변경은 보존한다.
 
 ## Previous Active Plan
 
