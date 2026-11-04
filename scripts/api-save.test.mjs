@@ -118,6 +118,11 @@ test("World 2 backtracking/visits cannot award checkpoints; crossing world clear
  assert.equal(b.current.resume.checkpoint,null);assert.deepEqual(b.current.resume.world02Travel,{});assert.equal(b.best.progressRank,300);
  await rejects(enter(c,"world-03-stage-1",travel),"INVALID_REQUEST");
 });
+test("restoring an earlier World 2 visit keeps the latest world checkpoint and best",async()=>{
+ const c=await activeAccount();await advance(c,"world-02-stage-1");await checkpoint(c,"world-02-stage-1");await advance(c,"world-02-stage-3");await checkpoint(c,"world-02-stage-3");
+ const before=await read(c),travel=before.current.resume.world02Travel;await enter(c,"world-02-stage-2",travel);await enter(c,"world-02-stage-1",travel);
+ await checkpoint(c,"world-02-stage-1","restored");const after=await read(c);assert.equal(after.current.resume.stageId,"world-02-stage-3");assert.deepEqual(after.best,before.best);
+});
 test("final world clear is persistent; test namespace never becomes eligible",async()=>{
  const c=await activeAccount(undefined,identity(undefined,"test"));await advance(c,"world-05-stage-boss");await complete(c,"world-05-stage-boss");
  const b=await read(c);assert.equal(b.current.resume.completed,true);assert.equal(b.best.progressRank,599);

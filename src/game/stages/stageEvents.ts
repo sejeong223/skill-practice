@@ -2,11 +2,14 @@ import type { CosmeticId, CustomOutfitDesign, CustomOutfitId, MarketCategory, Se
 import type { CutsceneBeat } from "../cutscenes/types";
 import type { BossFeedbackSnapshot } from "../systems/bossFeedback";
 import type { BossVictoryStageId } from "../data/bossVictoryPresentation";
+import type { CloudCheckpoint, ResumeState } from "../cloud/contracts";
 
 export interface StageEventMap {
   "boss-feedback-changed": BossFeedbackSnapshot;
   "world-selection-requested": WorldSelectionRequest;
-  "world-selection-committed": { worldId: SelectableWorldId };
+  "world-selection-committed": { worldId: SelectableWorldId; selection: WorldSelectionRequest };
+  "cloud-resume-changed": { resume: ResumeState };
+  "cloud-resume-error": { message: string };
   "stage-started": {
     stageId: StageId;
     attempt: number;
@@ -27,6 +30,8 @@ export interface StageEventMap {
   "checkpoint-activated": {
     stageId: StageId;
     checkpointId: string;
+    origin: "reached" | "restored";
+    snapshot: CloudCheckpoint;
   };
   "boss-hearts-changed": {
     stageId: StageId;

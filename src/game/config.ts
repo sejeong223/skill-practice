@@ -11,6 +11,7 @@ import { World02EntranceScene } from "./scenes/World02EntranceScene";
 import { World03EntranceScene } from "./scenes/World03EntranceScene";
 import { World04EntranceScene } from "./scenes/World04EntranceScene";
 import type { ProgressState } from "./core/types";
+import { CLOUD_CHECKPOINT_KEY, CLOUD_ENTRY_KEY, CLOUD_RESUME_KEY, CLOUD_RUNTIME_KEY, type CloudEntry } from "./cloud/resume";
 
 export const GAME_WIDTH = 1280;
 export const GAME_HEIGHT = 720;
@@ -20,6 +21,7 @@ export interface CreateGameOptions {
   readonly parent: HTMLElement;
   readonly gameEventBus?: GameEventBus;
   readonly progressState?: ProgressState;
+  readonly cloudEntry?: CloudEntry;
   readonly onReady?: (game: Phaser.Game) => void;
 }
 
@@ -27,6 +29,7 @@ export function createPhaserConfig(
   parent: HTMLElement,
   gameEventBus?: GameEventBus,
   progressState?: ProgressState,
+  cloudEntry?: CloudEntry,
 ): Phaser.Types.Core.GameConfig {
   return {
     type: Phaser.AUTO,
@@ -37,6 +40,14 @@ export function createPhaserConfig(
       preBoot: (game) => {
         if (gameEventBus) game.registry.set("gameEventBus", gameEventBus);
         if (progressState) game.registry.set("progressState", progressState);
+        if (cloudEntry) {
+          if (!progressState) game.registry.set("progressState", cloudEntry.progress);
+          game.registry.set(CLOUD_ENTRY_KEY, cloudEntry);
+          game.registry.set(CLOUD_RESUME_KEY, structuredClone(cloudEntry.resume));
+          game.registry.set(CLOUD_CHECKPOINT_KEY, structuredClone(cloudEntry.resume.checkpoint));
+          game.registry.set(CLOUD_RUNTIME_KEY, { seed: cloudEntry.resume.worldSeed, world02Travel: structuredClone(cloudEntry.resume.world02Travel) });
+          game.registry.set("world02TravelState", structuredClone(cloudEntry.resume.world02Travel));
+        }
       },
     },
     backgroundColor: "#f5e7c7",
@@ -65,7 +76,7 @@ export function createPhaserConfig(
 
 export function createGame(options: CreateGameOptions): Phaser.Game {
   const game = new Phaser.Game(
-    createPhaserConfig(options.parent, options.gameEventBus, options.progressState),
+    createPhaserConfig(options.parent, options.gameEventBus, options.progressState, options.cloudEntry),
   );
   options.onReady?.(game);
   return game;

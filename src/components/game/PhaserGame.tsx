@@ -4,12 +4,14 @@ import { useEffect, useRef, type ReactElement } from "react";
 import type * as Phaser from "phaser";
 import type { GameEventBus } from "@/game/bridge/GameEventBus";
 import type { ProgressState } from "@/game/core/types";
+import type { CloudEntry } from "@/game/cloud/resume";
 
 export interface PhaserGameProps {
   readonly className?: string;
   readonly onGameReady?: (game: Phaser.Game) => void;
   readonly gameEventBus?: GameEventBus;
   readonly progressState?: ProgressState;
+  readonly cloudEntry?: CloudEntry;
 }
 
 export function PhaserGame({
@@ -17,6 +19,7 @@ export function PhaserGame({
   onGameReady,
   gameEventBus,
   progressState,
+  cloudEntry,
 }: PhaserGameProps): ReactElement {
   const mountRef = useRef<HTMLDivElement>(null);
   const gameRef = useRef<Phaser.Game | null>(null);
@@ -42,6 +45,7 @@ export function PhaserGame({
         parent: mountRef.current,
         gameEventBus,
         progressState,
+        cloudEntry,
         onReady: (readyGame) => {
           gameRef.current = readyGame;
           onGameReadyRef.current?.(readyGame);
@@ -56,7 +60,7 @@ export function PhaserGame({
       gameRef.current?.destroy(true);
       gameRef.current = null;
     };
-  }, [gameEventBus, progressState]);
+  }, [gameEventBus, progressState, cloudEntry]);
 
   return (
     <div

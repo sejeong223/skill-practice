@@ -8,6 +8,9 @@ import {
 } from "../core/constants";
 import type { CustomOutfitDesign, ProgressState, StageId } from "../core/types";
 import type { CheckpointSnapshot } from "../core/runtimeTypes";
+import type { CloudCheckpoint, ResumeState } from "../cloud/contracts";
+import { CLOUD_ENTRY_KEY, CLOUD_RESUME_KEY, CLOUD_RUNTIME_KEY, CLOUD_CHECKPOINT_KEY, CLOUD_PENDING_CHECKPOINT_KEY,
+  restoreCloudCheckpoint, resumeForStage, resumeForSelection, toCloudCheckpoint } from "../cloud/resume";
 import { GameEventBus } from "../bridge/GameEventBus";
 import { CameraDirector } from "../camera/CameraDirector";
 import { AudioManager } from "../audio/AudioManager";
@@ -186,16 +189,23 @@ export class StageScene extends Phaser.Scene {
     const theme = getWorld04StageTheme(stage.id, getWorld03StageTheme(stage.id, getWorld02StageTheme(stage.id,
       getWorld01StageTheme(stage.id, getWorldMapTheme(stage.worldId)))));
     const savedCheckpoint = this.registry.get(WORLD01_CHECKPOINT_SNAPSHOT_KEY) as CheckpointSnapshot | undefined;
+    const cloudResume = this.registry.get(CLOUD_RESUME_KEY) as ResumeState | undefined;
+    const cloudCheckpoint = this.registry.get(CLOUD_CHECKPOINT_KEY) as CloudCheckpoint | null | undefined;
+    const matchingCloudCheckpoint = cloudCheckpoint?.stageId === stage.id && cloudCheckpoint.checkpointId === data.resumeCheckpointId ? cloudCheckpoint : null;
+    if (cloudResume && cloudResume.worldId !== stage.worldId) {
+      this.registry.remove("world02TravelState"); this.registry.remove("world02RunSeed");
+    }
     const world02StageId = isWorld02PlaygroundStageId(stage.id) ? stage.id : null;
     const world02Playground = world02StageId !== null;
     const travelState = readWorld02TravelState(this.registry.get("world02TravelState"));
     const visit = world02StageId ? travelState[world02StageId] : undefined;
     const savedWorld02Seed = this.registry.get("world02RunSeed");
-    const seed = world02Playground ? visit?.seed ??
+    const seed = matchingCloudCheckpoint?.randomSeed ?? (world02Playground ? visit?.seed ??
       (validWorld02Seed(data.seed) ? data.seed : undefined) ??
       (validWorld02Seed(savedWorld02Seed) ? savedWorld02Seed : undefined) ?? Phaser.Math.Between(1, 0x7fffffff)
       : data.seed ?? (savedCheckpoint?.stageId === stage.id &&
-      savedCheckpoint.checkpointId === data.resumeCheckpointId ? savedCheckpoint.randomSeed : undefined) ?? 1;
+      savedCheckpoint.checkpointId === data.resumeCheckpointId ? savedCheckpoint.randomSeed : undefined) ??
+      (cloudResume?.worldId === stage.worldId ? cloudResume.worldSeed : 1));
     if (world02Playground) this.registry.set("world02RunSeed", seed);
     const sharedEventBus = this.registry.get("gameEventBus");
     this.persistenceEventBus = sharedEventBus instanceof GameEventBus
@@ -354,8 +364,11 @@ export class StageScene extends Phaser.Scene {
       this.gameplayEventBus,
       undefined,
       (snapshot) => {
-        this.mapInteraction?.reset(snapshot?.mapSnapshot ?? null);
-        this.gimmickSystem?.reset(snapshot?.mapSnapshot ?? null);
+        const saved = this.registry.get(CLOUD_CHECKPOINT_KEY) as CloudCheckpoint | null | undefined;
+        const restored = saved && snapshot?.checkpointId === saved.checkpointId
+          ? restoreCloudCheckpoint(saved, this.getCheckpointSpawn(saved.checkpointId) ?? saved, this.time.now) : snapshot;
+        this.mapInteraction?.reset(restored?.mapSnapshot ?? null);
+        this.gimmickSystem?.reset(restored?.mapSnapshot ?? null);
         this.runtime?.resetCoins();
       },
       () => this.restartAtWorldCheckpoint(),
@@ -489,7 +502,7 @@ export class StageScene extends Phaser.Scene {
     this.cameraDirector = new CameraDirector(this, this.player, stage);
     this.cameraDirector.followPlayer();
     this.syncSectionCamera();
-    if (world02Playground && visit?.checkpointSnapshot &&
+    if (!matchingCloudCheckpoint && world02Playground && visit?.checkpointSnapshot &&
         this.checkpointSystem.restore(visit.checkpointSnapshot)) {
       const snapshot = visit.checkpointSnapshot.mapSnapshot ?? null;
       this.runtime.setMapSnapshot(snapshot);
@@ -499,19 +512,21 @@ export class StageScene extends Phaser.Scene {
       this.world02PigeonDrops?.resetForAttempt(this.player.x);
     }
     if (data.resumeCheckpointId) {
-      this.restoreCheckpoint(data.resumeCheckpointId);
+      try { this.restoreCheckpoint(data.resumeCheckpointId); }
+      catch (error) {
+        if (!this.registry.get(CLOUD_ENTRY_KEY)) throw error;
+        this.eventBus.emit("cloud-resume-error", { message: "저장된 체크포인트를 불러오지 못했습니다. 서버 저장을 다시 확인해 주세요." });
+        this.physics.world.pause(); this.scene.pause(); return;
+      }
       this.world02PigeonDrops?.resetForAttempt(this.player.x);
       this.world03SteelBeamDrops?.resetForAttempt(this.player.x);
     }
     this.resetWorld04Attempt();
+    this.rememberWorld02Visit();
+    this.updateCloudRuntime(seed);
     this.runtime.start();
     this.eventBus.emit("pause-state-changed", { paused: false });
-    if (data.resumeCheckpointId) {
-      this.eventBus.emit("checkpoint-activated", {
-        stageId: stage.id,
-        checkpointId: data.resumeCheckpointId,
-      });
-    }
+    if (data.resumeCheckpointId || visit?.checkpointSnapshot) this.publishCheckpoint("restored");
     if (stage.id === "world-01-stage-boss") {
       this.calicoSprite = this.add.sprite(1280, 472, "world-01-calico-boss", 0)
         .setDepth(10);
@@ -645,6 +660,10 @@ export class StageScene extends Phaser.Scene {
     this.eventUnsubscribers.push(this.eventBus.on("stage-completed", ({ stageId }) => {
       if (stageId !== this.stageId || this.stageTransitionStarted) return;
       this.rememberWorld02Visit();
+      if (stageId === "world-05-stage-boss" && this.registry.get(CLOUD_RESUME_KEY)) {
+        const resume = this.registry.get(CLOUD_RESUME_KEY) as ResumeState;
+        this.registry.set(CLOUD_RESUME_KEY, { ...resume, completed: true });
+      }
       this.runtime?.setStatus("completed");
       if (stageId === "world-01-stage-boss" || stageId === "world-02-stage-boss" ||
           stageId === "world-03-stage-boss") return;
@@ -759,7 +778,14 @@ export class StageScene extends Phaser.Scene {
           playerName: this.progress.playerName,
         };
       }
-      this.eventBus?.emit("world-selection-committed", { worldId: selection.worldId });
+      const cloud = this.registry.get(CLOUD_RESUME_KEY) as ResumeState | undefined;
+      if (cloud) {
+        const next = resumeForSelection(cloud, selection);
+        this.registry.set(CLOUD_RESUME_KEY, next.resume);
+        this.registry.set(CLOUD_CHECKPOINT_KEY, next.resume.checkpoint);
+        this.registry.set(CLOUD_PENDING_CHECKPOINT_KEY, next.pendingCheckpointId);
+      }
+      this.eventBus?.emit("world-selection-committed", { worldId: selection.worldId, selection });
       this.setPaused(false);
       this.scene.start("StageScene", target);
     }));
@@ -1247,8 +1273,13 @@ export class StageScene extends Phaser.Scene {
     const spawn = this.getCheckpointSpawn(checkpointId);
     if (!spawn) throw new Error("복원할 체크포인트를 찾을 수 없습니다: " + checkpointId);
     const saved = this.registry.get(WORLD01_CHECKPOINT_SNAPSHOT_KEY) as CheckpointSnapshot | undefined;
-    const restored = saved?.stageId === this.stageId && saved.checkpointId === checkpointId &&
-      this.checkpointSystem.restore({ ...saved, x: spawn.x, y: spawn.y });
+    const cloud = this.registry.get(CLOUD_CHECKPOINT_KEY) as CloudCheckpoint | null | undefined;
+    const cloudMode = Boolean(this.registry.get(CLOUD_ENTRY_KEY));
+    if (cloudMode && !(cloud?.stageId === this.stageId && cloud.checkpointId === checkpointId) &&
+        this.registry.get(CLOUD_PENDING_CHECKPOINT_KEY) !== checkpointId) throw new Error("서버 체크포인트를 찾을 수 없습니다.");
+    const restored = cloudMode && cloud?.stageId === this.stageId && cloud.checkpointId === checkpointId
+      ? this.checkpointSystem.restore(restoreCloudCheckpoint(cloud, spawn, this.time.now))
+      : saved?.stageId === this.stageId && saved.checkpointId === checkpointId && this.checkpointSystem.restore({ ...saved, x: spawn.x, y: spawn.y });
     if (!restored) {
       this.checkpointSystem.activate(checkpointId, spawn.x, spawn.y, 1, this.time.now, { silent: true });
     }
@@ -1345,10 +1376,33 @@ export class StageScene extends Phaser.Scene {
       this.registry.set(WORLD01_CHECKPOINT_SNAPSHOT_KEY, structuredClone(this.checkpointSystem.getSnapshot()));
     }
     this.mapInteraction?.triggerObject(checkpointId, "checkpoint-reached");
-    this.eventBus?.emit("checkpoint-activated", {
-      stageId: this.stageId,
-      checkpointId,
-    });
+    this.rememberWorld02Visit();
+    this.publishCheckpoint("reached");
+  }
+
+  private publishCheckpoint(origin: "reached" | "restored"): void {
+    const snapshot = this.checkpointSystem?.getSnapshot();
+    if (!snapshot) return;
+    const cloudSnapshot = toCloudCheckpoint(snapshot, this.time.now);
+    const resume = this.registry.get(CLOUD_RESUME_KEY) as ResumeState | undefined;
+    if (resume && (origin === "reached" || this.registry.get(CLOUD_PENDING_CHECKPOINT_KEY) === snapshot.checkpointId)) {
+      const next: ResumeState = { ...resume, stageId: this.stageId, checkpoint: cloudSnapshot, worldSeed: cloudSnapshot.randomSeed,
+        world02Travel: resume.worldId === "world-02" ? readWorld02TravelState(this.registry.get("world02TravelState")) : {} };
+      this.registry.set(CLOUD_RESUME_KEY, next); this.registry.set(CLOUD_CHECKPOINT_KEY, cloudSnapshot);
+      this.registry.remove(CLOUD_PENDING_CHECKPOINT_KEY);
+      this.eventBus?.emit("cloud-resume-changed", { resume: structuredClone(next) });
+    }
+    this.eventBus?.emit("checkpoint-activated", { stageId: this.stageId, checkpointId: snapshot.checkpointId, origin, snapshot: cloudSnapshot });
+  }
+
+  private updateCloudRuntime(seed: number): void {
+    const previous = this.registry.get(CLOUD_RESUME_KEY) as ResumeState | undefined;
+    if (!previous) return;
+    const travel = readWorld02TravelState(this.registry.get("world02TravelState"));
+    const next = resumeForStage(previous, this.stageId, seed, travel);
+    this.registry.set(CLOUD_RESUME_KEY, next); this.registry.set(CLOUD_CHECKPOINT_KEY, next.checkpoint);
+    this.registry.set(CLOUD_RUNTIME_KEY, { seed, world02Travel: next.world02Travel });
+    this.eventBus?.emit("cloud-resume-changed", { resume: structuredClone(next) });
   }
 
   private rememberWorld02Visit(): void {
@@ -1359,6 +1413,12 @@ export class StageScene extends Phaser.Scene {
       current, this.stageId, this.runtime.runtimeState.randomSeed,
       snapshot?.stageId === this.stageId ? snapshot : null,
     ));
+    const resume = this.registry.get(CLOUD_RESUME_KEY) as ResumeState | undefined;
+    if (resume?.worldId === "world-02") {
+      const world02Travel = readWorld02TravelState(this.registry.get("world02TravelState"));
+      this.registry.set(CLOUD_RESUME_KEY, { ...resume, world02Travel });
+      this.registry.set(CLOUD_RUNTIME_KEY, { seed: this.runtime.runtimeState.randomSeed, world02Travel });
+    }
   }
 
   private getCheckpointSpawn(checkpointId: string): { x: number; y: number } | undefined {

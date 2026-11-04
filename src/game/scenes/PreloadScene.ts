@@ -9,6 +9,8 @@ import { getSelectedWorldResume } from "../systems/worldSelection";
 import { getDevelopmentWorld03Entry } from "../systems/developmentWorld03Start";
 import { getWorld03Entry } from "../systems/world03IntroRouting";
 import { getWorld04Entry } from "../systems/world04IntroRouting";
+import { CLOUD_ENTRY_KEY, cloudEntryRoute, type CloudEntry } from "../cloud/resume";
+import type { GameEventBus } from "../bridge/GameEventBus";
 
 export class PreloadScene extends Phaser.Scene {
   private loadError: string | null = null;
@@ -73,6 +75,15 @@ export class PreloadScene extends Phaser.Scene {
 
   public create(): void {
     const progress = this.registry.get("progressState") as ProgressState | undefined;
+    const cloudEntry = this.registry.get(CLOUD_ENTRY_KEY) as CloudEntry | undefined;
+    if (!this.loadError && cloudEntry) {
+      const entry = cloudEntryRoute(cloudEntry);
+      if (entry.sceneKey === "ending") {
+        (this.registry.get("gameEventBus") as GameEventBus).emit("ending-finished", { cutsceneId: "ending-homecoming" });
+        this.scene.stop();
+      } else this.scene.start(entry.sceneKey, entry.data);
+      return;
+    }
     if (!this.loadError && progress) {
       const developmentEntry = getDevelopmentWorld03Entry(
         progress,

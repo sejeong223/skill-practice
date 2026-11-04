@@ -1,6 +1,6 @@
 # Task: T03 전 월드 체크포인트 스냅샷과 재개 경로
 
-## Status: pending
+## Status: done
 
 ## Goal
 
@@ -141,9 +141,9 @@ interface ApiErrorBody { error:{code:ApiErrorCode;message:string;retryAfterMs:nu
 
 ## Acceptance Criteria
 
-- [ ] 모든 월드의 재개 snapshot이 JSON round-trip과 실제 엔트리 선택을 통과한다.
-- [ ] 복원·개발 점프가 정상 달성 이벤트를 만들지 않는다.
-- [ ] 기존 게임·키 입력·저장 경로의 관련 회귀 검증이 통과한다.
+- [x] 모든 월드의 재개 snapshot이 JSON round-trip과 실제 엔트리 선택을 통과한다.
+- [x] 복원·개발 점프가 정상 달성 이벤트를 만들지 않는다.
+- [x] 기존 게임·키 입력·저장 경로의 관련 회귀 검증이 통과한다.
 
 ## Validation
 
@@ -167,8 +167,10 @@ Task: T03-resume-bridge
 
 ## Progress
 
-- [ ] 구현 완료
-- [ ] 검증 통과
-- commit: pending
-- 검증 결과·미실행 수동 확인: 실행 시 기록
+- W2 후퇴에서 방문했던 이전 CP 복원은 서버가 저장한 world02Travel의 CP와 대조하고 현재 월드의 마지막 CP/best를 그대로 유지하도록 P01 transitions의 restored 분기를 보완했다. 해당 서버 회귀 사례도 추가했다.
+- cloudEntryRoute는 PreloadScene이 직접 사용하는 순수 분기이며, 실제 Preload.create/StageScene.restoreCheckpoint/updateCloudRuntime를 렌더링 대역으로 호출해 연결을 검증한다. 실제 브라우저 프레임·물리·입력은 P03 사용자 확인 대상으로 남긴다.
+- [x] 구현 완료
+- [x] 검증 통과
+- commit: 이 Task의 Plan/Phase/Task 트레일러 커밋으로 조회
+- 검증 결과: 재개·진행·개발 경로·저장·기존 CP 회귀 56/56, TypeScript·전체 린트·Next 빌드 및 API 타입·빌드 통과. 실제 게임 조작은 P03 수동 확인 대상. 기존 미커밋 파일은 3-way 선별 스테이징으로 보존.
 

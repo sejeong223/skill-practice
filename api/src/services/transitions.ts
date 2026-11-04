@@ -61,7 +61,8 @@ export function applySaveEvent(current: CurrentState, event: SaveEvent, next: Pr
   if (event.kind === "checkpoint") {
     const snapshot = event.snapshot;
     if (event.origin === "restored" && current.pendingCheckpointId !== snapshot.checkpointId) {
-      if (current.resume.checkpoint?.checkpointId !== snapshot.checkpointId) invalid();
+      const visited = isWorld02PlaygroundStageId(event.stageId) ? current.resume.world02Travel[event.stageId]?.checkpointSnapshot : null;
+      if (current.resume.checkpoint?.checkpointId !== snapshot.checkpointId && visited?.checkpointId !== snapshot.checkpointId) invalid();
       return result; // A restore cannot change the saved achievement or its random state.
     }
     if (event.origin === "reached" && current.pendingCheckpointId) invalid();

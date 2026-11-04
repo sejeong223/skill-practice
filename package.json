@@ -17,6 +17,7 @@
     "test:api-ranking": "node --import tsx --test scripts/api-ranking.test.mjs",
     "test:cloud-auth": "node --import tsx --test scripts/cloud-auth.test.mjs",
     "test:cloud-save-client": "node --import tsx --test scripts/cloud-save-client.test.mjs",
+    "test:cloud-resume": "node --import tsx --test scripts/cloud-resume.test.mjs",
     "world01:maps": "node scripts/world01-maps.mjs",
     "world01:maps:check": "node scripts/world01-maps.mjs --check"
   },
