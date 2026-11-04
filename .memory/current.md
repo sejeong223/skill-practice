@@ -10,11 +10,11 @@
 
 ## Active Task
 
-[T04 원자적 저장·최고 기록·회차 초기화](./phases/2026-11-04-entra-login-cloud-save-leaderboard/P01-cloud-api/T04-save-reset.md)
+[T05 한국어 동점 정렬 TOP 10 API](./phases/2026-11-04-entra-login-cloud-save-leaderboard/P01-cloud-api/T05-leaderboard.md)
 
 ## Status
 
-- MEA 실행: 2/14 완료. 최근 P01-cloud-api/T02-api-auth: 인증 22/22(Node22 포함), API npm ci·타입·빌드, 루트 타입·린트 통과. 실제 Entra 로그인은 P03에서 확인.
+- MEA 실행: 4/14 완료. 최근 P01-cloud-api/T04-save-reset: 계약·세션·저장 55/55, API 타입·빌드와 전체 린트 통과. 저장 재전송·초기화·접속 전환·월드별 복원 경계 검증; 실제 Azure 호출은 P03에서 확인.
 - 확정 결정: [2026-11-04 로그인·저장·랭킹](./decisions/2026-11-04-entra-login-cloud-save-leaderboard.md).
 - computer-use 금지. 필요한 Azure 포털 확인·대화형 로그인·비밀 설정은 사용자에게 경로를 안내한다. 대상 구독 접근과 실제 ID·자격 증명 준비는 P03-T01에서 확인한다.
 - 기존 공용 Cosmos 계정 안에 게임 DB만 추가한다. 다른 DB·컨테이너·계정 설정을 변경하지 않는다. 새 컨테이너 전용 manual 400 RU/s, SWA Free, GitHub 수동 배포를 유지한다.
@@ -24,7 +24,7 @@
 
 ## Next Step (IMPORTANT)
 
-MEA 자동 연속 실행: P01-cloud-api/T04-save-reset 청사진을 읽고 구현·검증·선별 커밋한다. 남은 Task를 계속 실행하며 기존 미커밋 변경은 보존한다.
+MEA 자동 연속 실행: P01-cloud-api/T05-leaderboard 청사진을 읽고 구현·검증·선별 커밋한다. 남은 Task를 계속 실행하며 기존 미커밋 변경은 보존한다.
 
 ## Previous Active Plan
 

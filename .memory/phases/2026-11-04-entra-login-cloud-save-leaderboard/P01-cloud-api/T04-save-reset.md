@@ -1,6 +1,6 @@
 # Task: T04 원자적 저장·최고 기록·회차 초기화
 
-## Status: pending
+## Status: done
 
 ## Goal
 
@@ -178,9 +178,9 @@ interface ProgressState {
 
 ## Acceptance Criteria
 
-- [ ] current·best·fence·receipt가 단일 batch로 확정된다.
-- [ ] 초기화·지연·동시 요청에도 최고 기록의 위치·데스 조합을 보존한다.
-- [ ] 아래 검증이 통과하고 기존 작업 변경을 보존한다.
+- [x] current·best·fence·receipt가 단일 batch로 확정된다.
+- [x] 초기화·지연·동시 요청에도 최고 기록의 위치·데스 조합을 보존한다.
+- [x] 아래 검증이 통과하고 기존 작업 변경을 보존한다.
 
 ## Validation
 
@@ -204,8 +204,8 @@ Task: T04-save-reset
 
 ## Progress
 
-- [ ] 구현 완료
-- [ ] 검증 통과
-- commit: pending
-- 검증 결과·미실행 외부 확인: 실행 시 기록
+- [x] 구현 완료
+- [x] 검증 통과
+- commit: 이 Task의 Plan/Phase/Task 트레일러 커밋으로 조회
+- 검증 결과: 계약·세션·저장 55/55, API 타입·빌드와 전체 린트 통과. 저장 재전송·초기화·접속 전환·월드별 복원 경계 검증; 실제 Azure 호출은 P03에서 확인.
 

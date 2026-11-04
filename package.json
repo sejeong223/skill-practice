@@ -13,6 +13,7 @@
     "typecheck:api": "tsc -p api/tsconfig.json",
     "test:api-auth": "node --import tsx --test scripts/api-auth.test.mjs",
     "test:api-session": "node --import tsx --test scripts/api-session.test.mjs",
+    "test:api-save": "node --import tsx --test scripts/api-save.test.mjs",
     "world01:maps": "node scripts/world01-maps.mjs",
     "world01:maps:check": "node scripts/world01-maps.mjs --check"
   },
