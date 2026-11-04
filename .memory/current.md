@@ -10,12 +10,13 @@
 
 ## Active Task
 
-[T01 MSAL 로그인과 계정 진입 게이트](./phases/2026-11-04-entra-login-cloud-save-leaderboard/P02-game-integration/T01-auth-gate.md)
+[T02 계정 캐시와 순차 저장·복구 클라이언트](./phases/2026-11-04-entra-login-cloud-save-leaderboard/P02-game-integration/T02-save-client.md)
 
 ## Status
 
-- MEA 실행: 5/14 완료. 최근 P01-cloud-api/T05-leaderboard: 랭킹·저장 29/29, API 타입·빌드 및 전체 린트 통과. 150명 동점·210행 페이지 조회·실패 재조회·개인정보 제거 검증. 실제 Cosmos RU/응답 시간은 배포 후 확인.
+- MEA 실행: 6/14 완료. 최근 P02-game-integration/T01-auth-gate: 認証
 - 확정 결정: [2026-11-04 로그인·저장·랭킹](./decisions/2026-11-04-entra-login-cloud-save-leaderboard.md).
+- MSAL 5 호환 보완(P02-T01): root 로그인 복귀 주소 외에 silent 갱신용 `<origin>/auth/redirect/` SPA URI도 P03에서 등록한다. 해당 정적 경로에 `Cache-Control:no-store`, COOP 없음이 필요하다. 구체 근거는 P02-T01 Progress.
 - computer-use 금지. 필요한 Azure 포털 확인·대화형 로그인·비밀 설정은 사용자에게 경로를 안내한다. 대상 구독 접근과 실제 ID·자격 증명 준비는 P03-T01에서 확인한다.
 - 기존 공용 Cosmos 계정 안에 게임 DB만 추가한다. 다른 DB·컨테이너·계정 설정을 변경하지 않는다. 새 컨테이너 전용 manual 400 RU/s, SWA Free, GitHub 수동 배포를 유지한다.
 - 사용자 지시: 별도 테스트 폴더·test-plans 문서를 만들지 않는다. 자동 검증 파일은 기존 scripts/ 바로 아래에, 검증 결과는 해당 Task의 Progress에 기록한다.
@@ -24,7 +25,7 @@
 
 ## Next Step (IMPORTANT)
 
-MEA 자동 연속 실행: P02-game-integration/T01-auth-gate 청사진을 읽고 구현·검증·선별 커밋한다. 남은 Task를 계속 실행하며 기존 미커밋 변경은 보존한다.
+MEA 자동 연속 실행: P02-game-integration/T02-save-client 청사진을 읽고 구현·검증·선별 커밋한다. 남은 Task를 계속 실행하며 기존 미커밋 변경은 보존한다.
 
 ## Previous Active Plan
 

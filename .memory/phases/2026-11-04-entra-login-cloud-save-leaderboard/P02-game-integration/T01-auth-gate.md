@@ -1,6 +1,6 @@
 # Task: T01 MSAL 로그인과 계정 진입 게이트
 
-## Status: pending
+## Status: done
 
 ## Goal
 
@@ -139,9 +139,9 @@ interface ApiErrorBody { error:{code:ApiErrorCode;message:string;retryAfterMs:nu
 
 ## Acceptance Criteria
 
-- [ ] 목표 조직 토큰 흐름과 오류 의미를 재사용 가능한 모듈로 제공한다.
-- [ ] 새 인증 모듈 추가가 기존 개발 게임·저장 동작을 먼저 바꾸지 않는다.
-- [ ] 기존 게임·키 입력·저장 경로의 관련 회귀 검증이 통과한다.
+- [x] 목표 조직 토큰 흐름과 오류 의미를 재사용 가능한 모듈로 제공한다.
+- [x] 새 인증 모듈 추가가 기존 개발 게임·저장 동작을 먼저 바꾸지 않는다.
+- [x] 기존 게임·키 입력·저장 경로의 관련 회귀 검증이 통과한다.
 
 ## Validation
 
@@ -165,8 +165,10 @@ Task: T01-auth-gate
 
 ## Progress
 
-- [ ] 구현 완료
-- [ ] 검증 통과
-- commit: pending
-- 검증 결과·미실행 수동 확인: 실행 시 기록
+- SDK 호환 보완: MSAL Browser 5.27.0의 silent iframe 갱신은 redirect bridge가 필요하므로 `src/app/auth/redirect/page.tsx`와 `AuthController.ts`, DOM 검증 도우미를 추가했다. 명시 로그인 root URI는 유지하고 acquireTokenSilent에만 `/auth/redirect/`를 지정한다. P03에서는 이 SPA URI도 등록하고 해당 정적 경로는 COOP 없이 Cache-Control:no-store로 제공한다. 근거: [Microsoft MSAL 5 migration](https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-browser/docs/v4-migration.md#cross-origin-opener-policy-coop-support).
+- API 401 재시도를 위해 `getAccessToken(forceRefresh?:boolean)` 및 `GameApiClient`의 선택적 재로그인 콜백을 추가했다. 응답 시점 계정 epoch와 AbortSignal을 검사해 이전 계정의 늦은 응답을 폐기한다.
+- [x] 구현 완료
+- [x] 검증 통과
+- commit: 이 Task의 Plan/Phase/Task 트레일러 커밋으로 조회
+- 검증 결과: 認証
 
