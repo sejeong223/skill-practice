@@ -5,6 +5,7 @@ import type { BossVictoryStageId } from "../data/bossVictoryPresentation";
 import type { CloudCheckpoint, ResumeState } from "../cloud/contracts";
 
 export interface StageEventMap {
+  "leaderboard-state-changed": { open: boolean };
   "boss-feedback-changed": BossFeedbackSnapshot;
   "world-selection-requested": WorldSelectionRequest;
   "world-selection-committed": { worldId: SelectableWorldId; selection: WorldSelectionRequest };

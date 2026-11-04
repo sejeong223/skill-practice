@@ -687,6 +687,7 @@ export class StageScene extends Phaser.Scene {
       });
     }));
     this.eventUnsubscribers.push(this.eventBus.pauseReasons.subscribe(() => this.setPaused(false)));
+    this.eventUnsubscribers.push(this.eventBus.on("leaderboard-state-changed", () => { this.menuPauseGuard = true; }));
     this.eventUnsubscribers.push(this.eventBus.on("shop-state-changed", ({ open }) => {
       this.shopOpen = open;
       this.menuPauseGuard = true;

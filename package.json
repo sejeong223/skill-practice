@@ -20,7 +20,8 @@
     "test:cloud-resume": "node --import tsx --test scripts/cloud-resume.test.mjs",
     "world01:maps": "node scripts/world01-maps.mjs",
     "world01:maps:check": "node scripts/world01-maps.mjs --check",
-    "test:cloud-game": "node --import tsx --test scripts/cloud-game.test.mjs"
+    "test:cloud-game": "node --import tsx --test scripts/cloud-game.test.mjs",
+    "test:ranking-ui": "node --import tsx --test scripts/ranking-ui.test.mjs"
   },
   "dependencies": {
     "@azure/msal-browser": "^5.27.0",

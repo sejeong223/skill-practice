@@ -23,12 +23,14 @@ export interface GameOverlayProps {
   readonly onOpenShop: () => void;
   readonly onOpenCatalog: () => void;
   readonly onOpenPaint: () => void;
+  readonly onOpenLeaderboard: () => void;
+  readonly leaderboardEnabled: boolean;
   readonly onEquip: (tool: ToolDefinition) => void;
   readonly onKeybindChange: (action: InputAction, key: string) => void;
   readonly onToggleStatus: () => void;
 }
 
-export function GameOverlay({ stageTitle, runtime, progress, skills, tools, cooldowns, bossHearts, alive, statusOpen, paused, onTogglePause, onResetProgress, worldSelectUnlocked, onOpenWorldSelect, onOpenShop, onOpenCatalog, onOpenPaint, onEquip, onKeybindChange, onToggleStatus }: GameOverlayProps): ReactElement {
+export function GameOverlay({ stageTitle, runtime, progress, skills, tools, cooldowns, bossHearts, alive, statusOpen, paused, onTogglePause, onResetProgress, worldSelectUnlocked, onOpenWorldSelect, onOpenShop, onOpenCatalog, onOpenPaint, onOpenLeaderboard, leaderboardEnabled, onEquip, onKeybindChange, onToggleStatus }: GameOverlayProps): ReactElement {
   const attackTool = tools.find((tool) => tool.id === progress.equippedAttackToolId);
   const defenseTool = tools.find((tool) => tool.id === progress.equippedDefenseToolId);
   return (
@@ -51,6 +53,8 @@ export function GameOverlay({ stageTitle, runtime, progress, skills, tools, cool
         onOpenShop={onOpenShop}
         onOpenCatalog={onOpenCatalog}
         onOpenPaint={onOpenPaint}
+        onOpenLeaderboard={onOpenLeaderboard}
+        leaderboardEnabled={leaderboardEnabled}
       />
       {statusOpen && (
         <div className="overlay-columns">

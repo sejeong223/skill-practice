@@ -1,6 +1,6 @@
 # Task: T05 랭킹 메뉴와 접근 가능한 TOP 10 대화상자
 
-## Status: pending
+## Status: done
 
 ## Goal
 
@@ -125,9 +125,9 @@ interface ApiErrorBody { error:{code:ApiErrorCode;message:string;retryAfterMs:nu
 
 ## Acceptance Criteria
 
-- [ ] 메뉴에서 실데이터 TOP10을 상태별로 표시하고 개인정보를 노출하지 않는다.
-- [ ] 대화상자 닫기와 재시도가 저장·세션 정지를 풀지 않는다.
-- [ ] 기존 게임·키 입력·저장 경로의 관련 회귀 검증이 통과한다.
+- [x] 메뉴에서 실데이터 TOP10을 상태별로 표시하고 개인정보를 노출하지 않는다.
+- [x] 대화상자 닫기와 재시도가 저장·세션 정지를 풀지 않는다.
+- [x] 기존 게임·키 입력·저장 경로의 관련 회귀 검증이 통과한다.
 
 ## Validation
 
@@ -151,8 +151,13 @@ Task: T05-ranking-ui
 
 ## Progress
 
-- [ ] 구현 완료
-- [ ] 검증 통과
-- commit: pending
-- 검증 결과·미실행 수동 확인: 실행 시 기록
+- 서버 순서를 유지하는 semantic TOP 10 table, 로딩/빈 기록/권한·요청 제한·연결 오류/재시도를 구현했다. 응답을 다시 검증하여 11행·추가 개인정보 필드를 거절하고 이름은 React text로만 표시한다.
+- body 포털로 모달을 렌더하고 게임 배경은 inert 처리한다. 초기 닫기 focus, Tab 순환, Escape, 원래 버튼 복귀, abort와 늦은 응답 무시를 검증했다. 강제 정지 발생 시 모달 입력을 막고 상위 연결 안내를 사용한다.
+- 기존 상점과 같은 Escape 처리 충돌을 막기 위해 StageScene에 leaderboard-state-changed 입력 guard를 추가했다. close는 leaderboard 이유만 제거한다. local-dev 랭킹 버튼은 비활성이고 API 호출은 없다.
+- 긴 이름/위치의 줄바꿈, 작은 화면의 상태·랭킹 버튼 별도 행을 CSS로 반영했다. 실제 320px·모바일·키보드/포커스 육안 확인은 computer-use 금지에 따라 P03 사용자 수동 확인으로 남긴다. HUD·CSS·StageScene의 기존 변경은 선별 스테이징으로 보존했다.
+
+- [x] 구현 완료
+- [x] 검증 통과
+- commit: 이 Task의 Plan/Phase/Task 트레일러 커밋으로 조회
+- 검증 결과: 랭킹·게임 통합·기존 메뉴 27/27, 변경 후 랭킹 7/7 재검증, TypeScript·린트·Next 빌드 통과. 실제 320px/모바일/브라우저 포커스는 P03 사용자 수동 확인 대상.
 

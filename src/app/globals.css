@@ -674,3 +674,31 @@ form { display: flex; gap: 6px; margin-top: 10px; } form input { min-width: 0; f
 .cloud-blocker p { margin-bottom: 18px; line-height: 1.7; }
 .cloud-save-status { position: fixed; bottom: 8px; left: 12px; z-index: 200; padding: 5px 10px; border-radius: 8px; background: #211b16eb; color: #fff3d6; font-size: 12px; pointer-events: none; }
 .cloud-logout { position: fixed; right: 12px; bottom: 8px; z-index: 201; }
+
+.hud-account-actions { position: absolute; top: 56px; left: 16px; max-width: calc(100% - 32px); display: flex; align-items: center; flex-wrap: wrap; gap: 6px; }
+.leaderboard-open-button { white-space: nowrap; }
+.leaderboard-open-button:disabled { opacity: .65; cursor: default; }
+.game-page:has(.game-shell[data-leaderboard-open="true"]) .cloud-logout { visibility: hidden; }
+.leaderboard-overlay { position: fixed; inset: 0; z-index: 9000; display: grid; place-items: center; padding: 16px; background: rgb(39 35 49 / 80%); }
+.leaderboard-dialog { width: min(100%, 680px); max-height: calc(100svh - 32px); overflow: auto; padding: 24px; border: 3px solid #f0b95f; background: #fff8e5; color: #5f3942; font-family: "Galmuri11Pixel", monospace; }
+.leaderboard-dialog header { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.leaderboard-dialog header .intro-title-kicker { margin-bottom: 6px; color: #8b5a56; }
+.leaderboard-dialog h2 { margin: 0; font-size: clamp(20px, 4vw, 28px); }
+.leaderboard-dialog #leaderboard-description { margin: 18px 0; font-size: 12px; line-height: 1.7; }
+.leaderboard-dialog table { width: 100%; table-layout: fixed; border-collapse: collapse; font-size: 13px; }
+.leaderboard-dialog .rank-column { width: 12%; } .leaderboard-dialog .deaths-column { width: 17%; } .leaderboard-dialog .location-column { width: 36%; }
+.leaderboard-dialog th, .leaderboard-dialog td { padding: 12px 6px; border-bottom: 1px solid #c69a6d; overflow-wrap: anywhere; text-align: left; line-height: 1.6; }
+.leaderboard-dialog thead th { background: #e8cda0; }
+.leaderboard-dialog td:first-child, .leaderboard-dialog td:nth-child(3) { font-variant-numeric: tabular-nums; }
+.leaderboard-message { min-height: 140px; display: grid; place-content: center; gap: 14px; text-align: center; line-height: 1.7; }
+.leaderboard-dialog button:focus-visible { outline: 3px solid #5f3942; outline-offset: 3px; }
+@media (max-width: 720px) {
+  .game-overlay .hud-account-actions { position: absolute; top: 96px; left: 8px; max-width: calc(100% - 16px); }
+  .game-overlay .hud-account-actions .status-menu-button { position: static; }
+}
+@media (max-width: 480px) {
+  .leaderboard-overlay { padding: 8px; }
+  .leaderboard-dialog { padding: 12px 8px; max-height: calc(100svh - 16px); }
+  .leaderboard-dialog table { font-size: 11px; }
+  .leaderboard-dialog th, .leaderboard-dialog td { padding: 10px 4px; }
+}

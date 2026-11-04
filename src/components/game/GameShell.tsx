@@ -31,6 +31,7 @@ import { BossCombatOverlay } from "./BossCombatOverlay";
 import { ShopPanel } from "./ShopPanel";
 import { OwnedItemCatalogDialog } from "./OwnedItemCatalogDialog";
 import { CustomOutfitPaintDialog } from "./CustomOutfitPaintDialog";
+import { LeaderboardDialog } from "./LeaderboardDialog";
 import { EndingOverlay } from "./EndingOverlay";
 import type { CloudGameSession } from "./GameEntry";
 import type { SaveEvent } from "@/game/cloud/contracts";
@@ -87,6 +88,7 @@ export function GameShell({ initialStageId, onExit, cloud, onCloudObservation, o
   const [resetPending, setResetPending] = useState(false);
   const [resetError, setResetError] = useState<string | null>(null);
   const [worldSelectOpen, setWorldSelectOpen] = useState(false);
+  const [leaderboardOpen, setLeaderboardOpen] = useState(false);
   const [shopOpen, setShopOpen] = useState(false);
   const [catalogOpen, setCatalogOpen] = useState(false);
   const [paintOpen, setPaintOpen] = useState(false);
@@ -98,7 +100,7 @@ export function GameShell({ initialStageId, onExit, cloud, onCloudObservation, o
   const [introGateStep, setIntroGateStep] = useState<"intro" | "title" | "ready">("intro");
   const menuAvailable = canOpenSharedMenu({
     stageId: activeStageId, mode, introReady: introGateStep === "ready", paused,
-    shopOpen, catalogOpen, paintOpen, worldSelectOpen, resetProgressDialogOpen,
+    shopOpen, catalogOpen, paintOpen, worldSelectOpen, resetProgressDialogOpen, leaderboardOpen,
   });
 
   useEffect(() => {
@@ -434,12 +436,28 @@ export function GameShell({ initialStageId, onExit, cloud, onCloudObservation, o
     eventBus.emit("world-selection-requested", selection);
   }, [eventBus]);
 
+  const handleOpenLeaderboard = useCallback(() => {
+    if (!cloud || !menuAvailable) return;
+    setStatusOpen(false); setLeaderboardOpen(true);
+    eventBus.pauseReasons.set("leaderboard", true);
+    eventBus.emit("leaderboard-state-changed", { open: true });
+  }, [cloud, menuAvailable, eventBus]);
+  const handleCloseLeaderboard = useCallback(() => {
+    setLeaderboardOpen(false);
+    eventBus.emit("leaderboard-state-changed", { open: false });
+    eventBus.pauseReasons.set("leaderboard", false);
+  }, [eventBus]);
+  const loadLeaderboard = useCallback((signal: AbortSignal) => {
+    if (!cloud) return Promise.reject(new Error("개발 모드에서는 랭킹을 조회하지 않습니다."));
+    return cloud.api.leaderboard(signal);
+  }, [cloud]);
+
   const stage = getStageDefinition(activeStageId);
   const worldSelectUnlocked = isWorldSelectionUnlocked(progress) &&
     (activeStageId.startsWith("world-01-") || activeStageId.startsWith("world-02-"));
   const currentWorldId: SelectableWorldId = activeStageId.startsWith("world-02-") ? "world-02" : "world-01";
   return (
-    <div className="game-shell" inert={hasForcedPause(new Set([...reasons].filter(reason => reason !== "reset")))}>
+    <div className="game-shell" data-leaderboard-open={leaderboardOpen} inert={leaderboardOpen || hasForcedPause(new Set([...reasons].filter(reason => reason !== "reset")))}>
       <div className="game-content-frame">
         <BossCombatOverlay eventBus={eventBus} stageId={activeStageId} barkKeybind={progress.keybinds.bark}
           biteKeybind={progress.keybinds.bite}
@@ -449,7 +467,7 @@ export function GameShell({ initialStageId, onExit, cloud, onCloudObservation, o
         <GameEventBridge eventBus={eventBus} onEvent={handleEvent} />
         <CutsceneOverlay eventBus={eventBus} onSkip={() => eventBus.emit("cutscene-skip-requested", {})} />
         {introGateStep === "title" && <IntroTitleOverlay initialName={progress.playerName} onConfirm={handleNameConfirm} />}
-        {introGateStep === "ready" && mode !== "stage-clear" && mode !== "ending" && !worldEntranceActive && <GameOverlay stageTitle={stage.title} runtime={runtime} progress={progress} skills={SKILL_DEFINITIONS} tools={TOOL_DEFINITIONS} cooldowns={{}} bossHearts={stage.kind === "boss" ? bossHearts : undefined} alive={mode !== "dead" && mode !== "cutscene"} statusOpen={statusOpen} onEquip={handleEquip} onKeybindChange={handleKeybindChange} onToggleStatus={() => setStatusOpen((open) => !open)} paused={paused} onTogglePause={() => eventBus.emit("pause-requested", { paused: !paused })} onResetProgress={() => { setResetProgressDialogOpen(true); eventBus.pauseReasons.set("reset", true); }} worldSelectUnlocked={worldSelectUnlocked} onOpenWorldSelect={handleOpenWorldSelect} onOpenShop={handleOpenShop} onOpenCatalog={handleOpenCatalog} onOpenPaint={handleOpenPaint} />}
+        {introGateStep === "ready" && mode !== "stage-clear" && mode !== "ending" && !worldEntranceActive && <GameOverlay stageTitle={stage.title} runtime={runtime} progress={progress} skills={SKILL_DEFINITIONS} tools={TOOL_DEFINITIONS} cooldowns={{}} bossHearts={stage.kind === "boss" ? bossHearts : undefined} alive={mode !== "dead" && mode !== "cutscene"} statusOpen={statusOpen} onEquip={handleEquip} onKeybindChange={handleKeybindChange} onToggleStatus={() => setStatusOpen((open) => !open)} paused={paused} onTogglePause={() => eventBus.emit("pause-requested", { paused: !paused })} onResetProgress={() => { setResetProgressDialogOpen(true); eventBus.pauseReasons.set("reset", true); }} worldSelectUnlocked={worldSelectUnlocked} onOpenWorldSelect={handleOpenWorldSelect} onOpenShop={handleOpenShop} onOpenCatalog={handleOpenCatalog} onOpenPaint={handleOpenPaint} onOpenLeaderboard={handleOpenLeaderboard} leaderboardEnabled={Boolean(cloud)} />}
         {mode === "ending" && <EndingOverlay onReplayWorld01={() => handleSelectWorld({ worldId: "world-01", point: "start" })} />}
         {reasons.has("manual") && !forced && introGateStep === "ready" && !worldSelectOpen && !shopOpen && !catalogOpen && !paintOpen && <PauseOverlay onResume={() => eventBus.emit("pause-requested", { paused: false })} />}
         {shopOpen && <ShopPanel bankedCoins={progress.bankedCoins} products={MARKET_PRODUCTS} progress={progress}
@@ -457,6 +475,7 @@ export function GameShell({ initialStageId, onExit, cloud, onCloudObservation, o
         {catalogOpen && <OwnedItemCatalogDialog progress={progress} entries={getOwnedCatalogEntries(progress)}
           onEquip={handleCatalogEquip} onUnequip={handleCatalogUnequip} onClose={handleCloseCatalog} />}
         {paintOpen && <CustomOutfitPaintDialog designs={progress.customOutfits} onSave={handleSaveCustomOutfit} onClose={handleClosePaint} />}
+        {leaderboardOpen && <LeaderboardDialog load={loadLeaderboard} onClose={handleCloseLeaderboard} blocked={forced} />}
         {worldSelectOpen && (
           <WorldSelectDialog
             currentWorldId={currentWorldId}

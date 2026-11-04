@@ -22,6 +22,8 @@ export interface HudProps {
   readonly onOpenShop: () => void;
   readonly onOpenCatalog: () => void;
   readonly onOpenPaint: () => void;
+  readonly onOpenLeaderboard: () => void;
+  readonly leaderboardEnabled: boolean;
 }
 
 export function Hud({
@@ -40,6 +42,8 @@ export function Hud({
   onOpenShop,
   onOpenCatalog,
   onOpenPaint,
+  onOpenLeaderboard,
+  leaderboardEnabled,
 }: HudProps): ReactElement {
   return (
     <div className="game-hud" aria-label="게임 HUD">
@@ -53,6 +57,7 @@ export function Hud({
           <b>장비</b> {attackTool ? getToolPresentation(attackTool.id).nameKo : "없음"} / {defenseTool ? getToolPresentation(defenseTool.id).nameKo : "없음"}
         </span>
       </div>
+      <div className="hud-account-actions">
       <button
         className="tiny-button status-menu-button"
         type="button"
@@ -61,6 +66,11 @@ export function Hud({
       >
         {statusOpen ? "닫기" : "상태 / 설정"}
       </button>
+        <button className="tiny-button leaderboard-open-button" type="button" onClick={onOpenLeaderboard}
+          disabled={!leaderboardEnabled} title={leaderboardEnabled ? "TOP 10 랭킹" : "개발 모드에서는 랭킹을 조회하지 않습니다."}>
+          {leaderboardEnabled ? "랭킹" : "랭킹 (개발 모드)"}
+        </button>
+      </div>
       {bossHearts !== undefined && (
         <div className="boss-hearts" role="status" aria-label={`코기 남은 하트 ${bossHearts}개`}>
           <span className="boss-hearts-face" aria-hidden="true" />

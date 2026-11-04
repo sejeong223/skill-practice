@@ -6,15 +6,15 @@
 
 ## Active Phase
 
-[P02 로그인·이어하기·게임 화면 연결](./phases/2026-11-04-entra-login-cloud-save-leaderboard/P02-game-integration/phase.md)
+[P03 Azure 리소스·정적 배포·통합 검증](./phases/2026-11-04-entra-login-cloud-save-leaderboard/P03-azure-release/phase.md)
 
 ## Active Task
 
-[T05 랭킹 메뉴와 접근 가능한 TOP 10 대화상자](./phases/2026-11-04-entra-login-cloud-save-leaderboard/P02-game-integration/T05-ranking-ui.md)
+[T01 대상 구독·앱 등록·게임 DB·SWA 준비](./phases/2026-11-04-entra-login-cloud-save-leaderboard/P03-azure-release/T01-resource-setup.md)
 
 ## Status
 
-- MEA 실행: 9/14 완료. 최근 P02-game-integration/T04-cloud-game: 클라우드 게임·저장·복원·개발 경로 49/49, TypeScript·린트·Next 빌드 통과. 실제 React 진입/초기화와 StageScene 정지, native 컷신 timer 검증. 실제 로그인·브라우저 플레이는 P03 수동 확인 대상.
+- MEA 실행: 10/14 완료. 최근 P02-game-integration/T05-ranking-ui: 랭킹·게임 통합·기존 메뉴 27/27, 변경 후 랭킹 7/7 재검증, TypeScript·린트·Next 빌드 통과. 실제 320px/모바일/브라우저 포커스는 P03 사용자 수동 확인 대상.
 - 확정 결정: [2026-11-04 로그인·저장·랭킹](./decisions/2026-11-04-entra-login-cloud-save-leaderboard.md).
 - MSAL 5 호환 보완(P02-T01): root 로그인 복귀 주소 외에 silent 갱신용 `<origin>/auth/redirect/` SPA URI도 P03에서 등록한다. 해당 정적 경로에 `Cache-Control:no-store`, COOP 없음이 필요하다. 구체 근거는 P02-T01 Progress.
 - computer-use 금지. 필요한 Azure 포털 확인·대화형 로그인·비밀 설정은 사용자에게 경로를 안내한다. 대상 구독 접근과 실제 ID·자격 증명 준비는 P03-T01에서 확인한다.
@@ -25,7 +25,7 @@
 
 ## Next Step (IMPORTANT)
 
-MEA 자동 연속 실행: P02-game-integration/T05-ranking-ui 청사진을 읽고 구현·검증·선별 커밋한다. 남은 Task를 계속 실행하며 기존 미커밋 변경은 보존한다.
+MEA 자동 연속 실행: P03-azure-release/T01-resource-setup 청사진을 읽고 구현·검증·선별 커밋한다. 남은 Task를 계속 실행하며 기존 미커밋 변경은 보존한다.
 
 ## Previous Active Plan
 
