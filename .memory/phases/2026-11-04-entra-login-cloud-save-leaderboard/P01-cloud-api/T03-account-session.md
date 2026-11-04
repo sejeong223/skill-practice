@@ -1,6 +1,6 @@
 # Task: T03 계정 부트스트랩과 단일 쓰기 세션
 
-## Status: pending
+## Status: done
 
 ## Goal
 
@@ -174,9 +174,9 @@ interface ProgressState {
 
 ## Acceptance Criteria
 
-- [ ] 명시적 전환 없이 활성 세션을 빼앗지 않는다.
-- [ ] 실제 DB가 없어도 race와 rollback이 대역 테스트로 검증된다.
-- [ ] 아래 검증이 통과하고 기존 작업 변경을 보존한다.
+- [x] 명시적 전환 없이 활성 세션을 빼앗지 않는다.
+- [x] 실제 DB가 없어도 race와 rollback이 대역 테스트로 검증된다.
+- [x] 아래 검증이 통과하고 기존 작업 변경을 보존한다.
 
 ## Validation
 
@@ -200,8 +200,8 @@ Task: T03-account-session
 
 ## Progress
 
-- [ ] 구현 완료
-- [ ] 검증 통과
-- commit: pending
-- 검증 결과·미실행 외부 확인: 실행 시 기록
+- [x] 구현 완료
+- [x] 검증 통과
+- commit: 이 Task의 Plan/Phase/Task 트레일러 커밋으로 조회
+- 검증 결과: 계정·세션 및 Cosmos 어댑터 15/15, API 타입·빌드, 전체 린트 통과. 실제 DB 호출은 리소스 준비 후 확인.
 

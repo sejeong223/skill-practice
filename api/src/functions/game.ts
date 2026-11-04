@@ -2,6 +2,7 @@ import { app, type HttpRequest, type HttpResponseInit } from "@azure/functions";
 import type { Identity } from "../../../src/game/cloud/contracts";
 import { withIdentity, readJsonBody, ApiError, json } from "../http";
 import type { AccessTokenVerifier } from "../auth";
+import { dispatchGameService } from "../services/router";
 export const GAME_ROUTES = [
   ["bootstrap", "GET", "game/bootstrap"], ["acquire", "POST", "game/session/acquire"],
   ["heartbeat", "POST", "game/session/heartbeat"], ["release", "POST", "game/session/release"],
@@ -17,7 +18,7 @@ export function createGameHandlers(verify?: AccessTokenVerifier, service: GameSe
     return service(name, id, body);
   }, verify)]));
 }
-const handlers = createGameHandlers();
+const handlers = createGameHandlers(undefined, dispatchGameService);
 for (const [name, method, route] of GAME_ROUTES) {
   app.http("game-" + name, { methods: [method], route, authLevel: "anonymous", handler: handlers[name] });
 }

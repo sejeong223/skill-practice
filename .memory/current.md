@@ -10,7 +10,7 @@
 
 ## Active Task
 
-[T03 계정 부트스트랩과 단일 쓰기 세션](./phases/2026-11-04-entra-login-cloud-save-leaderboard/P01-cloud-api/T03-account-session.md)
+[T04 원자적 저장·최고 기록·회차 초기화](./phases/2026-11-04-entra-login-cloud-save-leaderboard/P01-cloud-api/T04-save-reset.md)
 
 ## Status
 
@@ -24,7 +24,7 @@
 
 ## Next Step (IMPORTANT)
 
-MEA 자동 연속 실행: P01-cloud-api/T03-account-session 청사진을 읽고 구현·검증·선별 커밋한다. 남은 Task를 계속 실행하며 기존 미커밋 변경은 보존한다.
+MEA 자동 연속 실행: P01-cloud-api/T04-save-reset 청사진을 읽고 구현·검증·선별 커밋한다. 남은 Task를 계속 실행하며 기존 미커밋 변경은 보존한다.
 
 ## Previous Active Plan
 
