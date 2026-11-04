@@ -1,6 +1,6 @@
 # Task: T05 한국어 동점 정렬 TOP 10 API
 
-## Status: pending
+## Status: done
 
 ## Goal
 
@@ -145,9 +145,9 @@ interface GameRepository {
 
 ## Acceptance Criteria
 
-- [ ] 10위 동점 전체에 한국어 이름순이 적용된다.
-- [ ] 빈 결과·DB 장애가 서로 다른 응답이며 개인정보를 노출하지 않는다.
-- [ ] 아래 검증이 통과하고 기존 작업 변경을 보존한다.
+- [x] 10위 동점 전체에 한국어 이름순이 적용된다.
+- [x] 빈 결과·DB 장애가 서로 다른 응답이며 개인정보를 노출하지 않는다.
+- [x] 아래 검증이 통과하고 기존 작업 변경을 보존한다.
 
 ## Validation
 
@@ -171,8 +171,8 @@ Task: T05-leaderboard
 
 ## Progress
 
-- [ ] 구현 완료
-- [ ] 검증 통과
-- commit: pending
-- 검증 결과·미실행 외부 확인: 실행 시 기록
+- [x] 구현 완료
+- [x] 검증 통과
+- commit: 이 Task의 Plan/Phase/Task 트레일러 커밋으로 조회
+- 검증 결과: 랭킹·저장 29/29, API 타입·빌드 및 전체 린트 통과. 150명 동점·210행 페이지 조회·실패 재조회·개인정보 제거 검증. 실제 Cosmos RU/응답 시간은 배포 후 확인.
 

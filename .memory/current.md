@@ -6,15 +6,15 @@
 
 ## Active Phase
 
-[P01 공유 계약·인증·클라우드 API](./phases/2026-11-04-entra-login-cloud-save-leaderboard/P01-cloud-api/phase.md)
+[P02 로그인·이어하기·게임 화면 연결](./phases/2026-11-04-entra-login-cloud-save-leaderboard/P02-game-integration/phase.md)
 
 ## Active Task
 
-[T05 한국어 동점 정렬 TOP 10 API](./phases/2026-11-04-entra-login-cloud-save-leaderboard/P01-cloud-api/T05-leaderboard.md)
+[T01 MSAL 로그인과 계정 진입 게이트](./phases/2026-11-04-entra-login-cloud-save-leaderboard/P02-game-integration/T01-auth-gate.md)
 
 ## Status
 
-- MEA 실행: 4/14 완료. 최근 P01-cloud-api/T04-save-reset: 계약·세션·저장 55/55, API 타입·빌드와 전체 린트 통과. 저장 재전송·초기화·접속 전환·월드별 복원 경계 검증; 실제 Azure 호출은 P03에서 확인.
+- MEA 실행: 5/14 완료. 최근 P01-cloud-api/T05-leaderboard: 랭킹·저장 29/29, API 타입·빌드 및 전체 린트 통과. 150명 동점·210행 페이지 조회·실패 재조회·개인정보 제거 검증. 실제 Cosmos RU/응답 시간은 배포 후 확인.
 - 확정 결정: [2026-11-04 로그인·저장·랭킹](./decisions/2026-11-04-entra-login-cloud-save-leaderboard.md).
 - computer-use 금지. 필요한 Azure 포털 확인·대화형 로그인·비밀 설정은 사용자에게 경로를 안내한다. 대상 구독 접근과 실제 ID·자격 증명 준비는 P03-T01에서 확인한다.
 - 기존 공용 Cosmos 계정 안에 게임 DB만 추가한다. 다른 DB·컨테이너·계정 설정을 변경하지 않는다. 새 컨테이너 전용 manual 400 RU/s, SWA Free, GitHub 수동 배포를 유지한다.
@@ -24,7 +24,7 @@
 
 ## Next Step (IMPORTANT)
 
-MEA 자동 연속 실행: P01-cloud-api/T05-leaderboard 청사진을 읽고 구현·검증·선별 커밋한다. 남은 Task를 계속 실행하며 기존 미커밋 변경은 보존한다.
+MEA 자동 연속 실행: P02-game-integration/T01-auth-gate 청사진을 읽고 구현·검증·선별 커밋한다. 남은 Task를 계속 실행하며 기존 미커밋 변경은 보존한다.
 
 ## Previous Active Plan
 

@@ -14,8 +14,8 @@
 
 | Phase | Status | Summary | Blueprint |
 | :--- | :--- | :--- | :--- |
-| P01-cloud-api | `in_progress` | 공유 계약·인증·클라우드 API (5 Tasks) | [P01](../phases/2026-11-04-entra-login-cloud-save-leaderboard/P01-cloud-api/phase.md) |
-| P02-game-integration | `pending` | 로그인·이어하기·게임 화면 연결 (5 Tasks) | [P02](../phases/2026-11-04-entra-login-cloud-save-leaderboard/P02-game-integration/phase.md) |
+| P01-cloud-api | `done` | 공유 계약·인증·클라우드 API (5 Tasks) | [P01](../phases/2026-11-04-entra-login-cloud-save-leaderboard/P01-cloud-api/phase.md) |
+| P02-game-integration | `in_progress` | 로그인·이어하기·게임 화면 연결 (5 Tasks) | [P02](../phases/2026-11-04-entra-login-cloud-save-leaderboard/P02-game-integration/phase.md) |
 | P03-azure-release | `pending` | Azure 리소스·정적 배포·통합 검증 (4 Tasks) | [P03](../phases/2026-11-04-entra-login-cloud-save-leaderboard/P03-azure-release/phase.md) |
 
 ## Execution Order

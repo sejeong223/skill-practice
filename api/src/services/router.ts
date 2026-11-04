@@ -2,10 +2,11 @@ import type { GameServiceHandler } from "../functions/game";
 import { loadServerConfig } from "../config";
 import { createCosmosRepository, type GameRepository } from "../repository";
 import { parseAcquireRequest, parseLeaseRequest, parseResetRequest, parseSaveRequest } from "../../../src/game/cloud/validation";
-import { ApiError, json } from "../http";
+import { json } from "../http";
 import { bootstrapAccount } from "./account";
 import { acquireSession, heartbeatSession, releaseSession } from "./session";
 import { resetProgress, saveProgress } from "./save";
+import { getLeaderboard } from "./leaderboard";
 export function createGameService(repo: GameRepository, now: () => Date = () => new Date()): GameServiceHandler {
   return async (route, id, body) => {
     switch (route) {
@@ -15,7 +16,7 @@ export function createGameService(repo: GameRepository, now: () => Date = () => 
       case "release": await releaseSession(id, parseLeaseRequest(body), repo, now); return { status: 204 };
       case "save": return json(await saveProgress(id, parseSaveRequest(body), repo, now));
       case "reset": return json(await resetProgress(id, parseResetRequest(body), repo, now));
-      default: throw new ApiError(503, "UNAVAILABLE", "게임 저장 서비스를 준비하고 있습니다.");
+      case "leaderboard": return json(await getLeaderboard(id, repo, now));
     }
   };
 }

@@ -91,22 +91,27 @@ export class CosmosGameRepository implements GameRepository {
     } catch (error) { throw databaseError(error); }
   }
   async *scanBest(namespace: Namespace, deadlineMs: number): AsyncIterable<BestDoc> {
+    const started = Date.now();
+    let count = 0, requestUnits = 0;
     if (deadlineMs <= Date.now()) throw new ApiError(503, "UNAVAILABLE", "랭킹 조회 시간이 초과되었습니다.", 1000);
     const iterator = this.container.items.query({
-      query: "SELECT c.id,c.playerId,c.schemaVersion,c.namespace,c.updatedAt,c.kind,c.displayName,c.eligible,c.record FROM c WHERE c.kind=@kind AND c.namespace=@namespace AND c.eligible=true",
+      query: "SELECT c.id,c.playerId,c.schemaVersion,c.namespace,c.updatedAt,c.kind,c.displayName,c.eligible,c.record FROM c WHERE c.kind=@kind AND c.namespace=@namespace AND c.eligible=true AND NOT IS_NULL(c.record)",
       parameters: [{ name: "@kind", value: "best" }, { name: "@namespace", value: namespace }],
     }, { maxItemCount: 100, abortSignal: AbortSignal.timeout(Math.max(1, deadlineMs - Date.now())) });
     try {
       while (iterator.hasMoreResults()) {
         if (Date.now() >= deadlineMs) throw new ApiError(503, "UNAVAILABLE", "랭킹 조회 시간이 초과되었습니다.", 1000);
         const page = await iterator.fetchNext();
+        requestUnits += page.requestCharge ?? 0;
         for (const value of page.resources) {
           const doc = parseDocument(value);
           if (doc.kind !== "best" || doc.namespace !== namespace || !doc.eligible) throw new ApiError(503, "UNSUPPORTED_SAVE", "랭킹 데이터를 확인할 수 없습니다.");
+          count++;
           yield doc;
         }
       }
     } catch (error) { throw databaseError(error); }
+    finally { console.info({ operation: "leaderboard-scan", rows: count, requestUnits, elapsedMs: Date.now() - started }); }
   }
 }
 export function createCosmosRepository(config: ServerConfig): GameRepository {
