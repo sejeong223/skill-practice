@@ -27,6 +27,7 @@ export interface StageEventMap {
     stageId: StageId;
     cause: "enemy" | "trap" | "fall" | "tool-drawback" | "scripted";
   };
+  "death-overlay-visibility-changed": { visible: boolean };
   "checkpoint-activated": {
     stageId: StageId;
     checkpointId: string;

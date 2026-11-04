@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useMemo, useRef, useState, type ReactElement } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore, type ReactElement } from "react";
 import type { CustomOutfitId, InputAction, ProgressState, RuntimeStageState, SelectableWorldId, StageId, ToolDefinition, WorldSelectionRequest } from "@/game/core/types";
 import { createDefaultProgressState, createRuntimeStageState } from "@/game/core/constants";
 import { SKILL_DEFINITIONS } from "@/game/data/skills";
@@ -16,7 +16,7 @@ import { sanitizeCustomOutfits } from "@/game/persistence/migrations";
 import { EconomySystem, type PurchaseResult } from "@/game/systems/EconomySystem";
 import { isWorldSelectionUnlocked } from "@/game/systems/worldSelection";
 import { canOpenSharedMenu } from "@/game/systems/gameMenuAvailability";
-import { prepareDevelopmentWorld03Progress } from "@/game/systems/developmentWorld03Start";
+import { prepareDevelopmentProgress } from "@/game/systems/developmentStart";
 import { GameEventBridge } from "./GameEventBridge";
 import { CutsceneOverlay } from "./CutsceneOverlay";
 import { GameOverlay } from "./GameOverlay";
@@ -32,11 +32,17 @@ import { ShopPanel } from "./ShopPanel";
 import { OwnedItemCatalogDialog } from "./OwnedItemCatalogDialog";
 import { CustomOutfitPaintDialog } from "./CustomOutfitPaintDialog";
 import { EndingOverlay } from "./EndingOverlay";
+import type { CloudGameSession } from "./GameEntry";
+import type { SaveEvent } from "@/game/cloud/contracts";
+import { buildCloudEntry, CLOUD_RUNTIME_KEY } from "@/game/cloud/resume";
+import { GameCloudBridge } from "@/game/cloud/GameCloudBridge";
+import { normalizeNickname } from "@/game/cloud/validation";
+import { hasForcedPause } from "@/game/bridge/PauseReasons";
+import type * as Phaser from "phaser";
 
-export interface GameShellProps {
-  readonly initialStageId: StageId;
-  readonly onExit?: () => void;
-}
+export type GameShellProps = { initialStageId: StageId; onExit?: () => void } &
+  ({ mode: "local"; cloud?: never; onCloudObservation?: never; onCloudReset?: never } |
+   { mode: "cloud"; cloud: CloudGameSession; onCloudObservation: (event: SaveEvent, progress: ProgressState) => void; onCloudReset: () => Promise<void> });
 type UiMode = "safe" | "play" | "cutscene" | "dead" | "stage-clear" | "ending";
 
 function cloneProgress(progress: ProgressState): ProgressState {
@@ -56,10 +62,14 @@ function cloneProgress(progress: ProgressState): ProgressState {
   };
 }
 
-export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElement {
-  const eventBus = useMemo(() => new GameEventBus(), []);
-  const storeRef = useRef(new ProgressStore());
-  const [sharedProgressState] = useState<ProgressState>(() => createDefaultProgressState());
+export function GameShell({ initialStageId, onExit, cloud, onCloudObservation, onCloudReset }: GameShellProps): ReactElement {
+  const eventBus = useMemo(() => cloud?.bus ?? new GameEventBus(), [cloud?.bus]);
+  const reasons = useSyncExternalStore(eventBus.pauseReasons.subscribe, eventBus.pauseReasons.snapshot, eventBus.pauseReasons.snapshot);
+  const forced = hasForcedPause(reasons);
+  const [cloudEntry] = useState(() => cloud ? buildCloudEntry(cloud.bootstrap) : undefined);
+  const gameRef = useRef<Phaser.Game | null>(null);
+  const storeRef = useRef(new ProgressStore(undefined, "legendary-rib-corgi:development:progress:v1"));
+  const [sharedProgressState] = useState<ProgressState>(() => cloudEntry?.progress ?? createDefaultProgressState());
   const [progress, setProgress] = useState<ProgressState>(() => cloneProgress(sharedProgressState));
   const [progressLoaded, setProgressLoaded] = useState(false);
   const [runtime, setRuntime] = useState<RuntimeStageState>(() => createRuntimeStageState(initialStageId));
@@ -70,10 +80,12 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
   const shopAudioRef = useRef<ShopAudioController | null>(null);
   const [toast, setToast] = useState("진행 상태를 준비하는 중...");
   const [mode, setMode] = useState<UiMode>("safe");
-  const [paused, setPaused] = useState(false);
+  const paused = reasons.size > 0;
   const [deathOverlayVisible, setDeathOverlayVisible] = useState(false);
   const [deathOverlayCount, setDeathOverlayCount] = useState(0);
   const [resetProgressDialogOpen, setResetProgressDialogOpen] = useState(false);
+  const [resetPending, setResetPending] = useState(false);
+  const [resetError, setResetError] = useState<string | null>(null);
   const [worldSelectOpen, setWorldSelectOpen] = useState(false);
   const [shopOpen, setShopOpen] = useState(false);
   const [catalogOpen, setCatalogOpen] = useState(false);
@@ -93,7 +105,7 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
     const removeStage = eventBus.on("stage-started", ({ stageId }) => {
       shopAudioRef.current?.destroy();
       shopAudioRef.current = null;
-      setPaused(false);
+      for (const reason of ["shop", "catalog", "paint", "world-select"] as const) eventBus.pauseReasons.set(reason, false);
       setWorldSelectOpen(false);
       setShopOpen(false);
       setCatalogOpen(false);
@@ -125,6 +137,7 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
     });
     const removeWorldSelection = eventBus.on("world-selection-committed", () => {
       setWorldSelectOpen(false);
+      eventBus.pauseReasons.set("world-select", false);
       setProgress(cloneProgress(progressRef.current));
     });
     return () => { removeStage(); removeHearts(); removeCheckpoint(); removeCoins(); removeWorldSelection(); };
@@ -154,7 +167,7 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
   }, [eventBus]);
 
   useEffect(() => {
-    const loaded = prepareDevelopmentWorld03Progress(
+    const loaded = cloud ? sharedProgressState : prepareDevelopmentProgress(
       storeRef.current.load(), process.env.NODE_ENV === "development",
     );
     Object.assign(progressRef.current, cloneProgress(loaded));
@@ -167,27 +180,23 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
           : "intro",
     );
     economyRef.current = new EconomySystem(progressRef.current, runtimeRef.current, eventBus);
-    const autoSave = new AutoSaveCoordinator(storeRef.current, progressRef.current, eventBus);
+    const autoSave = cloud ? null : new AutoSaveCoordinator(storeRef.current, progressRef.current, eventBus);
     autoSaveRef.current = autoSave;
+    const bridge = cloud && onCloudObservation ? new GameCloudBridge(eventBus, () => progressRef.current,
+      () => gameRef.current?.registry.get(CLOUD_RUNTIME_KEY) ?? { seed: cloud.bootstrap.current.resume.worldSeed, world02Travel: cloud.bootstrap.current.resume.world02Travel },
+      onCloudObservation, initialStageId) : null;
+    const removeError = eventBus.on("cloud-resume-error", () => eventBus.pauseReasons.set("conflict", true));
     setProgressLoaded(true);
     return () => {
-      autoSave.destroy();
+      autoSave?.destroy(); bridge?.destroy(); removeError();
       autoSaveRef.current = null;
-      eventBus.clear();
     };
-  }, [eventBus]);
+  }, [cloud, eventBus, initialStageId, onCloudObservation, sharedProgressState]);
 
   const replaceProgress = useCallback((next: ProgressState): void => {
     Object.assign(progressRef.current, cloneProgress(next));
     setProgress(cloneProgress(progressRef.current));
   }, []);
-
-  useEffect(() => {
-    const unsubscribe = eventBus.on("pause-state-changed", ({ paused: nextPaused }) => {
-      setPaused(nextPaused);
-    });
-    return unsubscribe;
-  }, [eventBus]);
 
   useEffect(() => () => {
     shopAudioRef.current?.destroy();
@@ -201,8 +210,8 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
     const messages: Partial<Record<GameEventType, string>> = {
       "tool-purchased": "새 도구를 금고에 넣었습니다.",
       "collectible-found": "수집품 기록을 갱신했습니다.",
-      "death-count-updated": "사망 통계를 저장했습니다.",
-      "keybinds-changed": "키 설정을 저장했습니다.",
+      "death-count-updated": "사망 통계를 갱신했습니다.",
+      "keybinds-changed": "키 설정을 변경했습니다.",
     };
     if (messages[type]) setToast(messages[type]);
     if (type === "death-count-updated") {
@@ -216,20 +225,22 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
     if (type === "death") {
       setDeathOverlayCount(progressRef.current.deathsTotal);
       setDeathOverlayVisible(true);
+      eventBus.setDeathOverlayVisible(true);
       setMode("dead");
       if (deathOverlayTimeoutRef.current) {
         clearTimeout(deathOverlayTimeoutRef.current);
       }
       deathOverlayTimeoutRef.current = setTimeout(() => {
         setDeathOverlayVisible(false);
+        eventBus.setDeathOverlayVisible(false);
         setMode("play");
         deathOverlayTimeoutRef.current = null;
       }, 900);
     }
-  }, []);
+  }, [eventBus]);
 
   const handleNameConfirm = useCallback((name: string): void => {
-    const safeName = name.trim().replace(/[<>]/g, "").slice(0, 20) || "코기";
+    const safeName = normalizeNickname(name);
     const next = cloneProgress(progressRef.current);
     next.playerName = safeName;
     next.onboardingCompleted = true;
@@ -279,17 +290,20 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
     eventBus.emit("keybinds-changed", { keybinds: { ...next.keybinds } });
   }, [eventBus, replaceProgress]);
 
-  const handleResetProgress = useCallback((): void => {
-    autoSaveRef.current?.destroy();
-    autoSaveRef.current = null;
-    storeRef.current.clear();
-    window.location.reload();
-  }, []);
+  const handleResetProgress = useCallback(async (): Promise<void> => {
+    if (resetPending) return;
+    setResetPending(true); setResetError(null);
+    try {
+      if (onCloudReset) await onCloudReset();
+      else { autoSaveRef.current?.destroy(); autoSaveRef.current = null; storeRef.current.clear(); window.location.reload(); }
+    } catch { setResetError("초기화를 확인하지 못했습니다. 현재 진행은 유지됩니다. 다시 시도해 주세요."); }
+    finally { setResetPending(false); }
+  }, [onCloudReset, resetPending]);
 
   const handleOpenWorldSelect = useCallback((): void => {
     if (mode !== "play" || paused || shopOpen || catalogOpen || paintOpen || !isWorldSelectionUnlocked(progressRef.current)) return;
     setWorldSelectOpen(true);
-    eventBus.emit("pause-requested", { paused: true });
+    eventBus.pauseReasons.set("world-select", true);
   }, [catalogOpen, eventBus, mode, paintOpen, paused, shopOpen]);
 
   const handleOpenShop = useCallback((): void => {
@@ -297,7 +311,7 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
     setStatusOpen(false);
     setShopOpen(true);
     eventBus.emit("shop-state-changed", { open: true, closeViaEscape: false });
-    eventBus.emit("pause-requested", { paused: true });
+    eventBus.pauseReasons.set("shop", true);
     if (typeof Audio !== "undefined") {
       try {
         shopAudioRef.current ??= new ShopAudioController();
@@ -313,7 +327,7 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
     void shopAudioRef.current?.exit();
     setShopOpen(false);
     eventBus.emit("shop-state-changed", { open: false, closeViaEscape: source === "keyboard" });
-    eventBus.emit("pause-requested", { paused: false });
+    eventBus.pauseReasons.set("shop", false);
   }, [eventBus, shopOpen]);
 
   const handleOpenCatalog = useCallback((): void => {
@@ -321,14 +335,14 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
     setStatusOpen(false);
     setCatalogOpen(true);
     eventBus.emit("catalog-state-changed", { open: true, closeViaEscape: false });
-    eventBus.emit("pause-requested", { paused: true });
+    eventBus.pauseReasons.set("catalog", true);
   }, [eventBus, menuAvailable]);
 
   const handleCloseCatalog = useCallback((source: "button" | "keyboard"): void => {
     if (!catalogOpen) return;
     setCatalogOpen(false);
     eventBus.emit("catalog-state-changed", { open: false, closeViaEscape: source === "keyboard" });
-    eventBus.emit("pause-requested", { paused: false });
+    eventBus.pauseReasons.set("catalog", false);
   }, [catalogOpen, eventBus]);
 
   const handleOpenPaint = useCallback((): void => {
@@ -336,14 +350,14 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
     setStatusOpen(false);
     setPaintOpen(true);
     eventBus.emit("paint-state-changed", { open: true, closeViaEscape: false });
-    eventBus.emit("pause-requested", { paused: true });
+    eventBus.pauseReasons.set("paint", true);
   }, [eventBus, menuAvailable]);
 
   const handleClosePaint = useCallback((source: "button" | "keyboard"): void => {
     if (!paintOpen) return;
     setPaintOpen(false);
     eventBus.emit("paint-state-changed", { open: false, closeViaEscape: source === "keyboard" });
-    eventBus.emit("pause-requested", { paused: false });
+    eventBus.pauseReasons.set("paint", false);
   }, [eventBus, paintOpen]);
 
   const handleSaveCustomOutfit = useCallback((id: CustomOutfitId, cells: (string | null)[]): void => {
@@ -413,7 +427,7 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
 
   const handleCancelWorldSelect = useCallback((): void => {
     setWorldSelectOpen(false);
-    eventBus.emit("pause-requested", { paused: false });
+    eventBus.pauseReasons.set("world-select", false);
   }, [eventBus]);
 
   const handleSelectWorld = useCallback((selection: WorldSelectionRequest): void => {
@@ -425,19 +439,19 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
     (activeStageId.startsWith("world-01-") || activeStageId.startsWith("world-02-"));
   const currentWorldId: SelectableWorldId = activeStageId.startsWith("world-02-") ? "world-02" : "world-01";
   return (
-    <div className="game-shell">
+    <div className="game-shell" inert={hasForcedPause(new Set([...reasons].filter(reason => reason !== "reset")))}>
       <div className="game-content-frame">
         <BossCombatOverlay eventBus={eventBus} stageId={activeStageId} barkKeybind={progress.keybinds.bark}
           biteKeybind={progress.keybinds.bite}
           visible={progressLoaded && introGateStep === "ready" && mode === "play" && !paused && !worldEntranceActive} />
         {progressLoaded && introGateStep === "ready" && !worldEntranceActive && <SnackCoinCounter balance={progress.bankedCoins} />}
-        {progressLoaded && <PhaserGame className="phaser-viewport" gameEventBus={eventBus} progressState={sharedProgressState} />}
+        {progressLoaded && <PhaserGame className="phaser-viewport" gameEventBus={eventBus} progressState={sharedProgressState} cloudEntry={cloudEntry} onGameReady={(game) => { gameRef.current = game; }} />}
         <GameEventBridge eventBus={eventBus} onEvent={handleEvent} />
         <CutsceneOverlay eventBus={eventBus} onSkip={() => eventBus.emit("cutscene-skip-requested", {})} />
         {introGateStep === "title" && <IntroTitleOverlay initialName={progress.playerName} onConfirm={handleNameConfirm} />}
-        {introGateStep === "ready" && mode !== "stage-clear" && mode !== "ending" && !worldEntranceActive && <GameOverlay stageTitle={stage.title} runtime={runtime} progress={progress} skills={SKILL_DEFINITIONS} tools={TOOL_DEFINITIONS} cooldowns={{}} bossHearts={stage.kind === "boss" ? bossHearts : undefined} alive={mode !== "dead" && mode !== "cutscene"} statusOpen={statusOpen} onEquip={handleEquip} onKeybindChange={handleKeybindChange} onToggleStatus={() => setStatusOpen((open) => !open)} paused={paused} onTogglePause={() => eventBus.emit("pause-requested", { paused: !paused })} onResetProgress={() => setResetProgressDialogOpen(true)} worldSelectUnlocked={worldSelectUnlocked} onOpenWorldSelect={handleOpenWorldSelect} onOpenShop={handleOpenShop} onOpenCatalog={handleOpenCatalog} onOpenPaint={handleOpenPaint} />}
+        {introGateStep === "ready" && mode !== "stage-clear" && mode !== "ending" && !worldEntranceActive && <GameOverlay stageTitle={stage.title} runtime={runtime} progress={progress} skills={SKILL_DEFINITIONS} tools={TOOL_DEFINITIONS} cooldowns={{}} bossHearts={stage.kind === "boss" ? bossHearts : undefined} alive={mode !== "dead" && mode !== "cutscene"} statusOpen={statusOpen} onEquip={handleEquip} onKeybindChange={handleKeybindChange} onToggleStatus={() => setStatusOpen((open) => !open)} paused={paused} onTogglePause={() => eventBus.emit("pause-requested", { paused: !paused })} onResetProgress={() => { setResetProgressDialogOpen(true); eventBus.pauseReasons.set("reset", true); }} worldSelectUnlocked={worldSelectUnlocked} onOpenWorldSelect={handleOpenWorldSelect} onOpenShop={handleOpenShop} onOpenCatalog={handleOpenCatalog} onOpenPaint={handleOpenPaint} />}
         {mode === "ending" && <EndingOverlay onReplayWorld01={() => handleSelectWorld({ worldId: "world-01", point: "start" })} />}
-        {paused && introGateStep === "ready" && !worldSelectOpen && !shopOpen && !catalogOpen && !paintOpen && <PauseOverlay onResume={() => eventBus.emit("pause-requested", { paused: false })} />}
+        {reasons.has("manual") && !forced && introGateStep === "ready" && !worldSelectOpen && !shopOpen && !catalogOpen && !paintOpen && <PauseOverlay onResume={() => eventBus.emit("pause-requested", { paused: false })} />}
         {shopOpen && <ShopPanel bankedCoins={progress.bankedCoins} products={MARKET_PRODUCTS} progress={progress}
           onPurchase={handleMarketPurchase} onEquip={handleMarketEquip} onUnequip={handleMarketUnequip} onClose={handleCloseShop} />}
         {catalogOpen && <OwnedItemCatalogDialog progress={progress} entries={getOwnedCatalogEntries(progress)}
@@ -452,8 +466,9 @@ export function GameShell({ initialStageId, onExit }: GameShellProps): ReactElem
         )}
         {resetProgressDialogOpen && (
           <ResetProgressDialog
-            onCancel={() => setResetProgressDialogOpen(false)}
-            onConfirm={handleResetProgress}
+            pending={resetPending} error={resetError} cloud={Boolean(cloud)}
+            onCancel={() => { if (resetPending || resetError) return; setResetProgressDialogOpen(false); eventBus.pauseReasons.set("reset", false); }}
+            onConfirm={() => void handleResetProgress()}
           />
         )}
         <DeathCounterOverlay deathCount={deathOverlayCount} visible={deathOverlayVisible} />

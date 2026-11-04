@@ -1,6 +1,6 @@
 # Task: T04 자동 저장·세션·일시정지·초기화 통합
 
-## Status: pending
+## Status: done
 
 ## Goal
 
@@ -150,9 +150,9 @@ interface ApiErrorBody { error:{code:ApiErrorCode;message:string;retryAfterMs:nu
 
 ## Acceptance Criteria
 
-- [ ] 운영 첫 게임과 계정 전환은 인증·저장 읽기·세션 확인 뒤에 시작한다.
-- [ ] 모든 강제 정지 사유가 풀려야만 플레이가 재개된다.
-- [ ] 기존 게임·키 입력·저장 경로의 관련 회귀 검증이 통과한다.
+- [x] 운영 첫 게임과 계정 전환은 인증·저장 읽기·세션 확인 뒤에 시작한다.
+- [x] 모든 강제 정지 사유가 풀려야만 플레이가 재개된다.
+- [x] 기존 게임·키 입력·저장 경로의 관련 회귀 검증이 통과한다.
 
 ## Validation
 
@@ -176,8 +176,14 @@ Task: T04-cloud-game
 
 ## Progress
 
-- [ ] 구현 완료
-- [ ] 검증 통과
-- commit: pending
-- 검증 결과·미실행 수동 확인: 실행 시 기록
+- CloudGameController로 계정별 bootstrap·pending 복구·acquire·heartbeat 수명주기를 분리했다. StrictMode 첫 setup은 외부 요청 전에 취소되며, 탭 UUID는 Web Locks로 독점한다. dispose에서는 pending 복구를 위해 lease를 임의 해제하지 않고 만료/명시적 전환을 사용한다. 로그아웃만 flush→캡처한 lease release→게임 unmount→MSAL 순서로 진행한다.
+- PauseReasons 직접 구독을 React(useSyncExternalStore)·StageScene·CloudPauseController·CutsceneDirector가 공유한다. 중복 pause-reasons-changed 이벤트 대신 단일 ledger를 사용하며, heartbeat 성공만으로 미확인 저장의 정지를 해제하지 않는다. 컷신 native timer는 남은 시간을 보존한다.
+- 초기화 ACK 또는 같은 요청의 자동 복구 ACK가 새 run을 확인해야 GameShell을 재생성한다. 서버 체크포인트 형식 오류는 heartbeat가 성공해도 해제되지 않는 충돌 상태다. API release에도 10초 제한을 적용했다.
+- 기존 미커밋 변경 중 이 Task의 필수 의존성인 W4 개발 진입 helper/검증, Preload의 helper 연결, GameShell의 death overlay 이벤트 및 해당 bus 계약만 함께 선별했다. 기존 파일 내용은 보존했다. 보스·그림·음악·맵 변경과 StageScene의 기존 게임플레이 변경은 제외했다. StageScene·CSS는 index에 이번 Task 변경만 적용했다.
+- 검증은 현재 작업 트리에서 실행했으며 jsdom/렌더링 포트를 사용했다. 실제 Microsoft 로그인, 실제 브라우저 물리·모바일 입력, 배포된 API는 P03 수동 검증 대상으로 남긴다. 기존 월드 3 인트로 자동 진행 문제는 수정하지 않았다.
+
+- [x] 구현 완료
+- [x] 검증 통과
+- commit: 이 Task의 Plan/Phase/Task 트레일러 커밋으로 조회
+- 검증 결과: 클라우드 게임·저장·복원·개발 경로 49/49, TypeScript·린트·Next 빌드 통과. 실제 React 진입/초기화와 StageScene 정지, native 컷신 timer 검증. 실제 로그인·브라우저 플레이는 P03 수동 확인 대상.
 

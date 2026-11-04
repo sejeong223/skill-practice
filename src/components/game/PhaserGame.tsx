@@ -4,6 +4,7 @@ import { useEffect, useRef, type ReactElement } from "react";
 import type * as Phaser from "phaser";
 import type { GameEventBus } from "@/game/bridge/GameEventBus";
 import type { ProgressState } from "@/game/core/types";
+import { CloudPauseController } from "@/game/bridge/CloudPauseController";
 import type { CloudEntry } from "@/game/cloud/resume";
 
 export interface PhaserGameProps {
@@ -35,6 +36,7 @@ export function PhaserGame({
     }
 
     let disposed = false;
+    let pauseController: CloudPauseController | undefined;
 
     void import("@/game/config").then(({ createGame }) => {
       if (disposed || !mountRef.current || gameRef.current) {
@@ -53,10 +55,12 @@ export function PhaserGame({
       });
 
       gameRef.current = game;
+      if (gameEventBus) pauseController = new CloudPauseController(game, gameEventBus);
     });
 
     return () => {
       disposed = true;
+      pauseController?.destroy();
       gameRef.current?.destroy(true);
       gameRef.current = null;
     };

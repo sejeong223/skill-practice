@@ -19,7 +19,8 @@
     "test:cloud-save-client": "node --import tsx --test scripts/cloud-save-client.test.mjs",
     "test:cloud-resume": "node --import tsx --test scripts/cloud-resume.test.mjs",
     "world01:maps": "node scripts/world01-maps.mjs",
-    "world01:maps:check": "node scripts/world01-maps.mjs --check"
+    "world01:maps:check": "node scripts/world01-maps.mjs --check",
+    "test:cloud-game": "node --import tsx --test scripts/cloud-game.test.mjs"
   },
   "dependencies": {
     "@azure/msal-browser": "^5.27.0",

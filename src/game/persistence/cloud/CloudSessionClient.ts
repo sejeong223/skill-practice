@@ -58,7 +58,7 @@ export class CloudSessionClient {
   };
   async release(): Promise<void> {
     const lease = this.lease; this.dispose();
-    if (lease?.sessionId) await this.api.release({ sessionId: lease.sessionId, generation: lease.generation });
+    if (lease?.sessionId) await this.api.release({ sessionId: lease.sessionId, generation: lease.generation }, AbortSignal.timeout(10000));
   }
   dispose(): void {
     this.disposed = true; clearTimeout(this.timer); this.lifetime.abort();

@@ -54,7 +54,7 @@ export class GameApiClient {
   bootstrap(signal?: AbortSignal): Promise<Bootstrap> { return this.request("bootstrap", undefined, parseBootstrap, signal); }
   acquire(input: AcquireRequest, signal?: AbortSignal): Promise<Bootstrap> { return this.request("session/acquire", input, parseBootstrap, signal); }
   heartbeat(input: LeaseRequest, signal?: AbortSignal): Promise<Lease> { return this.request("session/heartbeat", input, validateLease, signal); }
-  release(input: LeaseRequest): Promise<void> { return this.request("session/release", input, value => { if (value !== null) throw new Error(); }); }
+  release(input: LeaseRequest, signal?: AbortSignal): Promise<void> { return this.request("session/release", input, value => { if (value !== null) throw new Error(); }, signal); }
   save(input: SaveRequest, signal?: AbortSignal): Promise<SaveAck> { return this.request("save", input, parseSaveAck, signal); }
   reset(input: ResetRequest, signal?: AbortSignal): Promise<SaveAck> { return this.request("reset", input, parseSaveAck, signal); }
   leaderboard(signal?: AbortSignal): Promise<LeaderboardResponse> { return this.request("leaderboard", undefined, parseLeaderboardResponse, signal); }

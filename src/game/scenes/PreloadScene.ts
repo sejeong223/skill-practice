@@ -6,7 +6,7 @@ import { STAGE_IDS } from "../core/constants";
 import { FEEDBACK_AUDIO } from "../audio/audioManifest";
 import { getWorld01Respawn } from "../systems/world01Respawn";
 import { getSelectedWorldResume } from "../systems/worldSelection";
-import { getDevelopmentWorld03Entry } from "../systems/developmentWorld03Start";
+import { getDevelopmentEntry } from "../systems/developmentStart";
 import { getWorld03Entry } from "../systems/world03IntroRouting";
 import { getWorld04Entry } from "../systems/world04IntroRouting";
 import { CLOUD_ENTRY_KEY, cloudEntryRoute, type CloudEntry } from "../cloud/resume";
@@ -85,7 +85,7 @@ export class PreloadScene extends Phaser.Scene {
       return;
     }
     if (!this.loadError && progress) {
-      const developmentEntry = getDevelopmentWorld03Entry(
+      const developmentEntry = getDevelopmentEntry(
         progress,
         process.env.NODE_ENV === "development",
       );

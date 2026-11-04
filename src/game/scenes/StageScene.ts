@@ -525,7 +525,7 @@ export class StageScene extends Phaser.Scene {
     this.rememberWorld02Visit();
     this.updateCloudRuntime(seed);
     this.runtime.start();
-    this.eventBus.emit("pause-state-changed", { paused: false });
+    this.setPaused(false);
     if (data.resumeCheckpointId || visit?.checkpointSnapshot) this.publishCheckpoint("restored");
     if (stage.id === "world-01-stage-boss") {
       this.calicoSprite = this.add.sprite(1280, 472, "world-01-calico-boss", 0)
@@ -686,9 +686,7 @@ export class StageScene extends Phaser.Scene {
         } satisfies StageSceneData);
       });
     }));
-    this.eventUnsubscribers.push(this.eventBus.on("pause-requested", ({ paused }) => {
-      this.setPaused(paused);
-    }));
+    this.eventUnsubscribers.push(this.eventBus.pauseReasons.subscribe(() => this.setPaused(false)));
     this.eventUnsubscribers.push(this.eventBus.on("shop-state-changed", ({ open }) => {
       this.shopOpen = open;
       this.menuPauseGuard = true;
@@ -790,7 +788,7 @@ export class StageScene extends Phaser.Scene {
       this.scene.start("StageScene", target);
     }));
 
-    if (process.env.NODE_ENV !== "production" && this.input.keyboard) {
+    if (process.env.NODE_ENV !== "production" && !this.registry.get(CLOUD_ENTRY_KEY) && this.input.keyboard) {
       this.stageReviewKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F2);
       this.stageReviewKey.on("down", this.reviewNextWorld01Stage, this);
       this.overviewKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F3);
@@ -976,7 +974,7 @@ export class StageScene extends Phaser.Scene {
   public update(time: number, delta: number): void {
     const input = this.inputManager?.getSnapshot();
     if (input?.pausePressed && !this.shopOpen && !this.catalogOpen && !this.paintOpen && !this.menuPauseGuard) {
-      this.setPaused(this.runtime?.getStatus() !== "paused");
+      this.eventBus?.emit("pause-requested", { paused: !this.eventBus.pauseReasons.has("manual") });
     }
     if (this.menuPauseGuard && !input?.pauseHeld) this.menuPauseGuard = false;
     if (this.runtime?.getStatus() !== "play") {
@@ -1298,6 +1296,7 @@ export class StageScene extends Phaser.Scene {
   }
 
   private setPaused(paused: boolean): void {
+    paused = paused || Boolean(this.eventBus?.pauseReasons.isPaused());
     const runtime = this.runtime;
     if (!runtime) return;
 

@@ -1,7 +1,8 @@
 "use client";
-import { useCallback, useEffect, useState, type ReactElement } from "react";
+import { useCallback, useEffect, useState, useSyncExternalStore, type ReactElement } from "react";
 import type { GameEventBus } from "@/game/bridge/GameEventBus";
 import type { CutsceneBeat } from "@/game/cutscenes/types";
+import { hasForcedPause } from "@/game/bridge/PauseReasons";
 import { DialogueBox } from "./DialogueBox";
 import { ItemCard } from "./ItemCard";
 import { NarratorText } from "./NarratorText";
@@ -25,6 +26,8 @@ interface CutsceneOverlayState {
 }
 
 export function CutsceneOverlay({ eventBus, onSkip }: CutsceneOverlayProps): ReactElement | null {
+  const reasons = useSyncExternalStore(eventBus.pauseReasons.subscribe, eventBus.pauseReasons.snapshot, eventBus.pauseReasons.snapshot);
+  const blocked = hasForcedPause(reasons);
   const [state, setState] = useState<CutsceneOverlayState | null>(null);
   useEffect(() => {
     const removeStart = eventBus.on("cutscene-started", () => setState(null));
@@ -52,7 +55,7 @@ export function CutsceneOverlay({ eventBus, onSkip }: CutsceneOverlayProps): Rea
   }, []);
 
   const handleAdvance = useCallback((): void => {
-    if (!state?.manualAdvance) return;
+    if (hasForcedPause(eventBus.pauseReasons.snapshot()) || !state?.manualAdvance) return;
     const hasText = Boolean(state.beat.narration || state.beat.dialogue?.length);
     if (hasText && !state.textComplete) {
       setState((current) => current ? { ...current, forceReveal: true, textComplete: true } : current);
@@ -62,7 +65,7 @@ export function CutsceneOverlay({ eventBus, onSkip }: CutsceneOverlayProps): Rea
   }, [eventBus, state]);
 
   useEffect(() => {
-    if (!state) return undefined;
+    if (!state || blocked) return undefined;
     const handleKey = (event: KeyboardEvent) => {
       if (state.manualAdvance && (event.code === "Space" || event.key === "Enter")) {
         if (event.repeat) return;
@@ -75,7 +78,7 @@ export function CutsceneOverlay({ eventBus, onSkip }: CutsceneOverlayProps): Rea
     };
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
-  }, [handleAdvance, onSkip, state]);
+  }, [blocked, handleAdvance, onSkip, state]);
   if (!state) return null;
   const { beat, index, totalBeats, skipAllowed, manualAdvance, captionIndex, captionCount, textComplete, forceReveal } = state;
   const hasText = Boolean(beat.narration || beat.dialogue?.length);
@@ -115,11 +118,11 @@ export function CutsceneOverlay({ eventBus, onSkip }: CutsceneOverlayProps): Rea
           {manualAdvance && " · 자동으로 다음 문장으로 진행됩니다"}
         </span>
         {manualAdvance && (
-          <button className="primary-button" type="button" onClick={handleAdvance}>
+          <button className="primary-button" type="button" disabled={blocked} onClick={handleAdvance}>
             {advanceLabel} · 선택 · 클릭 / Space / Enter
           </button>
         )}
-        {skipAllowed && <button className="primary-button" type="button" onClick={onSkip}>건너뛰기 · ESC</button>}
+        {skipAllowed && <button className="primary-button" type="button" disabled={blocked} onClick={onSkip}>건너뛰기 · ESC</button>}
       </div>
     </div>
   );

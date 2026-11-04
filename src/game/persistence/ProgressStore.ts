@@ -6,7 +6,7 @@ import { PROGRESS_STORAGE_KEY, SAVE_SCHEMA_VERSION, type SaveEnvelope } from "./
 export class ProgressStore {
   private readonly storage?: Storage;
 
-  public constructor(storage?: Storage) {
+  public constructor(storage?: Storage, private readonly storageKey = PROGRESS_STORAGE_KEY) {
     this.storage = storage;
   }
 
@@ -17,7 +17,7 @@ export class ProgressStore {
     }
 
     try {
-      const raw = storage.getItem(PROGRESS_STORAGE_KEY);
+      const raw = storage.getItem(this.storageKey);
       return raw ? migrateSave(JSON.parse(raw)) : createDefaultProgressState();
     } catch (error) {
       console.warn("[ProgressStore] failed to read save; using defaults", error);
@@ -37,14 +37,14 @@ export class ProgressStore {
       progress: migrateSave({ schemaVersion: SAVE_SCHEMA_VERSION, progress }),
     };
     try {
-      storage.setItem(PROGRESS_STORAGE_KEY, JSON.stringify(envelope));
+      storage.setItem(this.storageKey, JSON.stringify(envelope));
     } catch (error) {
       console.warn("[ProgressStore] failed to write save", error);
     }
   }
 
   public clear(): void {
-    this.getStorage()?.removeItem(PROGRESS_STORAGE_KEY);
+    this.getStorage()?.removeItem(this.storageKey);
   }
 
   public update(mutator: (current: ProgressState) => ProgressState): ProgressState {

@@ -664,3 +664,13 @@ form { display: flex; gap: 6px; margin-top: 10px; } form input { min-width: 0; f
   .custom-paint-help { font-size: 9px; }
 }
 .owned-custom-outfit-preview { display: block; width: 64px; height: 48px; image-rendering: pixelated; }
+
+/* Account-backed game status */
+.cloud-entry { min-height: 100svh; display: grid; place-items: center; padding: 24px; background: #201a15; color: #fff3d6; }
+.cloud-entry section, .cloud-blocker section { max-width: 440px; padding: 28px; border-radius: 20px; background: #30271f; color: #fff3d6; }
+.cloud-entry h1 { font-size: 24px; margin-bottom: 16px; }
+.cloud-entry button { margin: 16px 8px 0 0; }
+.cloud-blocker { position: fixed; inset: 0; z-index: 10000; display: grid; place-items: center; padding: 24px; background: #120e0bd9; }
+.cloud-blocker p { margin-bottom: 18px; line-height: 1.7; }
+.cloud-save-status { position: fixed; bottom: 8px; left: 12px; z-index: 200; padding: 5px 10px; border-radius: 8px; background: #211b16eb; color: #fff3d6; font-size: 12px; pointer-events: none; }
+.cloud-logout { position: fixed; right: 12px; bottom: 8px; z-index: 201; }

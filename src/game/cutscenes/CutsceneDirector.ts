@@ -1,5 +1,6 @@
 import * as Phaser from "phaser";
 import type { GameEventBus } from "../bridge/GameEventBus";
+import { hasForcedPause } from "../bridge/PauseReasons";
 import type { ProgressState } from "../core/types";
 import { AudioManager } from "../audio/AudioManager";
 import { CameraDirector } from "../camera/CameraDirector";
@@ -20,6 +21,7 @@ export class CutsceneDirector {
   private canSkip = false;
   private skipped = false;
   private currentId: string | null = null;
+  private readonly unsubscribePause?: () => void;
 
   public constructor(
     _scene: Phaser.Scene,
@@ -36,6 +38,9 @@ export class CutsceneDirector {
     this.eventBus = eventBus;
     this.cameraDirector = cameraDirector;
     this.audioManager = audioManager;
+    const sync = () => { if (eventBus && hasForcedPause(eventBus.pauseReasons.snapshot())) this.timeline.pause(); else this.timeline.resume(); };
+    this.unsubscribePause = eventBus?.pauseReasons.subscribe(sync);
+    sync();
   }
 
   public play(id: string): Promise<void> {
@@ -72,6 +77,7 @@ export class CutsceneDirector {
   }
 
   public destroy(): void {
+    this.unsubscribePause?.();
     this.timeline.cancel();
     this.player.unlockControl("cutscene");
     this.playing = false;
