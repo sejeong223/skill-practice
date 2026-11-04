@@ -2,29 +2,33 @@
 
 ## Active Plan
 
-[월드 4 고물상 맵·장애물·바닥 함정](./plans/2026-11-02-world04-scrapyard-map-obstacles.md)
+[Entra ID 로그인·계정 저장·TOP 10 랭킹·Static Web Apps 배포](./plans/2026-11-04-entra-login-cloud-save-leaderboard.md)
 
 ## Active Phase
 
-[P01 고물상 맵·기믹·캠페인 연결](./phases/2026-11-02-world04-scrapyard-map-obstacles/P01-scrapyard/phase.md)
+[P01 공유 계약·인증·클라우드 API](./phases/2026-11-04-entra-login-cloud-save-leaderboard/P01-cloud-api/phase.md)
 
 ## Active Task
 
-없음 — 월드 4 고물상 계획 전체 8/8 완료.
+[T02 Functions 실행 구성과 Entra 토큰 검증](./phases/2026-11-04-entra-login-cloud-save-leaderboard/P01-cloud-api/T02-api-auth.md)
 
 ## Status
 
-- P01 8/8 완료. 일반맵 4개의 기믹 22·24·26·27개, 실제 입력 전체 통과·보스 연결, 브라우저 35사례 및 30fps 목표 통과, 자동 검사 61건·타입·린트·빌드를 검증했다.
+- MEA 자동 연속 실행 중: 1/14 완료, P01 1/5. T01 공유 계약·진행 매핑·엄격 검증 구현 및 25개 테스트·타입·린트 통과. 다음 P01-T02를 이어서 실행한다.
+- 확정 결정: [2026-11-04 로그인·저장·랭킹](./decisions/2026-11-04-entra-login-cloud-save-leaderboard.md).
+- computer-use 금지. 필요한 Azure 포털 확인·대화형 로그인·비밀 설정은 사용자에게 경로를 안내한다. 대상 구독 접근과 실제 ID·자격 증명 준비는 P03-T01에서 확인한다.
+- 기존 공용 Cosmos 계정 안에 게임 DB만 추가한다. 다른 DB·컨테이너·계정 설정을 변경하지 않는다. 새 컨테이너 전용 manual 400 RU/s, SWA Free, GitHub 수동 배포를 유지한다.
 - 사용자 지시: 별도 테스트 폴더·test-plans 문서를 만들지 않는다. 자동 검증 파일은 기존 scripts/ 바로 아래에, 검증 결과는 해당 Task의 Progress에 기록한다.
 - 후속 실행 스킬의 검증 기록 경로 관례보다 위 사용자 지시를 우선한다.
 - 월드 3 인트로 자동 진행 중단 기록은 사용자 선택에 따라 별도 후속 작업으로 유지한다.
 
 ## Next Step (IMPORTANT)
 
-현재 계획은 완료했다. 검증 결과와 조정 근거는 [T08 Progress](./phases/2026-11-02-world04-scrapyard-map-obstacles/P01-scrapyard/T08-playthrough-validation.md#progress)에 기록했다. 다음 사용자 지시를 기다리며 이전 계획을 자동 재개하지 않는다. 기존 미커밋 변경은 보존한다.
+MEA 자동 연속 실행: P01-T02 청사진을 읽고 api/ Functions 실행 구성과 Entra 토큰 검증을 구현·검증한다. 기존 미커밋 변경을 보존하고 남은 Task를 순서대로 계속한다.
 
 ## Previous Active Plan
 
+- [월드 4 고물상 맵·장애물·바닥 함정](./plans/2026-11-02-world04-scrapyard-map-obstacles.md): P01 8/8 완료. 일반맵 기믹 22·24·26·27개, 전체 입력 통과·보스 연결, 브라우저 35사례·30fps 목표, 자동61건·타입·린트·빌드 검증. 자세한 결과는 [T08 Progress](./phases/2026-11-02-world04-scrapyard-map-obstacles/P01-scrapyard/T08-playthrough-validation.md#progress).
 - [월드 3 고등어 태비 보스전 재구상](./plans/2026-10-29-world03-mackerel-boss-redesign.md): P01 3/3, P02 2/2, P03 4/4 완료. 이전 Active Task는 없음이었다.
 - 당시 월드 3 인트로 두 번째 자막 이후 자동 진행 중단으로 수동 보스전·청음 확인은 별도 조사·재검증 대상으로 남았다. 이번 계획에 자동으로 포함하지 않는다.
 - 기존 검증 기록과 아래 이전 작업 문맥은 보존한다. 새 계획 완료 후 과거 미완료 계획을 자동 재개하지 않는다.
