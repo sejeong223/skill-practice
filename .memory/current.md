@@ -39,6 +39,8 @@
 
 ## Next Step (IMPORTANT)
 
+T06 진행 중: cloud164/release-smoke12/린트/타입 및 실제 HTTP14·Cosmos9 검증 통과, 테스트 잔여0. 사용자 로그인 이후 fetch receiver 오류와 SDK receipt404 처리 결함을 수정했다. 수정 후보를 깨끗한 sourceSHA로 재배포 후 manual-A(사용자가 선택한 테스트 계정)의 M01~M06 실제 확인을 이어간다. 모든 수동 확인 전 완료 처리 금지. T05 완료 커밋은 `3bf566f`.
+
 [배포 run41972324270](https://github.com/sejeong223/skill-practice/actions/runs/41972324270) success. 실제 source=`c1e56c67f2c9b169de4cc9474d23fd2cecaedab4`(후보 브랜치 보존), workflow=`03456f99372de9b8d6e9a5d715d098d227f5fa9c`, origin=`https://polite-rock-0f80d2a00.5.azurestaticapps.net`. root/JS/PNG/bridge200 및 미인증API401/JSON/no-store 확인. T06 청사진에 따라 CLI/HTTP·격리 테스트 데이터를 검증하고 실제 사용자 로그인·다른 기기 재개는 사용자에게 요청한다. computer-use 금지, 실제 확인 전 done 금지, 기존 dirty 게임/아트 보존.
 
 ## Previous Active Plan
