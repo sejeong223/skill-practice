@@ -1,0 +1,136 @@
+name: Deploy legendary-rib-corgi
+on:
+  workflow_dispatch:
+    inputs:
+      source_ref:
+        description: dev or an exact 40-character commit SHA
+        required: true
+        default: dev
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: legendary-rib-corgi-production
+  cancel-in-progress: false
+jobs:
+  build-deploy:
+    if: github.repository == 'sejeong223/skill-practice'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    env:
+      NEXT_PUBLIC_GAME_TENANT_ID: ${{ vars.GAME_TENANT_ID }}
+      NEXT_PUBLIC_GAME_WEB_CLIENT_ID: ${{ vars.GAME_WEB_CLIENT_ID }}
+      NEXT_PUBLIC_GAME_API_CLIENT_ID: ${{ vars.GAME_API_CLIENT_ID }}
+      NEXT_PUBLIC_GAME_REDIRECT_URI: ${{ vars.GAME_REDIRECT_URI }}
+      NEXT_PUBLIC_GAME_MODE: cloud
+    steps:
+      - name: Validate workflow branch and source input
+        id: guard
+        env:
+          SOURCE_REF: ${{ inputs.source_ref }}
+          WORKFLOW_BRANCH: ${{ github.ref_name }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          set -euo pipefail
+          [[ "$WORKFLOW_BRANCH" == "$DEFAULT_BRANCH" ]]
+          [[ "$GITHUB_REF" == "refs/heads/$DEFAULT_BRANCH" ]]
+          [[ "$SOURCE_REF" == "dev" || "$SOURCE_REF" =~ ^[0-9a-fA-F]{40}$ ]]
+      - name: Checkout selected source
+        id: checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4, verified 2026-11-05
+        with:
+          ref: ${{ inputs.source_ref }}
+          persist-credentials: false
+      - name: Pin detached source commit
+        id: source
+        env:
+          SOURCE_REF: ${{ inputs.source_ref }}
+        run: |
+          set -euo pipefail
+          SOURCE_SHA="$(git rev-parse HEAD)"
+          [[ "$SOURCE_SHA" =~ ^[0-9a-f]{40}$ ]]
+          if [[ "$SOURCE_REF" != "dev" ]]; then [[ "$SOURCE_SHA" == "${SOURCE_REF,,}" ]]; fi
+          git checkout --detach "$SOURCE_SHA"
+          printf 'sha=%s\n' "$SOURCE_SHA" >> "$GITHUB_OUTPUT"
+      - name: Set up Node 22
+        id: node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4, verified 2026-11-05
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            api/package-lock.json
+      - name: Validate public build configuration
+        id: public-config
+        run: |
+          node --input-type=module <<'NODE'
+          import { appendFileSync } from 'node:fs';
+          import { publicBuildConfig } from './scripts/game-release-utils.mjs';
+          const { origin } = publicBuildConfig('production');
+          appendFileSync(process.env.GITHUB_ENV, 'GAME_EXPECTED_SWA_ORIGIN=' + origin + '\n');
+          NODE
+      - name: Install locked dependencies
+        id: install
+        run: |
+          npm ci
+          npm ci --prefix api
+      - name: Check dependency security
+        id: audit
+        run: npm audit --audit-level=high
+      - name: Validate application and release contracts
+        id: test
+        run: |
+          npm run lint
+          npx tsc --noEmit
+          npm run typecheck:api
+          npm run test:cloud
+          npm run test:release-config
+          npm run test:workflow
+          node scripts/check-game-workflow.mjs
+      - name: Build production artifacts
+        id: build
+        run: npm run build:release -- --mode production
+      - name: Verify production artifacts
+        id: verify
+        run: npm run check:release -- --mode production
+      - name: Require deployment token
+        id: token
+        env:
+          SWA_DEPLOY_TOKEN: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_LEGENDARY_RIB_CORGI }}
+        run: |
+          set -euo pipefail
+          [[ -n "$SWA_DEPLOY_TOKEN" ]] || { echo 'Deployment token is missing.'; exit 1; }
+      - name: Deploy verified static site and API
+        id: deploy
+        uses: Azure/static-web-apps-deploy@1a947af9992250f3bc2e68ad0754c0b0c11566c9 # v1, verified 2026-11-05
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_LEGENDARY_RIB_CORGI }}
+          action: upload
+          app_location: out
+          output_location: ''
+          api_location: build/game-api
+          skip_app_build: true
+          skip_api_build: true
+          production_branch: ${{ github.event.repository.default_branch }}
+      - name: Record deployment provenance
+        id: summary
+        env:
+          SOURCE_SHA: ${{ steps.source.outputs.sha }}
+          WORKFLOW_REF: ${{ github.workflow_ref }}
+          DEPLOY_URL: ${{ steps.deploy.outputs.static_web_app_url }}
+        run: |
+          node --input-type=module <<'NODE'
+          import { readFileSync, appendFileSync } from 'node:fs';
+          const manifest = JSON.parse(readFileSync('build/game-release.json', 'utf8'));
+          if (manifest.sourceCommit !== process.env.SOURCE_SHA) throw new Error('SOURCE_SHA_MISMATCH');
+          appendFileSync(process.env.GITHUB_STEP_SUMMARY, [
+            'Source SHA: ' + manifest.sourceCommit,
+            'Workflow ref: ' + process.env.WORKFLOW_REF,
+            'SWA origin: ' + manifest.swaOrigin,
+            'Deployment URL: ' + process.env.DEPLOY_URL,
+            'SKU: Standard; API: node:22', ''
+          ].join('\n'));
+          NODE
