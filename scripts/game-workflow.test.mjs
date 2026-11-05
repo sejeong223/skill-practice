@@ -44,6 +44,7 @@ test('audit must include development dependencies and fail the job', () => {
   rejects((d) => { step(d, 'verify').if = 'false'; }, 'WORKFLOW_STEP_BYPASS');
 });
 test('preflight artifacts, omitted checks and deployment rebuilds are rejected', () => {
+  rejects((d) => { step(d, 'test').run = step(d, 'test').run.replace('npx next typegen\n', ''); }, 'WORKFLOW_TEST_INVALID');
   rejects((d) => { step(d, 'build').run = 'npm run build:release -- --mode preflight'; }, 'WORKFLOW_BUILD_INVALID');
   rejects((d) => { step(d, 'verify').run = 'echo skipped'; }, 'WORKFLOW_VERIFY_INVALID');
   rejects((d) => { step(d, 'test').run = 'npm run lint'; }, 'WORKFLOW_TEST_INVALID');

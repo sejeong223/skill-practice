@@ -95,7 +95,7 @@ Task: T04-standard-resources
 
 - [x] 구현 완료
 - [x] 검증 통과
-- commit: 이 파일을 완료 처리한 Git 커밋의 Plan/Phase/Task 식별자로 조회
+- commit: 32a1f21
 - 로컬 선행 Task 커밋/검증: T01 b625133, T02 27037b6, T03 aa8d71c. Node22 별도 checkout preflight 및 cloud159/workflow9/release13·린트·타입·audit 검증 통과. 기존 미커밋91개 경로 중 T02에 명시적으로 편입한 경로를 제외한 내용 변경0.
 - 2026-11-05T03:43:39Z 실제 Inspect exit0: 고정 구독/tenant Enabled, Free10/Standard2, East Asia 지원, 게임 DB/container 재사용·추가RU0. 다른 DB7개/3400RU와 계정 metadata가 legacy 증거와 일치. 게임400RU·파티션·TTL·인덱스·고정 Entra 앱/SP/scope·DB 범위 역할 확인.
 - 실제 ARM이 반환하는 기본 `/_etag/?` 또는 `/"_etag"/?` 제외 경로만 정규화하도록 검증기를 보완했다. [Microsoft 기본 인덱스 정책](https://learn.microsoft.com/en-us/cosmos-db/indexing-policies)에 따른 시스템 경로이며 DB 인덱스는 수정하지 않는다. 다른 사용자 경로 변경 거절을 유지하며 대역13/13·대상 ESLint·PS 구문0 통과.
