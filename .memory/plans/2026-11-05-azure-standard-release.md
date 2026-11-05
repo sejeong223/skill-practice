@@ -86,4 +86,5 @@
 
 ## Latest Execution
 
-- 선행 보안 계획1/1 완료(2026-11-05). root audit critical0/high0/moderate8 및 Node22 검증 통과. 현재 배포 T01부터 실행하며 배포 완료는0/6이다.
+- 선행 보안 계획1/1 완료(`2aa6cbc`, 2026-11-05). root audit critical0/high0/moderate8 및 Node22 검증 통과.
+- 배포1/6: T01 완료. 정적284개/64,626,462bytes, API7개 경로 독립 로드, 경계 테스트13개·린트·타입·실제 로컬 HTTP 검사 통과. 현재 T02 Standard 도구 검증 단계이며 Azure/GitHub 쓰기는 아직 없다.

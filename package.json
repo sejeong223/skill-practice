@@ -5,7 +5,10 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
+    "start": "serve out -l 3000 --no-clipboard",
+    "build:release": "node scripts/build-game-release.mjs",
+    "check:release": "node scripts/check-game-release.mjs",
+    "test:release-config": "node --test scripts/release-config.test.mjs",
     "lint": "eslint",
     "test:progression": "node --experimental-strip-types --test scripts/stage-progression.test.mjs",
     "test:cloud-contracts": "node --import tsx --test scripts/cloud-contracts.test.mjs",
@@ -22,6 +25,9 @@
     "world01:maps:check": "node scripts/world01-maps.mjs --check",
     "test:cloud-game": "node --import tsx --test scripts/cloud-game.test.mjs",
     "test:ranking-ui": "node --import tsx --test scripts/ranking-ui.test.mjs"
+  },
+  "overrides": {
+    "serve": { "compression": "1.8.2" }
   },
   "dependencies": {
     "@azure/msal-browser": "^5.27.0",
@@ -42,6 +48,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.4.5",
     "jsdom": "^30.1.3",
+    "serve": "14.2.6",
     "tailwindcss": "^4",
     "tsx": "^4.23.15",
     "typescript": "^5"

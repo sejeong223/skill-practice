@@ -1,6 +1,6 @@
 # Task: T01 로컬 정적 패키지와 빌드 모드 분리
 
-## Status: pending
+## Status: done
 
 ## Goal
 
@@ -53,6 +53,7 @@ export async function packageGameApi(options: {
   - `scripts/build-game-release.mjs` :: `buildRelease` — 빌드 오케스트레이션; new
   - `scripts/check-game-release.mjs` :: `validateStaticOutput/validateApiPackage/validateRelease` — 배포 게이트; new
   - `scripts/release-config.test.mjs` :: `release tests` — 모드·경로·라우팅·경계 검증; new
+  - `scripts/game-release-utils.mjs` :: `publicBuildConfig/childEnvironment/noLinks/runNode` — 빌드·검사·패키징이 공유하는 공개 설정과 안전한 경로/프로세스 실행; new
   - `package.json`, `package-lock.json` :: `release scripts/serve` — 명령과 정적 서버; modify
   - `.gitignore`, `eslint.config.mjs` :: `generated output ignores` — 기존 out/build/api/dist ignore 확인; modify only if needed
 
@@ -65,8 +66,8 @@ interface ReleaseManifest {
   schemaVersion: 1; mode: ReleaseMode; sourceCommit: string; dirty: boolean;
   builtAt: string; swaOrigin: string; tenantId: string; webClientId: string; apiClientId: string;
   sku: "Standard"; apiRuntime: "node:22";
-  static: { directory: "out"; files: number; bytes: number };
-  api: { directory: "build/game-api"; entrypoint: "dist/functions/game.js" };
+  static: { directory: "out"; files: number; bytes: number; sha256: string };
+  api: { directory: "build/game-api"; entrypoint: "dist/functions/game.js"; sha256: string };
 }
 export async function buildRelease(options: { mode: ReleaseMode; env?: NodeJS.ProcessEnv }): Promise<ReleaseManifest>;
 export async function validateStaticOutput(root: string): Promise<{ files: number; bytes: number }>;
@@ -87,14 +88,14 @@ export async function validateRelease(options: { mode: ReleaseMode; expectedOrig
   4. `validateRelease`는 manifest 모드/SHA/환경과 실제 폴더/config/수치를 재계산한다. preflight manifest를 production으로 검사하면 실패. Browser JS/HTML에 서버 비밀 키 이름·테스트용 비밀 sentinel·서버 모듈이 포함되면 실패하되 값은 출력하지 않는다. 이 검사가 모든 가능한 비밀을 탐지한다는 주장은 하지 않는다.
   5. Error & Exception Handling: 빈 출력·없는 bridge·Phaser SSR·비밀 포함·용량 초과·production dirty/localhost는 exit1, manifest 성공 기록 없음. 수정 실패를 Azure 생성으로 우회하지 않는다.
   6. State Transition & Return: preflight 완료는 로컬 산출물 검증만 의미. 실제 로그인/API 연결 완료 아님. local serve는 /api를 호스팅하지 않아404가 정상이다.
-- package scripts: `start="serve out -l 3000"`(serve devDependency로 설치 버전 정확히 pin; catch-all -s 금지); `build:release="node scripts/build-game-release.mjs"`; `check:release="node scripts/check-game-release.mjs"`; `test:release-config="node --test scripts/release-config.test.mjs"`. 변경된 lockfile 유지.
+- package scripts: `start="serve out -l 3000 --no-clipboard"`(serve devDependency로 설치 버전 정확히 pin; catch-all -s 금지, 사용자 클립보드 변경 방지); `build:release="node scripts/build-game-release.mjs"`; `check:release="node scripts/check-game-release.mjs"`; `test:release-config="node --test scripts/release-config.test.mjs"`. 변경된 lockfile 유지.
 - 테스트: 500000000/15000 이하 통과·초과 실패(거대 실제 파일 대신 집계 포트), 출력경로 탈출·링크 거절, API 원본 deps 보존, 브라우저 secret sentinel, bridge/no-store/COOP 제거, API fallback 없음, production/preflight 모드·host·dirty 충돌, Functions7개 등록. 없는 자산404 정적 HTTP 확인은 Node fetch와 정적 서버로만 수행한다.
 
 ## Acceptance Criteria
 
-- [ ] Node22에서 Azure 설정/비밀 없이 preflight 산출물과 manifest를 생성한다.
-- [ ] bridge 정적 파일·API 독립 로드·Standard 크기·비밀 분리·production 거절 조건을 검증했다.
-- [ ] 실제 Azure/GitHub 쓰기 없이 코드와 본 Task 진행만 선별 커밋한다.
+- [x] Node22에서 Azure 설정/비밀 없이 preflight 산출물과 manifest를 생성한다.
+- [x] bridge 정적 파일·API 독립 로드·Standard 크기·비밀 분리·production 거절 조건을 검증했다.
+- [x] 실제 Azure/GitHub 쓰기 없이 코드와 본 Task 진행만 선별 커밋한다.
 
 ## Validation
 
@@ -120,8 +121,13 @@ Task: T01-static-package
 
 ## Progress
 
-- [ ] 구현 완료
-- [ ] 검증 통과
-- commit: pending
-- 실제 실행 명령/Node 버전/결과/한계: 실행 시 기록
+- [x] 구현 완료
+- [x] 검증 통과
+- commit: 이 파일을 완료 처리한 Git 커밋의 Plan/Phase/Task 식별자로 조회
+- 2026-11-05 Node22.23.4: test:release-config13/13, build:release preflight, check:release preflight, root/API 타입 검사, 전체 lint와 최종 수정 파일 lint 모두 통과. production 검사에서 preflight를 의도대로 거절했다.
+- 실제 출력: 정적284개/64,626,462bytes; 독립 API의7개 method/route/anonymous 등록 확인, API 패키지 의존성 audit0. root high 기준 audit 통과(보통8개 유지).
+- 실제 serve 프로세스를 숨김·loopback·임시 포트·clipboard 변경 없이 실행해 Node fetch로 / 및 /auth/redirect/200, 없는PNG404, /api/game/bootstrap404 확인 후 종료했다. SWA 헤더는 config 검사로 확인했으며 실제 Azure 로그인·기기 전환은 아직 미검증이다.
+- 기존 변경91개 경로 해시 보존 확인, 원본 api manifest/lock 변경 없음. .gitignore와 ESLint는 기존 출력 제외 규칙으로 충분해 수정하지 않았다.
+- 선행 보안 커밋: `2aa6cbc`. 출력 파일 수/바이트가 같아도 내용이 달라질 수 있으므로 manifest에 두 출력 폴더의 sha256을 추가해 재검사한다. Windows npm 실행은 Node22와 npm-cli.js를 명시적으로 사용한다.
+- 정적 확인 서버는 serve14.2.6으로 고정하고, 그 하위 compression만 제작사 수정 버전1.8.2로 좁게 override한다. serve의 고정된1.8.1 대신 같은1.8 계열 패치 버전을 사용해 새 high 경고가 들어오지 않도록 한다. [제작사 수정](https://github.com/expressjs/compression/releases/tag/v1.8.2). 보통 경고 수정 범위는 넓히지 않는다.
 - Azure/GitHub 쓰기: 없음 (본 Task 범위)

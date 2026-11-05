@@ -117,7 +117,7 @@ Task: T01-dependency-patches
 
 - [x] 구현 완료
 - [x] 검증 통과
-- commit: 이 파일을 완료 처리한 Git 커밋의 Plan/Phase/Task 식별자로 조회
+- commit: `2aa6cbc`
 - 2026-11-05 MEA 실행 시작. 기존 비메모리 변경91개 경로의 해시/삭제 상태를 `.git/mea-baseline-2026-11-05.json`에 보관했다. Node22.23.4로 변경 전 검증을 수행한다.
 - 변경 전 기준 검증(Node22.23.4): 클라우드11개 파일159/159, PNG3/3, lint, root/API 타입 검사, Next16.3.5 build, API build 모두 exit0. root audit는 critical1/high3/moderate8이었다.
 - 잠금 파일 갱신: Next/ESLint 설정16.4.5, sharp0.35.5/libvips1.3.4, source-map-js1.2.2, zod4.6.7. Zod는 부모의4.x 허용 범위 안에서 최신 수정 버전으로 해결됐다. 직접 의존성은 Next/ESLint 설정 두 항목만 바꿨다. sharp 하위 semver7.8.6과 npm이 보완한 기존 Tailwind WASM 선택적 의존성 경로도 lock에 포함됐으며 Tailwind 직접 버전은 유지했다.
