@@ -123,7 +123,7 @@ Task: T01-static-package
 
 - [x] 구현 완료
 - [x] 검증 통과
-- commit: 이 파일을 완료 처리한 Git 커밋의 Plan/Phase/Task 식별자로 조회
+- commit: `b625133`
 - 2026-11-05 Node22.23.4: test:release-config13/13, build:release preflight, check:release preflight, root/API 타입 검사, 전체 lint와 최종 수정 파일 lint 모두 통과. production 검사에서 preflight를 의도대로 거절했다.
 - 실제 출력: 정적284개/64,626,462bytes; 독립 API의7개 method/route/anonymous 등록 확인, API 패키지 의존성 audit0. root high 기준 audit 통과(보통8개 유지).
 - 실제 serve 프로세스를 숨김·loopback·임시 포트·clipboard 변경 없이 실행해 Node fetch로 / 및 /auth/redirect/200, 없는PNG404, /api/game/bootstrap404 확인 후 종료했다. SWA 헤더는 config 검사로 확인했으며 실제 Azure 로그인·기기 전환은 아직 미검증이다.

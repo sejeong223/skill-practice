@@ -10,7 +10,7 @@
 
 ## Active Task
 
-[T02 Standard 준비 도구와 보존 검사](./phases/2026-11-05-azure-standard-release/P01-standard-release/T02-standard-tooling.md)
+[T03 로컬 GitHub 수동 workflow와 검증](./phases/2026-11-05-azure-standard-release/P01-standard-release/T03-manual-workflow.md)
 
 ## Completed Prerequisite
 
@@ -26,7 +26,7 @@
 
 ## Status
 
-- 보안 계획1/1 완료(`2aa6cbc`), 배포 계획1/6. T01 정적/API 패키징·검증 완료, MEA로 T02 Standard 도구를 이어서 구현한다.
+- 보안 계획1/1 완료(`2aa6cbc`), 배포 계획2/6. T01 정적/API 패키징(`b625133`), T02 Standard 도구·보존 검사 완료. MEA로 T03 수동 workflow를 이어서 구현한다.
 - 이전 완료 구현10개 Task 재사용: P02-T05의 랭킹·게임 통합·기존 메뉴27/27, 랭킹7/7, TypeScript·린트·Next 빌드 통과 기록을 보존한다. 새계획을 이미 구현/검증한 결과로 표현하지 않는다.
 - 확정 결정: [2026-11-04 로그인·저장·랭킹](./decisions/2026-11-04-entra-login-cloud-save-leaderboard.md).
 - MSAL 5 호환 보완(P02-T01): root 로그인 복귀 주소 외에 silent 갱신용 `<origin>/auth/redirect/` SPA URI도 P03에서 등록한다. 해당 정적 경로에 `Cache-Control:no-store`, COOP 없음이 필요하다. 구체 근거는 P02-T01 Progress.
@@ -39,7 +39,7 @@
 
 ## Next Step (IMPORTANT)
 
-배포 T02 청사진을 읽고 기존 Azure 준비 스크립트의 Free 전제를 Standard로 바꾸며 고정 구독·기존 리소스 보존·재실행 안전성을 대역으로 검증한다. T03까지 Azure/GitHub 외부 쓰기 없음. 각 Task 검증 후 관련 변경만 한국어 커밋하고 자동으로 다음 포인터를 진행한다.
+배포 T03 청사진을 읽고 workflow_dispatch 전용 GitHub YAML, 확정 소스 SHA·공개 설정·보안 검사·운영 산출물 검증을 로컬에서 준비한다. T03까지 Azure/GitHub 외부 쓰기 없음. 완료 후 T04에서 실제 리소스 상태를 확인하고 승인된 게임 Standard 앱 생성·설정을 진행한다.
 
 ## Previous Active Plan
 

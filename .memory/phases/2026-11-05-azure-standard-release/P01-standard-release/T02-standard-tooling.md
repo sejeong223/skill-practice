@@ -1,6 +1,6 @@
 # Task: T02 Standard 준비 도구와 보존 검사
 
-## Status: pending
+## Status: done
 
 ## Goal
 
@@ -58,6 +58,7 @@ param(
 - Related Files:
   - `scripts/azure-game-apps.ps1` :: `Azure/Graph/Find-App/Finalize` — Standard 대상과 공개 설정; modify
   - `scripts/azure-game-apps.mock.ps1`, `scripts/azure-game-apps.test.mjs` :: `mock Graph/ARM tests` — 로컬 대역; new
+  - `scripts/azure-game-test-support.mjs` :: `fixture/setup/run/writes` — 두 도구의 고정 ID·legacy 증거·임시 작업 폴더·명령 추적을 공유; new
 
 #### Details
 
@@ -72,9 +73,9 @@ param(
 
 ## Acceptance Criteria
 
-- [ ] Standard 생성·검증·Finalize가 동일 SKU를 요구한다.
-- [ ] legacy 생성 증거와 기존400RU/앱/범위권한을 보존하며 새 앱/DB 중복 생성 경로를 막았다.
-- [ ] 모든 실제 Azure 쓰기는0, 대역 검증으로 잘못된 대상/기존 데이터/비밀 보호를 확인했다.
+- [x] Standard 생성·검증·Finalize가 동일 SKU를 요구한다.
+- [x] legacy 생성 증거와 기존400RU/앱/범위권한을 보존하며 새 앱/DB 중복 생성 경로를 막았다.
+- [x] 모든 실제 Azure 쓰기는0, 대역 검증으로 잘못된 대상/기존 데이터/비밀 보호를 확인했다.
 
 ## Validation
 
@@ -99,8 +100,10 @@ Task: T02-standard-tooling
 
 ## Progress
 
-- [ ] 구현 완료
-- [ ] 검증 통과
-- commit: pending
-- 대역 결과/기존 준비 파일 편입 내역: 실행 시 기록
+- [x] 구현 완료
+- [x] 검증 통과
+- commit: 이 파일을 완료 처리한 Git 커밋의 Plan/Phase/Task 식별자로 조회
+- 2026-11-05 Node22.23.4: resources7그룹+apps5그룹 총12/12 통과. 잘못된 tenant/등록/SP/scope, Standard100, Free 충돌, quota 재시도, metadata/파티션/인덱스/처리량 변경, 허용 목록, secret sentinel, 증거 보존 및 재실행 쓰기0을 검증했다.
+- 수정한4개 PS1 Parser.parseErrors0, JS 테스트/공유 fixture ESLint 통과. 기존 준비 resources/apps/mock/test/index 및 .env.example 설명을 이 Task에 편입했다.
+- DB/container/role 생성 코드를 제거했고 앱 helper의 legacy Create는 명시적으로 거절한다. 앱 Finalize는 필요한 URI의 합집합과 달라진 공개 설정만 적용한다. 실제 Azure 명령은 테스트 함수 포트가 전부 대체했으며 설치 CLI fallback은 없다.
 - 실제 Azure 쓰기:0 (본 Task 범위)

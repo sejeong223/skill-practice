@@ -1,0 +1,13 @@
+{
+  "indexingMode": "consistent",
+  "automatic": true,
+  "includedPaths": [
+    { "path": "/kind/?" },
+    { "path": "/namespace/?" },
+    { "path": "/eligible/?" },
+    { "path": "/record/progressRank/?" },
+    { "path": "/record/deaths/?" },
+    { "path": "/playerId/?" }
+  ],
+  "excludedPaths": [{ "path": "/*" }]
+}
