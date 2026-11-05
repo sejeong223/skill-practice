@@ -1,6 +1,6 @@
 # Task: T04 실제 Standard 앱 생성과 운영 설정
 
-## Status: pending
+## Status: done
 
 ## Goal
 
@@ -66,10 +66,10 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/azure-game-apps.
 
 ## Acceptance Criteria
 
-- [ ] T01~T03 완료 후 Standard SWA1개가 실제로 생성됐다.
-- [ ] 기존 게임 DB/Entra/권한 재사용과 다른 리소스 보존이 실제 조회로 확인됐다.
-- [ ] 운영URI·서버공개값·비밀존재/만료 metadata를 확인하고 Verify exit0.
-- [ ] 실제 host/ID·준비시각·남은 실제로그인검증을 Progress에 기록했다.
+- [x] T01~T03 완료 후 Standard SWA1개가 실제로 생성됐다.
+- [x] 기존 게임 DB/Entra/권한 재사용과 다른 리소스 보존이 실제 조회로 확인됐다.
+- [x] 운영URI·서버공개값·비밀존재/만료 metadata를 확인하고 Verify exit0.
+- [x] 실제 host/ID·준비시각·남은 실제로그인검증을 Progress에 기록했다.
 
 ## Validation
 
@@ -93,10 +93,16 @@ Task: T04-standard-resources
 
 ## Progress
 
-- [ ] 구현 완료
-- [ ] 검증 통과
-- commit: pending
-- 로컬 선행 Task 커밋/검증: 실행 시 기록
-- 실제 공개 IDs/host/지역/SKU/권한/metadata 비교: 실행 시 기록
-- 비밀keyID/만료일(값금지)/입력완료/Verify: 실행 시 기록
+- [x] 구현 완료
+- [x] 검증 통과
+- commit: 이 파일을 완료 처리한 Git 커밋의 Plan/Phase/Task 식별자로 조회
+- 로컬 선행 Task 커밋/검증: T01 b625133, T02 27037b6, T03 aa8d71c. Node22 별도 checkout preflight 및 cloud159/workflow9/release13·린트·타입·audit 검증 통과. 기존 미커밋91개 경로 중 T02에 명시적으로 편입한 경로를 제외한 내용 변경0.
+- 2026-11-05T03:43:39Z 실제 Inspect exit0: 고정 구독/tenant Enabled, Free10/Standard2, East Asia 지원, 게임 DB/container 재사용·추가RU0. 다른 DB7개/3400RU와 계정 metadata가 legacy 증거와 일치. 게임400RU·파티션·TTL·인덱스·고정 Entra 앱/SP/scope·DB 범위 역할 확인.
+- 실제 ARM이 반환하는 기본 `/_etag/?` 또는 `/"_etag"/?` 제외 경로만 정규화하도록 검증기를 보완했다. [Microsoft 기본 인덱스 정책](https://learn.microsoft.com/en-us/cosmos-db/indexing-policies)에 따른 시스템 경로이며 DB 인덱스는 수정하지 않는다. 다른 사용자 경로 변경 거절을 유지하며 대역13/13·대상 ESLint·PS 구문0 통과.
+- 실제 Create exit0, 생성시각 `2026-11-05T03:44:50.1271567Z`: `legendary-rib-corgi`, SKU Standard, East Asia, host `polite-rock-0f80d2a00.5.azurestaticapps.net`. SWA ID는 위 고정 ARM ID와 일치. 계정·다른DB metadata 재조회 보존 확인. `.git/azure-game-resources.json`의 legacy plan·기존 증거 유지 및 standardRelease 증거 추가.
+- Finalize exit0: 웹 앱 redirect4개(운영 root/bridge와 localhost root/bridge)를 실제 재조회했고, 서버 공개 설정6개(고정 tenant/API/web/client/endpoint 및 testIds=[]) 적용·재조회 일치. 기존 추가 URI·allowlist를 보존하는 방식이다.
+- 사용자 서버 비밀 설정 완료 응답 후 실제 Verify exit0(2026-11-05T04:47Z). secretPresent=true, credentialKeyId=`7a3aa0a9-3fc3-48f0-b4d4-5429c4c7eb5e`, credentialExpiresAt=`2027-05-04T04:43:11.296Z`. 비밀 값은 요청/출력/저장하지 않았다. 운영/localhost URI4개, 공개 서버값, 기존 DB400RU·파티션·TTL·인덱스, DB 범위 역할, Standard/East Asia와 공유 metadata 보존을 모두 실제 재조회했다. 자격증명의 실제 사용과 사용자 로그인은 배포 이후 T06에서 확인한다.
+- 비밀 존재 조회는 Windows native 인수 전달에서도 따옴표 손실 없이 동작하도록 JMESPath의 null/빈문자열 비교를 사용한다. 실제 CLI가 공개 값과 secretPresent=false만 반환하는 것을 확인했다. 설치된 Azure CLI의 JMESPath 엔진으로 미설정/null/빈값/비어 있지 않은 sentinel4사례를 검증했고 값 노출0. 최종 resources8+apps5=13/13 대역 검사 재통과.
+- T03의 임시 worktree는 검증 후 선택 파일5개가 완료 커밋의 파일과 같은지 해시로 확인하고 삭제했다. 검증 결과와 source SHA는 T03 Progress에 보존했다.
+- 갱신 절차: 새 비밀 생성 → SWA 값 교체 → 실제 API 성공 확인 → 기존 비밀 삭제. 이 Task에서 기존 비밀을 임의 삭제하지 않는다.
 - 실제 사용자 로그인: 아직 검증하지 않음(T06)

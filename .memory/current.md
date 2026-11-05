@@ -10,7 +10,7 @@
 
 ## Active Task
 
-[T04 실제 Standard 앱 생성과 운영 설정](./phases/2026-11-05-azure-standard-release/P01-standard-release/T04-standard-resources.md)
+[T05 기본 브랜치 등록과 운영 수동 배포](./phases/2026-11-05-azure-standard-release/P01-standard-release/T05-production-deploy.md)
 
 ## Completed Prerequisite
 
@@ -26,7 +26,7 @@
 
 ## Status
 
-- 보안 계획1/1 완료(`2aa6cbc`), 배포 계획3/6. T01 정적/API 패키징(`b625133`), T02 Standard 도구·보존 검사(`27037b6`), T03 수동 workflow와 별도 checkout 검증 완료. MEA로 T04 실제 Standard 리소스 준비를 이어간다.
+- 보안 계획1/1 완료(`2aa6cbc`), 배포 계획4/6. T01 정적/API 패키징(`b625133`), T02 Standard 도구·보존 검사(`27037b6`), T03 workflow(`aa8d71c`), T04 실제 Standard 생성·설정 Verify 완료. MEA로 T05 수동 배포를 이어간다.
 - 이전 완료 구현10개 Task 재사용: P02-T05의 랭킹·게임 통합·기존 메뉴27/27, 랭킹7/7, TypeScript·린트·Next 빌드 통과 기록을 보존한다. 새계획을 이미 구현/검증한 결과로 표현하지 않는다.
 - 확정 결정: [2026-11-04 로그인·저장·랭킹](./decisions/2026-11-04-entra-login-cloud-save-leaderboard.md).
 - MSAL 5 호환 보완(P02-T01): root 로그인 복귀 주소 외에 silent 갱신용 `<origin>/auth/redirect/` SPA URI도 P03에서 등록한다. 해당 정적 경로에 `Cache-Control:no-store`, COOP 없음이 필요하다. 구체 근거는 P02-T01 Progress.
@@ -39,7 +39,7 @@
 
 ## Next Step (IMPORTANT)
 
-T04 청사진에 따라 실제 Azure 구독/tenant·공유 리소스 상태를 재확인하고 게임 Standard 앱 생성·공개 설정을 진행한다. T01~T03 및 별도 checkout preflight 검증 완료. 비밀은 사용자 직접 입력하며 설정 존재/만료 metadata만 확인한다. 실제 Verify 성공 전에는 T04를 완료하지 않는다.
+T04 실제 Verify 완료(2026-11-05T04:47Z), Standard/East Asia origin=`https://polite-rock-0f80d2a00.5.azurestaticapps.net`. 서버 비밀 존재·만료2027-05-04 확인, 값 조회 없음. T05에서 GitHub 권한·기본 브랜치를 조회하고 workflow 등록, 공개 Variables, 배포 토큰 이름 존재를 확인한 뒤 확정 소스 SHA를 운영 빌드·배포한다. 기존 dirty 게임/아트는 보존한다. 배포 성공 후 T06 실제 HTTP·로그인·저장·기기 전환 검증까지 이어간다.
 
 ## Previous Active Plan
 

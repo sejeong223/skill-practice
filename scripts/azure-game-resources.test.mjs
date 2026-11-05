@@ -7,6 +7,12 @@ test("Inspect is read-only and Free10 does not block Standard2; existing DB adds
  const s=fixture(),dir=setup(t,s),e=join(dir,".git/azure-game-resources.json"),before=readFileSync(e);const r=run(dir,s,"Inspect");assert.equal(r.status,0,r.stderr+r.stdout);assert.equal(writes(r).length,0);
  const out=JSON.parse(r.stdout);assert.equal(out.otherThroughputRU,3400);assert.equal(out.additionalRU,0);assert.equal(out.sku,"Standard");assert.equal(out.freeSiteCount,10);assert.equal(out.standardSiteCount,2);assert.equal(out.standardSiteLimit,100);assert.equal(out.reusedDatabase,true);assert.deepEqual(readFileSync(e),before);
 });
+test("ARM default etag exclusion is accepted without changing any index",t=>{
+ for(const path of ['/"_etag"/?','/_etag/?']){
+  const s=fixture();s.container.resource.indexingPolicy.excludedPaths.push({path});const before=structuredClone(s.container);const dir=setup(t,s),r=run(dir,s,"Inspect");
+  assert.equal(r.status,0,r.stderr+r.stdout);assert.equal(writes(r).length,0);assert.deepEqual(r.fixture.container,before);
+ }
+});
 test("Create only creates Standard SWA, preserves legacy evidence and retries without any write",t=>{
  const s=fixture(),dir=setup(t,s),r=run(dir,s);assert.equal(r.status,0,r.stderr+r.stdout);assert.equal(writes(r).length,1);assert.equal(writes(r)[0].slice(0,2).join(" "),"staticwebapp create");assert.ok(writes(r)[0].includes("Standard"));
  const e=JSON.parse(readFileSync(join(dir,".git/azure-game-resources.json")));assert.equal(e.plan,"2026-11-04-entra-login-cloud-save-leaderboard");assert.equal(e.databaseId,db);assert.equal(e.containerId,container);assert.equal(e.standardRelease.sku,"Standard");

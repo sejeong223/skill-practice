@@ -110,7 +110,11 @@ function Assert-Container($Value) {
     $p = $r.indexingPolicy
     Assert-Condition ($p.indexingMode -eq 'consistent' -and $p.automatic -eq $true) 'Index mode mismatch.'
     Assert-Condition ((Json @($p.includedPaths.path | Sort-Object)) -eq (Json @($desiredIndex.includedPaths.path | Sort-Object))) 'Included index paths mismatch.'
-    Assert-Condition ((Json @($p.excludedPaths.path | Sort-Object)) -eq (Json @($desiredIndex.excludedPaths.path | Sort-Object))) 'Excluded index paths mismatch.'
+    # Cosmos adds the default system-property exclusion to the ARM response.
+    # Ignore only that normalization; retain exact checks for all application paths.
+    # https://learn.microsoft.com/en-us/cosmos-db/indexing-policies
+    $applicationExclusions = @($p.excludedPaths.path | Where-Object { $_ -notin @('/"_etag"/?', '/_etag/?') } | Sort-Object)
+    Assert-Condition ((Json $applicationExclusions) -eq (Json @($desiredIndex.excludedPaths.path | Sort-Object))) 'Excluded index paths mismatch.'
     Assert-Condition (-not $p.compositeIndexes -and -not $p.spatialIndexes -and -not $p.vectorIndexes) 'Unexpected secondary indexes.'
     Assert-Condition (-not $r.uniqueKeyPolicy.uniqueKeys -and -not $r.clientEncryptionPolicy -and -not $r.vectorEmbeddingPolicy) 'Unexpected container policy.'
     $tp = Read-Throughput $database $container
@@ -230,7 +234,7 @@ if ($Mode -eq 'Create') {
     $activeSecrets = @($apiApp.passwordCredentials | Where-Object { [DateTime]$_.endDateTime -gt [DateTime]::UtcNow })
     Assert-Condition ($activeSecrets.Count -gt 0) 'API app has no unexpired credential metadata.'
     # Read public settings and presence only. Never return the secret value from az.
-    $settingsQuery = 'properties.{tenant:GAME_TENANT_ID,api:GAME_API_CLIENT_ID,web:GAME_WEB_CLIENT_ID,endpoint:GAME_COSMOS_ENDPOINT,client:GAME_COSMOS_CLIENT_ID,testIds:GAME_TEST_OBJECT_IDS,secretPresent:length(GAME_COSMOS_CLIENT_SECRET || `""`) > `0`}'
+    $settingsQuery = "properties.{tenant:GAME_TENANT_ID,api:GAME_API_CLIENT_ID,web:GAME_WEB_CLIENT_ID,endpoint:GAME_COSMOS_ENDPOINT,client:GAME_COSMOS_CLIENT_ID,testIds:GAME_TEST_OBJECT_IDS,secretPresent:GAME_COSMOS_CLIENT_SECRET != null && GAME_COSMOS_CLIENT_SECRET != ''}"
     $settings = Invoke-Azure @('staticwebapp', 'appsettings', 'list', '-g', $group, '-n', $database, '--query', $settingsQuery)
     Assert-Condition ($settings.tenant -eq $TenantId -and $settings.api -eq $apiApp.appId -and $settings.web -eq $webApp.appId -and $settings.client -eq $apiApp.appId -and $settings.secretPresent) 'SWA server settings are missing or incorrect.'
     Assert-Condition ($settings.endpoint -in @("https://$account.documents.azure.com:443/", "https://$account.documents.azure.com/")) 'Cosmos endpoint mismatch.'

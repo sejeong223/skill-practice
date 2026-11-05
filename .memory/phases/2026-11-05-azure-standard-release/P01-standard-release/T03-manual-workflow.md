@@ -95,7 +95,7 @@ Task: T03-manual-workflow
 
 - [x] 구현 완료
 - [x] 검증 통과
-- commit: 이 파일을 완료 처리한 Git 커밋의 Plan/Phase/Task 식별자로 조회
+- commit: aa8d71c
 - 2026-11-05 Node22.23.4: workflow9/9, cloud159/159, release-config13/13, YAML CLI, lint, root/API TypeScript, root audit(high 기준) 통과. 보안 경고는 critical0/high0/moderate8로 유지.
 - 별도 worktree `%TEMP%/corgi-standard-release-20261105`에서 선행 HEAD27037b6 + T03 파일5개만 복사하여 root/API npm ci, preflight build/check, cloud159/159, workflow9/9, lint, root/API 타입 검사 통과. 원래 미커밋 게임/아트와 .env.local은 복사하지 않았다. 산출물284개/64,920,945bytes, API7개 경로 독립 로드 확인. 실제 운영 배포·로그인은 아직 미검증.
 - 공식 저장소 `git ls-remote`로 확인한 immutable pins: checkout v4=11d5960a326750d5838078e36cf38b85af677262, setup-node v4=49933ea5288caeca8642d1e84afbd3f7d6820020, static-web-apps-deploy v1=1a947af9992250f3bc2e68ad0754c0b0c11566c9. YAML parser2.9.1 고정, 중복 키 거절.

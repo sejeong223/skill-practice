@@ -88,3 +88,5 @@
 
 - 선행 보안 계획1/1 완료(`2aa6cbc`, 2026-11-05). root audit critical0/high0/moderate8 및 Node22 검증 통과.
 - 배포3/6: T01(`b625133`) 정적/API 패키징, T02(`27037b6`) Standard 도구 대역12그룹 완료. T03 workflow9개/cloud159개/release13개·린트·타입·audit 통과. 별도 checkout preflight284개/64,920,945bytes와 API7개 경로 확인. 현재 T04 실제 리소스 준비이며 T03 완료까지 Azure/GitHub 쓰기는 없다.
+- T03 커밋 `aa8d71c`. 이후 T04에서 Standard `legendary-rib-corgi`를 East Asia에 생성하고 공개 설정·URI를 연결했다. 실제 host `polite-rock-0f80d2a00.5.azurestaticapps.net`, 생성2026-11-05T03:44:50Z. 기존 DB·공유 리소스 보존 확인. 서버 비밀 사용자 입력/실제 Verify 대기이므로 T04는 미완료이며 게임 배포는 아직 하지 않았다.
+- 사용자 비밀 설정 완료 후 T04 실제 Verify exit0(2026-11-05T04:47Z). 서버 비밀 존재와 만료2027-05-04, 공개 설정/URI·공유 리소스 보존을 확인하여 배포4/6 완료. 현재 T05 기본 브랜치 등록·운영 수동 배포를 진행한다. 실제 게임 배포·사용자 로그인은 아직 검증하지 않았다.
