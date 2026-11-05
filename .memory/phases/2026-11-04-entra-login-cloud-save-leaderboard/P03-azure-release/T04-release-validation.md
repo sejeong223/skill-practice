@@ -1,6 +1,8 @@
 # Task: T04 실제 인증·기기 전환·데이터 격리 검증
 
-## Status: pending
+## Status: superseded
+
+> [새T06 Standard 실제 검증](../../2026-11-05-azure-standard-release/P01-standard-release/T06-release-validation.md)으로 대체됐다. 아래는 과거 청사진이며 완료 결과가 아니다.
 
 ## Goal
 

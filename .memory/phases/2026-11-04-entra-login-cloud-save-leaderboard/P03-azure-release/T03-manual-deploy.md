@@ -1,6 +1,8 @@
 # Task: T03 GitHub 수동 배포와 기본 브랜치 등록
 
-## Status: pending
+## Status: superseded
+
+> 로컬 작성은 [새T03](../../2026-11-05-azure-standard-release/P01-standard-release/T03-manual-workflow.md), 실제 배포는 [새T05](../../2026-11-05-azure-standard-release/P01-standard-release/T05-production-deploy.md)로 대체됐다. 아래는 과거 청사진이다.
 
 ## Goal
 

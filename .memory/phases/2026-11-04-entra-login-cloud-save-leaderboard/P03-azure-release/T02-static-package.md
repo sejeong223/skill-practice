@@ -1,6 +1,8 @@
 # Task: T02 Next 정적 내보내기와 Functions 배포 산출물
 
-## Status: pending
+## Status: superseded
+
+> [새T01 로컬 정적 패키지](../../2026-11-05-azure-standard-release/P01-standard-release/T01-static-package.md)로 대체됐다. 새 계획은 Standard 기준이며 실제 SWA 생성 전에 로컬 준비를 완료한다. 아래 내용은 과거 청사진이다.
 
 ## Goal
 

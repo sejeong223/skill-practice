@@ -1,6 +1,8 @@
 # Task: T01 대상 구독·앱 등록·게임 DB·SWA 준비
 
-## Status: pending
+## Status: superseded
+
+> 실행 기록 보존용. 준비 도구는 [새T02](../../2026-11-05-azure-standard-release/P01-standard-release/T02-standard-tooling.md), 실제 Standard 설정은 [새T04](../../2026-11-05-azure-standard-release/P01-standard-release/T04-standard-resources.md)로 대체됐다. 아래 Free 명령을 그대로 재실행하지 않는다.
 
 ## Goal
 
@@ -19,6 +21,7 @@
 
 - Related Files:
   - `scripts/azure-game-resources.ps1` :: `Inspect/Create/Verify resource modes` — 준비·배포·검증 대상; new
+  - `scripts/azure-game-apps.ps1` :: `Create/Finalize Entra and public SWA settings` — 사용자 후속 요청에 따라 CLI 자동화; new
   - `scripts/game-cosmos-index.json` :: `game-data indexing policy` — 준비·배포·검증 대상; new
   - `scripts/azure-game-resources.test.mjs` :: `target guard and plan tests` — 준비·배포·검증 대상; new
   - `api/local.settings.example.json` :: `server config names` — 준비·배포·검증 대상; modify
@@ -114,9 +117,46 @@ Task: T01-resource-setup
 
 ## Progress
 
+- 2026-11-04 실제 구독 조회: subscription `b7af62a9-9a10-4deb-95fa-1690f7bbd33d`, tenant `69c1e470-4528-435a-a1ae-de98e0aac738`, state `Enabled`. 최초 CLI에는 대상 구독이 없었으나 사용자 로그인 후 정상 확인했다. computer-use는 사용하지 않았다.
+- 최초 Inspect 성공: 기존 다른 DB 7개, 총 3400 RU/s, provisioned NoSQL/free tier/Korea Central/모든 네트워크 일치. 당시 `legendary-rib-corgi` DB·SWA 없음, 추가 컨테이너 처리량 400 RU/s, SWA 지원 지역 East Asia(`eastasia`). 계정 capacity의 totalThroughputLimit 값은 null로 조회되었다.
+- 최초 Graph 읽기에서 앱 등록이 없었고 수동 등록을 안내했으나, 사용자의 “직접 만들어야 하는가” 후속 요청에 따라 연결된 CLI로 자동 등록했다. `scripts/azure-game-apps.ps1`은 고정 tenant/subscription, 앱 이름 충돌 검사, 로컬 생성 증거를 사용하며 비밀을 생성하거나 읽지 않는다. Finalize는 실제 SWA SPA URI와 공개 서버 설정을 연결한다.
+- 실제 Entra 생성 완료: web client ID `e467e8bc-c900-4d08-88be-7f0a5fce2474`(app object `aacb102c-4dbb-4cbc-b056-58b4fed0e674`, SP `11ff15d3-5d72-4bbc-9d66-51bbcc31a06b`), API client ID `a2e3f4fa-56e5-4ab5-ba41-43cb974b8722`(app object `bd092a7c-ad3c-4fe4-8475-7ec70769be73`, SP `f02b1a27-859d-4872-8549-99ad95927132`). API scope GUID `d36060b6-6582-45d3-a95f-5b1b8b742883`, scope `api://a2e3f4fa-56e5-4ab5-ba41-43cb974b8722/access_as_user`. 두 앱 조직 전용, v2 API, 위임 권한, 암시적 grant 꺼짐. `.git/azure-game-apps.json`에 공개 생성 증거 기록. 앱 ID만 담은 로컬 `.env.local`을 준비했다(Git 제외).
+- 스크립트: Inspect/Create/Verify, 모든 Azure 호출의 명시적 subscription, 실재 tenant·API SP 검증, DB/컨테이너/SWA 이름 충돌 거절, 수동400·DB공유처리량없음·index·TTL·DB 범위 역할·기존 metadata 보존을 구현했다. 생성 증거는 로컬 `.git/azure-game-resources.json`에 남겨 해당 실행이 만든 리소스만 재사용한다. quota 실패 시 cap 변경/삭제 rollback 없음.
+- CLI 호환: 설치된 `az ad`는 --subscription 인자를 받지 않아 Graph 읽기는 `az rest --subscription ...`로 수행한다. Windows az.cmd가 Graph 필터의 괄호를 재해석하므로 스크립트는 동일 설치본의 python.exe -IBm azure.cli를 인자 배열로 호출한다. 테스트만 mock function az를 사용한다. PowerShell 실행 정책은 프로세스 단위 `-ExecutionPolicy Bypass`로만 적용하며 영구 변경하지 않는다.
+- 대역 검증 최종7개 그룹 통과: 잘못된 구독/tenant/region/기존 DB/서비스주체/광범위 역할/앱 범위에서 쓰기0; 전용400 생성; Verify·재실행 쓰기0; quota 중단·부분 생성 재개; 다른 DB metadata 변경/파티션/DB처리량/SPA bridge/서버 설정 누락 거절. SWA Free 개수 한도에서는 기존 준비 리소스를 보존하고 한도 해소 후 SWA만 생성하는 회귀 사례도 통과했다. 실제 Azure 생성·Verify 성공과는 구분한다. PowerShell 앱 스크립트 구문 검사 및 해당 JS 린트 통과.
+- 서버 예시 `api/local.settings.example.json`은 이미 필요한 GAME_* 이름과 빈 비밀 값을 갖추고 있어 유지했다. `.env.example`에는 MSAL bridge URI 및 빌드 시 NEXT_PUBLIC_* 주입 설명을 추가했다.
+- 실제 Azure 생성: DB `legendary-rib-corgi`, 컨테이너 `game-data`(partition `/playerId`, manual400 RU/s, TTL -1, 지정 index), DB 공유 처리량 없음. API SP `f02b1a27-859d-4872-8549-99ad95927132`에 Cosmos DB Built-in Data Contributor를 정확히 `/dbs/legendary-rib-corgi` 범위로 부여했고 별도 재조회로 확인했다. `.git/azure-game-resources.json`에 DB/컨테이너 생성 증거가 있다.
+- **현재 미완료 원인**: SWA Free 생성은 Azure의 `(BadRequest) Sku is invalid. This subscription has too many static sites with SKU: Free.`로 거절되었다. 후속 show는 ResourceNotFound, 구독 목록은 Free10/Standard2개이며 이 저장소에 연결된 앱은 없다(일부 repositoryUrl은 null이므로 소유권은 추정하지 않음). 다른 앱 삭제·재사용·유료 전환은 하지 않았다. 사용자에게 관리자 정리 후 Free 신규 생성 또는 본인 소유 기존 SWA 이름을 요청했다.
+- 생성 후 실제 Inspect 재실행 exit0: `createDatabase=false`, `createContainer=false`, `additionalRU=0`, `createSwa=true`. 생성 전 증거와 비교하여 기존 계정 설정과 타인 DB7개 metadata/3400RU 보존을 확인했다. 합계는 새 게임400을 더한3800RU/s. SWA가 없으므로 운영 SPA URI·서버 환경 변수·비밀 설정·최종 Verify·배포는 미완료다. 완료 커밋/다음 Task 전진 없음.
+- 2026-11-04 사용자 후속 요청 “그럼 일단 이건 추후 계획으로 미뤄줘.”에 따라 Status를 deferred로 변경하고 current의 활성 Task를 비웠다. 생성한 Entra 앱·DB·권한 및 미커밋 준비 스크립트는 보존한다. 재개 요청 전 SWA 생성·다른 앱 정리·설정·배포를 진행하지 않는다.
+
+### 설정 절차와 현재 상태 (비밀 값은 채팅·Git에 기록하지 않음)
+
+아래 1~4는 CLI로 완료했으므로 사용자가 앱을 다시 만들 필요가 없다. 5의 DB/컨테이너/역할도 완료했으며 SWA Free 개수 한도 해결이 먼저다. 이후 `azure-game-apps.ps1 -Mode Finalize`가 운영 SPA URI와 7의 공개 서버 값을 설정한다. 6의 비밀 값은 확정된 계획대로 사용자가 SWA에 직접 입력한다.
+
+1. Entra ID → 앱 등록에서 `legendary-rib-corgi-api`와 `legendary-rib-corgi-web`을 각각 **이 조직 디렉터리만**으로 등록한다. 두 application/client ID를 기록한다.
+2. api → API 표시(Expose an API) → 애플리케이션 ID URI를 `api://{apiClientId}`로 설정 → 범위 추가 `access_as_user`, 관리자 및 사용자 동의, 활성화. 동의 표시 이름은 “코기 게임 진행 저장 및 랭킹 조회”, 설명은 “로그인한 사용자의 게임 진행을 저장하고 랭킹을 조회합니다.”로 설정한다. Manifest의 `api.requestedAccessTokenVersion`을 2로 설정한다. scope GUID를 기록한다.
+3. web → API 사용 권한 → 권한 추가 → 내 API → 위 api 앱 → 위임 권한 `access_as_user`. 조직 정책이 요구하면 관리자가 동의한다. 암시적 액세스/ID 토큰 발급은 켜지 않는다.
+4. api 개요의 **로컬 디렉터리에서 관리되는 애플리케이션** 링크 → 엔터프라이즈 애플리케이션 개요 → 개체 ID를 확인한다. 앱 등록 자체의 object ID가 아닌 **서비스 주체 object ID**가 필요하다.
+5. 위 공개 ID를 확인한 뒤 아래 Create를 실행한다. 성공한 실제 swaHostname이 나오면 web → 인증 → 플랫폼 추가 → SPA에 `https://{swaHostname}/`, `https://{swaHostname}/auth/redirect/`, `http://localhost:3000/`, `http://localhost:3000/auth/redirect/` 네 주소를 등록한다.
+6. api → 인증서 및 암호 → 새 클라이언트 비밀. **값**은 SWA → 설정 → 환경 변수의 `GAME_COSMOS_CLIENT_SECRET`에 본인이 직접 입력한다. 이 앱에는 Cosmos 게임 DB 범위의 데이터 기여자 역할만 부여하며 관리면 Contributor는 부여하지 않는다. 문서에는 secret key ID와 만료일만 기록한다. 만료 전 새 비밀 생성→SWA 값 교체→실제 API 성공 확인→이전 비밀 삭제 순으로 갱신한다.
+7. 같은 SWA 환경 변수에 `GAME_TENANT_ID=69c1e470-4528-435a-a1ae-de98e0aac738`, `GAME_API_CLIENT_ID={apiClientId}`, `GAME_WEB_CLIENT_ID={webClientId}`, `GAME_COSMOS_CLIENT_ID={apiClientId}`, `GAME_COSMOS_ENDPOINT=https://maze-rescue-ms-b7af62a9.documents.azure.com:443/`, `GAME_TEST_OBJECT_IDS=[]`를 입력한다. 실제 테스트 계정의 oid는 사용자 선택 확인 후 allowlist에 넣는다.
+8. 웹용 NEXT_PUBLIC_*는 `.env.local`과 나중의 GitHub Variables에 입력한다. 이미 빌드한 정적 파일은 SWA 서버 환경 변수를 바꾸어도 바뀌지 않으므로 다시 빌드해야 한다. API 비밀을 NEXT_PUBLIC_*에 넣지 않는다.
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/azure-game-resources.ps1 -Mode Inspect -TenantId 69c1e470-4528-435a-a1ae-de98e0aac738
+# SWA Free 한도 해결 후 재개. 기존 게임 DB/컨테이너/역할은 생성 증거로 재사용한다.
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/azure-game-resources.ps1 -Mode Create -TenantId 69c1e470-4528-435a-a1ae-de98e0aac738 -ApiServicePrincipalObjectId f02b1a27-859d-4872-8549-99ad95927132 -SwaLocation eastasia
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/azure-game-apps.ps1 -Mode Finalize
+# 서버 비밀 직접 설정 이후
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/azure-game-resources.ps1 -Mode Verify -TenantId 69c1e470-4528-435a-a1ae-de98e0aac738 -ApiServicePrincipalObjectId f02b1a27-859d-4872-8549-99ad95927132 -SwaLocation eastasia
+```
+
+- 근거: [SWA 생성 CLI](https://learn.microsoft.com/en-us/cli/azure/staticwebapp?view=azure-cli-latest#az-staticwebapp-create), [Cosmos 컨테이너 CLI](https://learn.microsoft.com/en-us/cli/azure/cosmosdb/sql/container?view=azure-cli-latest), [DB 범위 데이터 역할](https://learn.microsoft.com/en-us/cli/azure/cosmosdb/sql/role/assignment?view=azure-cli-latest), [관리형 Functions 제약](https://learn.microsoft.com/en-us/azure/static-web-apps/apis-functions), [CLI DB 생성의 throughput=None 기본값](https://github.com/Azure/azure-cli/blob/dev/src/azure-cli/azure/cli/command_modules/cosmosdb/custom.py).
+
 - [ ] 구현 완료
 - [ ] 검증 통과
 - commit: pending
-- 공개 식별자·실행 URL·source SHA·검증 결과: 실행 시 기록
-- 사용자 수동 확인/미완료 입력: 실행 시 기록
+- 공개 식별자: 위 Entra/DB/SP/scope 기록. SWA URL은 아직 없음. 배포 미실행.
+- 추후 재개 시 확인할 항목: SWA Free 개수 한도 해소 방식, 이후 서버 비밀 직접 입력 및 테스트 계정 선택. 지금은 답변을 요구하지 않는다.
 

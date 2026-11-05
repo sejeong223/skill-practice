@@ -1,10 +1,12 @@
 # Plan: Entra ID 로그인·계정 저장·TOP 10 랭킹·Static Web Apps 배포
 
 - Date: 2026-11-04
-- Status: in_progress (계획 준비 완료, 구현 미착수)
+- Status: superseded (완료10개 Task 보존; 미완료 P03은 2026-11-05 Standard 계획으로 대체)
 - Decisions: [확정 결정](../decisions/2026-11-04-entra-login-cloud-save-leaderboard.md)
 - Task count: 14 (P01 5 + P02 5 + P03 4)
 - Execution: 아래 순서대로 한 Task씩 구현·검증·커밋하고 current.md를 전진한다.
+
+> 이 문서는 과거 실행 기록이다. 미완료 P03의 Free 전제·실행 순서는 [새 Standard 계획](./2026-11-05-azure-standard-release.md)으로 대체됐다. P01/P02 완료 기록과 P03 실제 생성 증거는 보존하며, 아래 과거 실행 순서로 재개하지 않는다.
 
 ## Goal
 
@@ -16,7 +18,14 @@
 | :--- | :--- | :--- | :--- |
 | P01-cloud-api | `done` | 공유 계약·인증·클라우드 API (5 Tasks) | [P01](../phases/2026-11-04-entra-login-cloud-save-leaderboard/P01-cloud-api/phase.md) |
 | P02-game-integration | `done` | 로그인·이어하기·게임 화면 연결 (5 Tasks) | [P02](../phases/2026-11-04-entra-login-cloud-save-leaderboard/P02-game-integration/phase.md) |
-| P03-azure-release | `in_progress` | Azure 리소스·정적 배포·통합 검증 (4 Tasks) | [P03](../phases/2026-11-04-entra-login-cloud-save-leaderboard/P03-azure-release/phase.md) |
+| P03-azure-release | `superseded` | 미완료4개 Task는 새 Standard 계획으로 대체 | [P03](../phases/2026-11-04-entra-login-cloud-save-leaderboard/P03-azure-release/phase.md) |
+
+## Deferred Release — 2026-11-04
+
+- 사용자 요청 “그럼 일단 이건 추후 계획으로 미뤄줘.”에 따라 SWA 생성과 이에 의존하는 운영 설정·배포 산출물·배포·실서비스 검증을 보류한다. 현재 자동 실행할 Task는 없으며 재개 요청 전 외부 쓰기를 재시도하지 않는다.
+- P01/P02 코드 구현과 Task별 커밋 10개는 완료했다. P03-T01은 Entra 앱2개/서비스 주체/scope와 게임 DB·컨테이너 전용400RU·DB 범위 데이터 권한까지 준비했다. 다른 DB7개/3400RU와 계정 설정 보존을 실제 Inspect로 확인했다.
+- SWA Free 생성은 구독의 Free 앱10개 한도로 거절되었다. 다른 앱 삭제·덮어쓰기·Standard 전환은 하지 않았다. 생성한 Entra/DB 리소스는 유지하며 게임 컨테이너의400RU/s도 유지된다.
+- 재개 지점은 P03-T01. 자세한 공개 ID·로컬 증거·명령·검증 결과는 해당 Task Progress에 있다. 부분 완료를 전체 완료로 표시하지 않으며 P03 부분 작업은 아직 미커밋이다.
 
 ## Execution Order
 

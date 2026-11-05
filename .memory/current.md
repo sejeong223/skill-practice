@@ -2,30 +2,44 @@
 
 ## Active Plan
 
-[Entra ID 로그인·계정 저장·TOP 10 랭킹·Static Web Apps 배포](./plans/2026-11-04-entra-login-cloud-save-leaderboard.md)
+[Static Web Apps Standard 배포 재개](./plans/2026-11-05-azure-standard-release.md)
 
 ## Active Phase
 
-[P03 Azure 리소스·정적 배포·통합 검증](./phases/2026-11-04-entra-login-cloud-save-leaderboard/P03-azure-release/phase.md)
+[P01 Static Web Apps Standard 배포](./phases/2026-11-05-azure-standard-release/P01-standard-release/phase.md)
 
 ## Active Task
 
-[T01 대상 구독·앱 등록·게임 DB·SWA 준비](./phases/2026-11-04-entra-login-cloud-save-leaderboard/P03-azure-release/T01-resource-setup.md)
+[T01 로컬 정적 패키지와 빌드 모드 분리](./phases/2026-11-05-azure-standard-release/P01-standard-release/T01-static-package.md)
+
+## Completed Prerequisite
+
+- [보안 수정 계획](./plans/2026-11-05-dependency-security-fix.md)1/1 완료. Next/ESLint16.4.5, sharp0.35.5, source-map-js1.2.2, Zod4.6.7; root audit critical0/high0/moderate8, 운영 의존성0. Node22.23.4 테스트159+3개·린트·타입·빌드 통과.
+- MEA 자동 연속 실행: 배포 T01~T03 로컬 준비 → T04 Standard 리소스 → T05 수동 배포 → T06 실제 검증. 기존 미커밋 게임·아트 변경91개 경로 보존.
+
+## Previous Plan and Superseded Release
+
+- 최신 확정 결정: [2026-11-05 SWA Standard 배포 재계획](./decisions/2026-11-05-azure-standard-release-replan.md). 사용자 선택은 **Standard 신규 앱 + 로컬 빌드·패키징·자동 검증 먼저**다.
+- [이전 계획](./plans/2026-11-04-entra-login-cloud-save-leaderboard.md)의 완료 P01/P02 10개 Task는 유지한다. 미완료 [구 P03](./phases/2026-11-04-entra-login-cloud-save-leaderboard/P03-azure-release/phase.md) 4개 Task는 새 계획6개로 대체했다. 과거 Task를 done으로 처리하거나 번호 순서대로 재개하지 않는다.
+- 실제 Entra/DB 생성 증거와 공개 ID는 [구 P03-T01 Progress](./phases/2026-11-04-entra-login-cloud-save-leaderboard/P03-azure-release/T01-resource-setup.md#progress)에 보존했다. `.git/azure-game-resources.json`의 기존 plan 출처를 덮어쓰지 않는다.
+- 2026-11-04 Free 한도 보류 기록은 역사로 보존한다. 배포 재계획 T01은 보안 수정 T01이 끝난 뒤 재개한다.
 
 ## Status
 
-- MEA 실행: 10/14 완료. 최근 P02-game-integration/T05-ranking-ui: 랭킹·게임 통합·기존 메뉴 27/27, 변경 후 랭킹 7/7 재검증, TypeScript·린트·Next 빌드 통과. 실제 320px/모바일/브라우저 포커스는 P03 사용자 수동 확인 대상.
+- 보안 계획1/1 완료, 배포 계획0/6. 현재 MEA로 배포 T01을 이어서 구현한다.
+- 이전 완료 구현10개 Task 재사용: P02-T05의 랭킹·게임 통합·기존 메뉴27/27, 랭킹7/7, TypeScript·린트·Next 빌드 통과 기록을 보존한다. 새계획을 이미 구현/검증한 결과로 표현하지 않는다.
 - 확정 결정: [2026-11-04 로그인·저장·랭킹](./decisions/2026-11-04-entra-login-cloud-save-leaderboard.md).
 - MSAL 5 호환 보완(P02-T01): root 로그인 복귀 주소 외에 silent 갱신용 `<origin>/auth/redirect/` SPA URI도 P03에서 등록한다. 해당 정적 경로에 `Cache-Control:no-store`, COOP 없음이 필요하다. 구체 근거는 P02-T01 Progress.
+- 2026-11-04 리소스 확인 기록: Entra 앱2개/SP/scope, 게임DB/컨테이너400RU/DB범위권한 생성 및 다른DB7개/3400RU 보존 확인. 당시 SWA Free10개 한도로 생성 거절. 새 계획에서 실제 상태를 재확인하고 이미 만든 리소스를 재사용한다. 기존 미커밋 준비 스크립트는 새 T02에서 검증·편입한다.
 - computer-use 금지. 필요한 Azure 포털 확인·대화형 로그인·비밀 설정은 사용자에게 경로를 안내한다. 대상 구독 접근과 실제 ID·자격 증명 준비는 P03-T01에서 확인한다.
-- 기존 공용 Cosmos 계정 안에 게임 DB만 추가한다. 다른 DB·컨테이너·계정 설정을 변경하지 않는다. 새 컨테이너 전용 manual 400 RU/s, SWA Free, GitHub 수동 배포를 유지한다.
+- 기존 공용 Cosmos 계정에 생성된 게임 DB/컨테이너 manual400RU와 다른 DB·계정 설정을 보존한다. 2026-11-05 사용자 선택으로 신규 SWA는 Standard로 변경한다. GitHub 수동 배포 방식은 유지한다.
 - 사용자 지시: 별도 테스트 폴더·test-plans 문서를 만들지 않는다. 자동 검증 파일은 기존 scripts/ 바로 아래에, 검증 결과는 해당 Task의 Progress에 기록한다.
 - 후속 실행 스킬의 검증 기록 경로 관례보다 위 사용자 지시를 우선한다.
-- 월드 3 인트로 자동 진행 중단 기록은 사용자 선택에 따라 별도 후속 작업으로 유지한다.
+- 2026-11-05 최신 사용자 선택: 심각·높음4개 패키지는 보안 수정 계획에 포함, 보통8개와 월드3 인트로는 별도 후속 유지. [추가 결정](./decisions/2026-11-05-dependency-security-fix.md). 수정 전 root audit12(critical1/high3/moderate8)에서 수정 후8(critical0/high0/moderate8)로 감소했다.
 
 ## Next Step (IMPORTANT)
 
-MEA 자동 연속 실행: P03-azure-release/T01-resource-setup 청사진을 읽고 구현·검증·선별 커밋한다. 남은 Task를 계속 실행하며 기존 미커밋 변경은 보존한다.
+배포 T01 청사진을 읽고 next.config.ts의 정적 출력, 독립 API 패키지, preflight/production 빌드·검증을 구현한다. 배포 T01~T03 로컬 준비 전 Azure/GitHub 외부 쓰기 없음. 각 Task 검증 후 관련 변경만 한국어 커밋하고 자동으로 다음 포인터를 진행한다.
 
 ## Previous Active Plan
 
