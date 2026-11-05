@@ -13,7 +13,9 @@ export async function packageGameApi({ sourceDir = join(workspace, "api"), outpu
   await rm(output, { recursive: true, force: true });
   await mkdir(join(output, "dist/functions"), { recursive: true });
   for (const name of files) await copyFile(join(source, name), join(output, name));
-  await runNode([npmCli(), "ci", "--omit=dev", "--no-fund"], { cwd: output });
+  // Functions loads modules directly; npm CLI executable links are unnecessary.
+  // Avoid platform-specific .bin symlinks in the self-contained deployment ZIP.
+  await runNode([npmCli(), "ci", "--omit=dev", "--no-fund", "--bin-links=false"], { cwd: output });
   return { outputDir: output, entrypoint: "dist/functions/game.js" };
 }
 if (isCli(import.meta.url)) {

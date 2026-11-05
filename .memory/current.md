@@ -39,7 +39,7 @@
 
 ## Next Step (IMPORTANT)
 
-T04 실제 Verify 완료(2026-11-05T04:47Z), Standard/East Asia origin=`https://polite-rock-0f80d2a00.5.azurestaticapps.net`. 서버 비밀 존재·만료2027-05-04 확인, 값 조회 없음. T05에서 GitHub 권한·기본 브랜치를 조회하고 workflow 등록, 공개 Variables, 배포 토큰 이름 존재를 확인한 뒤 확정 소스 SHA를 운영 빌드·배포한다. 기존 dirty 게임/아트는 보존한다. 배포 성공 후 T06 실제 HTTP·로그인·저장·기기 전환 검증까지 이어간다.
+T04 실제 Verify 완료(`32a1f21`). T05 source=`32a1f21ebf3988796bdcfdaba383537c493be83a`, origin=`https://polite-rock-0f80d2a00.5.azurestaticapps.net`; clean production build/check 통과. PR #1로 main workflow 등록(`8fc22d795d8325e0ebee8920b2448a086f87032a`), Variables4개와 배포 Secret 이름 존재 확인. main에서 위 source SHA로 [run41971017172](https://github.com/sejeong223/skill-practice/actions/runs/41971017172) dispatch 완료. 결과를 관찰하고 실제 root/bridge/API HTTP 확인 후 T05 완료 처리한다. 기존 dirty 게임/아트 보존, 이후 T06 실제 로그인·저장·기기 전환 검증까지 이어간다.
 
 ## Previous Active Plan
 

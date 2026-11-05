@@ -26,7 +26,7 @@ git checkout --detach "$SOURCE_SHA"
 printf 'sha=%s\\n' "$SOURCE_SHA" >> "$GITHUB_OUTPUT"`,
   install: 'npm ci\nnpm ci --prefix api',
   audit: 'npm audit --audit-level=high',
-  test: 'npm run lint\nnpx tsc --noEmit\nnpm run typecheck:api\nnpm run test:cloud\nnpm run test:release-config\nnpm run test:workflow\nnode scripts/check-game-workflow.mjs',
+  test: 'npm run lint\nnpx next typegen\nnpx tsc --noEmit\nnpm run typecheck:api\nnpm run test:cloud\nnpm run test:release-config\nnpm run test:workflow\nnode scripts/check-game-workflow.mjs',
   build: 'npm run build:release -- --mode production',
   verify: 'npm run check:release -- --mode production',
   token: `set -euo pipefail

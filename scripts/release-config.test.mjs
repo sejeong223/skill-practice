@@ -1,11 +1,12 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { mkdtemp, mkdir, writeFile, readFile, rm, symlink } from "node:fs/promises";
+import { mkdtemp, mkdir, writeFile, readFile, rm, symlink, lstat } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { tmpdir } from "node:os";
 import { childEnvironment, publicBuildConfig, PUBLIC_IDS, apiOutputPath, noLinks, workspace, parseMode, validateProductionContext, safeErrorCode, fail } from "./game-release-utils.mjs";
 import { validateTotals, validateStaticConfig, validateStaticOutput, validateApiPackage, validateManifest, outputDigest, SECRET_SENTINEL } from "./check-game-release.mjs";
 import { packageGameApi } from "./package-game-api.mjs";
+import { buildGameApi } from "./build-game-api.mjs";
 
 const config = JSON.parse(await readFile(new URL("../public/staticwebapp.config.json", import.meta.url), "utf8"));
 const environment = { NEXT_PUBLIC_GAME_TENANT_ID: PUBLIC_IDS.tenantId, NEXT_PUBLIC_GAME_WEB_CLIENT_ID: PUBLIC_IDS.webClientId, NEXT_PUBLIC_GAME_API_CLIENT_ID: PUBLIC_IDS.apiClientId, NEXT_PUBLIC_GAME_REDIRECT_URI: "https://calm-corgi-123.1.azurestaticapps.net/", NEXT_PUBLIC_GAME_MODE: "cloud" };
@@ -75,6 +76,23 @@ test("packaging refuses escaping destinations without touching API dependencies"
   await assert.rejects(packageGameApi({ outputDir: join(workspace, "build/game-api/../../api") }), /INVALID_API_OUTPUT/);
   assert.deepEqual(await readFile(file), before);
   assert.equal(await apiOutputPath(), resolve(workspace, "build/game-api"));
+});
+test("actual API runtime package loads all routes without npm executable links", async t => {
+  const base = resolve(workspace, "build/game-api");
+  await mkdir(base, { recursive: true });
+  const outputDir = await mkdtemp(join(base, "packaging-test-"));
+  t.after(async () => {
+    assert.equal(resolve(outputDir, ".."), base);
+    assert.ok(outputDir.startsWith(join(base, "packaging-test-")));
+    await rm(outputDir, { recursive: true, force: true });
+  });
+  const original = join(workspace, "api/node_modules/@azure/functions/package.json");
+  const before = await readFile(original);
+  await buildGameApi();
+  await packageGameApi({ outputDir });
+  await assert.rejects(lstat(join(outputDir, "node_modules/.bin")), { code: "ENOENT" });
+  await validateApiPackage(outputDir);
+  assert.deepEqual(await readFile(original), before);
 });
 test("API validator refuses bad runtime metadata before executing an entrypoint", async t => {
   const { root, put } = await fixture(t);

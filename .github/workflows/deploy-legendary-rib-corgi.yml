@@ -84,6 +84,7 @@ jobs:
         id: test
         run: |
           npm run lint
+          npx next typegen
           npx tsc --noEmit
           npm run typecheck:api
           npm run test:cloud
