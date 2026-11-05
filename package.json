@@ -9,6 +9,8 @@
     "build:release": "node scripts/build-game-release.mjs",
     "check:release": "node scripts/check-game-release.mjs",
     "test:release-config": "node --test scripts/release-config.test.mjs",
+    "test:workflow": "node --test scripts/game-workflow.test.mjs",
+    "test:cloud": "node --import tsx --test scripts/cloud-contracts.test.mjs scripts/api-auth.test.mjs scripts/api-session.test.mjs scripts/api-save.test.mjs scripts/api-ranking.test.mjs scripts/cloud-auth.test.mjs scripts/cloud-save-client.test.mjs scripts/cloud-resume.test.mjs scripts/cloud-game.test.mjs scripts/ranking-ui.test.mjs scripts/development-start.test.mjs",
     "lint": "eslint",
     "test:progression": "node --experimental-strip-types --test scripts/stage-progression.test.mjs",
     "test:cloud-contracts": "node --import tsx --test scripts/cloud-contracts.test.mjs",
@@ -27,7 +29,9 @@
     "test:ranking-ui": "node --import tsx --test scripts/ranking-ui.test.mjs"
   },
   "overrides": {
-    "serve": { "compression": "1.8.2" }
+    "serve": {
+      "compression": "1.8.2"
+    }
   },
   "dependencies": {
     "@azure/msal-browser": "^5.27.0",
@@ -51,6 +55,7 @@
     "serve": "14.2.6",
     "tailwindcss": "^4",
     "tsx": "^4.23.15",
-    "typescript": "^5"
+    "typescript": "^5",
+    "yaml": "2.9.1"
   }
 }

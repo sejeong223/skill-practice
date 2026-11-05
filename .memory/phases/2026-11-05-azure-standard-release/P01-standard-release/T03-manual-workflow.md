@@ -1,6 +1,6 @@
 # Task: T03 로컬 GitHub 수동 workflow와 검증
 
-## Status: pending
+## Status: done
 
 ## Goal
 
@@ -44,7 +44,7 @@ export function validateWorkflow(document: unknown): string[]; // []=valid; stab
   3. actions/checkout@v4, actions/setup-node@v4, Azure/static-web-apps-deploy@v1은 공식 저장소의 해당 태그 commit을 확인해서 가능하면40hex로 고정하고 대응 tag를 주석에 기록한다. 임의 SHA를 추측하지 않는다. 빌드 소스와 workflow 실행 ref를 혼동하지 않는다.
   4. Node22/cache(root와api lockfile) → npm ci → npm ci --prefix api → root `npm audit --audit-level=high` → lint/tsc/typecheck:api/test:cloud/test:release-config/test:workflow → `npm run build:release -- --mode production` → `npm run check:release -- --mode production` 순서. GitHub Variables 누락·다른ID·localhost URI·dirty/sourceSHA mismatch는 배포 전에 실패한다. 보안 검사는 dev dependencies도 포함하며 `--omit=dev`, `continue-on-error`, `|| true`로 우회하지 않는다. 보통만 남으면 진행할 수 있고 critical/high 또는 registry 실패는 배포 전에 중단한다. 보안 수정은 별도 선행 계획에서 완료한 lock을 사용한다.
   5. Azure Action은 action=upload, app_location=out, output_location="", api_location=build/game-api, skip_app_build=true, skip_api_build=true, production_branch=`github.event.repository.default_branch`. 임의 deployment_environment 없음. .github 실행 ref와 배포 source SHA가 다른 점을 명시적으로 유지한다. repo_token은 PR 댓글 기능이 필요 없으므로 생략 가능.
-  6. 배포토큰은 upload step env로 주입하여 존재 여부를 값 출력 없이 검사한다. missing secret을 성공 skip하는 SKIP_DEPLOY_ON_MISSING_SECRETS=true는 금지. pipeline 어느 실패도 성공으로 덮지 않는다.
+  6. 배포토큰은 upload 직전 전용 guard step의 env로 주입하여 값 출력 없이 존재 여부를 검사하고, upload Action의 with에만 전달한다. Action의 uses와 run을 한 step에 함께 둘 수 없어 두 단계로 나눈다. missing secret을 성공 skip하는 SKIP_DEPLOY_ON_MISSING_SECRETS=true는 금지. pipeline 어느 실패도 성공으로 덮지 않는다.
   7. summary에 공개 source SHA, workflow ref, manifest의 origin, 결과URL을 남긴다. 정적manifest를 웹에 노출할 필요는 없다. 토큰·서버 env dump·set-x 금지.
   8. 커밋될 소스만으로도 preflight가 성공하는지 확인한다. 별도 임시 worktree에 선행 Task 커밋과 본 Task에 선별할 파일 변경만 적용해 Node22 preflight를 실행한다. 원래 작업 트리의 다른 미커밋 게임/아트 파일이나 .env.local을 복사하지 않는다. 미커밋 사용자 변경에 의존하는 실패가 있으면 필요한 파일·이유를 설명하고 범위를 확정한 후 해결한다. 이 문제를 남긴 채 유료 SWA를 먼저 생성하지 않는다.
   9. Error & Exception Handling: workflow 기본branch 미등록/토큰미입력은 아직 T05 작업이며 T03 완료에 요구하지 않는다. YAML/소스검증 실패는 수정 후 관련 대역 재실행. 실제 dispatch로 테스트하지 않는다.
@@ -64,11 +64,11 @@ export function validateWorkflow(document: unknown): string[]; // []=valid; stab
 
 ## Acceptance Criteria
 
-- [ ] 수동 workflow가 빌드/업로드 전에 전체 root audit를 high 기준으로 검사하며 검사 생략·실패 무시·dev 제외를 검증기가 거절한다. 기존 YAML fixture에 audit 단계 누락/`continue-on-error`/`--omit=dev` 거절 사례를 추가한다.
-- [ ] 수동 workflow와 SHA/production 게이트 검사 완료.
-- [ ] 배포 비밀 없이 모든 로컬 검사·preflight가 성공한다.
-- [ ] 선행 커밋과 본 Task 변경만 담은 별도 checkout에서도 preflight가 성공하여 미커밋 사용자 파일 의존이 없다.
-- [ ] 저장소 push·기본 브랜치 등록·workflow dispatch·SWA생성은 하지 않았다.
+- [x] 수동 workflow가 빌드/업로드 전에 전체 root audit를 high 기준으로 검사하며 검사 생략·실패 무시·dev 제외를 검증기가 거절한다. 기존 YAML fixture에 audit 단계 누락/`continue-on-error`/`--omit=dev` 거절 사례를 추가한다.
+- [x] 수동 workflow와 SHA/production 게이트 검사 완료.
+- [x] 배포 비밀 없이 모든 로컬 검사·preflight가 성공한다.
+- [x] 선행 커밋과 본 Task 변경만 담은 별도 checkout에서도 preflight가 성공하여 미커밋 사용자 파일 의존이 없다.
+- [x] 저장소 push·기본 브랜치 등록·workflow dispatch·SWA생성은 하지 않았다.
 
 ## Validation
 
@@ -93,8 +93,11 @@ Task: T03-manual-workflow
 
 ## Progress
 
-- [ ] 구현 완료
-- [ ] 검증 통과
-- commit: pending
-- Actions pin 근거/로컬검증/한계: 실행 시 기록
+- [x] 구현 완료
+- [x] 검증 통과
+- commit: 이 파일을 완료 처리한 Git 커밋의 Plan/Phase/Task 식별자로 조회
+- 2026-11-05 Node22.23.4: workflow9/9, cloud159/159, release-config13/13, YAML CLI, lint, root/API TypeScript, root audit(high 기준) 통과. 보안 경고는 critical0/high0/moderate8로 유지.
+- 별도 worktree `%TEMP%/corgi-standard-release-20261105`에서 선행 HEAD27037b6 + T03 파일5개만 복사하여 root/API npm ci, preflight build/check, cloud159/159, workflow9/9, lint, root/API 타입 검사 통과. 원래 미커밋 게임/아트와 .env.local은 복사하지 않았다. 산출물284개/64,920,945bytes, API7개 경로 독립 로드 확인. 실제 운영 배포·로그인은 아직 미검증.
+- 공식 저장소 `git ls-remote`로 확인한 immutable pins: checkout v4=11d5960a326750d5838078e36cf38b85af677262, setup-node v4=49933ea5288caeca8642d1e84afbd3f7d6820020, static-web-apps-deploy v1=1a947af9992250f3bc2e68ad0754c0b0c11566c9. YAML parser2.9.1 고정, 중복 키 거절.
+- guard에 입력을 env로 전달하고 소스 SHA를 detach한다. 빌드 비밀 격리, audit 실패 무시 금지, production 검사 누락·preflight 업로드·preview 환경·재빌드·추가 checkout을 거절하는 회귀 검사를 포함했다.
 - 실제 외부 쓰기:0

@@ -1,7 +1,7 @@
 # Plan: Static Web Apps Standard 배포 재개
 
 - Date: 2026-11-05
-- Status: ready
+- Status: in_progress
 - Decisions: [Standard 전환·로컬 준비 우선](../decisions/2026-11-05-azure-standard-release-replan.md)
 - Task count: 6 (한 Phase)
 - Prerequisite: [심각·높음 보안 수정](./2026-11-05-dependency-security-fix.md) 1개 Task 완료 후 이 계획 T01부터 재개한다. 배포 Task 수는6개로 유지한다.
@@ -58,7 +58,7 @@
 
 - 최초에는 의존성 보안 경고와 월드3 인트로 모두 후속 작업이었으나, 2026-11-05 추가 요청으로 **심각·높음4개 패키지 수정 계획**을 선행 연결했다. [최신 결정](../decisions/2026-11-05-dependency-security-fix.md)이 이 범위의 이전 보류 결정을 대체한다.
 - 사용자는 보통8개를 별도 후속으로 확정했다. 월드3 인트로도 계속 범위 밖이다. 보안 수정은 별도 Plan1개 Task이며 이 배포 Plan에 중복 집계하지 않는다.
-- 현재는 두 계획의 문서 작성만 완료했다. 보안 패키지 설치/변경이나 배포를 실행한 것으로 해석하지 않는다.
+- 계획 작성 당시에는 문서만 완료한 상태였다. 이후 실제 실행 상태는 아래 Latest Execution과 각 Task Progress를 따른다.
 - 로그인·저장·랭킹 재구현, 전체 서버 물리 검증, 다른 게임 DB 정비, App Service/별도 Functions 앱/새 사용자 지정 인증 체계는 범위 밖이다.
 
 ## 보안 참고 기록 — 2026-11-05 읽기 전용 재확인
@@ -87,4 +87,4 @@
 ## Latest Execution
 
 - 선행 보안 계획1/1 완료(`2aa6cbc`, 2026-11-05). root audit critical0/high0/moderate8 및 Node22 검증 통과.
-- 배포2/6: T01(`b625133`) 정적284개/64,626,462bytes, API7개 경로 독립 로드, 경계 테스트13개·린트·타입·실제 로컬 HTTP 검사 통과. T02 Standard 도구 대역12그룹·PS 구문·JS 린트 통과. 현재 T03 수동 workflow 준비이며 Azure/GitHub 쓰기는 아직 없다.
+- 배포3/6: T01(`b625133`) 정적/API 패키징, T02(`27037b6`) Standard 도구 대역12그룹 완료. T03 workflow9개/cloud159개/release13개·린트·타입·audit 통과. 별도 checkout preflight284개/64,920,945bytes와 API7개 경로 확인. 현재 T04 실제 리소스 준비이며 T03 완료까지 Azure/GitHub 쓰기는 없다.
