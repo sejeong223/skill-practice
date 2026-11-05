@@ -2,6 +2,10 @@ import type { ProgressState, StageId, WorldId, WorldSelectionRequest } from "../
 import type { MapRuntimeSnapshot } from "../core/runtimeTypes";
 import type { World02TravelState } from "../data/world02Travel";
 
+// SWA owns Authorization on its managed API proxy. Carry the Entra access token
+// separately; the server must still verify its signature, issuer and permissions.
+export const GAME_AUTH_HEADER = "X-Game-Authorization";
+
 export type Namespace = "prod" | "test";
 export interface Identity { tenantId: string; objectId: string; playerId: string; namespace: Namespace }
 export interface CloudCheckpoint {

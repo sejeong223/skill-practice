@@ -1,6 +1,6 @@
 # Task: T06 실제 로그인·저장·기기 전환 검증
 
-## Status: pending
+## Status: in_progress
 
 ## Goal
 
@@ -108,14 +108,27 @@ Task: T06-release-validation
 
 ## Progress
 
-- [ ] 구현 완료
+- [x] 구현 완료
 - [ ] 검증 통과
-- commit: pending
-- 실제origin/sourceSHA/workflowrun/HTTP/SDK/정리결과: 실행 시 기록
+- commit: T06 수정 배포용 후보를 먼저 보존하고 수동 검증 완료 시 같은 Task 기록을 마무리한다. 아직 완료 커밋으로 간주하지 않는다.
+- 2026-11-05T05:36Z: Node22 cloud164/164, release-smoke12/12, lint/root TypeScript/API TypeScript 통과. 실제 HTTP14/14 및 제한 앱 신원 Cosmos9/9 통과, remainingTestDocuments=0. 비밀/원문 토큰/타인 문서는 기록하지 않았다.
+- 실제 HTTP: root/JS/PNG/bridge200, bridge no-store/COOP 없음, 없는 asset/서버 파일5종404, 미인증·위조 GET/POST401 JSON/no-store. 초기 배포 source=`c1e56c67f2c9b169de4cc9474d23fd2cecaedab4`, workflow=`03456f99372de9b8d6e9a5d715d098d227f5fa9c`, run41972324270, origin=`https://polite-rock-0f80d2a00.5.azurestaticapps.net`.
+- 실제 Cosmos: 동일 API 앱 ClientSecretCredential로 실행. 계정 DB목록403, 게임DB 내 정상 저장, 동일 요청 ACK/버전 불변, 유효 CP101·death2 최고기록 생성 후 reset 보존, test best eligible=false, raw batch stale ETag 결과412/424 및 내용/receipt 원상 유지, 명시적 takeover와 이전 generation409/SESSION_LOST 확인. 생성한 test partition의 정확한 소유 문서만 point delete/404 재확인; 정리 manifest runs=[] 확인. 400RU 내 검증을 위해 요청 간격350ms를 두었고 처리량/권한을 늘리지 않았다.
+- ARM 재확인: API SP `f02b1a27-859d-4872-8549-99ad95927132`의 Built-in Data Contributor(00000000-0000-0000-0000-000000000002)는 `/dbs/legendary-rib-corgi` 범위 한 건이다. 타 DB 문서 조회나 변경 없음.
+- 사용자 직접 입력: ignored `api/local.settings.json`에 기존 서버 비밀을 설정했다. 값은 출력/Git 추가하지 않았다. 사용자 선택으로 CLI 계정(alias manual-A, oid 끝 cf5fa6c2)만 GAME_TEST_OBJECT_IDS에 추가하고 JSON 값 재확인. 운영 TOP10 제외, 사용자 초기화는 아직 실행하지 않았다.
+- M01 최초 사용자 화면에서 “서버에 연결하지 못했습니다.” 확인. `GameApiClient`가 브라우저 fetch를 인스턴스 메서드로 호출하는 결함을 receiver 검증 대역으로 재현했고 `.call(globalThis, ...)`로 보완했다. Node fetch가 허용하는 호출이어서 기존 Node 검사로 잡히지 않았던 경계다.
+- 실제 SDK 추가 결함: `item.read()`의 404는 예외 대신 statusCode=404 응답으로 반환된다. 신규 receipt 부재를 정상 null로 처리하도록 `CosmosGameRepository.readReceipt`를 수정하고 resolved/thrown404·429·잘못된200 회귀 검증을 추가했다. 정리 검사도 같은 SDK 계약을 따른다.
+- 수정본 재배포 성공: [run41975219401](https://github.com/sejeong223/skill-practice/actions/runs/41975219401), 2026-11-05T05:37:50Z~05:40:43Z. source=`4dc4a54fd3424c6a91f4c29c82ca0dd348ac873f`(release/corgi-t06-validation-20261105 보존), workflow=`03456f99372de9b8d6e9a5d715d098d227f5fa9c`. CI 전체 검증·production build/check 통과(284파일/64,920,755바이트). frontend/API 모두 Oryx 재빌드 생략 로그 확인.
+- 2026-11-05T05:42Z 배포 후 HTTP14/14 재통과. 실제 `/_next/static/chunks/0jij9etk3mtzs.js`에서 API 호출의 `.call(globalThis,...)` 수정 코드가 내려오는 것을 확인했다. 사용자에게 Ctrl+F5 후 M01 게임 진입·이름 유지 재검증을 요청했다.
+- M01~M06 필수 실제 확인은 미완료. 현재 계획5/6을 유지하며 수동 증거 전에 done으로 바꾸지 않는다. 수정 sourceSHA는 후보 브랜치에 보존했고 T06 완료 시 로컬 Task 기록을 마무리한다.
+- 2026-11-05 16:04 KST 추가 M01 제보: 로그인 후 bootstrap401/UNAUTHENTICATED(“로그인을 다시 확인해 주세요.”)로 로그인 화면 반복. Entra 두 앱의 tenant/client/scope/SPA redirect/token v2와 SWA 공개 설정은 일치했다.
+- 원인 분리: Authorization 미전송·가짜 값·실제 앱 전용 Entra 토큰 모두 배포 API에서 같은401이었다. 동일 앱 전용 토큰의 로컬 검증은 서명 통과 후 사용자 권한 부재403으로 거절됐다(토큰은 출력하지 않음). SWA 관리형 API의 Authorization 교체 동작과 일치한다. 근거: [Azure 공식 저장소 이슈158](https://github.com/Azure/static-web-apps/issues/158).
+- 추가 수정: 공유 계약 `GAME_AUTH_HEADER="X-Game-Authorization"`를 만들고 GameApiClient/withIdentity가 이 헤더만으로 사용자 토큰을 주고받는다. Authorization/x-ms-client-principal로 대체하지 않으며 RS256/issuer/audience/tenant/azp/scope/expiry 검증은 그대로 유지한다. 별도 토큰 출력/진단 endpoint/권한 확대 없음.
+- 회귀 검증: 실제 GameApiClient→SWA 헤더 교체 대역→HttpRequest/withIdentity→서명 검증 경로 통과. 표준 헤더에 유효 토큰이 있어도 게임 헤더 누락·위조·중복은401, 잘못된 scope는403. cloud165/165, 인증·검사기 관련46/46 통과. HTTP smoke는 게임 헤더 위조와 플랫폼 헤더 단독 거절을 각각 검사하도록15개로 확장했다. 새 수정 배포 후 실제 Entra 앱 전용 토큰의 전달/403 확인과 사용자 M01 재검증이 필요하다.
 
 | caseId | accountAlias/deviceAlias | expected | actual | status | checkedAt/evidenceNote |
 | --- | --- | --- | --- | --- | --- |
-| M01 | 미정 | 조직로그인·저장항목유지 | 미실행 | pending | - |
+| M01 | manual-A/device-A | 조직로그인·저장항목유지 | fetch 수정 후 bootstrap401 로그인 반복. 게임 전용 토큰 헤더 수정 배포·재검증 대기 | fail | 2026-11-05 사용자 응답의 UNAUTHENTICATED 확인. 원문 토큰 없음 |
 | M02 | 미정 | 실제CP·death·reload/보스재개 | 미실행 | pending | - |
 | M03 | 미정 | 기기A/B전환·다른계정격리 | 미실행 | pending | - |
 | M04 | 미정 | offline/재로그인·필수정지 | 미실행 | pending | - |

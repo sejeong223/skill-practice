@@ -39,6 +39,10 @@
 
 ## Next Step (IMPORTANT)
 
+M01 추가 제보: bootstrap401로 로그인 반복. SWA의 Authorization 교체에 대응해 공유 `X-Game-Authorization` 헤더로 사용자 토큰을 전달하고 기존 JWT 검증을 유지했다. cloud165/인증 관련46/린트/타입 통과. T06 동일 작업의 수정 후보를 재배포한 뒤 실제 앱 전용 토큰의403(사용자 권한 없음)·HTTP15를 확인하고 사용자 M01을 다시 요청한다. M01~M06 미완료, 계획5/6 유지.
+
+T06 진행 중: cloud164/release-smoke12/린트/타입 및 실제 HTTP14·Cosmos9 검증 통과, 테스트 잔여0. 사용자 로그인 이후 fetch receiver 오류와 SDK receipt404 처리 결함을 수정했다. 수정 source=`4dc4a54fd3424c6a91f4c29c82ca0dd348ac873f`, [run41975219401](https://github.com/sejeong223/skill-practice/actions/runs/41975219401) 재배포 성공, HTTP14 및 실제 JS 수정 코드 확인. manual-A(사용자가 선택한 테스트 계정)에게 Ctrl+F5 후 게임 진입·닉네임 유지 재확인을 요청했다. M01~M06 실제 확인 전 완료 처리 금지. T05 완료 커밋은 `3bf566f`.
+
 [배포 run41972324270](https://github.com/sejeong223/skill-practice/actions/runs/41972324270) success. 실제 source=`c1e56c67f2c9b169de4cc9474d23fd2cecaedab4`(후보 브랜치 보존), workflow=`03456f99372de9b8d6e9a5d715d098d227f5fa9c`, origin=`https://polite-rock-0f80d2a00.5.azurestaticapps.net`. root/JS/PNG/bridge200 및 미인증API401/JSON/no-store 확인. T06 청사진에 따라 CLI/HTTP·격리 테스트 데이터를 검증하고 실제 사용자 로그인·다른 기기 재개는 사용자에게 요청한다. computer-use 금지, 실제 확인 전 done 금지, 기존 dirty 게임/아트 보존.
 
 ## Previous Active Plan

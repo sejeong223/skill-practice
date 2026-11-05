@@ -1,4 +1,5 @@
 import type { AcquireRequest, ApiErrorCode, Bootstrap, LeaderboardResponse, Lease, LeaseRequest, ResetRequest, SaveAck, SaveRequest } from "../../cloud/contracts";
+import { GAME_AUTH_HEADER } from "../../cloud/contracts";
 import { parseBootstrap, parseLeaderboardResponse, parseSaveAck, validateLease } from "../../cloud/validation";
 export class ApiClientError extends Error {
   constructor(readonly status: number, readonly code: ApiErrorCode, message: string, readonly retryAfterMs: number | null = null) { super(message); }
@@ -16,9 +17,11 @@ export class GameApiClient {
       aborted(signal);
       let response: Response;
       try {
-        response = await this.fetchImpl("/api/game/" + path, {
+        // Browser fetch requires the global receiver; calling it as a client
+        // method throws before dispatch even though Node's fetch accepts it.
+        response = await this.fetchImpl.call(globalThis, "/api/game/" + path, {
           method: input === undefined ? "GET" : "POST", cache: "no-store", credentials: "same-origin", signal,
-          headers: { Authorization: "Bearer " + token, ...(input === undefined ? {} : { "Content-Type": "application/json" }) },
+          headers: { [GAME_AUTH_HEADER]: "Bearer " + token, ...(input === undefined ? {} : { "Content-Type": "application/json" }) },
           ...(input === undefined ? {} : { body: JSON.stringify(input) }),
         });
       } catch (error) {

@@ -7,6 +7,7 @@ import { AuthProvider } from "../src/auth/AuthProvider.tsx";
 import { LoginGate } from "../src/components/game/LoginGate.tsx";
 import { createMsalClientLoader, loadAuthConfig, gameMode } from "../src/auth/msal.ts";
 import { GameApiClient } from "../src/game/persistence/cloud/GameApiClient.ts";
+import { GAME_AUTH_HEADER } from "../src/game/cloud/contracts.ts";
 import { activeAccount } from "./cloud-test-support.mjs";
 import { installDom } from "./cloud-dom-support.mjs";
 const dom=installDom();
@@ -69,7 +70,8 @@ test("API retries 401 once with forced silent refresh and sends Bearer access to
  const {bootstrap}=await activeAccount(),tokens=[],requests=[];
  const api=new GameApiClient(async force=>{tokens.push(force);return force?"REFRESH":"ACCESS";},async(url,init)=>{requests.push({url,init});return requests.length===1?json({error:{code:"UNAUTHENTICATED"}},401):json(bootstrap);});
  assert.deepEqual(await api.bootstrap(),bootstrap);assert.deepEqual(tokens,[false,true]);assert.equal(requests[0].url,"/api/game/bootstrap");
- assert.equal(requests[0].init.headers.Authorization,"Bearer ACCESS");assert.equal(requests[1].init.headers.Authorization,"Bearer REFRESH");
+ assert.equal(requests[0].init.headers[GAME_AUTH_HEADER],"Bearer ACCESS");assert.equal(requests[1].init.headers[GAME_AUTH_HEADER],"Bearer REFRESH");
+ assert.equal(requests[0].init.headers.Authorization,undefined);
  assert.equal(requests[0].init.cache,"no-store");
 });
 test("second 401 requests reauthentication; 403 and other errors never retry login",async()=>{

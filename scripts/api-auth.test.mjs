@@ -6,6 +6,9 @@ import { createAccessTokenVerifier } from "../api/src/auth.ts";
 import { loadServerConfig } from "../api/src/config.ts";
 import { errorResponse, readJsonBody, withIdentity } from "../api/src/http.ts";
 import { createGameHandlers, GAME_ROUTES } from "../api/src/functions/game.ts";
+import { GAME_AUTH_HEADER } from "../src/game/cloud/contracts.ts";
+import { GameApiClient } from "../src/game/persistence/cloud/GameApiClient.ts";
+import { activeAccount } from "./cloud-test-support.mjs";
 const require=createRequire(new URL("../api/package.json",import.meta.url));
 const {SignJWT,generateKeyPair,exportJWK,createLocalJWKSet}=await import(pathToFileURL(require.resolve("jose")).href);
 const {HttpRequest}=require("@azure/functions");
@@ -23,7 +26,7 @@ async function token(patch={},key=pair.privateKey) {
     .setProtectedHeader({alg:"RS256",kid:"unit-test"}).sign(key);
 }
 const req=(method="GET",body,authorization)=>new HttpRequest({method,url:"https://game.example/api/game/bootstrap",
-  headers:{"content-type":"application/json",...(authorization?{authorization}:{})},
+  headers:{"content-type":"application/json",...(authorization?{[GAME_AUTH_HEADER]:authorization}:{})},
   ...(body===undefined?{}:{body:{string:typeof body==="string"?body:JSON.stringify(body)}})});
 test("signed member and guest identity use verified tenant/oid, not email",async()=>{
   for(const patch of [{email:"changed@elsewhere.test"},{idp:"https://guest.test",preferred_username:"guest@outside.test"}]){
@@ -74,6 +77,32 @@ test("every registered route authenticates before invoking the service",async()=
     assert.equal((await handlers[name](req(method,method==="POST"?{}:undefined,valid),{warn(){}})).status,200);
   }
   assert.equal(serviceCalls,GAME_ROUTES.length);
+});
+
+test("SWA Authorization replacement cannot replace the independently verified game access token",async()=>{
+ const {bootstrap}=await activeAccount();let serviceCalls=0;
+ const handlers=createGameHandlers(verify,async(_route,owner)=>{
+  serviceCalls++;assert.equal(owner.objectId,ids.oid);return {status:200,jsonBody:bootstrap};
+ });
+ const valid="Bearer "+await token();
+ const client=new GameApiClient(async()=>valid.slice(7),async function(path,options){
+  assert.equal(this,globalThis);assert.equal(options.headers.Authorization,undefined);
+  const request=new HttpRequest({method:options.method,url:"https://game.example"+path,
+   headers:{...options.headers,authorization:"Bearer platform-owned-token"}});
+  const response=await handlers.bootstrap(request,{warn(){}});
+  return new Response(JSON.stringify(response.jsonBody),{status:response.status,headers:response.headers});
+ });
+ assert.deepEqual(await client.bootstrap(),bootstrap);assert.equal(serviceCalls,1);
+ for(const gameToken of [undefined,"Bearer invalid",valid+", "+valid]){
+  const request=req("GET",undefined,gameToken);
+  request.headers.set("authorization",valid);
+  request.headers.set("x-ms-client-principal",Buffer.from(JSON.stringify({userId:ids.oid})).toString("base64"));
+  assert.equal((await handlers.bootstrap(request,{warn(){}})).status,401);
+ }
+ const wrongScope=req("GET",undefined,"Bearer "+await token({scp:"not_access_as_user"}));
+ wrongScope.headers.set("authorization",valid);
+ assert.equal((await handlers.bootstrap(wrongScope,{warn(){}})).status,403);
+ assert.equal(serviceCalls,1);
 });
 test("unimplemented authenticated routes fail closed and wrong methods return 405",async()=>{
   const valid="Bearer "+await token();

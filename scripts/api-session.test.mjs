@@ -96,6 +96,20 @@ test("Cosmos SDK wrapped failures preserve 429/412 without leaking messages",()=
  assert.equal(throttled.status,429);assert.equal(throttled.retryAfterMs,2400);
  assert.equal(databaseError({code:403,message:"private"}).status,503);
 });
+
+test("receipt lookup accepts SDK resolved 404 without disguising corrupt or unavailable receipts",async()=>{
+ const a=await activeAccount(),requestId=randomUUID();
+ let response={statusCode:404},failure;
+ const repo=new CosmosGameRepository({item:(id,pk)=>{
+  assert.equal(id,"receipt:"+requestId);assert.equal(pk,a.id.playerId);
+  return {read:async()=>{if(failure)throw failure;return response;}};
+ }});
+ assert.equal(await repo.readReceipt(a.id.playerId,requestId),null);
+ failure={code:404};assert.equal(await repo.readReceipt(a.id.playerId,requestId),null);
+ failure={code:429};await assert.rejects(repo.readReceipt(a.id.playerId,requestId),e=>e.code==="THROTTLED");
+ failure=undefined;response={statusCode:200};
+ await assert.rejects(repo.readReceipt(a.id.playerId,requestId),e=>e.code==="UNSUPPORTED_SAVE");
+});
 test("adapter reads an atomic account snapshot and distinguishes empty from corrupt storage",async()=>{
  const a=await activeAccount(),raw=await a.repo.readAccount(a.id);
  const rows=Object.values(raw).map(v=>({statusCode:200,resourceBody:v.value,eTag:v.etag}));

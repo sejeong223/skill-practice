@@ -1,5 +1,6 @@
 import type { HttpRequest, HttpResponseInit, InvocationContext } from "@azure/functions";
 import type { Identity } from "../../src/game/cloud/contracts";
+import { GAME_AUTH_HEADER } from "../../src/game/cloud/contracts";
 import { ContractError } from "../../src/game/cloud/validation";
 import { authenticate, type AccessTokenVerifier } from "./auth";
 import { ApiError } from "./errors";
@@ -22,7 +23,8 @@ export function withIdentity(
 ): (req: HttpRequest, ctx: InvocationContext) => Promise<HttpResponseInit> {
   return async (req, ctx) => {
     try {
-      const identity = await verify(req.headers.get("authorization") ?? undefined);
+      // Never fall back to the platform's Authorization or principal headers.
+      const identity = await verify(req.headers.get(GAME_AUTH_HEADER) ?? undefined);
       const response = await handler(req, identity);
       return { ...response, headers: { ...response.headers, "Cache-Control": "no-store" } };
     } catch (error) {

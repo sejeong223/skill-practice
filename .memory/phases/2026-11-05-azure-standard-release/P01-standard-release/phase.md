@@ -18,6 +18,7 @@
 ## Progress
 
 - done: 5/6 (active: T06)
+- T06 자동 HTTP14·격리 Cosmos9/잔여0 및 cloud164/release-smoke12/타입/린트 통과. fetch receiver·receipt404 연동 결함 수정 source4dc4a54를 run41975219401로 재배포했다. 필수 사용자 M01~M06은 확인 중이며 완료 수는 유지한다.
 - T04 실제 Verify, T05 run41972324270 성공 및 실제 root/JS/PNG/bridge/API HTTP 검증 완료. T06에서 실제 로그인·저장·기기 전환과 제한된 테스트 데이터 검증을 수행한다.
 - T01~T03은 로컬 작성/대역 검증만 수행한다. T04부터 승인된 게임 SWA 외부 작업을 수행한다.
 - 완료 기록·검증 증거는 각 Task Progress에 남긴다. 구현과 실제 외부 검증을 모두 충족해야 해당 Task를 done 처리한다.

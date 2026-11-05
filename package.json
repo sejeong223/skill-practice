@@ -10,7 +10,7 @@
     "check:release": "node scripts/check-game-release.mjs",
     "test:release-config": "node --test scripts/release-config.test.mjs",
     "test:workflow": "node --test scripts/game-workflow.test.mjs",
-    "test:cloud": "node --import tsx --test scripts/cloud-contracts.test.mjs scripts/api-auth.test.mjs scripts/api-session.test.mjs scripts/api-save.test.mjs scripts/api-ranking.test.mjs scripts/cloud-auth.test.mjs scripts/cloud-save-client.test.mjs scripts/cloud-resume.test.mjs scripts/cloud-game.test.mjs scripts/ranking-ui.test.mjs scripts/development-start.test.mjs",
+    "test:cloud": "node --import tsx --test scripts/cloud-contracts.test.mjs scripts/api-auth.test.mjs scripts/api-session.test.mjs scripts/api-save.test.mjs scripts/api-ranking.test.mjs scripts/cloud-auth.test.mjs scripts/cloud-save-client.test.mjs scripts/cloud-resume.test.mjs scripts/cloud-game.test.mjs scripts/ranking-ui.test.mjs scripts/development-start.test.mjs scripts/cloud-regression.test.mjs",
     "lint": "eslint",
     "test:progression": "node --experimental-strip-types --test scripts/stage-progression.test.mjs",
     "test:cloud-contracts": "node --import tsx --test scripts/cloud-contracts.test.mjs",
@@ -26,7 +26,9 @@
     "world01:maps": "node scripts/world01-maps.mjs",
     "world01:maps:check": "node scripts/world01-maps.mjs --check",
     "test:cloud-game": "node --import tsx --test scripts/cloud-game.test.mjs",
-    "test:ranking-ui": "node --import tsx --test scripts/ranking-ui.test.mjs"
+    "test:ranking-ui": "node --import tsx --test scripts/ranking-ui.test.mjs",
+    "smoke:cloud": "node --import tsx scripts/cloud-release-smoke.mjs",
+    "test:release-smoke": "node --import tsx --test scripts/cloud-release-smoke.test.mjs scripts/cloud-regression.test.mjs"
   },
   "overrides": {
     "serve": {

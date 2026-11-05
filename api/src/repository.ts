@@ -66,6 +66,9 @@ export class CosmosGameRepository implements GameRepository {
   async readReceipt(playerId: string, requestId: string): Promise<ReceiptDoc | null> {
     try {
       const response = await this.container.item("receipt:" + requestId, playerId).read();
+      // Cosmos item.read resolves a 404 ItemResponse (it does not always throw).
+      // A new request legitimately has no receipt yet.
+      if (response.statusCode === 404) return null;
       if (!response.resource) throw new ApiError(503, "UNSUPPORTED_SAVE", "저장 확인 데이터를 읽을 수 없습니다.");
       const doc = parseDocument(response.resource, playerId);
       if (doc.kind !== "receipt") throw new ApiError(503, "UNSUPPORTED_SAVE", "저장 확인 데이터가 올바르지 않습니다.");
